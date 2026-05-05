@@ -1,7 +1,7 @@
-// Tip-jar / support panel that pairs with RequestNextGame in the
-// engagement section. The Ko-fi action opens an in-page modal containing
-// Ko-fi's official panel iframe — see KofiModal. Share button is a
-// plain Twitter intent link.
+// Tip-jar panel that pairs with RequestNextGame in the engagement strip.
+// Stacks vertically inside its column: heading + copy on top, Ko-fi
+// profile preview + tip button + share link below. The Ko-fi action opens
+// an in-page modal containing Ko-fi's official panel iframe — see KofiModal.
 import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL } from "@/lib/site";
 import { KofiModal } from "./KofiModal";
 
@@ -13,25 +13,47 @@ export function SupportLinks() {
   return (
     <div className="flex h-full flex-col">
       <h3 className="font-soft text-2xl font-bold text-ink sm:text-3xl">
-        Support me <span className="text-accent-soft">:D</span>
+        Support me :D
       </h3>
+      <p className="mt-2 text-sm text-ink-soft">
+        Daily puzzles take time. If OWdle made your day, slide a coffee my way {'( ๑‾̀◡‾́)σ"'}
+      </p>
 
-      {/* Centered Ko-fi button is the whole point of the card — we let
-          flex-1 push it into the empty vertical space so this side mirrors
-          the height of the leaderboard side. */}
-      <div className="mt-2 flex flex-1 items-center justify-center py-6">
-        <KofiModal username={SUPPORT_LINKS.kofiUsername} />
+      {/* Action cluster — centered horizontally within the column so the
+          avatar+name and Ko-fi button form a clear vertical focal point
+          beneath the heading copy. */}
+      <div className="mt-6 flex flex-col items-center gap-5">
+        {/* Ko-fi profile-card preview — anchors the tip button so visitors
+            see who they'd be supporting before they click. */}
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/kofi-avatar.jpg"
+            alt=""
+            width={56}
+            height={56}
+            className="h-14 w-14 shrink-0 rounded-full border border-line object-cover"
+          />
+          <div>
+            <p className="font-soft text-base font-bold leading-none text-ink">
+              yush
+            </p>
+            <p className="mt-1.5 text-xs text-ink-soft">ko-fi.com/yushoo</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <KofiModal username={SUPPORT_LINKS.kofiUsername} />
+          <a
+            href={TWITTER_INTENT}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:text-info"
+          >
+            <ShareMark />
+            Share on X
+          </a>
+        </div>
       </div>
-
-      <a
-        href={TWITTER_INTENT}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-2 inline-flex items-center gap-1.5 self-start font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint transition-colors hover:text-info"
-      >
-        <ShareMark />
-        Share on X
-      </a>
     </div>
   );
 }

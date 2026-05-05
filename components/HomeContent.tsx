@@ -91,17 +91,16 @@ export function HomeContent() {
         <TryDeadlockleCard />
       </section>
 
-      {/* Engagement strip: vote on next game + tip jar. Containerless —
-          content sits on the page canvas, separated from the modes grid
-          by a top hairline and from each other by a single vertical
-          divider. Heights still match (default grid items-stretch) so
-          the divider spans cleanly. */}
+      {/* Engagement strip: vote on next game + tip jar in one row.
+          60/40 split (3:2 grid) — vote gets a touch more horizontal room
+          since it's the more interactive ask. Single vertical hairline
+          divider between the two columns. */}
       <section className="mx-auto max-w-6xl border-t border-line px-6 pt-12 pb-20 sm:pt-14">
-        <div className="grid gap-y-14 md:grid-cols-2 md:gap-y-0 md:divide-x md:divide-line">
-          <div className="md:pr-10 lg:pr-14">
+        <div className="grid gap-y-14 md:grid-cols-5 md:gap-y-0 md:divide-x md:divide-line">
+          <div className="md:col-span-3 md:pr-10 lg:pr-14">
             <RequestNextGame />
           </div>
-          <div className="md:pl-10 lg:pl-14">
+          <div className="md:col-span-2 md:pl-10 lg:pl-14">
             <SupportLinks />
           </div>
         </div>

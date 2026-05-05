@@ -225,193 +225,195 @@ export function RequestNextGame() {
     }
   };
 
-  if (status.tag === "submitted") {
-    return (
-      <div className="flex h-full flex-col">
-        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
-          ✓ Vote recorded
-        </p>
-        <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
-          Thanks — your pick is in.
-        </h3>
-        <p className="mt-2 text-sm text-ink-soft">
-          You voted for{" "}
-          <span className="text-ink">{status.game.name}</span>
-          {year(status.game.released) ? ` (${year(status.game.released)})` : ""}.
-          Vote for another, or come back next month.
-        </p>
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={reset}
-            className="inline-flex items-center gap-2 border border-line bg-canvas px-3 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink transition-colors hover:border-edge hover:text-accent-soft"
-          >
-            Vote again →
-          </button>
-        </div>
-        <Leaderboard data={leaderboard} />
-      </div>
-    );
-  }
+  const submitted = status.tag === "submitted";
 
   return (
     <div ref={wrapRef} className="flex h-full flex-col">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
-        Request the next game
-      </p>
-      <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
-        Which game should I work on next?
-      </h3>
-      <p className="mt-2 text-sm text-ink-soft">
-        Search any game and vote. The most-requested ones get built.
-      </p>
+      {submitted ? (
+          <>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
+              ✓ Vote recorded
+            </p>
+            <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
+              Thanks — your pick is in.
+            </h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              You voted for{" "}
+              <span className="text-ink">{status.game.name}</span>
+              {year(status.game.released) ? ` (${year(status.game.released)})` : ""}.
+              Vote for another, or come back next month.
+            </p>
+            <div className="mt-5">
+              <button
+                type="button"
+                onClick={reset}
+                className="inline-flex items-center gap-2 border border-line bg-canvas px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink transition-colors hover:border-edge hover:text-accent-soft"
+              >
+                Vote again →
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+              Request the next game
+            </p>
+            <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
+              Which game should I work on next?
+            </h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              Search any game and vote. The most-requested ones get built.
+            </p>
 
-      <div className="relative mt-5">
-        <div
-          className={clsx(
-            "flex items-stretch border bg-canvas transition-colors",
-            selected
-              ? "border-accent"
-              : open
-                ? "border-edge"
-                : "border-line focus-within:border-edge",
-          )}
-        >
-          <input
-            ref={inputRef}
-            id={inputId}
-            type="text"
-            autoComplete="off"
-            spellCheck={false}
-            value={query}
-            disabled={status.tag === "submitting"}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setSelected(null);
-              setStatus({ tag: "idle" });
-              setOpen(true);
-            }}
-            onFocus={() => {
-              if (!selected && results.length > 0) setOpen(true);
-            }}
-            onKeyDown={onKeyDown}
-            placeholder="Search games…"
-            role="combobox"
-            aria-expanded={open}
-            aria-autocomplete="list"
-            aria-controls={listboxId}
-            aria-activedescendant={
-              open && results[activeIndex]
-                ? `${listboxId}-${results[activeIndex].id}`
-                : undefined
-            }
-            className="flex-1 bg-transparent px-3 py-2.5 font-sans text-sm text-ink placeholder:text-ink-faint disabled:opacity-50"
-          />
-          {selected ? (
-            <button
-              type="button"
-              onClick={reset}
-              className="border-l border-line px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:text-ink"
-              aria-label="Clear selection"
-            >
-              ×
-            </button>
-          ) : searching ? (
-            <span className="flex items-center px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-              …
-            </span>
-          ) : null}
-        </div>
-
-        {open && !selected && results.length > 0 ? (
-          <ul
-            id={listboxId}
-            role="listbox"
-            className="absolute z-30 mt-px max-h-72 w-full overflow-auto border border-edge bg-surface shadow-2xl shadow-black/60"
-          >
-            {results.map((r, i) => {
-              const already = voted.includes(r.id);
-              const active = i === activeIndex;
-              return (
-                <li
-                  key={r.id}
-                  id={`${listboxId}-${r.id}`}
-                  role="option"
-                  aria-selected={active}
-                  ref={(el) => {
-                    if (active && el) el.scrollIntoView({ block: "nearest" });
+            <div className="relative mt-5">
+              <div
+                className={clsx(
+                  "flex items-stretch border transition-colors",
+                  selected
+                    ? "border-accent"
+                    : open
+                      ? "border-edge"
+                      : "border-line focus-within:border-edge",
+                )}
+                style={{
+                  background:
+                    "linear-gradient(180deg, #1d1814 0%, #14110d 100%)",
+                }}
+              >
+                <input
+                  ref={inputRef}
+                  id={inputId}
+                  type="text"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={query}
+                  disabled={status.tag === "submitting"}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setSelected(null);
+                    setStatus({ tag: "idle" });
+                    setOpen(true);
                   }}
-                  onMouseEnter={() => setActiveIndex(i)}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    if (!already) choose(r);
+                  onFocus={() => {
+                    if (!selected && results.length > 0) setOpen(true);
                   }}
-                  className={clsx(
-                    "flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors",
-                    active && !already && "bg-muted",
-                    already && "cursor-not-allowed opacity-50",
-                  )}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={
-                      r.image ??
-                      "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
-                    }
-                    alt=""
-                    className="h-8 w-12 shrink-0 border border-line bg-inset object-cover"
-                    loading="lazy"
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm text-ink">
-                      {r.name}
-                    </span>
-                    <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-                      {year(r.released) ?? "—"}
-                      {already ? " · already voted" : ""}
-                    </span>
+                  onKeyDown={onKeyDown}
+                  placeholder="Search games…"
+                  role="combobox"
+                  aria-expanded={open}
+                  aria-autocomplete="list"
+                  aria-controls={listboxId}
+                  aria-activedescendant={
+                    open && results[activeIndex]
+                      ? `${listboxId}-${results[activeIndex].id}`
+                      : undefined
+                  }
+                  className="flex-1 bg-transparent px-4 py-3 font-sans text-sm text-ink placeholder:text-ink-faint disabled:opacity-50"
+                />
+                {selected ? (
+                  <button
+                    type="button"
+                    onClick={reset}
+                    className="border-l border-line px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:text-ink"
+                    aria-label="Clear selection"
+                  >
+                    ×
+                  </button>
+                ) : searching ? (
+                  <span className="flex items-center px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                    …
                   </span>
-                </li>
-              );
-            })}
-          </ul>
-        ) : null}
+                ) : null}
+              </div>
 
-        {open && !selected && !searching && query.trim().length >= 2 && results.length === 0 ? (
-          <div className="absolute z-30 mt-px w-full border border-line bg-surface px-3 py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
-            No matches.
-          </div>
-        ) : null}
-      </div>
+              {open && !selected && results.length > 0 ? (
+                <ul
+                  id={listboxId}
+                  role="listbox"
+                  className="absolute z-30 mt-px max-h-72 w-full overflow-auto border border-edge bg-surface shadow-2xl shadow-black/60"
+                >
+                  {results.map((r, i) => {
+                    const already = voted.includes(r.id);
+                    const active = i === activeIndex;
+                    return (
+                      <li
+                        key={r.id}
+                        id={`${listboxId}-${r.id}`}
+                        role="option"
+                        aria-selected={active}
+                        ref={(el) => {
+                          if (active && el) el.scrollIntoView({ block: "nearest" });
+                        }}
+                        onMouseEnter={() => setActiveIndex(i)}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          if (!already) choose(r);
+                        }}
+                        className={clsx(
+                          "flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors",
+                          active && !already && "bg-muted",
+                          already && "cursor-not-allowed opacity-50",
+                        )}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={r.image ?? PLACEHOLDER_IMG}
+                          alt=""
+                          className="h-8 w-12 shrink-0 border border-line bg-inset object-cover"
+                          loading="lazy"
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm text-ink">
+                            {r.name}
+                          </span>
+                          <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+                            {year(r.released) ?? "—"}
+                            {already ? " · already voted" : ""}
+                          </span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
 
-      <div className="mt-4 flex items-center gap-3">
-        <button
-          type="button"
-          onClick={submit}
-          disabled={
-            !selected ||
-            status.tag === "submitting" ||
-            (selected && voted.includes(selected.id))
-          }
-          className={clsx(
-            "inline-flex items-center gap-2 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] transition-colors",
-            selected && !voted.includes(selected.id)
-              ? "bg-accent text-on-accent hover:bg-accent-soft"
-              : "cursor-not-allowed border border-line bg-canvas text-ink-faint",
-          )}
-        >
-          {status.tag === "submitting"
-            ? "Sending…"
-            : selected && voted.includes(selected.id)
-              ? "Already voted"
-              : "Submit vote →"}
-        </button>
-        {status.tag === "error" ? (
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-far">
-            {status.message}
-          </span>
-        ) : null}
-      </div>
+              {open && !selected && !searching && query.trim().length >= 2 && results.length === 0 ? (
+                <div className="absolute z-30 mt-px w-full border border-line bg-surface px-3 py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+                  No matches.
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-5 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={submit}
+                disabled={
+                  !selected ||
+                  status.tag === "submitting" ||
+                  (selected && voted.includes(selected.id))
+                }
+                className={clsx(
+                  "inline-flex items-center gap-2 rounded-full px-6 py-2.5 font-soft text-sm font-bold transition-all duration-150",
+                  selected && !voted.includes(selected.id)
+                    ? "bg-accent text-on-accent shadow-lg shadow-accent/25 hover:bg-accent-soft hover:-translate-y-0.5"
+                    : "cursor-not-allowed border border-line bg-canvas text-ink-faint",
+                )}
+              >
+                {status.tag === "submitting"
+                  ? "Sending…"
+                  : selected && voted.includes(selected.id)
+                    ? "Already voted"
+                    : "Submit vote →"}
+              </button>
+              {status.tag === "error" ? (
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-far">
+                  {status.message}
+                </span>
+              ) : null}
+            </div>
+          </>
+        )}
 
       <Leaderboard data={leaderboard} />
     </div>
@@ -420,7 +422,8 @@ export function RequestNextGame() {
 
 // Top voted games. The order IS the data — we don't show counts so the
 // rank can't be reverse-engineered into "X has 1 vote", which would
-// cheapen the signal early on. Top-3 ranks tinted accent for hierarchy.
+// cheapen the signal early on. Vertical list keeps it legible inside a
+// narrow column; rank-1 gets a tinted thumb, top-3 ranks tinted accent.
 function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
   return (
     <div className="mt-6 border-t border-line pt-5">
@@ -436,7 +439,7 @@ function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
           No votes yet — be the first to weigh in.
         </p>
       ) : (
-        <ol className="mt-3 space-y-1.5">
+        <ol className="mt-3 space-y-2">
           {data.map((g, i) => (
             <li key={g.game_id} className="flex items-center gap-3">
               <span
@@ -455,7 +458,7 @@ function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
               <img
                 src={g.game_image ?? PLACEHOLDER_IMG}
                 alt=""
-                className="h-7 w-10 shrink-0 border border-line bg-inset object-cover"
+                className="h-8 w-12 shrink-0 border border-line bg-inset object-cover"
                 loading="lazy"
               />
               <span className="min-w-0 flex-1 truncate text-sm text-ink">
