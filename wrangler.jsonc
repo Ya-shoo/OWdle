@@ -2,5 +2,17 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "owdle",
   "compatibility_date": "2026-04-28",
-  "pages_build_output_dir": "./out"
+  "pages_build_output_dir": "./out",
+
+  // D1 database for "request next game" votes. The database_id below is a
+  // placeholder — replace with the UUID printed by `wrangler d1 create
+  // owdle-votes` before the first deploy. RAWG_API_KEY is set as a Pages
+  // secret (`wrangler pages secret put RAWG_API_KEY`), not in this file.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "owdle-votes",
+      "database_id": "e51eedfa-9f64-4f22-86b2-29b26b413af8"
+    }
+  ]
 }

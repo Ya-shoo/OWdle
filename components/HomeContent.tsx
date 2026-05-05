@@ -14,6 +14,8 @@ import {
 import { Brand } from "./Brand";
 import { HomeBanner } from "./HomeBanner";
 import { NextResetCountdown } from "./NextResetCountdown";
+import { RequestNextGame } from "./RequestNextGame";
+import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 
 type Status = { won: boolean; guesses: number };
@@ -84,9 +86,22 @@ export function HomeContent() {
         </ul>
       </section>
 
-      {/* Sister-site card — sits between modes grid and footer */}
-      <section className="mx-auto max-w-6xl px-6 pb-24 pt-4">
+      {/* Sister-site card — sits between modes grid and engagement strip */}
+      <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
         <TryDeadlockleCard />
+      </section>
+
+      {/* Engagement strip: vote on next game + tip jar. Two equal-width
+          panels divided by a single hairline so it reads as one band. */}
+      <section className="mx-auto max-w-6xl px-6 pb-20">
+        <div className="grid gap-px border border-line bg-line md:grid-cols-2">
+          <div className="bg-surface p-6 sm:p-7">
+            <RequestNextGame />
+          </div>
+          <div className="bg-surface p-6 sm:p-7">
+            <SupportLinks />
+          </div>
+        </div>
       </section>
 
       <footer className="border-t border-line bg-inset/40">

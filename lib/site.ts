@@ -7,6 +7,16 @@ export const SITE_TAGLINE = "the daily Overwatch quiz";
 export const SITE_DEFAULT_DESCRIPTION =
   "OWdle is the daily Overwatch hero quiz. Wordle-inspired modes — guess the hero by attributes, ability icons, splash art, and voice lines. New puzzles every day at midnight UTC.";
 
+// Support/tip links for the home-page engagement section. Yash to update
+// the Ko-fi handle once an account exists. SHARE_TEXT is consumed by the
+// Twitter/X intent on the same panel.
+export const SUPPORT_LINKS = {
+  kofi: "https://ko-fi.com/yashpa",
+} as const;
+
+export const SHARE_TEXT =
+  "Playing OWdle — the daily Overwatch hero quiz. Six modes, one hero.";
+
 export const SITE_KEYWORDS = [
   "Overwatch quiz",
   "Overwatch wordle",
