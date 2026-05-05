@@ -13,7 +13,7 @@ type Row = {
 };
 
 const CACHE_TTL_SECONDS = 30;
-const LIMIT = 10;
+const LIMIT = 5;
 
 export const onRequestGet: Handler = async ({ request, env, waitUntil }) => {
   const url = new URL(request.url);
