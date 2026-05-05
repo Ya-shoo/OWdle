@@ -45,13 +45,25 @@ export function KofiModal({ username }: Props) {
 
   return (
     <>
+      {/* Use Ko-fi's official button image so it's instantly recognizable
+          as a Ko-fi tip jar without users needing to read the label. We
+          override the click to open our embedded modal rather than letting
+          the image link redirect away — this is why it's a <button>, not
+          an <a>. */}
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 bg-accent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-on-accent transition-colors hover:bg-accent-soft"
+        className="inline-block cursor-pointer border-0 bg-transparent p-0 transition-transform duration-150 hover:-translate-y-0.5"
+        aria-label="Open Ko-fi tip panel"
       >
-        <KofiMark />
-        Tip on Ko-fi
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://storage.ko-fi.com/cdn/kofi3.png?v=3"
+          alt="Support me on Ko-fi"
+          width={185}
+          height={36}
+          style={{ display: "block", border: 0, height: 36, width: 185 }}
+        />
       </button>
 
       <dialog
@@ -99,23 +111,3 @@ export function KofiModal({ username }: Props) {
   );
 }
 
-function KofiMark() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-      <path
-        d="M3 7h15a3 3 0 0 1 0 6h-1M3 7v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-      />
-      <path
-        d="M7 4v2M11 4v2"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="square"
-      />
-    </svg>
-  );
-}
