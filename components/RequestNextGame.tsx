@@ -28,8 +28,17 @@ type Status =
   | { tag: "submitted"; game: Result }
   | { tag: "error"; message: string };
 
+type LeaderEntry = {
+  game_id: string;
+  game_name: string;
+  game_image: string | null;
+  game_released: string | null;
+};
+
 const STORAGE_KEY = "owdle:requested-games";
 const SEARCH_DEBOUNCE_MS = 250;
+const PLACEHOLDER_IMG =
+  "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
 
 function loadVoted(): string[] {
   if (typeof window === "undefined") return [];
@@ -68,15 +77,33 @@ export function RequestNextGame() {
   const [selected, setSelected] = useState<Result | null>(null);
   const [status, setStatus] = useState<Status>({ tag: "idle" });
   const [voted, setVoted] = useState<string[]>([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderEntry[] | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reqIdRef = useRef(0);
   const wrapRef = useRef<HTMLDivElement>(null);
 
+  // Cache-bust the leaderboard fetch so a successful submit always shows
+  // the user's pick reflected immediately, bypassing the 30s edge cache.
+  const loadLeaderboard = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/leaderboard?t=${Date.now()}`);
+      if (!res.ok) {
+        setLeaderboard([]);
+        return;
+      }
+      const data = (await res.json()) as { results?: LeaderEntry[] };
+      setLeaderboard(data.results ?? []);
+    } catch {
+      setLeaderboard([]);
+    }
+  }, []);
+
   useEffect(() => {
     setVoted(loadVoted());
-  }, []);
+    loadLeaderboard();
+  }, [loadLeaderboard]);
 
   // Debounced search against /api/search.
   const runSearch = useCallback(async (q: string) => {
@@ -171,6 +198,7 @@ export function RequestNextGame() {
       setVoted(next);
       saveVoted(next);
       setStatus({ tag: "submitted", game: selected });
+      loadLeaderboard();
     } catch {
       setStatus({
         tag: "error",
@@ -221,6 +249,7 @@ export function RequestNextGame() {
             Vote again →
           </button>
         </div>
+        <Leaderboard data={leaderboard} />
       </div>
     );
   }
@@ -231,7 +260,7 @@ export function RequestNextGame() {
         Request the next game
       </p>
       <h3 className="mt-2 font-display text-xl text-ink sm:text-2xl">
-        Which game should I Wordle next?
+        Which game should I work on next?
       </h3>
       <p className="mt-2 text-sm text-ink-soft">
         Search any game and vote. The most-requested ones get built.
@@ -383,6 +412,59 @@ export function RequestNextGame() {
           </span>
         ) : null}
       </div>
+
+      <Leaderboard data={leaderboard} />
+    </div>
+  );
+}
+
+// Top voted games. The order IS the data — we don't show counts so the
+// rank can't be reverse-engineered into "X has 1 vote", which would
+// cheapen the signal early on. Top-3 ranks tinted accent for hierarchy.
+function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
+  return (
+    <div className="mt-6 border-t border-line pt-5">
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+        Current top picks
+      </p>
+      {data === null ? (
+        <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+          Loading…
+        </p>
+      ) : data.length === 0 ? (
+        <p className="mt-3 text-sm text-ink-soft">
+          No votes yet — be the first to weigh in.
+        </p>
+      ) : (
+        <ol className="mt-3 space-y-1.5">
+          {data.map((g, i) => (
+            <li key={g.game_id} className="flex items-center gap-3">
+              <span
+                className={clsx(
+                  "w-6 shrink-0 font-mono text-[11px] tabular-nums",
+                  i === 0
+                    ? "text-accent"
+                    : i < 3
+                      ? "text-accent-soft"
+                      : "text-ink-faint",
+                )}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={g.game_image ?? PLACEHOLDER_IMG}
+                alt=""
+                className="h-7 w-10 shrink-0 border border-line bg-inset object-cover"
+                loading="lazy"
+              />
+              <span className="min-w-0 flex-1 truncate text-sm text-ink">
+                {g.game_name}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }
