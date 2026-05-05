@@ -1,0 +1,8346 @@
+{
+  "ana": [
+    {
+      "key": "arch-commandant-amari",
+      "name": "Arch-Commandant Amari",
+      "rarity": "legendary",
+      "file": "/skins/ana/arch-commandant-amari.jpg"
+    },
+    {
+      "key": "blackbraid",
+      "name": "Blackbraid",
+      "rarity": "legendary",
+      "file": "/skins/ana/blackbraid.jpg"
+    },
+    {
+      "key": "blue-lotus",
+      "name": "Blue Lotus",
+      "rarity": "legendary",
+      "file": "/skins/ana/blue-lotus.jpg"
+    },
+    {
+      "key": "bog-witch",
+      "name": "Bog Witch",
+      "rarity": "legendary",
+      "file": "/skins/ana/bog-witch.jpg"
+    },
+    {
+      "key": "botanist",
+      "name": "Botanist",
+      "rarity": "legendary",
+      "file": "/skins/ana/botanist.jpg"
+    },
+    {
+      "key": "cabana",
+      "name": "Cabana",
+      "rarity": "legendary",
+      "file": "/skins/ana/cabana.jpg"
+    },
+    {
+      "key": "captain-amari",
+      "name": "Captain Amari",
+      "rarity": "legendary",
+      "file": "/skins/ana/captain-amari.jpg"
+    },
+    {
+      "key": "corsair",
+      "name": "Corsair",
+      "rarity": "legendary",
+      "file": "/skins/ana/corsair.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/ana/cosmic.jpg"
+    },
+    {
+      "key": "demon",
+      "name": "Demon",
+      "rarity": "legendary",
+      "file": "/skins/ana/demon.jpg"
+    },
+    {
+      "key": "haroeris",
+      "name": "Haroeris",
+      "rarity": "legendary",
+      "file": "/skins/ana/haroeris.jpg"
+    },
+    {
+      "key": "horus",
+      "name": "Horus",
+      "rarity": "legendary",
+      "file": "/skins/ana/horus.jpg"
+    },
+    {
+      "key": "li-yu",
+      "name": "Li Yu",
+      "rarity": "legendary",
+      "file": "/skins/ana/li-yu.jpg"
+    },
+    {
+      "key": "mummy",
+      "name": "Mummy",
+      "rarity": "legendary",
+      "file": "/skins/ana/mummy.jpg"
+    },
+    {
+      "key": "night-owl",
+      "name": "Night Owl",
+      "rarity": "legendary",
+      "file": "/skins/ana/night-owl.jpg"
+    },
+    {
+      "key": "nighthawker",
+      "name": "Nighthawker",
+      "rarity": "legendary",
+      "file": "/skins/ana/nighthawker.jpg"
+    },
+    {
+      "key": "oni",
+      "name": "Oni",
+      "rarity": "legendary",
+      "file": "/skins/ana/oni.jpg"
+    },
+    {
+      "key": "sniper",
+      "name": "Sniper",
+      "rarity": "legendary",
+      "file": "/skins/ana/sniper.jpg"
+    },
+    {
+      "key": "snow-owl",
+      "name": "Snow Owl",
+      "rarity": "legendary",
+      "file": "/skins/ana/snow-owl.jpg"
+    },
+    {
+      "key": "stakeout",
+      "name": "Stakeout",
+      "rarity": "legendary",
+      "file": "/skins/ana/stakeout.jpg"
+    },
+    {
+      "key": "tomb-walker",
+      "name": "Tomb Walker",
+      "rarity": "legendary",
+      "file": "/skins/ana/tomb-walker.jpg"
+    },
+    {
+      "key": "wadjet",
+      "name": "Wadjet",
+      "rarity": "legendary",
+      "file": "/skins/ana/wadjet.jpg"
+    },
+    {
+      "key": "wasteland",
+      "name": "Wasteland",
+      "rarity": "legendary",
+      "file": "/skins/ana/wasteland.jpg"
+    },
+    {
+      "key": "bastet",
+      "name": "Bastet",
+      "rarity": "epic",
+      "file": "/skins/ana/bastet.jpg"
+    },
+    {
+      "key": "crazy-raccoon",
+      "name": "Crazy Raccoon",
+      "rarity": "epic",
+      "file": "/skins/ana/crazy-raccoon.jpg"
+    },
+    {
+      "key": "cybermedic",
+      "name": "Cybermedic",
+      "rarity": "epic",
+      "file": "/skins/ana/cybermedic.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/ana/elite.jpg"
+    },
+    {
+      "key": "gen-g",
+      "name": "Gen.G",
+      "rarity": "epic",
+      "file": "/skins/ana/gen-g.jpg"
+    },
+    {
+      "key": "ghoul",
+      "name": "Ghoul",
+      "rarity": "epic",
+      "file": "/skins/ana/ghoul.jpg"
+    },
+    {
+      "key": "gingerbread",
+      "name": "Gingerbread",
+      "rarity": "epic",
+      "file": "/skins/ana/gingerbread.jpg"
+    },
+    {
+      "key": "lightbringer",
+      "name": "Lightbringer",
+      "rarity": "epic",
+      "file": "/skins/ana/lightbringer.jpg"
+    },
+    {
+      "key": "merciful",
+      "name": "Merciful",
+      "rarity": "epic",
+      "file": "/skins/ana/merciful.jpg"
+    },
+    {
+      "key": "midnight-camo",
+      "name": "Midnight Camo",
+      "rarity": "epic",
+      "file": "/skins/ana/midnight-camo.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "epic",
+      "file": "/skins/ana/polar.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "epic",
+      "file": "/skins/ana/sakura.jpg"
+    },
+    {
+      "key": "sanguine-curse",
+      "name": "Sanguine Curse",
+      "rarity": "epic",
+      "file": "/skins/ana/sanguine-curse.jpg"
+    },
+    {
+      "key": "shrike",
+      "name": "Shrike",
+      "rarity": "epic",
+      "file": "/skins/ana/shrike.jpg"
+    },
+    {
+      "key": "spacestation-gaming",
+      "name": "Spacestation Gaming",
+      "rarity": "epic",
+      "file": "/skins/ana/spacestation-gaming.jpg"
+    },
+    {
+      "key": "spiritwarder",
+      "name": "Spiritwarder",
+      "rarity": "epic",
+      "file": "/skins/ana/spiritwarder.jpg"
+    },
+    {
+      "key": "t1",
+      "name": "T1",
+      "rarity": "epic",
+      "file": "/skins/ana/t1.jpg"
+    },
+    {
+      "key": "tal",
+      "name": "Tal",
+      "rarity": "epic",
+      "file": "/skins/ana/tal.jpg"
+    },
+    {
+      "key": "team-falcons",
+      "name": "Team Falcons",
+      "rarity": "epic",
+      "file": "/skins/ana/team-falcons.jpg"
+    },
+    {
+      "key": "team-liquid",
+      "name": "Team Liquid",
+      "rarity": "epic",
+      "file": "/skins/ana/team-liquid.jpg"
+    },
+    {
+      "key": "twisted-minds",
+      "name": "Twisted Minds",
+      "rarity": "epic",
+      "file": "/skins/ana/twisted-minds.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "epic",
+      "file": "/skins/ana/ultrawatch.jpg"
+    },
+    {
+      "key": "virtus-pro",
+      "name": "Virtus.pro",
+      "rarity": "epic",
+      "file": "/skins/ana/virtus-pro.jpg"
+    },
+    {
+      "key": "zeta-division",
+      "name": "Zeta Division",
+      "rarity": "epic",
+      "file": "/skins/ana/zeta-division.jpg"
+    }
+  ],
+  "anran": [
+    {
+      "key": "crimson-court",
+      "name": "Crimson Court",
+      "rarity": "legendary",
+      "file": "/skins/anran/crimson-court.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/anran/rainy-day.jpg"
+    },
+    {
+      "key": "red-ribbon",
+      "name": "Red Ribbon",
+      "rarity": "legendary",
+      "file": "/skins/anran/red-ribbon.jpg"
+    },
+    {
+      "key": "xiong-mao",
+      "name": "Xiong Mao",
+      "rarity": "epic",
+      "file": "/skins/anran/xiong-mao.jpg"
+    }
+  ],
+  "ashe": [
+    {
+      "key": "azure-huntress",
+      "name": "Azure Huntress",
+      "rarity": "legendary",
+      "file": "/skins/ashe/azure-huntress.jpg"
+    },
+    {
+      "key": "cozy",
+      "name": "Cozy",
+      "rarity": "legendary",
+      "file": "/skins/ashe/cozy.jpg"
+    },
+    {
+      "key": "cursed-doll",
+      "name": "Cursed Doll",
+      "rarity": "legendary",
+      "file": "/skins/ashe/cursed-doll.jpg"
+    },
+    {
+      "key": "demon-rocker",
+      "name": "Demon Rocker",
+      "rarity": "legendary",
+      "file": "/skins/ashe/demon-rocker.jpg"
+    },
+    {
+      "key": "dorothy",
+      "name": "Dorothy",
+      "rarity": "legendary",
+      "file": "/skins/ashe/dorothy.jpg"
+    },
+    {
+      "key": "exo-l2pus",
+      "name": "exo-L2PUS",
+      "rarity": "legendary",
+      "file": "/skins/ashe/exo-l2pus.jpg"
+    },
+    {
+      "key": "faye-valentine",
+      "name": "Faye Valentine",
+      "rarity": "legendary",
+      "file": "/skins/ashe/faye-valentine.jpg"
+    },
+    {
+      "key": "fearless",
+      "name": "FEARLESS",
+      "rarity": "legendary",
+      "file": "/skins/ashe/fearless.jpg"
+    },
+    {
+      "key": "flamingo",
+      "name": "Flamingo",
+      "rarity": "legendary",
+      "file": "/skins/ashe/flamingo.jpg"
+    },
+    {
+      "key": "gangster",
+      "name": "Gangster",
+      "rarity": "legendary",
+      "file": "/skins/ashe/gangster.jpg"
+    },
+    {
+      "key": "haunted-doll",
+      "name": "Haunted Doll",
+      "rarity": "legendary",
+      "file": "/skins/ashe/haunted-doll.jpg"
+    },
+    {
+      "key": "heist",
+      "name": "Heist",
+      "rarity": "legendary",
+      "file": "/skins/ashe/heist.jpg"
+    },
+    {
+      "key": "hellish-blizzard",
+      "name": "Hellish Blizzard",
+      "rarity": "legendary",
+      "file": "/skins/ashe/hellish-blizzard.jpg"
+    },
+    {
+      "key": "intergalactic-smuggler",
+      "name": "Intergalactic Smuggler",
+      "rarity": "legendary",
+      "file": "/skins/ashe/intergalactic-smuggler.jpg"
+    },
+    {
+      "key": "jungle",
+      "name": "Jungle",
+      "rarity": "legendary",
+      "file": "/skins/ashe/jungle.jpg"
+    },
+    {
+      "key": "little-red",
+      "name": "Little Red",
+      "rarity": "legendary",
+      "file": "/skins/ashe/little-red.jpg"
+    },
+    {
+      "key": "lucky-cat",
+      "name": "Lucky Cat",
+      "rarity": "legendary",
+      "file": "/skins/ashe/lucky-cat.jpg"
+    },
+    {
+      "key": "mobster",
+      "name": "Mobster",
+      "rarity": "legendary",
+      "file": "/skins/ashe/mobster.jpg"
+    },
+    {
+      "key": "music-festival",
+      "name": "Music Festival",
+      "rarity": "legendary",
+      "file": "/skins/ashe/music-festival.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/ashe/poolside.jpg"
+    },
+    {
+      "key": "raijin",
+      "name": "Raijin",
+      "rarity": "legendary",
+      "file": "/skins/ashe/raijin.jpg"
+    },
+    {
+      "key": "safari",
+      "name": "Safari",
+      "rarity": "legendary",
+      "file": "/skins/ashe/safari.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "legendary",
+      "file": "/skins/ashe/sakura.jpg"
+    },
+    {
+      "key": "spring-fairy",
+      "name": "Spring Fairy",
+      "rarity": "legendary",
+      "file": "/skins/ashe/spring-fairy.jpg"
+    },
+    {
+      "key": "storm-rider",
+      "name": "Storm Rider",
+      "rarity": "legendary",
+      "file": "/skins/ashe/storm-rider.jpg"
+    },
+    {
+      "key": "tiger-huntress",
+      "name": "Tiger Huntress",
+      "rarity": "legendary",
+      "file": "/skins/ashe/tiger-huntress.jpg"
+    },
+    {
+      "key": "voidwalker",
+      "name": "Voidwalker",
+      "rarity": "legendary",
+      "file": "/skins/ashe/voidwalker.jpg"
+    },
+    {
+      "key": "warlock",
+      "name": "Warlock",
+      "rarity": "legendary",
+      "file": "/skins/ashe/warlock.jpg"
+    },
+    {
+      "key": "deadlock",
+      "name": "Deadlock",
+      "rarity": "epic",
+      "file": "/skins/ashe/deadlock.jpg"
+    },
+    {
+      "key": "haunted",
+      "name": "Haunted",
+      "rarity": "epic",
+      "file": "/skins/ashe/haunted.jpg"
+    },
+    {
+      "key": "mardi-gras",
+      "name": "Mardi Gras",
+      "rarity": "epic",
+      "file": "/skins/ashe/mardi-gras.jpg"
+    },
+    {
+      "key": "merry-outlaw",
+      "name": "Merry Outlaw",
+      "rarity": "epic",
+      "file": "/skins/ashe/merry-outlaw.jpg"
+    },
+    {
+      "key": "posh",
+      "name": "Posh",
+      "rarity": "epic",
+      "file": "/skins/ashe/posh.jpg"
+    },
+    {
+      "key": "prosperity",
+      "name": "Prosperity",
+      "rarity": "epic",
+      "file": "/skins/ashe/prosperity.jpg"
+    },
+    {
+      "key": "snake-wrangler",
+      "name": "Snake Wrangler",
+      "rarity": "epic",
+      "file": "/skins/ashe/snake-wrangler.jpg"
+    },
+    {
+      "key": "thorn",
+      "name": "Thorn",
+      "rarity": "epic",
+      "file": "/skins/ashe/thorn.jpg"
+    },
+    {
+      "key": "winter",
+      "name": "Winter",
+      "rarity": "epic",
+      "file": "/skins/ashe/winter.jpg"
+    }
+  ],
+  "baptiste": [
+    {
+      "key": "archangel",
+      "name": "Archangel",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/archangel.jpg"
+    },
+    {
+      "key": "arctic-ops",
+      "name": "Arctic Ops",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/arctic-ops.jpg"
+    },
+    {
+      "key": "bounty-hunter",
+      "name": "Bounty Hunter",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/bounty-hunter.jpg"
+    },
+    {
+      "key": "buccaneer",
+      "name": "Buccaneer",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/buccaneer.jpg"
+    },
+    {
+      "key": "desert-ops",
+      "name": "Desert Ops",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/desert-ops.jpg"
+    },
+    {
+      "key": "flirty-flare",
+      "name": "Flirty Flare",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/flirty-flare.jpg"
+    },
+    {
+      "key": "pirate",
+      "name": "Pirate",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/pirate.jpg"
+    },
+    {
+      "key": "scorpion",
+      "name": "Scorpion",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/scorpion.jpg"
+    },
+    {
+      "key": "snowboarder",
+      "name": "Snowboarder",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/snowboarder.jpg"
+    },
+    {
+      "key": "spec-ops",
+      "name": "Spec Ops",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/spec-ops.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/talon.jpg"
+    },
+    {
+      "key": "tropical",
+      "name": "Tropical",
+      "rarity": "legendary",
+      "file": "/skins/baptiste/tropical.jpg"
+    },
+    {
+      "key": "blue-steel",
+      "name": "Blue Steel",
+      "rarity": "epic",
+      "file": "/skins/baptiste/blue-steel.jpg"
+    },
+    {
+      "key": "camouflage",
+      "name": "Camouflage",
+      "rarity": "epic",
+      "file": "/skins/baptiste/camouflage.jpg"
+    },
+    {
+      "key": "combat-medic",
+      "name": "Combat Medic",
+      "rarity": "epic",
+      "file": "/skins/baptiste/combat-medic.jpg"
+    },
+    {
+      "key": "deluxe",
+      "name": "Deluxe",
+      "rarity": "epic",
+      "file": "/skins/baptiste/deluxe.jpg"
+    },
+    {
+      "key": "mummy",
+      "name": "Mummy",
+      "rarity": "epic",
+      "file": "/skins/baptiste/mummy.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "epic",
+      "file": "/skins/baptiste/new-era.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "epic",
+      "file": "/skins/baptiste/polar.jpg"
+    },
+    {
+      "key": "terracotta-medic",
+      "name": "Terracotta Medic",
+      "rarity": "epic",
+      "file": "/skins/baptiste/terracotta-medic.jpg"
+    },
+    {
+      "key": "vampire",
+      "name": "Vampire",
+      "rarity": "epic",
+      "file": "/skins/baptiste/vampire.jpg"
+    },
+    {
+      "key": "wasteland",
+      "name": "Wasteland",
+      "rarity": "epic",
+      "file": "/skins/baptiste/wasteland.jpg"
+    }
+  ],
+  "bastion": [
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/bastion/8-bit.jpg"
+    },
+    {
+      "key": "antique",
+      "name": "Antique",
+      "rarity": "legendary",
+      "file": "/skins/bastion/antique.jpg"
+    },
+    {
+      "key": "avalanche",
+      "name": "Avalanche",
+      "rarity": "legendary",
+      "file": "/skins/bastion/avalanche.jpg"
+    },
+    {
+      "key": "brick",
+      "name": "Brick",
+      "rarity": "legendary",
+      "file": "/skins/bastion/brick.jpg"
+    },
+    {
+      "key": "bumblebee",
+      "name": "Bumblebee",
+      "rarity": "legendary",
+      "file": "/skins/bastion/bumblebee.jpg"
+    },
+    {
+      "key": "cardboard",
+      "name": "Cardboard",
+      "rarity": "legendary",
+      "file": "/skins/bastion/cardboard.jpg"
+    },
+    {
+      "key": "coffin",
+      "name": "Coffin",
+      "rarity": "legendary",
+      "file": "/skins/bastion/coffin.jpg"
+    },
+    {
+      "key": "dragonfire",
+      "name": "Dragonfire",
+      "rarity": "legendary",
+      "file": "/skins/bastion/dragonfire.jpg"
+    },
+    {
+      "key": "dune-buggy",
+      "name": "Dune Buggy",
+      "rarity": "legendary",
+      "file": "/skins/bastion/dune-buggy.jpg"
+    },
+    {
+      "key": "fire-engine",
+      "name": "Fire Engine",
+      "rarity": "legendary",
+      "file": "/skins/bastion/fire-engine.jpg"
+    },
+    {
+      "key": "gearbot",
+      "name": "Gearbot",
+      "rarity": "legendary",
+      "file": "/skins/bastion/gearbot.jpg"
+    },
+    {
+      "key": "gwishin",
+      "name": "Gwishin",
+      "rarity": "legendary",
+      "file": "/skins/bastion/gwishin.jpg"
+    },
+    {
+      "key": "magma",
+      "name": "Magma",
+      "rarity": "legendary",
+      "file": "/skins/bastion/magma.jpg"
+    },
+    {
+      "key": "overgrown",
+      "name": "Overgrown",
+      "rarity": "legendary",
+      "file": "/skins/bastion/overgrown.jpg"
+    },
+    {
+      "key": "pirate-ship",
+      "name": "Pirate Ship",
+      "rarity": "legendary",
+      "file": "/skins/bastion/pirate-ship.jpg"
+    },
+    {
+      "key": "rikimaru-ramen",
+      "name": "Rikimaru Ramen",
+      "rarity": "legendary",
+      "file": "/skins/bastion/rikimaru-ramen.jpg"
+    },
+    {
+      "key": "snowman",
+      "name": "Snowman",
+      "rarity": "legendary",
+      "file": "/skins/bastion/snowman.jpg"
+    },
+    {
+      "key": "stealth",
+      "name": "Stealth",
+      "rarity": "legendary",
+      "file": "/skins/bastion/stealth.jpg"
+    },
+    {
+      "key": "steambot",
+      "name": "Steambot",
+      "rarity": "legendary",
+      "file": "/skins/bastion/steambot.jpg"
+    },
+    {
+      "key": "toxic",
+      "name": "Toxic",
+      "rarity": "legendary",
+      "file": "/skins/bastion/toxic.jpg"
+    },
+    {
+      "key": "woodbot",
+      "name": "Woodbot",
+      "rarity": "legendary",
+      "file": "/skins/bastion/woodbot.jpg"
+    },
+    {
+      "key": "blizzcon-2016",
+      "name": "BlizzCon 2016",
+      "rarity": "epic",
+      "file": "/skins/bastion/blizzcon-2016.jpg"
+    },
+    {
+      "key": "defense-matrix",
+      "name": "Defense Matrix",
+      "rarity": "epic",
+      "file": "/skins/bastion/defense-matrix.jpg"
+    },
+    {
+      "key": "gift-wrap",
+      "name": "Gift Wrap",
+      "rarity": "epic",
+      "file": "/skins/bastion/gift-wrap.jpg"
+    },
+    {
+      "key": "infinite-annihilator",
+      "name": "Infinite Annihilator",
+      "rarity": "epic",
+      "file": "/skins/bastion/infinite-annihilator.jpg"
+    },
+    {
+      "key": "null-sector",
+      "name": "Null Sector",
+      "rarity": "epic",
+      "file": "/skins/bastion/null-sector.jpg"
+    },
+    {
+      "key": "omnic-crisis",
+      "name": "Omnic Crisis",
+      "rarity": "epic",
+      "file": "/skins/bastion/omnic-crisis.jpg"
+    },
+    {
+      "key": "pumpkin",
+      "name": "Pumpkin",
+      "rarity": "epic",
+      "file": "/skins/bastion/pumpkin.jpg"
+    },
+    {
+      "key": "rooster",
+      "name": "Rooster",
+      "rarity": "epic",
+      "file": "/skins/bastion/rooster.jpg"
+    },
+    {
+      "key": "sand-castle",
+      "name": "Sand Castle",
+      "rarity": "epic",
+      "file": "/skins/bastion/sand-castle.jpg"
+    },
+    {
+      "key": "tombstone",
+      "name": "Tombstone",
+      "rarity": "epic",
+      "file": "/skins/bastion/tombstone.jpg"
+    }
+  ],
+  "brigitte": [
+    {
+      "key": "antifragile-bb",
+      "name": "Antifragile BB",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/antifragile-bb.jpg"
+    },
+    {
+      "key": "azure-drake",
+      "name": "Azure Drake",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/azure-drake.jpg"
+    },
+    {
+      "key": "blue-flame",
+      "name": "Blue Flame",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/blue-flame.jpg"
+    },
+    {
+      "key": "cardboard",
+      "name": "Cardboard",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/cardboard.jpg"
+    },
+    {
+      "key": "engineer",
+      "name": "Engineer",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/engineer.jpg"
+    },
+    {
+      "key": "exo-l5o",
+      "name": "exo-L5O",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/exo-l5o.jpg"
+    },
+    {
+      "key": "feskarn",
+      "name": "Feskarn",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/feskarn.jpg"
+    },
+    {
+      "key": "goat",
+      "name": "Goat",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/goat.jpg"
+    },
+    {
+      "key": "heart-of-strength",
+      "name": "Heart of Strength",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/heart-of-strength.jpg"
+    },
+    {
+      "key": "m-ni",
+      "name": "Máni",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/m-ni.jpg"
+    },
+    {
+      "key": "mechanic",
+      "name": "Mechanic",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/mechanic.jpg"
+    },
+    {
+      "key": "medic",
+      "name": "Medic",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/medic.jpg"
+    },
+    {
+      "key": "opera",
+      "name": "Opera",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/opera.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/polar.jpg"
+    },
+    {
+      "key": "riot-police",
+      "name": "Riot Police",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/riot-police.jpg"
+    },
+    {
+      "key": "royal-captain",
+      "name": "Royal Captain",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/royal-captain.jpg"
+    },
+    {
+      "key": "shieldmaiden",
+      "name": "Shieldmaiden",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/shieldmaiden.jpg"
+    },
+    {
+      "key": "s-l",
+      "name": "Sól",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/s-l.jpg"
+    },
+    {
+      "key": "solaris",
+      "name": "Solaris",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/solaris.jpg"
+    },
+    {
+      "key": "sparkplug",
+      "name": "Sparkplug",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/sparkplug.jpg"
+    },
+    {
+      "key": "turned-hunter",
+      "name": "Turned Hunter",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/turned-hunter.jpg"
+    },
+    {
+      "key": "tyrian-drake",
+      "name": "Tyrian Drake",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/tyrian-drake.jpg"
+    },
+    {
+      "key": "vampire-hunter",
+      "name": "Vampire Hunter",
+      "rarity": "legendary",
+      "file": "/skins/brigitte/vampire-hunter.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/brigitte/carbon-fiber.jpg"
+    },
+    {
+      "key": "general",
+      "name": "General",
+      "rarity": "epic",
+      "file": "/skins/brigitte/general.jpg"
+    },
+    {
+      "key": "ice-queen",
+      "name": "Ice Queen",
+      "rarity": "epic",
+      "file": "/skins/brigitte/ice-queen.jpg"
+    },
+    {
+      "key": "ironclad",
+      "name": "Ironclad",
+      "rarity": "epic",
+      "file": "/skins/brigitte/ironclad.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "epic",
+      "file": "/skins/brigitte/new-era.jpg"
+    },
+    {
+      "key": "pearlescent",
+      "name": "Pearlescent",
+      "rarity": "epic",
+      "file": "/skins/brigitte/pearlescent.jpg"
+    },
+    {
+      "key": "peppermint-bark",
+      "name": "Peppermint Bark",
+      "rarity": "epic",
+      "file": "/skins/brigitte/peppermint-bark.jpg"
+    },
+    {
+      "key": "stone",
+      "name": "Stone",
+      "rarity": "epic",
+      "file": "/skins/brigitte/stone.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "epic",
+      "file": "/skins/brigitte/talon.jpg"
+    },
+    {
+      "key": "tre-kronor",
+      "name": "Tre Kronor",
+      "rarity": "epic",
+      "file": "/skins/brigitte/tre-kronor.jpg"
+    }
+  ],
+  "cassidy": [
+    {
+      "key": "blackwatch",
+      "name": "Blackwatch",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/blackwatch.jpg"
+    },
+    {
+      "key": "c-455-sharpshooter",
+      "name": "C-455 Sharpshooter",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/c-455-sharpshooter.jpg"
+    },
+    {
+      "key": "cozy",
+      "name": "Cozy",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/cozy.jpg"
+    },
+    {
+      "key": "deadlock",
+      "name": "Deadlock",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/deadlock.jpg"
+    },
+    {
+      "key": "delinquent-cole",
+      "name": "Delinquent Cole",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/delinquent-cole.jpg"
+    },
+    {
+      "key": "force-fighter",
+      "name": "Force Fighter",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/force-fighter.jpg"
+    },
+    {
+      "key": "frozen-mountaineer",
+      "name": "Frozen Mountaineer",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/frozen-mountaineer.jpg"
+    },
+    {
+      "key": "gambler",
+      "name": "Gambler",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/gambler.jpg"
+    },
+    {
+      "key": "invisible-man",
+      "name": "Invisible Man",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/invisible-man.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/lifeguard.jpg"
+    },
+    {
+      "key": "longhorn",
+      "name": "Longhorn",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/longhorn.jpg"
+    },
+    {
+      "key": "magistrate",
+      "name": "Magistrate",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/magistrate.jpg"
+    },
+    {
+      "key": "mountain-man",
+      "name": "Mountain Man",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/mountain-man.jpg"
+    },
+    {
+      "key": "nerf-or-nothin",
+      "name": "Nerf or Nothin'",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/nerf-or-nothin.jpg"
+    },
+    {
+      "key": "oni",
+      "name": "Oni",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/oni.jpg"
+    },
+    {
+      "key": "riverboat",
+      "name": "Riverboat",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/riverboat.jpg"
+    },
+    {
+      "key": "sherlock",
+      "name": "Sherlock",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/sherlock.jpg"
+    },
+    {
+      "key": "space-ranger",
+      "name": "Space Ranger",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/space-ranger.jpg"
+    },
+    {
+      "key": "spike-spiegel",
+      "name": "Spike Spiegel",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/spike-spiegel.jpg"
+    },
+    {
+      "key": "stadium-all-star",
+      "name": "Stadium All-Star",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/stadium-all-star.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/ultrawatch.jpg"
+    },
+    {
+      "key": "van-helsing",
+      "name": "Van Helsing",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/van-helsing.jpg"
+    },
+    {
+      "key": "vigilante",
+      "name": "Vigilante",
+      "rarity": "legendary",
+      "file": "/skins/cassidy/vigilante.jpg"
+    },
+    {
+      "key": "american",
+      "name": "American",
+      "rarity": "epic",
+      "file": "/skins/cassidy/american.jpg"
+    },
+    {
+      "key": "forest-ranger",
+      "name": "Forest Ranger",
+      "rarity": "epic",
+      "file": "/skins/cassidy/forest-ranger.jpg"
+    },
+    {
+      "key": "masked-man",
+      "name": "Masked Man",
+      "rarity": "epic",
+      "file": "/skins/cassidy/masked-man.jpg"
+    },
+    {
+      "key": "on-the-range",
+      "name": "On the Range",
+      "rarity": "epic",
+      "file": "/skins/cassidy/on-the-range.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "epic",
+      "file": "/skins/cassidy/polar.jpg"
+    },
+    {
+      "key": "ritzy",
+      "name": "Ritzy",
+      "rarity": "epic",
+      "file": "/skins/cassidy/ritzy.jpg"
+    },
+    {
+      "key": "royal",
+      "name": "Royal",
+      "rarity": "epic",
+      "file": "/skins/cassidy/royal.jpg"
+    },
+    {
+      "key": "sandstorm",
+      "name": "Sandstorm",
+      "rarity": "epic",
+      "file": "/skins/cassidy/sandstorm.jpg"
+    },
+    {
+      "key": "scrooge",
+      "name": "Scrooge",
+      "rarity": "epic",
+      "file": "/skins/cassidy/scrooge.jpg"
+    },
+    {
+      "key": "undead",
+      "name": "Undead",
+      "rarity": "epic",
+      "file": "/skins/cassidy/undead.jpg"
+    },
+    {
+      "key": "white-hat",
+      "name": "White Hat",
+      "rarity": "epic",
+      "file": "/skins/cassidy/white-hat.jpg"
+    },
+    {
+      "key": "xiake",
+      "name": "Xiake",
+      "rarity": "epic",
+      "file": "/skins/cassidy/xiake.jpg"
+    }
+  ],
+  "domina": [
+    {
+      "key": "heartbreaker",
+      "name": "Heartbreaker",
+      "rarity": "legendary",
+      "file": "/skins/domina/heartbreaker.jpg"
+    }
+  ],
+  "doomfist": [
+    {
+      "key": "avatar",
+      "name": "Avatar",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/avatar.jpg"
+    },
+    {
+      "key": "bast",
+      "name": "Bast",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/bast.jpg"
+    },
+    {
+      "key": "blackhand",
+      "name": "Blackhand",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/blackhand.jpg"
+    },
+    {
+      "key": "bonebreaker",
+      "name": "Bonebreaker",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/bonebreaker.jpg"
+    },
+    {
+      "key": "caution",
+      "name": "Caution",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/caution.jpg"
+    },
+    {
+      "key": "crimson-court",
+      "name": "Crimson Court",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/crimson-court.jpg"
+    },
+    {
+      "key": "crimson-wolf",
+      "name": "Crimson Wolf",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/crimson-wolf.jpg"
+    },
+    {
+      "key": "destro",
+      "name": "Destro",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/destro.jpg"
+    },
+    {
+      "key": "formal",
+      "name": "Formal",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/formal.jpg"
+    },
+    {
+      "key": "funky",
+      "name": "Funky",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/funky.jpg"
+    },
+    {
+      "key": "gladiator",
+      "name": "Gladiator",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/gladiator.jpg"
+    },
+    {
+      "key": "irin",
+      "name": "Irin",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/irin.jpg"
+    },
+    {
+      "key": "j-tunn",
+      "name": "Jötunn",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/j-tunn.jpg"
+    },
+    {
+      "key": "karate",
+      "name": "Karate",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/karate.jpg"
+    },
+    {
+      "key": "lapis",
+      "name": "Lapis",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/lapis.jpg"
+    },
+    {
+      "key": "norse",
+      "name": "Norse",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/norse.jpg"
+    },
+    {
+      "key": "saitama",
+      "name": "Saitama",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/saitama.jpg"
+    },
+    {
+      "key": "spirit",
+      "name": "Spirit",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/spirit.jpg"
+    },
+    {
+      "key": "strike-commander",
+      "name": "Strike Commander",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/strike-commander.jpg"
+    },
+    {
+      "key": "swamp-monster",
+      "name": "Swamp Monster",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/swamp-monster.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/talon.jpg"
+    },
+    {
+      "key": "thunder",
+      "name": "Thunder",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/thunder.jpg"
+    },
+    {
+      "key": "toxic",
+      "name": "Toxic",
+      "rarity": "legendary",
+      "file": "/skins/doomfist/toxic.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/doomfist/carbon-fiber.jpg"
+    },
+    {
+      "key": "cursed-warrior",
+      "name": "Cursed Warrior",
+      "rarity": "epic",
+      "file": "/skins/doomfist/cursed-warrior.jpg"
+    },
+    {
+      "key": "general",
+      "name": "General",
+      "rarity": "epic",
+      "file": "/skins/doomfist/general.jpg"
+    },
+    {
+      "key": "k-n-n",
+      "name": "Kìnìún",
+      "rarity": "epic",
+      "file": "/skins/doomfist/k-n-n.jpg"
+    },
+    {
+      "key": "leopard",
+      "name": "Leopard",
+      "rarity": "epic",
+      "file": "/skins/doomfist/leopard.jpg"
+    },
+    {
+      "key": "monk",
+      "name": "Monk",
+      "rarity": "epic",
+      "file": "/skins/doomfist/monk.jpg"
+    },
+    {
+      "key": "painted",
+      "name": "Painted",
+      "rarity": "epic",
+      "file": "/skins/doomfist/painted.jpg"
+    },
+    {
+      "key": "tropical",
+      "name": "Tropical",
+      "rarity": "epic",
+      "file": "/skins/doomfist/tropical.jpg"
+    }
+  ],
+  "dva": [
+    {
+      "key": "2020-pacific-all-stars",
+      "name": "2020 Pacific All-Stars",
+      "rarity": "legendary",
+      "file": "/skins/dva/2020-pacific-all-stars.jpg"
+    },
+    {
+      "key": "academy",
+      "name": "Academy",
+      "rarity": "legendary",
+      "file": "/skins/dva/academy.jpg"
+    },
+    {
+      "key": "antifragile-dazzle",
+      "name": "Antifragile Dazzle",
+      "rarity": "legendary",
+      "file": "/skins/dva/antifragile-dazzle.jpg"
+    },
+    {
+      "key": "b-va",
+      "name": "B.Va",
+      "rarity": "legendary",
+      "file": "/skins/dva/b-va.jpg"
+    },
+    {
+      "key": "black-cat",
+      "name": "Black Cat",
+      "rarity": "legendary",
+      "file": "/skins/dva/black-cat.jpg"
+    },
+    {
+      "key": "blue-flame",
+      "name": "Blue Flame",
+      "rarity": "legendary",
+      "file": "/skins/dva/blue-flame.jpg"
+    },
+    {
+      "key": "cardboard",
+      "name": "Cardboard",
+      "rarity": "legendary",
+      "file": "/skins/dva/cardboard.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/dva/cosmic.jpg"
+    },
+    {
+      "key": "cruiser",
+      "name": "Cruiser",
+      "rarity": "legendary",
+      "file": "/skins/dva/cruiser.jpg"
+    },
+    {
+      "key": "dainty-cat",
+      "name": "Dainty Cat",
+      "rarity": "legendary",
+      "file": "/skins/dva/dainty-cat.jpg"
+    },
+    {
+      "key": "edm",
+      "name": "EDM",
+      "rarity": "legendary",
+      "file": "/skins/dva/edm.jpg"
+    },
+    {
+      "key": "fearless",
+      "name": "FEARLESS",
+      "rarity": "legendary",
+      "file": "/skins/dva/fearless.jpg"
+    },
+    {
+      "key": "flamebound",
+      "name": "Flamebound",
+      "rarity": "legendary",
+      "file": "/skins/dva/flamebound.jpg"
+    },
+    {
+      "key": "gentle-tokki-aqua",
+      "name": "Gentle Tokki Aqua",
+      "rarity": "legendary",
+      "file": "/skins/dva/gentle-tokki-aqua.jpg"
+    },
+    {
+      "key": "gentle-tokki-fuchsia",
+      "name": "Gentle Tokki Fuchsia",
+      "rarity": "legendary",
+      "file": "/skins/dva/gentle-tokki-fuchsia.jpg"
+    },
+    {
+      "key": "heist",
+      "name": "Heist",
+      "rarity": "legendary",
+      "file": "/skins/dva/heist.jpg"
+    },
+    {
+      "key": "junebug",
+      "name": "Junebug",
+      "rarity": "legendary",
+      "file": "/skins/dva/junebug.jpg"
+    },
+    {
+      "key": "junker",
+      "name": "Junker",
+      "rarity": "legendary",
+      "file": "/skins/dva/junker.jpg"
+    },
+    {
+      "key": "magepunk",
+      "name": "Magepunk",
+      "rarity": "legendary",
+      "file": "/skins/dva/magepunk.jpg"
+    },
+    {
+      "key": "my-melody-skin",
+      "name": "My Melody Skin",
+      "rarity": "legendary",
+      "file": "/skins/dva/my-melody-skin.jpg"
+    },
+    {
+      "key": "nocturna",
+      "name": "Nocturna",
+      "rarity": "legendary",
+      "file": "/skins/dva/nocturna.jpg"
+    },
+    {
+      "key": "palanquin",
+      "name": "Palanquin",
+      "rarity": "legendary",
+      "file": "/skins/dva/palanquin.jpg"
+    },
+    {
+      "key": "porsche",
+      "name": "Porsche",
+      "rarity": "legendary",
+      "file": "/skins/dva/porsche.jpg"
+    },
+    {
+      "key": "queen",
+      "name": "Queen",
+      "rarity": "legendary",
+      "file": "/skins/dva/queen.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/dva/rainy-day.jpg"
+    },
+    {
+      "key": "robber",
+      "name": "Robber",
+      "rarity": "legendary",
+      "file": "/skins/dva/robber.jpg"
+    },
+    {
+      "key": "rosy-hanbok",
+      "name": "Rosy Hanbok",
+      "rarity": "legendary",
+      "file": "/skins/dva/rosy-hanbok.jpg"
+    },
+    {
+      "key": "scavenger",
+      "name": "Scavenger",
+      "rarity": "legendary",
+      "file": "/skins/dva/scavenger.jpg"
+    },
+    {
+      "key": "shin-ryeong",
+      "name": "Shin-Ryeong",
+      "rarity": "legendary",
+      "file": "/skins/dva/shin-ryeong.jpg"
+    },
+    {
+      "key": "sleighing",
+      "name": "Sleighing",
+      "rarity": "legendary",
+      "file": "/skins/dva/sleighing.jpg"
+    },
+    {
+      "key": "stadium-all-star",
+      "name": "Stadium All-Star",
+      "rarity": "legendary",
+      "file": "/skins/dva/stadium-all-star.jpg"
+    },
+    {
+      "key": "turtle-ship",
+      "name": "Turtle Ship",
+      "rarity": "legendary",
+      "file": "/skins/dva/turtle-ship.jpg"
+    },
+    {
+      "key": "varsity",
+      "name": "Varsity",
+      "rarity": "legendary",
+      "file": "/skins/dva/varsity.jpg"
+    },
+    {
+      "key": "waveracer",
+      "name": "Waveracer",
+      "rarity": "legendary",
+      "file": "/skins/dva/waveracer.jpg"
+    },
+    {
+      "key": "white-cat",
+      "name": "White Cat",
+      "rarity": "legendary",
+      "file": "/skins/dva/white-cat.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/dva/carbon-fiber.jpg"
+    },
+    {
+      "key": "infinite-ace",
+      "name": "Infinite Ace",
+      "rarity": "epic",
+      "file": "/skins/dva/infinite-ace.jpg"
+    },
+    {
+      "key": "midnight",
+      "name": "Midnight",
+      "rarity": "epic",
+      "file": "/skins/dva/midnight.jpg"
+    },
+    {
+      "key": "nano",
+      "name": "Nano",
+      "rarity": "epic",
+      "file": "/skins/dva/nano.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/dva/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "overwatch-league-gray-away",
+      "name": "Overwatch League Gray Away",
+      "rarity": "epic",
+      "file": "/skins/dva/overwatch-league-gray-away.jpg"
+    },
+    {
+      "key": "taegeukgi",
+      "name": "Taegeukgi",
+      "rarity": "epic",
+      "file": "/skins/dva/taegeukgi.jpg"
+    },
+    {
+      "key": "white-rabbit",
+      "name": "White Rabbit",
+      "rarity": "epic",
+      "file": "/skins/dva/white-rabbit.jpg"
+    }
+  ],
+  "echo": [
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/echo/8-bit.jpg"
+    },
+    {
+      "key": "aset",
+      "name": "Aset",
+      "rarity": "legendary",
+      "file": "/skins/echo/aset.jpg"
+    },
+    {
+      "key": "automaton",
+      "name": "Automaton",
+      "rarity": "legendary",
+      "file": "/skins/echo/automaton.jpg"
+    },
+    {
+      "key": "borealis",
+      "name": "Borealis",
+      "rarity": "legendary",
+      "file": "/skins/echo/borealis.jpg"
+    },
+    {
+      "key": "butterfly",
+      "name": "Butterfly",
+      "rarity": "legendary",
+      "file": "/skins/echo/butterfly.jpg"
+    },
+    {
+      "key": "camo",
+      "name": "Camo",
+      "rarity": "legendary",
+      "file": "/skins/echo/camo.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/echo/cosmic.jpg"
+    },
+    {
+      "key": "good-and-evil",
+      "name": "Good and Evil",
+      "rarity": "legendary",
+      "file": "/skins/echo/good-and-evil.jpg"
+    },
+    {
+      "key": "ice-angel",
+      "name": "Ice Angel",
+      "rarity": "legendary",
+      "file": "/skins/echo/ice-angel.jpg"
+    },
+    {
+      "key": "kkachi",
+      "name": "Kkachi",
+      "rarity": "legendary",
+      "file": "/skins/echo/kkachi.jpg"
+    },
+    {
+      "key": "merry-marionette",
+      "name": "Merry Marionette",
+      "rarity": "legendary",
+      "file": "/skins/echo/merry-marionette.jpg"
+    },
+    {
+      "key": "moth",
+      "name": "Moth",
+      "rarity": "legendary",
+      "file": "/skins/echo/moth.jpg"
+    },
+    {
+      "key": "phoenix",
+      "name": "Phoenix",
+      "rarity": "legendary",
+      "file": "/skins/echo/phoenix.jpg"
+    },
+    {
+      "key": "spring-fairy",
+      "name": "Spring Fairy",
+      "rarity": "legendary",
+      "file": "/skins/echo/spring-fairy.jpg"
+    },
+    {
+      "key": "stealth",
+      "name": "Stealth",
+      "rarity": "legendary",
+      "file": "/skins/echo/stealth.jpg"
+    },
+    {
+      "key": "strawberry",
+      "name": "Strawberry",
+      "rarity": "legendary",
+      "file": "/skins/echo/strawberry.jpg"
+    },
+    {
+      "key": "surfs-up",
+      "name": "Surf's Up",
+      "rarity": "legendary",
+      "file": "/skins/echo/surfs-up.jpg"
+    },
+    {
+      "key": "vampire-bat",
+      "name": "Vampire Bat",
+      "rarity": "legendary",
+      "file": "/skins/echo/vampire-bat.jpg"
+    },
+    {
+      "key": "victorian-doll",
+      "name": "Victorian Doll",
+      "rarity": "legendary",
+      "file": "/skins/echo/victorian-doll.jpg"
+    },
+    {
+      "key": "voidwalker",
+      "name": "Voidwalker",
+      "rarity": "legendary",
+      "file": "/skins/echo/voidwalker.jpg"
+    },
+    {
+      "key": "bird-of-paradise",
+      "name": "Bird of Paradise",
+      "rarity": "epic",
+      "file": "/skins/echo/bird-of-paradise.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/echo/carbon-fiber.jpg"
+    },
+    {
+      "key": "cursed-woods",
+      "name": "Cursed Woods",
+      "rarity": "epic",
+      "file": "/skins/echo/cursed-woods.jpg"
+    },
+    {
+      "key": "dance-machine",
+      "name": "Dance Machine",
+      "rarity": "epic",
+      "file": "/skins/echo/dance-machine.jpg"
+    },
+    {
+      "key": "hot-rod",
+      "name": "Hot Rod",
+      "rarity": "epic",
+      "file": "/skins/echo/hot-rod.jpg"
+    },
+    {
+      "key": "new-empire",
+      "name": "New Empire",
+      "rarity": "epic",
+      "file": "/skins/echo/new-empire.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "epic",
+      "file": "/skins/echo/new-era.jpg"
+    },
+    {
+      "key": "ragdoll",
+      "name": "Ragdoll",
+      "rarity": "epic",
+      "file": "/skins/echo/ragdoll.jpg"
+    },
+    {
+      "key": "retro-future",
+      "name": "Retro Future",
+      "rarity": "epic",
+      "file": "/skins/echo/retro-future.jpg"
+    },
+    {
+      "key": "slime-queen",
+      "name": "Slime Queen",
+      "rarity": "epic",
+      "file": "/skins/echo/slime-queen.jpg"
+    }
+  ],
+  "emre": [
+    {
+      "key": "kanhizakura",
+      "name": "Kanhizakura",
+      "rarity": "legendary",
+      "file": "/skins/emre/kanhizakura.jpg"
+    },
+    {
+      "key": "new-empire",
+      "name": "New Empire",
+      "rarity": "legendary",
+      "file": "/skins/emre/new-empire.jpg"
+    }
+  ],
+  "freja": [
+    {
+      "key": "archangel",
+      "name": "Archangel",
+      "rarity": "legendary",
+      "file": "/skins/freja/archangel.jpg"
+    },
+    {
+      "key": "galactic",
+      "name": "Galactic",
+      "rarity": "legendary",
+      "file": "/skins/freja/galactic.jpg"
+    },
+    {
+      "key": "heart-of-courage",
+      "name": "Heart of Courage",
+      "rarity": "legendary",
+      "file": "/skins/freja/heart-of-courage.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/freja/rainy-day.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "legendary",
+      "file": "/skins/freja/sakura.jpg"
+    },
+    {
+      "key": "scarlet-flare",
+      "name": "Scarlet Flare",
+      "rarity": "legendary",
+      "file": "/skins/freja/scarlet-flare.jpg"
+    },
+    {
+      "key": "scarlett",
+      "name": "Scarlett",
+      "rarity": "legendary",
+      "file": "/skins/freja/scarlett.jpg"
+    },
+    {
+      "key": "skadi",
+      "name": "Skadi",
+      "rarity": "legendary",
+      "file": "/skins/freja/skadi.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/freja/streetwear.jpg"
+    }
+  ],
+  "genji": [
+    {
+      "key": "2018-pacific-all-stars",
+      "name": "2018 Pacific All-Stars",
+      "rarity": "legendary",
+      "file": "/skins/genji/2018-pacific-all-stars.jpg"
+    },
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/genji/8-bit.jpg"
+    },
+    {
+      "key": "archangel",
+      "name": "Archangel",
+      "rarity": "legendary",
+      "file": "/skins/genji/archangel.jpg"
+    },
+    {
+      "key": "baihu",
+      "name": "Baihu",
+      "rarity": "legendary",
+      "file": "/skins/genji/baihu.jpg"
+    },
+    {
+      "key": "bedouin",
+      "name": "Bedouin",
+      "rarity": "legendary",
+      "file": "/skins/genji/bedouin.jpg"
+    },
+    {
+      "key": "blackwatch",
+      "name": "Blackwatch",
+      "rarity": "legendary",
+      "file": "/skins/genji/blackwatch.jpg"
+    },
+    {
+      "key": "bushi",
+      "name": "Bushi",
+      "rarity": "legendary",
+      "file": "/skins/genji/bushi.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/genji/cosmic.jpg"
+    },
+    {
+      "key": "crimson-summer",
+      "name": "Crimson Summer",
+      "rarity": "legendary",
+      "file": "/skins/genji/crimson-summer.jpg"
+    },
+    {
+      "key": "dallas-summer",
+      "name": "Dallas Summer",
+      "rarity": "legendary",
+      "file": "/skins/genji/dallas-summer.jpg"
+    },
+    {
+      "key": "demon",
+      "name": "Demon",
+      "rarity": "legendary",
+      "file": "/skins/genji/demon.jpg"
+    },
+    {
+      "key": "devourer",
+      "name": "Devourer",
+      "rarity": "legendary",
+      "file": "/skins/genji/devourer.jpg"
+    },
+    {
+      "key": "divine-monkey",
+      "name": "Divine Monkey",
+      "rarity": "legendary",
+      "file": "/skins/genji/divine-monkey.jpg"
+    },
+    {
+      "key": "genjiman",
+      "name": "Genjiman",
+      "rarity": "legendary",
+      "file": "/skins/genji/genjiman.jpg"
+    },
+    {
+      "key": "genos",
+      "name": "Genos",
+      "rarity": "legendary",
+      "file": "/skins/genji/genos.jpg"
+    },
+    {
+      "key": "god-of-wealth",
+      "name": "God of Wealth",
+      "rarity": "legendary",
+      "file": "/skins/genji/god-of-wealth.jpg"
+    },
+    {
+      "key": "happi",
+      "name": "Happi",
+      "rarity": "legendary",
+      "file": "/skins/genji/happi.jpg"
+    },
+    {
+      "key": "heihu",
+      "name": "Heihu",
+      "rarity": "legendary",
+      "file": "/skins/genji/heihu.jpg"
+    },
+    {
+      "key": "ice-wraith",
+      "name": "Ice Wraith",
+      "rarity": "legendary",
+      "file": "/skins/genji/ice-wraith.jpg"
+    },
+    {
+      "key": "illidan",
+      "name": "Illidan",
+      "rarity": "legendary",
+      "file": "/skins/genji/illidan.jpg"
+    },
+    {
+      "key": "karasu-tengu",
+      "name": "Karasu-Tengu",
+      "rarity": "legendary",
+      "file": "/skins/genji/karasu-tengu.jpg"
+    },
+    {
+      "key": "kendoka",
+      "name": "Kendoka",
+      "rarity": "legendary",
+      "file": "/skins/genji/kendoka.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "legendary",
+      "file": "/skins/genji/new-era.jpg"
+    },
+    {
+      "key": "nomad",
+      "name": "Nomad",
+      "rarity": "legendary",
+      "file": "/skins/genji/nomad.jpg"
+    },
+    {
+      "key": "omakase",
+      "name": "Omakase",
+      "rarity": "legendary",
+      "file": "/skins/genji/omakase.jpg"
+    },
+    {
+      "key": "royal-guard",
+      "name": "Royal Guard",
+      "rarity": "legendary",
+      "file": "/skins/genji/royal-guard.jpg"
+    },
+    {
+      "key": "royal-swordsman",
+      "name": "Royal Swordsman",
+      "rarity": "legendary",
+      "file": "/skins/genji/royal-swordsman.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "legendary",
+      "file": "/skins/genji/sakura.jpg"
+    },
+    {
+      "key": "sentai",
+      "name": "Sentai",
+      "rarity": "legendary",
+      "file": "/skins/genji/sentai.jpg"
+    },
+    {
+      "key": "shanghai-summer",
+      "name": "Shanghai Summer",
+      "rarity": "legendary",
+      "file": "/skins/genji/shanghai-summer.jpg"
+    },
+    {
+      "key": "skull",
+      "name": "Skull",
+      "rarity": "legendary",
+      "file": "/skins/genji/skull.jpg"
+    },
+    {
+      "key": "snake-eyes",
+      "name": "Snake Eyes",
+      "rarity": "legendary",
+      "file": "/skins/genji/snake-eyes.jpg"
+    },
+    {
+      "key": "sparrow",
+      "name": "Sparrow",
+      "rarity": "legendary",
+      "file": "/skins/genji/sparrow.jpg"
+    },
+    {
+      "key": "stone-crow",
+      "name": "Stone Crow",
+      "rarity": "legendary",
+      "file": "/skins/genji/stone-crow.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "legendary",
+      "file": "/skins/genji/ultrawatch.jpg"
+    },
+    {
+      "key": "volcanic",
+      "name": "Volcanic",
+      "rarity": "legendary",
+      "file": "/skins/genji/volcanic.jpg"
+    },
+    {
+      "key": "young-genji",
+      "name": "Young Genji",
+      "rarity": "legendary",
+      "file": "/skins/genji/young-genji.jpg"
+    },
+    {
+      "key": "yukizaru",
+      "name": "Yukizaru",
+      "rarity": "legendary",
+      "file": "/skins/genji/yukizaru.jpg"
+    },
+    {
+      "key": "zuko",
+      "name": "Zuko",
+      "rarity": "legendary",
+      "file": "/skins/genji/zuko.jpg"
+    },
+    {
+      "key": "chrome",
+      "name": "Chrome",
+      "rarity": "epic",
+      "file": "/skins/genji/chrome.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/genji/elite.jpg"
+    },
+    {
+      "key": "junker",
+      "name": "Junker",
+      "rarity": "epic",
+      "file": "/skins/genji/junker.jpg"
+    },
+    {
+      "key": "nihon",
+      "name": "Nihon",
+      "rarity": "epic",
+      "file": "/skins/genji/nihon.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/genji/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "epic",
+      "file": "/skins/genji/polar.jpg"
+    },
+    {
+      "key": "skeleton",
+      "name": "Skeleton",
+      "rarity": "epic",
+      "file": "/skins/genji/skeleton.jpg"
+    },
+    {
+      "key": "street-runner",
+      "name": "Street Runner",
+      "rarity": "epic",
+      "file": "/skins/genji/street-runner.jpg"
+    }
+  ],
+  "hanzo": [
+    {
+      "key": "azure-flame",
+      "name": "Azure Flame",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/azure-flame.jpg"
+    },
+    {
+      "key": "casual",
+      "name": "Casual",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/casual.jpg"
+    },
+    {
+      "key": "chrysanthemum",
+      "name": "Chrysanthemum",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/chrysanthemum.jpg"
+    },
+    {
+      "key": "cupid",
+      "name": "Cupid",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/cupid.jpg"
+    },
+    {
+      "key": "cyber-dragon",
+      "name": "Cyber Dragon",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/cyber-dragon.jpg"
+    },
+    {
+      "key": "cyber-oni",
+      "name": "Cyber Oni",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/cyber-oni.jpg"
+    },
+    {
+      "key": "cyberninja",
+      "name": "Cyberninja",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/cyberninja.jpg"
+    },
+    {
+      "key": "dai-tengu",
+      "name": "Dai Tengu",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/dai-tengu.jpg"
+    },
+    {
+      "key": "dark-wolf",
+      "name": "Dark Wolf",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/dark-wolf.jpg"
+    },
+    {
+      "key": "drake-master",
+      "name": "Drake Master",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/drake-master.jpg"
+    },
+    {
+      "key": "force-fighter",
+      "name": "Force Fighter",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/force-fighter.jpg"
+    },
+    {
+      "key": "goumang",
+      "name": "Goumang",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/goumang.jpg"
+    },
+    {
+      "key": "great-tengu",
+      "name": "Great Tengu",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/great-tengu.jpg"
+    },
+    {
+      "key": "hashimoto",
+      "name": "Hashimoto",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/hashimoto.jpg"
+    },
+    {
+      "key": "heir",
+      "name": "Heir",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/heir.jpg"
+    },
+    {
+      "key": "huang-zhong",
+      "name": "Huang Zhong",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/huang-zhong.jpg"
+    },
+    {
+      "key": "kabuki",
+      "name": "Kabuki",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/kabuki.jpg"
+    },
+    {
+      "key": "lone-wolf",
+      "name": "Lone Wolf",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/lone-wolf.jpg"
+    },
+    {
+      "key": "long-ma",
+      "name": "Long Ma",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/long-ma.jpg"
+    },
+    {
+      "key": "lovestruck",
+      "name": "Lovestruck",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/lovestruck.jpg"
+    },
+    {
+      "key": "royal-archer",
+      "name": "Royal Archer",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/royal-archer.jpg"
+    },
+    {
+      "key": "ryu",
+      "name": "Ryu",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/ryu.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/sakura.jpg"
+    },
+    {
+      "key": "scion",
+      "name": "Scion",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/scion.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/streetwear.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/ultrawatch.jpg"
+    },
+    {
+      "key": "wave",
+      "name": "Wave",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/wave.jpg"
+    },
+    {
+      "key": "young-hanzo",
+      "name": "Young Hanzo",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/young-hanzo.jpg"
+    },
+    {
+      "key": "young-master",
+      "name": "Young Master",
+      "rarity": "legendary",
+      "file": "/skins/hanzo/young-master.jpg"
+    },
+    {
+      "key": "cloud",
+      "name": "Cloud",
+      "rarity": "epic",
+      "file": "/skins/hanzo/cloud.jpg"
+    },
+    {
+      "key": "demon",
+      "name": "Demon",
+      "rarity": "epic",
+      "file": "/skins/hanzo/demon.jpg"
+    },
+    {
+      "key": "dragon",
+      "name": "Dragon",
+      "rarity": "epic",
+      "file": "/skins/hanzo/dragon.jpg"
+    },
+    {
+      "key": "festival",
+      "name": "Festival",
+      "rarity": "epic",
+      "file": "/skins/hanzo/festival.jpg"
+    },
+    {
+      "key": "koi",
+      "name": "Koi",
+      "rarity": "epic",
+      "file": "/skins/hanzo/koi.jpg"
+    },
+    {
+      "key": "ky-gisha",
+      "name": "Kyōgisha",
+      "rarity": "epic",
+      "file": "/skins/hanzo/ky-gisha.jpg"
+    },
+    {
+      "key": "nihon",
+      "name": "Nihon",
+      "rarity": "epic",
+      "file": "/skins/hanzo/nihon.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/hanzo/overwatch-league-gray.jpg"
+    }
+  ],
+  "hazard": [
+    {
+      "key": "exo-urs4",
+      "name": "exo-URS4",
+      "rarity": "legendary",
+      "file": "/skins/hazard/exo-urs4.jpg"
+    },
+    {
+      "key": "heartbreaker",
+      "name": "Heartbreaker",
+      "rarity": "legendary",
+      "file": "/skins/hazard/heartbreaker.jpg"
+    },
+    {
+      "key": "mobster",
+      "name": "Mobster",
+      "rarity": "legendary",
+      "file": "/skins/hazard/mobster.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/hazard/streetwear.jpg"
+    },
+    {
+      "key": "away-owcs",
+      "name": "Away OWCS",
+      "rarity": "epic",
+      "file": "/skins/hazard/away-owcs.jpg"
+    },
+    {
+      "key": "bixi",
+      "name": "Bixi",
+      "rarity": "epic",
+      "file": "/skins/hazard/bixi.jpg"
+    },
+    {
+      "key": "owcs",
+      "name": "OWCS",
+      "rarity": "epic",
+      "file": "/skins/hazard/owcs.jpg"
+    }
+  ],
+  "illari": [
+    {
+      "key": "arcee",
+      "name": "Arcee",
+      "rarity": "legendary",
+      "file": "/skins/illari/arcee.jpg"
+    },
+    {
+      "key": "black-cat",
+      "name": "Black Cat",
+      "rarity": "legendary",
+      "file": "/skins/illari/black-cat.jpg"
+    },
+    {
+      "key": "daybreak",
+      "name": "Daybreak",
+      "rarity": "legendary",
+      "file": "/skins/illari/daybreak.jpg"
+    },
+    {
+      "key": "demon-rocker",
+      "name": "Demon Rocker",
+      "rarity": "legendary",
+      "file": "/skins/illari/demon-rocker.jpg"
+    },
+    {
+      "key": "fearless",
+      "name": "FEARLESS",
+      "rarity": "legendary",
+      "file": "/skins/illari/fearless.jpg"
+    },
+    {
+      "key": "gothic-cat",
+      "name": "Gothic Cat",
+      "rarity": "legendary",
+      "file": "/skins/illari/gothic-cat.jpg"
+    },
+    {
+      "key": "llama-pajamas",
+      "name": "Llama Pajamas",
+      "rarity": "legendary",
+      "file": "/skins/illari/llama-pajamas.jpg"
+    },
+    {
+      "key": "nightraven",
+      "name": "Nightraven",
+      "rarity": "legendary",
+      "file": "/skins/illari/nightraven.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/illari/poolside.jpg"
+    },
+    {
+      "key": "sundown",
+      "name": "Sundown",
+      "rarity": "legendary",
+      "file": "/skins/illari/sundown.jpg"
+    },
+    {
+      "key": "sunstone",
+      "name": "Sunstone",
+      "rarity": "legendary",
+      "file": "/skins/illari/sunstone.jpg"
+    },
+    {
+      "key": "thoth",
+      "name": "Thoth",
+      "rarity": "legendary",
+      "file": "/skins/illari/thoth.jpg"
+    },
+    {
+      "key": "voidwalker",
+      "name": "Voidwalker",
+      "rarity": "legendary",
+      "file": "/skins/illari/voidwalker.jpg"
+    },
+    {
+      "key": "winter-jammies",
+      "name": "Winter Jammies",
+      "rarity": "legendary",
+      "file": "/skins/illari/winter-jammies.jpg"
+    },
+    {
+      "key": "amethyst",
+      "name": "Amethyst",
+      "rarity": "epic",
+      "file": "/skins/illari/amethyst.jpg"
+    },
+    {
+      "key": "eclipse",
+      "name": "Eclipse",
+      "rarity": "epic",
+      "file": "/skins/illari/eclipse.jpg"
+    },
+    {
+      "key": "nightfall",
+      "name": "Nightfall",
+      "rarity": "epic",
+      "file": "/skins/illari/nightfall.jpg"
+    },
+    {
+      "key": "shadowchild",
+      "name": "Shadowchild",
+      "rarity": "epic",
+      "file": "/skins/illari/shadowchild.jpg"
+    },
+    {
+      "key": "sophomore-ruiz",
+      "name": "Sophomore Ruiz",
+      "rarity": "epic",
+      "file": "/skins/illari/sophomore-ruiz.jpg"
+    },
+    {
+      "key": "winter-guardian",
+      "name": "Winter Guardian",
+      "rarity": "epic",
+      "file": "/skins/illari/winter-guardian.jpg"
+    }
+  ],
+  "jetpack-cat": [
+    {
+      "key": "fighter-pilot",
+      "name": "Fighter Pilot",
+      "rarity": "epic",
+      "file": "/skins/jetpack-cat/fighter-pilot.jpg"
+    }
+  ],
+  "junker-queen": [
+    {
+      "key": "black-metal",
+      "name": "Black Metal",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/black-metal.jpg"
+    },
+    {
+      "key": "circuit-breaker",
+      "name": "Circuit Breaker",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/circuit-breaker.jpg"
+    },
+    {
+      "key": "executioner",
+      "name": "Executioner",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/executioner.jpg"
+    },
+    {
+      "key": "gladiator-queen",
+      "name": "Gladiator Queen",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/gladiator-queen.jpg"
+    },
+    {
+      "key": "huntress",
+      "name": "Huntress",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/huntress.jpg"
+    },
+    {
+      "key": "mob-boss",
+      "name": "Mob Boss",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/mob-boss.jpg"
+    },
+    {
+      "key": "necrotic-witch",
+      "name": "Necrotic Witch",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/necrotic-witch.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/poolside.jpg"
+    },
+    {
+      "key": "qilin",
+      "name": "Qilin",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/qilin.jpg"
+    },
+    {
+      "key": "wastelander",
+      "name": "Wastelander",
+      "rarity": "legendary",
+      "file": "/skins/junker-queen/wastelander.jpg"
+    },
+    {
+      "key": "beast-hunter",
+      "name": "Beast Hunter",
+      "rarity": "epic",
+      "file": "/skins/junker-queen/beast-hunter.jpg"
+    },
+    {
+      "key": "j-tunn",
+      "name": "Jötunn",
+      "rarity": "epic",
+      "file": "/skins/junker-queen/j-tunn.jpg"
+    },
+    {
+      "key": "punker-queen",
+      "name": "Punker Queen",
+      "rarity": "epic",
+      "file": "/skins/junker-queen/punker-queen.jpg"
+    },
+    {
+      "key": "rugby",
+      "name": "Rugby",
+      "rarity": "epic",
+      "file": "/skins/junker-queen/rugby.jpg"
+    }
+  ],
+  "junkrat": [
+    {
+      "key": "beachrat",
+      "name": "Beachrat",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/beachrat.jpg"
+    },
+    {
+      "key": "bilgerat",
+      "name": "Bilgerat",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/bilgerat.jpg"
+    },
+    {
+      "key": "cricket",
+      "name": "Cricket",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/cricket.jpg"
+    },
+    {
+      "key": "dr-junkenstein",
+      "name": "Dr. Junkenstein",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/dr-junkenstein.jpg"
+    },
+    {
+      "key": "fawksey-james",
+      "name": "Fawksey James",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/fawksey-james.jpg"
+    },
+    {
+      "key": "frozen-demon",
+      "name": "Frozen Demon",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/frozen-demon.jpg"
+    },
+    {
+      "key": "hayseed",
+      "name": "Hayseed",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/hayseed.jpg"
+    },
+    {
+      "key": "hong-hai-er",
+      "name": "Hong Hai Er",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/hong-hai-er.jpg"
+    },
+    {
+      "key": "jester",
+      "name": "Jester",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/jester.jpg"
+    },
+    {
+      "key": "junkbot",
+      "name": "Junkbot",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/junkbot.jpg"
+    },
+    {
+      "key": "junkfood",
+      "name": "Junkfood",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/junkfood.jpg"
+    },
+    {
+      "key": "king-jamison",
+      "name": "King Jamison",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/king-jamison.jpg"
+    },
+    {
+      "key": "krampus",
+      "name": "Krampus",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/krampus.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/lifeguard.jpg"
+    },
+    {
+      "key": "professor-fawkes",
+      "name": "Professor Fawkes",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/professor-fawkes.jpg"
+    },
+    {
+      "key": "scarecrow",
+      "name": "Scarecrow",
+      "rarity": "legendary",
+      "file": "/skins/junkrat/scarecrow.jpg"
+    },
+    {
+      "key": "aviator",
+      "name": "Aviator",
+      "rarity": "epic",
+      "file": "/skins/junkrat/aviator.jpg"
+    },
+    {
+      "key": "caution",
+      "name": "Caution",
+      "rarity": "epic",
+      "file": "/skins/junkrat/caution.jpg"
+    },
+    {
+      "key": "circus",
+      "name": "Circus",
+      "rarity": "epic",
+      "file": "/skins/junkrat/circus.jpg"
+    },
+    {
+      "key": "elf",
+      "name": "Elf",
+      "rarity": "epic",
+      "file": "/skins/junkrat/elf.jpg"
+    },
+    {
+      "key": "firework",
+      "name": "Firework",
+      "rarity": "epic",
+      "file": "/skins/junkrat/firework.jpg"
+    },
+    {
+      "key": "inferno",
+      "name": "Inferno",
+      "rarity": "epic",
+      "file": "/skins/junkrat/inferno.jpg"
+    },
+    {
+      "key": "jailbird",
+      "name": "Jailbird",
+      "rarity": "epic",
+      "file": "/skins/junkrat/jailbird.jpg"
+    },
+    {
+      "key": "mobster",
+      "name": "Mobster",
+      "rarity": "epic",
+      "file": "/skins/junkrat/mobster.jpg"
+    },
+    {
+      "key": "neon-streets",
+      "name": "Neon Streets",
+      "rarity": "epic",
+      "file": "/skins/junkrat/neon-streets.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/junkrat/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "sawtooth-trapper",
+      "name": "Sawtooth Trapper",
+      "rarity": "epic",
+      "file": "/skins/junkrat/sawtooth-trapper.jpg"
+    },
+    {
+      "key": "toasted",
+      "name": "Toasted",
+      "rarity": "epic",
+      "file": "/skins/junkrat/toasted.jpg"
+    }
+  ],
+  "juno": [
+    {
+      "key": "celestial",
+      "name": "Celestial",
+      "rarity": "legendary",
+      "file": "/skins/juno/celestial.jpg"
+    },
+    {
+      "key": "chun-li",
+      "name": "Chun-Li",
+      "rarity": "legendary",
+      "file": "/skins/juno/chun-li.jpg"
+    },
+    {
+      "key": "cozy",
+      "name": "Cozy",
+      "rarity": "legendary",
+      "file": "/skins/juno/cozy.jpg"
+    },
+    {
+      "key": "cupid",
+      "name": "Cupid",
+      "rarity": "legendary",
+      "file": "/skins/juno/cupid.jpg"
+    },
+    {
+      "key": "ember",
+      "name": "Ember",
+      "rarity": "legendary",
+      "file": "/skins/juno/ember.jpg"
+    },
+    {
+      "key": "fearless",
+      "name": "FEARLESS",
+      "rarity": "legendary",
+      "file": "/skins/juno/fearless.jpg"
+    },
+    {
+      "key": "forget-me-not",
+      "name": "Forget-Me-Not",
+      "rarity": "legendary",
+      "file": "/skins/juno/forget-me-not.jpg"
+    },
+    {
+      "key": "freshman-teo-minh",
+      "name": "Freshman Teo Minh",
+      "rarity": "legendary",
+      "file": "/skins/juno/freshman-teo-minh.jpg"
+    },
+    {
+      "key": "hello-kitty-skin",
+      "name": "Hello Kitty Skin",
+      "rarity": "legendary",
+      "file": "/skins/juno/hello-kitty-skin.jpg"
+    },
+    {
+      "key": "magepunk",
+      "name": "Magepunk",
+      "rarity": "legendary",
+      "file": "/skins/juno/magepunk.jpg"
+    },
+    {
+      "key": "music-festival",
+      "name": "Music Festival",
+      "rarity": "legendary",
+      "file": "/skins/juno/music-festival.jpg"
+    },
+    {
+      "key": "scarlet-ember",
+      "name": "Scarlet Ember",
+      "rarity": "legendary",
+      "file": "/skins/juno/scarlet-ember.jpg"
+    },
+    {
+      "key": "stadium-all-star",
+      "name": "Stadium All-Star",
+      "rarity": "legendary",
+      "file": "/skins/juno/stadium-all-star.jpg"
+    },
+    {
+      "key": "uravity",
+      "name": "Uravity",
+      "rarity": "legendary",
+      "file": "/skins/juno/uravity.jpg"
+    },
+    {
+      "key": "away-owcs",
+      "name": "Away OWCS",
+      "rarity": "epic",
+      "file": "/skins/juno/away-owcs.jpg"
+    },
+    {
+      "key": "owcs",
+      "name": "OWCS",
+      "rarity": "epic",
+      "file": "/skins/juno/owcs.jpg"
+    }
+  ],
+  "kiriko": [
+    {
+      "key": "2b",
+      "name": "2B",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/2b.jpg"
+    },
+    {
+      "key": "antifragile-kira-kira",
+      "name": "Antifragile Kira-Kira",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/antifragile-kira-kira.jpg"
+    },
+    {
+      "key": "athleisure",
+      "name": "Athleisure",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/athleisure.jpg"
+    },
+    {
+      "key": "bai-ze",
+      "name": "Bai Ze",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/bai-ze.jpg"
+    },
+    {
+      "key": "blue-flame",
+      "name": "Blue Flame",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/blue-flame.jpg"
+    },
+    {
+      "key": "cinnamoroll-skin",
+      "name": "Cinnamoroll Skin",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/cinnamoroll-skin.jpg"
+    },
+    {
+      "key": "cupid",
+      "name": "Cupid",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/cupid.jpg"
+    },
+    {
+      "key": "demon",
+      "name": "Demon",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/demon.jpg"
+    },
+    {
+      "key": "divinator",
+      "name": "Divinator",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/divinator.jpg"
+    },
+    {
+      "key": "exo-vu7pes",
+      "name": "exo-VU7PES",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/exo-vu7pes.jpg"
+    },
+    {
+      "key": "festive",
+      "name": "Festive",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/festive.jpg"
+    },
+    {
+      "key": "god-of-prosperity",
+      "name": "God of Prosperity",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/god-of-prosperity.jpg"
+    },
+    {
+      "key": "guangmu-tingwang",
+      "name": "Guangmu Tingwang",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/guangmu-tingwang.jpg"
+    },
+    {
+      "key": "hashimoto",
+      "name": "Hashimoto",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/hashimoto.jpg"
+    },
+    {
+      "key": "heart-of-passion",
+      "name": "Heart of Passion",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/heart-of-passion.jpg"
+    },
+    {
+      "key": "himiko-toga",
+      "name": "Himiko Toga",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/himiko-toga.jpg"
+    },
+    {
+      "key": "hinotori",
+      "name": "Hinotori",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/hinotori.jpg"
+    },
+    {
+      "key": "hydrangea",
+      "name": "Hydrangea",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/hydrangea.jpg"
+    },
+    {
+      "key": "idunn",
+      "name": "Idunn",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/idunn.jpg"
+    },
+    {
+      "key": "inari",
+      "name": "Inari",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/inari.jpg"
+    },
+    {
+      "key": "juri",
+      "name": "Juri",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/juri.jpg"
+    },
+    {
+      "key": "k-2000-blademaster",
+      "name": "K-2000 Blademaster",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/k-2000-blademaster.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/lifeguard.jpg"
+    },
+    {
+      "key": "oni",
+      "name": "Oni",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/oni.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/rainy-day.jpg"
+    },
+    {
+      "key": "sophomore-kamori",
+      "name": "Sophomore Kamori",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/sophomore-kamori.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/streetwear.jpg"
+    },
+    {
+      "key": "sukajan",
+      "name": "Sukajan",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/sukajan.jpg"
+    },
+    {
+      "key": "terrible-tornado",
+      "name": "Terrible Tornado",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/terrible-tornado.jpg"
+    },
+    {
+      "key": "time-keeper",
+      "name": "Time Keeper",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/time-keeper.jpg"
+    },
+    {
+      "key": "vampire",
+      "name": "Vampire",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/vampire.jpg"
+    },
+    {
+      "key": "witch",
+      "name": "Witch",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/witch.jpg"
+    },
+    {
+      "key": "yatagarasu",
+      "name": "Yatagarasu",
+      "rarity": "legendary",
+      "file": "/skins/kiriko/yatagarasu.jpg"
+    },
+    {
+      "key": "matsuri",
+      "name": "Matsuri",
+      "rarity": "epic",
+      "file": "/skins/kiriko/matsuri.jpg"
+    },
+    {
+      "key": "rogue",
+      "name": "Rogue",
+      "rarity": "epic",
+      "file": "/skins/kiriko/rogue.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "epic",
+      "file": "/skins/kiriko/sakura.jpg"
+    },
+    {
+      "key": "suki",
+      "name": "Suki",
+      "rarity": "epic",
+      "file": "/skins/kiriko/suki.jpg"
+    },
+    {
+      "key": "visual-kei",
+      "name": "Visual Kei",
+      "rarity": "epic",
+      "file": "/skins/kiriko/visual-kei.jpg"
+    }
+  ],
+  "lifeweaver": [
+    {
+      "key": "adam",
+      "name": "Adam",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/adam.jpg"
+    },
+    {
+      "key": "anteros",
+      "name": "Anteros",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/anteros.jpg"
+    },
+    {
+      "key": "black-swan",
+      "name": "Black Swan",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/black-swan.jpg"
+    },
+    {
+      "key": "borealis",
+      "name": "Borealis",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/borealis.jpg"
+    },
+    {
+      "key": "cleric",
+      "name": "Cleric",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/cleric.jpg"
+    },
+    {
+      "key": "demon-rocker",
+      "name": "Demon Rocker",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/demon-rocker.jpg"
+    },
+    {
+      "key": "elysian-keeper",
+      "name": "Elysian Keeper",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/elysian-keeper.jpg"
+    },
+    {
+      "key": "eros",
+      "name": "Eros",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/eros.jpg"
+    },
+    {
+      "key": "fox",
+      "name": "Fox",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/fox.jpg"
+    },
+    {
+      "key": "frozen-seer",
+      "name": "Frozen Seer",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/frozen-seer.jpg"
+    },
+    {
+      "key": "harbinger",
+      "name": "Harbinger",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/harbinger.jpg"
+    },
+    {
+      "key": "lifeguarder",
+      "name": "Lifeguarder",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/lifeguarder.jpg"
+    },
+    {
+      "key": "phi-ta-khon",
+      "name": "Phi Ta Khon",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/phi-ta-khon.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/poolside.jpg"
+    },
+    {
+      "key": "regent",
+      "name": "Regent",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/regent.jpg"
+    },
+    {
+      "key": "royal-butler",
+      "name": "Royal Butler",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/royal-butler.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/sakura.jpg"
+    },
+    {
+      "key": "sovereign",
+      "name": "Sovereign",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/sovereign.jpg"
+    },
+    {
+      "key": "vampire-regent",
+      "name": "Vampire Regent",
+      "rarity": "legendary",
+      "file": "/skins/lifeweaver/vampire-regent.jpg"
+    },
+    {
+      "key": "baldr",
+      "name": "Baldr",
+      "rarity": "epic",
+      "file": "/skins/lifeweaver/baldr.jpg"
+    },
+    {
+      "key": "cassia",
+      "name": "Cassia",
+      "rarity": "epic",
+      "file": "/skins/lifeweaver/cassia.jpg"
+    },
+    {
+      "key": "cotton-candy",
+      "name": "Cotton Candy",
+      "rarity": "epic",
+      "file": "/skins/lifeweaver/cotton-candy.jpg"
+    },
+    {
+      "key": "ghostbloom",
+      "name": "Ghostbloom",
+      "rarity": "epic",
+      "file": "/skins/lifeweaver/ghostbloom.jpg"
+    },
+    {
+      "key": "lotus",
+      "name": "Lotus",
+      "rarity": "epic",
+      "file": "/skins/lifeweaver/lotus.jpg"
+    },
+    {
+      "key": "synthwave",
+      "name": "Synthwave",
+      "rarity": "epic",
+      "file": "/skins/lifeweaver/synthwave.jpg"
+    }
+  ],
+  "lucio": [
+    {
+      "key": "2019-pacific-all-stars",
+      "name": "2019 Pacific All-Stars",
+      "rarity": "legendary",
+      "file": "/skins/lucio/2019-pacific-all-stars.jpg"
+    },
+    {
+      "key": "bard",
+      "name": "Bard",
+      "rarity": "legendary",
+      "file": "/skins/lucio/bard.jpg"
+    },
+    {
+      "key": "breakaway",
+      "name": "Breakaway",
+      "rarity": "legendary",
+      "file": "/skins/lucio/breakaway.jpg"
+    },
+    {
+      "key": "capoeira",
+      "name": "Capoeira",
+      "rarity": "legendary",
+      "file": "/skins/lucio/capoeira.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/lucio/cosmic.jpg"
+    },
+    {
+      "key": "cyber-dj",
+      "name": "Cyber DJ",
+      "rarity": "legendary",
+      "file": "/skins/lucio/cyber-dj.jpg"
+    },
+    {
+      "key": "dark-faun",
+      "name": "Dark Faun",
+      "rarity": "legendary",
+      "file": "/skins/lucio/dark-faun.jpg"
+    },
+    {
+      "key": "equalizer",
+      "name": "Equalizer",
+      "rarity": "legendary",
+      "file": "/skins/lucio/equalizer.jpg"
+    },
+    {
+      "key": "grafiteiro",
+      "name": "Grafiteiro",
+      "rarity": "legendary",
+      "file": "/skins/lucio/grafiteiro.jpg"
+    },
+    {
+      "key": "hermes",
+      "name": "Hermes",
+      "rarity": "legendary",
+      "file": "/skins/lucio/hermes.jpg"
+    },
+    {
+      "key": "hippityhop",
+      "name": "HippityHop",
+      "rarity": "legendary",
+      "file": "/skins/lucio/hippityhop.jpg"
+    },
+    {
+      "key": "jazzy",
+      "name": "Jazzy",
+      "rarity": "legendary",
+      "file": "/skins/lucio/jazzy.jpg"
+    },
+    {
+      "key": "keroppi-skin",
+      "name": "Keroppi Skin",
+      "rarity": "legendary",
+      "file": "/skins/lucio/keroppi-skin.jpg"
+    },
+    {
+      "key": "poet",
+      "name": "Poet",
+      "rarity": "legendary",
+      "file": "/skins/lucio/poet.jpg"
+    },
+    {
+      "key": "poison-dart",
+      "name": "Poison Dart",
+      "rarity": "legendary",
+      "file": "/skins/lucio/poison-dart.jpg"
+    },
+    {
+      "key": "ribbit",
+      "name": "Ribbit",
+      "rarity": "legendary",
+      "file": "/skins/lucio/ribbit.jpg"
+    },
+    {
+      "key": "royal-prince",
+      "name": "Royal Prince",
+      "rarity": "legendary",
+      "file": "/skins/lucio/royal-prince.jpg"
+    },
+    {
+      "key": "samul-nori",
+      "name": "Samul Nori",
+      "rarity": "legendary",
+      "file": "/skins/lucio/samul-nori.jpg"
+    },
+    {
+      "key": "satyr",
+      "name": "Satyr",
+      "rarity": "legendary",
+      "file": "/skins/lucio/satyr.jpg"
+    },
+    {
+      "key": "sele-o",
+      "name": "Seleção",
+      "rarity": "legendary",
+      "file": "/skins/lucio/sele-o.jpg"
+    },
+    {
+      "key": "slapshot",
+      "name": "Slapshot",
+      "rarity": "legendary",
+      "file": "/skins/lucio/slapshot.jpg"
+    },
+    {
+      "key": "snow-fox",
+      "name": "Snow Fox",
+      "rarity": "legendary",
+      "file": "/skins/lucio/snow-fox.jpg"
+    },
+    {
+      "key": "space-prince",
+      "name": "Space Prince",
+      "rarity": "legendary",
+      "file": "/skins/lucio/space-prince.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/lucio/streetwear.jpg"
+    },
+    {
+      "key": "striker",
+      "name": "Striker",
+      "rarity": "legendary",
+      "file": "/skins/lucio/striker.jpg"
+    },
+    {
+      "key": "andes",
+      "name": "Andes",
+      "rarity": "epic",
+      "file": "/skins/lucio/andes.jpg"
+    },
+    {
+      "key": "auditiva",
+      "name": "Auditiva",
+      "rarity": "epic",
+      "file": "/skins/lucio/auditiva.jpg"
+    },
+    {
+      "key": "bitrate",
+      "name": "Bitrate",
+      "rarity": "epic",
+      "file": "/skins/lucio/bitrate.jpg"
+    },
+    {
+      "key": "boleiro",
+      "name": "Boleiro",
+      "rarity": "epic",
+      "file": "/skins/lucio/boleiro.jpg"
+    },
+    {
+      "key": "corredor",
+      "name": "Corredor",
+      "rarity": "epic",
+      "file": "/skins/lucio/corredor.jpg"
+    },
+    {
+      "key": "disco",
+      "name": "Disco",
+      "rarity": "epic",
+      "file": "/skins/lucio/disco.jpg"
+    },
+    {
+      "key": "gorgon",
+      "name": "Gorgon",
+      "rarity": "epic",
+      "file": "/skins/lucio/gorgon.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "epic",
+      "file": "/skins/lucio/lifeguard.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "epic",
+      "file": "/skins/lucio/new-era.jpg"
+    },
+    {
+      "key": "octopus",
+      "name": "Octopus",
+      "rarity": "epic",
+      "file": "/skins/lucio/octopus.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "epic",
+      "file": "/skins/lucio/polar.jpg"
+    },
+    {
+      "key": "synaesthesia",
+      "name": "Synaesthesia",
+      "rarity": "epic",
+      "file": "/skins/lucio/synaesthesia.jpg"
+    },
+    {
+      "key": "tianma",
+      "name": "Tianma",
+      "rarity": "epic",
+      "file": "/skins/lucio/tianma.jpg"
+    },
+    {
+      "key": "victorian-ghost",
+      "name": "Victorian Ghost",
+      "rarity": "epic",
+      "file": "/skins/lucio/victorian-ghost.jpg"
+    }
+  ],
+  "mauga": [
+    {
+      "key": "bonesplinter",
+      "name": "Bonesplinter",
+      "rarity": "legendary",
+      "file": "/skins/mauga/bonesplinter.jpg"
+    },
+    {
+      "key": "cozy",
+      "name": "Cozy",
+      "rarity": "legendary",
+      "file": "/skins/mauga/cozy.jpg"
+    },
+    {
+      "key": "demon-rocker",
+      "name": "Demon Rocker",
+      "rarity": "legendary",
+      "file": "/skins/mauga/demon-rocker.jpg"
+    },
+    {
+      "key": "jet-black",
+      "name": "Jet Black",
+      "rarity": "legendary",
+      "file": "/skins/mauga/jet-black.jpg"
+    },
+    {
+      "key": "j-tunn",
+      "name": "Jötunn",
+      "rarity": "legendary",
+      "file": "/skins/mauga/j-tunn.jpg"
+    },
+    {
+      "key": "magepunk",
+      "name": "Magepunk",
+      "rarity": "legendary",
+      "file": "/skins/mauga/magepunk.jpg"
+    },
+    {
+      "key": "magma",
+      "name": "Magma",
+      "rarity": "legendary",
+      "file": "/skins/mauga/magma.jpg"
+    },
+    {
+      "key": "new-empire",
+      "name": "New Empire",
+      "rarity": "legendary",
+      "file": "/skins/mauga/new-empire.jpg"
+    },
+    {
+      "key": "port-de-paix",
+      "name": "Port-De-Paix",
+      "rarity": "legendary",
+      "file": "/skins/mauga/port-de-paix.jpg"
+    },
+    {
+      "key": "owcs-2024-away",
+      "name": "OWCS 2024 Away",
+      "rarity": "epic",
+      "file": "/skins/mauga/owcs-2024-away.jpg"
+    },
+    {
+      "key": "owcs-2024-home",
+      "name": "OWCS 2024 Home",
+      "rarity": "epic",
+      "file": "/skins/mauga/owcs-2024-home.jpg"
+    },
+    {
+      "key": "rugby",
+      "name": "Rugby",
+      "rarity": "epic",
+      "file": "/skins/mauga/rugby.jpg"
+    }
+  ],
+  "mei": [
+    {
+      "key": "abominable",
+      "name": "Abominable",
+      "rarity": "legendary",
+      "file": "/skins/mei/abominable.jpg"
+    },
+    {
+      "key": "alchemist",
+      "name": "Alchemist",
+      "rarity": "legendary",
+      "file": "/skins/mei/alchemist.jpg"
+    },
+    {
+      "key": "beekeeper",
+      "name": "Beekeeper",
+      "rarity": "legendary",
+      "file": "/skins/mei/beekeeper.jpg"
+    },
+    {
+      "key": "celestial",
+      "name": "Celestial",
+      "rarity": "legendary",
+      "file": "/skins/mei/celestial.jpg"
+    },
+    {
+      "key": "change",
+      "name": "Chang'e",
+      "rarity": "legendary",
+      "file": "/skins/mei/change.jpg"
+    },
+    {
+      "key": "cloudy-day",
+      "name": "Cloudy Day",
+      "rarity": "legendary",
+      "file": "/skins/mei/cloudy-day.jpg"
+    },
+    {
+      "key": "empress",
+      "name": "Empress",
+      "rarity": "legendary",
+      "file": "/skins/mei/empress.jpg"
+    },
+    {
+      "key": "firefighter",
+      "name": "Firefighter",
+      "rarity": "legendary",
+      "file": "/skins/mei/firefighter.jpg"
+    },
+    {
+      "key": "flower-child",
+      "name": "Flower Child",
+      "rarity": "legendary",
+      "file": "/skins/mei/flower-child.jpg"
+    },
+    {
+      "key": "glitter",
+      "name": "Glitter",
+      "rarity": "legendary",
+      "file": "/skins/mei/glitter.jpg"
+    },
+    {
+      "key": "honeydew",
+      "name": "Honeydew",
+      "rarity": "legendary",
+      "file": "/skins/mei/honeydew.jpg"
+    },
+    {
+      "key": "jiangshi",
+      "name": "Jiangshi",
+      "rarity": "legendary",
+      "file": "/skins/mei/jiangshi.jpg"
+    },
+    {
+      "key": "luna",
+      "name": "Luna",
+      "rarity": "legendary",
+      "file": "/skins/mei/luna.jpg"
+    },
+    {
+      "key": "mei-rry",
+      "name": "Mei-rry",
+      "rarity": "legendary",
+      "file": "/skins/mei/mei-rry.jpg"
+    },
+    {
+      "key": "mm-mei",
+      "name": "MM-Mei",
+      "rarity": "legendary",
+      "file": "/skins/mei/mm-mei.jpg"
+    },
+    {
+      "key": "neon-streets",
+      "name": "Neon Streets",
+      "rarity": "legendary",
+      "file": "/skins/mei/neon-streets.jpg"
+    },
+    {
+      "key": "pajamei",
+      "name": "Pajamei",
+      "rarity": "legendary",
+      "file": "/skins/mei/pajamei.jpg"
+    },
+    {
+      "key": "penguin",
+      "name": "Penguin",
+      "rarity": "legendary",
+      "file": "/skins/mei/penguin.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/mei/rainy-day.jpg"
+    },
+    {
+      "key": "rescue-mei",
+      "name": "Rescue Mei",
+      "rarity": "legendary",
+      "file": "/skins/mei/rescue-mei.jpg"
+    },
+    {
+      "key": "sprinkles",
+      "name": "Sprinkles",
+      "rarity": "legendary",
+      "file": "/skins/mei/sprinkles.jpg"
+    },
+    {
+      "key": "stargazer",
+      "name": "Stargazer",
+      "rarity": "legendary",
+      "file": "/skins/mei/stargazer.jpg"
+    },
+    {
+      "key": "strawberry",
+      "name": "Strawberry",
+      "rarity": "legendary",
+      "file": "/skins/mei/strawberry.jpg"
+    },
+    {
+      "key": "yeti-hunter",
+      "name": "Yeti Hunter",
+      "rarity": "legendary",
+      "file": "/skins/mei/yeti-hunter.jpg"
+    },
+    {
+      "key": "arcane-apprentice",
+      "name": "Arcane Apprentice",
+      "rarity": "epic",
+      "file": "/skins/mei/arcane-apprentice.jpg"
+    },
+    {
+      "key": "bear",
+      "name": "Bear",
+      "rarity": "epic",
+      "file": "/skins/mei/bear.jpg"
+    },
+    {
+      "key": "cartographer",
+      "name": "Cartographer",
+      "rarity": "epic",
+      "file": "/skins/mei/cartographer.jpg"
+    },
+    {
+      "key": "cursed-seer",
+      "name": "Cursed Seer",
+      "rarity": "epic",
+      "file": "/skins/mei/cursed-seer.jpg"
+    },
+    {
+      "key": "earthen",
+      "name": "Earthen",
+      "rarity": "epic",
+      "file": "/skins/mei/earthen.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/mei/elite.jpg"
+    },
+    {
+      "key": "hu-tou-mao",
+      "name": "Hu Tou Mao",
+      "rarity": "epic",
+      "file": "/skins/mei/hu-tou-mao.jpg"
+    },
+    {
+      "key": "katara",
+      "name": "Katara",
+      "rarity": "epic",
+      "file": "/skins/mei/katara.jpg"
+    },
+    {
+      "key": "pumpkin",
+      "name": "Pumpkin",
+      "rarity": "epic",
+      "file": "/skins/mei/pumpkin.jpg"
+    },
+    {
+      "key": "retro-star",
+      "name": "Retro Star",
+      "rarity": "epic",
+      "file": "/skins/mei/retro-star.jpg"
+    },
+    {
+      "key": "snow-plum",
+      "name": "Snow Plum",
+      "rarity": "epic",
+      "file": "/skins/mei/snow-plum.jpg"
+    },
+    {
+      "key": "suanni",
+      "name": "Suanni",
+      "rarity": "epic",
+      "file": "/skins/mei/suanni.jpg"
+    },
+    {
+      "key": "zhongguo",
+      "name": "Zhongguo",
+      "rarity": "epic",
+      "file": "/skins/mei/zhongguo.jpg"
+    }
+  ],
+  "mercy": [
+    {
+      "key": "2019-atlantic-all-stars",
+      "name": "2019 Atlantic All-Stars",
+      "rarity": "legendary",
+      "file": "/skins/mercy/2019-atlantic-all-stars.jpg"
+    },
+    {
+      "key": "beach-rescue",
+      "name": "Beach Rescue",
+      "rarity": "legendary",
+      "file": "/skins/mercy/beach-rescue.jpg"
+    },
+    {
+      "key": "black-cat",
+      "name": "Black Cat",
+      "rarity": "legendary",
+      "file": "/skins/mercy/black-cat.jpg"
+    },
+    {
+      "key": "borealis",
+      "name": "Borealis",
+      "rarity": "legendary",
+      "file": "/skins/mercy/borealis.jpg"
+    },
+    {
+      "key": "combat-medic-ziegler",
+      "name": "Combat Medic Ziegler",
+      "rarity": "legendary",
+      "file": "/skins/mercy/combat-medic-ziegler.jpg"
+    },
+    {
+      "key": "commander-white",
+      "name": "Commander White",
+      "rarity": "legendary",
+      "file": "/skins/mercy/commander-white.jpg"
+    },
+    {
+      "key": "conjurer",
+      "name": "Conjurer",
+      "rarity": "legendary",
+      "file": "/skins/mercy/conjurer.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/mercy/cosmic.jpg"
+    },
+    {
+      "key": "crimson-knight",
+      "name": "Crimson Knight",
+      "rarity": "legendary",
+      "file": "/skins/mercy/crimson-knight.jpg"
+    },
+    {
+      "key": "devil",
+      "name": "Devil",
+      "rarity": "legendary",
+      "file": "/skins/mercy/devil.jpg"
+    },
+    {
+      "key": "dr-ziegler",
+      "name": "Dr. Ziegler",
+      "rarity": "legendary",
+      "file": "/skins/mercy/dr-ziegler.jpg"
+    },
+    {
+      "key": "dragoon",
+      "name": "Dragoon",
+      "rarity": "legendary",
+      "file": "/skins/mercy/dragoon.jpg"
+    },
+    {
+      "key": "fallen-angel",
+      "name": "Fallen Angel",
+      "rarity": "legendary",
+      "file": "/skins/mercy/fallen-angel.jpg"
+    },
+    {
+      "key": "fearless",
+      "name": "FEARLESS",
+      "rarity": "legendary",
+      "file": "/skins/mercy/fearless.jpg"
+    },
+    {
+      "key": "formalwear",
+      "name": "Formalwear",
+      "rarity": "legendary",
+      "file": "/skins/mercy/formalwear.jpg"
+    },
+    {
+      "key": "gothic-cat",
+      "name": "Gothic Cat",
+      "rarity": "legendary",
+      "file": "/skins/mercy/gothic-cat.jpg"
+    },
+    {
+      "key": "happy-holly",
+      "name": "Happy Holly",
+      "rarity": "legendary",
+      "file": "/skins/mercy/happy-holly.jpg"
+    },
+    {
+      "key": "imp",
+      "name": "Imp",
+      "rarity": "legendary",
+      "file": "/skins/mercy/imp.jpg"
+    },
+    {
+      "key": "ivory-rose",
+      "name": "Ivory Rose",
+      "rarity": "legendary",
+      "file": "/skins/mercy/ivory-rose.jpg"
+    },
+    {
+      "key": "jingle-belle",
+      "name": "Jingle Belle",
+      "rarity": "legendary",
+      "file": "/skins/mercy/jingle-belle.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "legendary",
+      "file": "/skins/mercy/lifeguard.jpg"
+    },
+    {
+      "key": "mage",
+      "name": "Mage",
+      "rarity": "legendary",
+      "file": "/skins/mercy/mage.jpg"
+    },
+    {
+      "key": "miko",
+      "name": "Miko",
+      "rarity": "legendary",
+      "file": "/skins/mercy/miko.jpg"
+    },
+    {
+      "key": "music-festival",
+      "name": "Music Festival",
+      "rarity": "legendary",
+      "file": "/skins/mercy/music-festival.jpg"
+    },
+    {
+      "key": "mystic-swan",
+      "name": "Mystic Swan",
+      "rarity": "legendary",
+      "file": "/skins/mercy/mystic-swan.jpg"
+    },
+    {
+      "key": "panther",
+      "name": "Panther",
+      "rarity": "legendary",
+      "file": "/skins/mercy/panther.jpg"
+    },
+    {
+      "key": "pink",
+      "name": "Pink",
+      "rarity": "legendary",
+      "file": "/skins/mercy/pink.jpg"
+    },
+    {
+      "key": "pompompurin-skin",
+      "name": "Pompompurin Skin",
+      "rarity": "legendary",
+      "file": "/skins/mercy/pompompurin-skin.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/mercy/poolside.jpg"
+    },
+    {
+      "key": "radiant-angel",
+      "name": "Radiant Angel",
+      "rarity": "legendary",
+      "file": "/skins/mercy/radiant-angel.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/mercy/rainy-day.jpg"
+    },
+    {
+      "key": "rose-gold",
+      "name": "Rose Gold",
+      "rarity": "legendary",
+      "file": "/skins/mercy/rose-gold.jpg"
+    },
+    {
+      "key": "rose-majesty",
+      "name": "Rose Majesty",
+      "rarity": "legendary",
+      "file": "/skins/mercy/rose-majesty.jpg"
+    },
+    {
+      "key": "royal-gladiator",
+      "name": "Royal Gladiator",
+      "rarity": "legendary",
+      "file": "/skins/mercy/royal-gladiator.jpg"
+    },
+    {
+      "key": "royal-knight",
+      "name": "Royal Knight",
+      "rarity": "legendary",
+      "file": "/skins/mercy/royal-knight.jpg"
+    },
+    {
+      "key": "royal-princess",
+      "name": "Royal Princess",
+      "rarity": "legendary",
+      "file": "/skins/mercy/royal-princess.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "legendary",
+      "file": "/skins/mercy/sakura.jpg"
+    },
+    {
+      "key": "scarlet-angel",
+      "name": "Scarlet Angel",
+      "rarity": "legendary",
+      "file": "/skins/mercy/scarlet-angel.jpg"
+    },
+    {
+      "key": "seolbim",
+      "name": "Seolbim",
+      "rarity": "legendary",
+      "file": "/skins/mercy/seolbim.jpg"
+    },
+    {
+      "key": "sigr-n",
+      "name": "Sigrún",
+      "rarity": "legendary",
+      "file": "/skins/mercy/sigr-n.jpg"
+    },
+    {
+      "key": "stadium-all-star",
+      "name": "Stadium All-Star",
+      "rarity": "legendary",
+      "file": "/skins/mercy/stadium-all-star.jpg"
+    },
+    {
+      "key": "sugar-plum-fairy",
+      "name": "Sugar Plum Fairy",
+      "rarity": "legendary",
+      "file": "/skins/mercy/sugar-plum-fairy.jpg"
+    },
+    {
+      "key": "valkyrie",
+      "name": "Valkyrie‎",
+      "rarity": "legendary",
+      "file": "/skins/mercy/valkyrie.jpg"
+    },
+    {
+      "key": "wing-zero",
+      "name": "Wing Zero",
+      "rarity": "legendary",
+      "file": "/skins/mercy/wing-zero.jpg"
+    },
+    {
+      "key": "winged-victory",
+      "name": "Winged Victory",
+      "rarity": "legendary",
+      "file": "/skins/mercy/winged-victory.jpg"
+    },
+    {
+      "key": "witch",
+      "name": "Witch",
+      "rarity": "legendary",
+      "file": "/skins/mercy/witch.jpg"
+    },
+    {
+      "key": "wyvern",
+      "name": "Wyvern",
+      "rarity": "legendary",
+      "file": "/skins/mercy/wyvern.jpg"
+    },
+    {
+      "key": "zhuque",
+      "name": "Zhuque",
+      "rarity": "legendary",
+      "file": "/skins/mercy/zhuque.jpg"
+    },
+    {
+      "key": "amber",
+      "name": "Amber",
+      "rarity": "epic",
+      "file": "/skins/mercy/amber.jpg"
+    },
+    {
+      "key": "camouflage",
+      "name": "Camouflage",
+      "rarity": "epic",
+      "file": "/skins/mercy/camouflage.jpg"
+    },
+    {
+      "key": "cobalt",
+      "name": "Cobalt",
+      "rarity": "epic",
+      "file": "/skins/mercy/cobalt.jpg"
+    },
+    {
+      "key": "eidgenossin",
+      "name": "Eidgenossin",
+      "rarity": "epic",
+      "file": "/skins/mercy/eidgenossin.jpg"
+    },
+    {
+      "key": "fortune",
+      "name": "Fortune",
+      "rarity": "epic",
+      "file": "/skins/mercy/fortune.jpg"
+    },
+    {
+      "key": "honey-bee",
+      "name": "Honey Bee",
+      "rarity": "epic",
+      "file": "/skins/mercy/honey-bee.jpg"
+    },
+    {
+      "key": "infinite-seer",
+      "name": "Infinite Seer",
+      "rarity": "epic",
+      "file": "/skins/mercy/infinite-seer.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/mercy/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "owl-guardian",
+      "name": "Owl Guardian",
+      "rarity": "epic",
+      "file": "/skins/mercy/owl-guardian.jpg"
+    },
+    {
+      "key": "snow-angel",
+      "name": "Snow Angel",
+      "rarity": "epic",
+      "file": "/skins/mercy/snow-angel.jpg"
+    },
+    {
+      "key": "zombie-doctor",
+      "name": "Zombie Doctor",
+      "rarity": "epic",
+      "file": "/skins/mercy/zombie-doctor.jpg"
+    }
+  ],
+  "mizuki": [
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/mizuki/streetwear.jpg"
+    }
+  ],
+  "moira": [
+    {
+      "key": "banshee",
+      "name": "Banshee",
+      "rarity": "legendary",
+      "file": "/skins/moira/banshee.jpg"
+    },
+    {
+      "key": "blackwatch",
+      "name": "Blackwatch",
+      "rarity": "legendary",
+      "file": "/skins/moira/blackwatch.jpg"
+    },
+    {
+      "key": "celestial",
+      "name": "Celestial",
+      "rarity": "legendary",
+      "file": "/skins/moira/celestial.jpg"
+    },
+    {
+      "key": "cyber-scientist",
+      "name": "Cyber Scientist",
+      "rarity": "legendary",
+      "file": "/skins/moira/cyber-scientist.jpg"
+    },
+    {
+      "key": "demon-queen",
+      "name": "Demon Queen",
+      "rarity": "legendary",
+      "file": "/skins/moira/demon-queen.jpg"
+    },
+    {
+      "key": "duowen-tingwang",
+      "name": "Duowen Tingwang",
+      "rarity": "legendary",
+      "file": "/skins/moira/duowen-tingwang.jpg"
+    },
+    {
+      "key": "glam",
+      "name": "Glam",
+      "rarity": "legendary",
+      "file": "/skins/moira/glam.jpg"
+    },
+    {
+      "key": "ice-empress",
+      "name": "Ice Empress",
+      "rarity": "legendary",
+      "file": "/skins/moira/ice-empress.jpg"
+    },
+    {
+      "key": "lilith",
+      "name": "Lilith",
+      "rarity": "legendary",
+      "file": "/skins/moira/lilith.jpg"
+    },
+    {
+      "key": "mask-dancer",
+      "name": "Mask Dancer",
+      "rarity": "legendary",
+      "file": "/skins/moira/mask-dancer.jpg"
+    },
+    {
+      "key": "mime",
+      "name": "Mime",
+      "rarity": "legendary",
+      "file": "/skins/moira/mime.jpg"
+    },
+    {
+      "key": "minister",
+      "name": "Minister",
+      "rarity": "legendary",
+      "file": "/skins/moira/minister.jpg"
+    },
+    {
+      "key": "moon",
+      "name": "Moon",
+      "rarity": "legendary",
+      "file": "/skins/moira/moon.jpg"
+    },
+    {
+      "key": "new-empire",
+      "name": "New Empire",
+      "rarity": "legendary",
+      "file": "/skins/moira/new-empire.jpg"
+    },
+    {
+      "key": "oasis",
+      "name": "Oasis",
+      "rarity": "legendary",
+      "file": "/skins/moira/oasis.jpg"
+    },
+    {
+      "key": "plague-doctor",
+      "name": "Plague Doctor",
+      "rarity": "legendary",
+      "file": "/skins/moira/plague-doctor.jpg"
+    },
+    {
+      "key": "scientist",
+      "name": "Scientist",
+      "rarity": "legendary",
+      "file": "/skins/moira/scientist.jpg"
+    },
+    {
+      "key": "solaris",
+      "name": "Solaris",
+      "rarity": "legendary",
+      "file": "/skins/moira/solaris.jpg"
+    },
+    {
+      "key": "vampire",
+      "name": "Vampire",
+      "rarity": "legendary",
+      "file": "/skins/moira/vampire.jpg"
+    },
+    {
+      "key": "venus",
+      "name": "Venus",
+      "rarity": "legendary",
+      "file": "/skins/moira/venus.jpg"
+    },
+    {
+      "key": "wicked",
+      "name": "Wicked",
+      "rarity": "legendary",
+      "file": "/skins/moira/wicked.jpg"
+    },
+    {
+      "key": "wicked-reign",
+      "name": "Wicked Reign",
+      "rarity": "legendary",
+      "file": "/skins/moira/wicked-reign.jpg"
+    },
+    {
+      "key": "ireannach",
+      "name": "Éireannach",
+      "rarity": "epic",
+      "file": "/skins/moira/ireannach.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/moira/elite.jpg"
+    },
+    {
+      "key": "hollow-heart",
+      "name": "Hollow Heart",
+      "rarity": "epic",
+      "file": "/skins/moira/hollow-heart.jpg"
+    },
+    {
+      "key": "holly",
+      "name": "Holly",
+      "rarity": "epic",
+      "file": "/skins/moira/holly.jpg"
+    },
+    {
+      "key": "magma",
+      "name": "Magma",
+      "rarity": "epic",
+      "file": "/skins/moira/magma.jpg"
+    },
+    {
+      "key": "ornate",
+      "name": "Ornate",
+      "rarity": "epic",
+      "file": "/skins/moira/ornate.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/moira/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "pasque",
+      "name": "Pasque",
+      "rarity": "epic",
+      "file": "/skins/moira/pasque.jpg"
+    },
+    {
+      "key": "rosewood",
+      "name": "Rosewood",
+      "rarity": "epic",
+      "file": "/skins/moira/rosewood.jpg"
+    }
+  ],
+  "orisa": [
+    {
+      "key": "appa",
+      "name": "Appa",
+      "rarity": "legendary",
+      "file": "/skins/orisa/appa.jpg"
+    },
+    {
+      "key": "bian",
+      "name": "Bi'an",
+      "rarity": "legendary",
+      "file": "/skins/orisa/bian.jpg"
+    },
+    {
+      "key": "bull-demon",
+      "name": "Bull Demon",
+      "rarity": "legendary",
+      "file": "/skins/orisa/bull-demon.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "legendary",
+      "file": "/skins/orisa/carbon-fiber.jpg"
+    },
+    {
+      "key": "demon",
+      "name": "Demon",
+      "rarity": "legendary",
+      "file": "/skins/orisa/demon.jpg"
+    },
+    {
+      "key": "dream-sheep",
+      "name": "Dream Sheep",
+      "rarity": "legendary",
+      "file": "/skins/orisa/dream-sheep.jpg"
+    },
+    {
+      "key": "dynastinae",
+      "name": "Dynastinae",
+      "rarity": "legendary",
+      "file": "/skins/orisa/dynastinae.jpg"
+    },
+    {
+      "key": "fiend",
+      "name": "Fiend",
+      "rarity": "legendary",
+      "file": "/skins/orisa/fiend.jpg"
+    },
+    {
+      "key": "forest-spirit",
+      "name": "Forest Spirit",
+      "rarity": "legendary",
+      "file": "/skins/orisa/forest-spirit.jpg"
+    },
+    {
+      "key": "gr-iffon",
+      "name": "GR-iffon",
+      "rarity": "legendary",
+      "file": "/skins/orisa/gr-iffon.jpg"
+    },
+    {
+      "key": "immortal",
+      "name": "Immortal",
+      "rarity": "legendary",
+      "file": "/skins/orisa/immortal.jpg"
+    },
+    {
+      "key": "megasoma",
+      "name": "Megasoma",
+      "rarity": "legendary",
+      "file": "/skins/orisa/megasoma.jpg"
+    },
+    {
+      "key": "null-sector",
+      "name": "Null Sector",
+      "rarity": "legendary",
+      "file": "/skins/orisa/null-sector.jpg"
+    },
+    {
+      "key": "or-unit",
+      "name": "OR-Unit",
+      "rarity": "legendary",
+      "file": "/skins/orisa/or-unit.jpg"
+    },
+    {
+      "key": "protector",
+      "name": "Protector",
+      "rarity": "legendary",
+      "file": "/skins/orisa/protector.jpg"
+    },
+    {
+      "key": "rainy-ducky",
+      "name": "Rainy Ducky",
+      "rarity": "legendary",
+      "file": "/skins/orisa/rainy-ducky.jpg"
+    },
+    {
+      "key": "referee",
+      "name": "Referee",
+      "rarity": "legendary",
+      "file": "/skins/orisa/referee.jpg"
+    },
+    {
+      "key": "reindeer",
+      "name": "Reindeer",
+      "rarity": "legendary",
+      "file": "/skins/orisa/reindeer.jpg"
+    },
+    {
+      "key": "retro-future",
+      "name": "Retro Future",
+      "rarity": "legendary",
+      "file": "/skins/orisa/retro-future.jpg"
+    },
+    {
+      "key": "rubber-ducky",
+      "name": "Rubber Ducky",
+      "rarity": "legendary",
+      "file": "/skins/orisa/rubber-ducky.jpg"
+    },
+    {
+      "key": "star-sheep",
+      "name": "Star Sheep",
+      "rarity": "legendary",
+      "file": "/skins/orisa/star-sheep.jpg"
+    },
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "epic",
+      "file": "/skins/orisa/8-bit.jpg"
+    },
+    {
+      "key": "carved",
+      "name": "Carved",
+      "rarity": "epic",
+      "file": "/skins/orisa/carved.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/orisa/elite.jpg"
+    },
+    {
+      "key": "ice-cream",
+      "name": "Ice Cream",
+      "rarity": "epic",
+      "file": "/skins/orisa/ice-cream.jpg"
+    },
+    {
+      "key": "lucky-lioness",
+      "name": "Lucky Lioness",
+      "rarity": "epic",
+      "file": "/skins/orisa/lucky-lioness.jpg"
+    },
+    {
+      "key": "sanye",
+      "name": "Sanye",
+      "rarity": "epic",
+      "file": "/skins/orisa/sanye.jpg"
+    }
+  ],
+  "pharah": [
+    {
+      "key": "archangel",
+      "name": "Archangel",
+      "rarity": "legendary",
+      "file": "/skins/pharah/archangel.jpg"
+    },
+    {
+      "key": "asp",
+      "name": "Asp",
+      "rarity": "legendary",
+      "file": "/skins/pharah/asp.jpg"
+    },
+    {
+      "key": "aviator",
+      "name": "Aviator",
+      "rarity": "legendary",
+      "file": "/skins/pharah/aviator.jpg"
+    },
+    {
+      "key": "beach-rescue",
+      "name": "Beach Rescue",
+      "rarity": "legendary",
+      "file": "/skins/pharah/beach-rescue.jpg"
+    },
+    {
+      "key": "bedouin",
+      "name": "Bedouin",
+      "rarity": "legendary",
+      "file": "/skins/pharah/bedouin.jpg"
+    },
+    {
+      "key": "crimson-court",
+      "name": "Crimson Court",
+      "rarity": "legendary",
+      "file": "/skins/pharah/crimson-court.jpg"
+    },
+    {
+      "key": "dragon-hunter",
+      "name": "Dragon Hunter",
+      "rarity": "legendary",
+      "file": "/skins/pharah/dragon-hunter.jpg"
+    },
+    {
+      "key": "enchanted-armor",
+      "name": "Enchanted Armor",
+      "rarity": "legendary",
+      "file": "/skins/pharah/enchanted-armor.jpg"
+    },
+    {
+      "key": "hades",
+      "name": "Hades",
+      "rarity": "legendary",
+      "file": "/skins/pharah/hades.jpg"
+    },
+    {
+      "key": "inarius",
+      "name": "Inarius",
+      "rarity": "legendary",
+      "file": "/skins/pharah/inarius.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "legendary",
+      "file": "/skins/pharah/lifeguard.jpg"
+    },
+    {
+      "key": "malachite",
+      "name": "Malachite",
+      "rarity": "legendary",
+      "file": "/skins/pharah/malachite.jpg"
+    },
+    {
+      "key": "mechaqueen",
+      "name": "Mechaqueen",
+      "rarity": "legendary",
+      "file": "/skins/pharah/mechaqueen.jpg"
+    },
+    {
+      "key": "mechatron",
+      "name": "Mechatron",
+      "rarity": "legendary",
+      "file": "/skins/pharah/mechatron.jpg"
+    },
+    {
+      "key": "music-festival",
+      "name": "Music Festival",
+      "rarity": "legendary",
+      "file": "/skins/pharah/music-festival.jpg"
+    },
+    {
+      "key": "nefertari",
+      "name": "Nefertari",
+      "rarity": "legendary",
+      "file": "/skins/pharah/nefertari.jpg"
+    },
+    {
+      "key": "nutcracker",
+      "name": "Nutcracker",
+      "rarity": "legendary",
+      "file": "/skins/pharah/nutcracker.jpg"
+    },
+    {
+      "key": "orbital",
+      "name": "Orbital",
+      "rarity": "legendary",
+      "file": "/skins/pharah/orbital.jpg"
+    },
+    {
+      "key": "p-900-warhead",
+      "name": "P-900 Warhead",
+      "rarity": "legendary",
+      "file": "/skins/pharah/p-900-warhead.jpg"
+    },
+    {
+      "key": "porsche",
+      "name": "Porsche",
+      "rarity": "legendary",
+      "file": "/skins/pharah/porsche.jpg"
+    },
+    {
+      "key": "qinglong",
+      "name": "Qinglong",
+      "rarity": "legendary",
+      "file": "/skins/pharah/qinglong.jpg"
+    },
+    {
+      "key": "raindancer",
+      "name": "Raindancer",
+      "rarity": "legendary",
+      "file": "/skins/pharah/raindancer.jpg"
+    },
+    {
+      "key": "raptorion",
+      "name": "Raptorion",
+      "rarity": "legendary",
+      "file": "/skins/pharah/raptorion.jpg"
+    },
+    {
+      "key": "security-chief",
+      "name": "Security Chief",
+      "rarity": "legendary",
+      "file": "/skins/pharah/security-chief.jpg"
+    },
+    {
+      "key": "sky-centurion",
+      "name": "Sky Centurion",
+      "rarity": "legendary",
+      "file": "/skins/pharah/sky-centurion.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/pharah/streetwear.jpg"
+    },
+    {
+      "key": "thunderbird",
+      "name": "Thunderbird",
+      "rarity": "legendary",
+      "file": "/skins/pharah/thunderbird.jpg"
+    },
+    {
+      "key": "anubis",
+      "name": "Anubis",
+      "rarity": "epic",
+      "file": "/skins/pharah/anubis.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/pharah/carbon-fiber.jpg"
+    },
+    {
+      "key": "devil",
+      "name": "Devil",
+      "rarity": "epic",
+      "file": "/skins/pharah/devil.jpg"
+    },
+    {
+      "key": "frostbite",
+      "name": "Frostbite",
+      "rarity": "epic",
+      "file": "/skins/pharah/frostbite.jpg"
+    },
+    {
+      "key": "jackal",
+      "name": "Jackal",
+      "rarity": "epic",
+      "file": "/skins/pharah/jackal.jpg"
+    },
+    {
+      "key": "possessed",
+      "name": "Possessed",
+      "rarity": "epic",
+      "file": "/skins/pharah/possessed.jpg"
+    },
+    {
+      "key": "punk",
+      "name": "Punk",
+      "rarity": "epic",
+      "file": "/skins/pharah/punk.jpg"
+    },
+    {
+      "key": "sunset",
+      "name": "Sunset",
+      "rarity": "epic",
+      "file": "/skins/pharah/sunset.jpg"
+    }
+  ],
+  "ramattra": [
+    {
+      "key": "biohazard",
+      "name": "Biohazard",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/biohazard.jpg"
+    },
+    {
+      "key": "diesel-baron",
+      "name": "Diesel Baron",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/diesel-baron.jpg"
+    },
+    {
+      "key": "epyon",
+      "name": "Epyon",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/epyon.jpg"
+    },
+    {
+      "key": "megatron",
+      "name": "Megatron",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/megatron.jpg"
+    },
+    {
+      "key": "necromancer",
+      "name": "Necromancer",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/necromancer.jpg"
+    },
+    {
+      "key": "ocean-king",
+      "name": "Ocean King",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/ocean-king.jpg"
+    },
+    {
+      "key": "poseidon",
+      "name": "Poseidon",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/poseidon.jpg"
+    },
+    {
+      "key": "r-7k-preserver",
+      "name": "R-7K Preserver",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/r-7k-preserver.jpg"
+    },
+    {
+      "key": "summoner",
+      "name": "Summoner",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/summoner.jpg"
+    },
+    {
+      "key": "travelling-monk",
+      "name": "Travelling Monk",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/travelling-monk.jpg"
+    },
+    {
+      "key": "wandering-monk",
+      "name": "Wandering Monk",
+      "rarity": "legendary",
+      "file": "/skins/ramattra/wandering-monk.jpg"
+    },
+    {
+      "key": "construction",
+      "name": "Construction",
+      "rarity": "epic",
+      "file": "/skins/ramattra/construction.jpg"
+    },
+    {
+      "key": "crazy-raccoon",
+      "name": "Crazy Raccoon",
+      "rarity": "epic",
+      "file": "/skins/ramattra/crazy-raccoon.jpg"
+    },
+    {
+      "key": "gen-g",
+      "name": "Gen.G",
+      "rarity": "epic",
+      "file": "/skins/ramattra/gen-g.jpg"
+    },
+    {
+      "key": "jade-totem",
+      "name": "Jade Totem",
+      "rarity": "epic",
+      "file": "/skins/ramattra/jade-totem.jpg"
+    },
+    {
+      "key": "kabuki",
+      "name": "Kabuki",
+      "rarity": "epic",
+      "file": "/skins/ramattra/kabuki.jpg"
+    },
+    {
+      "key": "primordial",
+      "name": "Primordial",
+      "rarity": "epic",
+      "file": "/skins/ramattra/primordial.jpg"
+    },
+    {
+      "key": "spacestation-gaming",
+      "name": "Spacestation Gaming",
+      "rarity": "epic",
+      "file": "/skins/ramattra/spacestation-gaming.jpg"
+    },
+    {
+      "key": "t1",
+      "name": "T1",
+      "rarity": "epic",
+      "file": "/skins/ramattra/t1.jpg"
+    },
+    {
+      "key": "team-falcons",
+      "name": "Team Falcons",
+      "rarity": "epic",
+      "file": "/skins/ramattra/team-falcons.jpg"
+    },
+    {
+      "key": "team-liquid",
+      "name": "Team Liquid",
+      "rarity": "epic",
+      "file": "/skins/ramattra/team-liquid.jpg"
+    },
+    {
+      "key": "twisted-minds",
+      "name": "Twisted Minds",
+      "rarity": "epic",
+      "file": "/skins/ramattra/twisted-minds.jpg"
+    },
+    {
+      "key": "virtus-pro",
+      "name": "Virtus.pro",
+      "rarity": "epic",
+      "file": "/skins/ramattra/virtus-pro.jpg"
+    },
+    {
+      "key": "zeta-division",
+      "name": "Zeta Division",
+      "rarity": "epic",
+      "file": "/skins/ramattra/zeta-division.jpg"
+    }
+  ],
+  "reaper": [
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/reaper/8-bit.jpg"
+    },
+    {
+      "key": "anti-hero",
+      "name": "Anti-Hero",
+      "rarity": "legendary",
+      "file": "/skins/reaper/anti-hero.jpg"
+    },
+    {
+      "key": "biker",
+      "name": "Biker",
+      "rarity": "legendary",
+      "file": "/skins/reaper/biker.jpg"
+    },
+    {
+      "key": "blackwatch-reyes",
+      "name": "Blackwatch Reyes",
+      "rarity": "legendary",
+      "file": "/skins/reaper/blackwatch-reyes.jpg"
+    },
+    {
+      "key": "cardboard",
+      "name": "Cardboard",
+      "rarity": "legendary",
+      "file": "/skins/reaper/cardboard.jpg"
+    },
+    {
+      "key": "chained-king",
+      "name": "Chained King",
+      "rarity": "legendary",
+      "file": "/skins/reaper/chained-king.jpg"
+    },
+    {
+      "key": "chasa",
+      "name": "Chasa",
+      "rarity": "legendary",
+      "file": "/skins/reaper/chasa.jpg"
+    },
+    {
+      "key": "cobra-commander",
+      "name": "Cobra Commander",
+      "rarity": "legendary",
+      "file": "/skins/reaper/cobra-commander.jpg"
+    },
+    {
+      "key": "cursed-captain",
+      "name": "Cursed Captain",
+      "rarity": "legendary",
+      "file": "/skins/reaper/cursed-captain.jpg"
+    },
+    {
+      "key": "deathscythe",
+      "name": "Deathscythe",
+      "rarity": "legendary",
+      "file": "/skins/reaper/deathscythe.jpg"
+    },
+    {
+      "key": "dracula",
+      "name": "Dracula",
+      "rarity": "legendary",
+      "file": "/skins/reaper/dracula.jpg"
+    },
+    {
+      "key": "dusk",
+      "name": "Dusk",
+      "rarity": "legendary",
+      "file": "/skins/reaper/dusk.jpg"
+    },
+    {
+      "key": "eagle-warrior",
+      "name": "Eagle Warrior",
+      "rarity": "legendary",
+      "file": "/skins/reaper/eagle-warrior.jpg"
+    },
+    {
+      "key": "el-blanco",
+      "name": "El Blanco",
+      "rarity": "legendary",
+      "file": "/skins/reaper/el-blanco.jpg"
+    },
+    {
+      "key": "emotional",
+      "name": "Emotional",
+      "rarity": "legendary",
+      "file": "/skins/reaper/emotional.jpg"
+    },
+    {
+      "key": "evermore",
+      "name": "Evermore",
+      "rarity": "legendary",
+      "file": "/skins/reaper/evermore.jpg"
+    },
+    {
+      "key": "frost-lich",
+      "name": "Frost Lich",
+      "rarity": "legendary",
+      "file": "/skins/reaper/frost-lich.jpg"
+    },
+    {
+      "key": "hazmat",
+      "name": "Hazmat",
+      "rarity": "legendary",
+      "file": "/skins/reaper/hazmat.jpg"
+    },
+    {
+      "key": "heartbreaker",
+      "name": "Heartbreaker",
+      "rarity": "legendary",
+      "file": "/skins/reaper/heartbreaker.jpg"
+    },
+    {
+      "key": "heist",
+      "name": "Heist",
+      "rarity": "legendary",
+      "file": "/skins/reaper/heist.jpg"
+    },
+    {
+      "key": "lion-luchador",
+      "name": "Lion Luchador",
+      "rarity": "legendary",
+      "file": "/skins/reaper/lion-luchador.jpg"
+    },
+    {
+      "key": "l-bu",
+      "name": "Lü Bu",
+      "rarity": "legendary",
+      "file": "/skins/reaper/l-bu.jpg"
+    },
+    {
+      "key": "luchador",
+      "name": "Luchador",
+      "rarity": "legendary",
+      "file": "/skins/reaper/luchador.jpg"
+    },
+    {
+      "key": "mariachi",
+      "name": "Mariachi",
+      "rarity": "legendary",
+      "file": "/skins/reaper/mariachi.jpg"
+    },
+    {
+      "key": "masquerade",
+      "name": "Masquerade",
+      "rarity": "legendary",
+      "file": "/skins/reaper/masquerade.jpg"
+    },
+    {
+      "key": "nevermore",
+      "name": "Nevermore",
+      "rarity": "legendary",
+      "file": "/skins/reaper/nevermore.jpg"
+    },
+    {
+      "key": "oni",
+      "name": "Oni",
+      "rarity": "legendary",
+      "file": "/skins/reaper/oni.jpg"
+    },
+    {
+      "key": "plague-doctor",
+      "name": "Plague Doctor",
+      "rarity": "legendary",
+      "file": "/skins/reaper/plague-doctor.jpg"
+    },
+    {
+      "key": "pumpkin",
+      "name": "Pumpkin",
+      "rarity": "legendary",
+      "file": "/skins/reaper/pumpkin.jpg"
+    },
+    {
+      "key": "rat-king",
+      "name": "Rat King",
+      "rarity": "legendary",
+      "file": "/skins/reaper/rat-king.jpg"
+    },
+    {
+      "key": "solaris",
+      "name": "Solaris",
+      "rarity": "legendary",
+      "file": "/skins/reaper/solaris.jpg"
+    },
+    {
+      "key": "stadium-all-star",
+      "name": "Stadium All-Star",
+      "rarity": "legendary",
+      "file": "/skins/reaper/stadium-all-star.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/reaper/streetwear.jpg"
+    },
+    {
+      "key": "tiger-luchador",
+      "name": "Tiger Luchador",
+      "rarity": "legendary",
+      "file": "/skins/reaper/tiger-luchador.jpg"
+    },
+    {
+      "key": "tomura-shigaraki",
+      "name": "Tomura Shigaraki",
+      "rarity": "legendary",
+      "file": "/skins/reaper/tomura-shigaraki.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "legendary",
+      "file": "/skins/reaper/ultrawatch.jpg"
+    },
+    {
+      "key": "american",
+      "name": "American",
+      "rarity": "epic",
+      "file": "/skins/reaper/american.jpg"
+    },
+    {
+      "key": "calavera",
+      "name": "Calavera",
+      "rarity": "epic",
+      "file": "/skins/reaper/calavera.jpg"
+    },
+    {
+      "key": "desert",
+      "name": "Desert",
+      "rarity": "epic",
+      "file": "/skins/reaper/desert.jpg"
+    },
+    {
+      "key": "fenrir",
+      "name": "Fenrir",
+      "rarity": "epic",
+      "file": "/skins/reaper/fenrir.jpg"
+    },
+    {
+      "key": "grim-effigy",
+      "name": "Grim Effigy",
+      "rarity": "epic",
+      "file": "/skins/reaper/grim-effigy.jpg"
+    },
+    {
+      "key": "hellfire",
+      "name": "Hellfire",
+      "rarity": "epic",
+      "file": "/skins/reaper/hellfire.jpg"
+    },
+    {
+      "key": "imperial-guard",
+      "name": "Imperial Guard",
+      "rarity": "epic",
+      "file": "/skins/reaper/imperial-guard.jpg"
+    },
+    {
+      "key": "nebula",
+      "name": "Nebula",
+      "rarity": "epic",
+      "file": "/skins/reaper/nebula.jpg"
+    },
+    {
+      "key": "ringleader",
+      "name": "Ringleader",
+      "rarity": "epic",
+      "file": "/skins/reaper/ringleader.jpg"
+    },
+    {
+      "key": "shiver",
+      "name": "Shiver",
+      "rarity": "epic",
+      "file": "/skins/reaper/shiver.jpg"
+    },
+    {
+      "key": "wight",
+      "name": "Wight",
+      "rarity": "epic",
+      "file": "/skins/reaper/wight.jpg"
+    }
+  ],
+  "reinhardt": [
+    {
+      "key": "2020-atlantic-all-stars",
+      "name": "2020 Atlantic All-Stars",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/2020-atlantic-all-stars.jpg"
+    },
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/8-bit.jpg"
+    },
+    {
+      "key": "all-might",
+      "name": "All Might",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/all-might.jpg"
+    },
+    {
+      "key": "balderich",
+      "name": "Balderich",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/balderich.jpg"
+    },
+    {
+      "key": "blackhardt",
+      "name": "Blackhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/blackhardt.jpg"
+    },
+    {
+      "key": "bloodhardt",
+      "name": "Bloodhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/bloodhardt.jpg"
+    },
+    {
+      "key": "cardboard",
+      "name": "Cardboard",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/cardboard.jpg"
+    },
+    {
+      "key": "conductor",
+      "name": "Conductor",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/conductor.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/cosmic.jpg"
+    },
+    {
+      "key": "crusader",
+      "name": "Crusader",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/crusader.jpg"
+    },
+    {
+      "key": "demon-lord",
+      "name": "Demon Lord",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/demon-lord.jpg"
+    },
+    {
+      "key": "draugr",
+      "name": "Draugr",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/draugr.jpg"
+    },
+    {
+      "key": "elysian-keeper",
+      "name": "Elysian Keeper",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/elysian-keeper.jpg"
+    },
+    {
+      "key": "fallen-knight",
+      "name": "Fallen Knight",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/fallen-knight.jpg"
+    },
+    {
+      "key": "greifhardt",
+      "name": "Greifhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/greifhardt.jpg"
+    },
+    {
+      "key": "gridironhardt",
+      "name": "Gridironhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/gridironhardt.jpg"
+    },
+    {
+      "key": "guan-yu",
+      "name": "Guan Yu",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/guan-yu.jpg"
+    },
+    {
+      "key": "heavens-devil",
+      "name": "Heaven's Devil",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/heavens-devil.jpg"
+    },
+    {
+      "key": "imperius",
+      "name": "Imperius",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/imperius.jpg"
+    },
+    {
+      "key": "lich-king",
+      "name": "Lich King",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/lich-king.jpg"
+    },
+    {
+      "key": "lionhardt",
+      "name": "Lionhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/lionhardt.jpg"
+    },
+    {
+      "key": "minotaur",
+      "name": "Minotaur",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/minotaur.jpg"
+    },
+    {
+      "key": "one-eyed-wilhelm",
+      "name": "One-Eyed Wilhelm",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/one-eyed-wilhelm.jpg"
+    },
+    {
+      "key": "optimus-prime",
+      "name": "Optimus Prime",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/optimus-prime.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/polar.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/poolside.jpg"
+    },
+    {
+      "key": "raynhardt",
+      "name": "Raynhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/raynhardt.jpg"
+    },
+    {
+      "key": "rosahardt",
+      "name": "Rosahardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/rosahardt.jpg"
+    },
+    {
+      "key": "stadium-all-star",
+      "name": "Stadium All-Star",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/stadium-all-star.jpg"
+    },
+    {
+      "key": "steelhardt",
+      "name": "Steelhardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/steelhardt.jpg"
+    },
+    {
+      "key": "stonehardt",
+      "name": "Stonehardt",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/stonehardt.jpg"
+    },
+    {
+      "key": "wrapping-paper",
+      "name": "Wrapping Paper",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/wrapping-paper.jpg"
+    },
+    {
+      "key": "wujing",
+      "name": "Wujing",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/wujing.jpg"
+    },
+    {
+      "key": "zengzhang-tianwang",
+      "name": "Zengzhang Tianwang",
+      "rarity": "legendary",
+      "file": "/skins/reinhardt/zengzhang-tianwang.jpg"
+    },
+    {
+      "key": "borealis",
+      "name": "Borealis",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/borealis.jpg"
+    },
+    {
+      "key": "bundesadler",
+      "name": "Bundesadler",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/bundesadler.jpg"
+    },
+    {
+      "key": "bundeswehr",
+      "name": "Bundeswehr",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/bundeswehr.jpg"
+    },
+    {
+      "key": "coldhardt",
+      "name": "Coldhardt",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/coldhardt.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/elite.jpg"
+    },
+    {
+      "key": "festive",
+      "name": "Festive",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/festive.jpg"
+    },
+    {
+      "key": "lieutenant-wilhelm",
+      "name": "Lieutenant Wilhelm",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/lieutenant-wilhelm.jpg"
+    },
+    {
+      "key": "prideful",
+      "name": "Prideful",
+      "rarity": "epic",
+      "file": "/skins/reinhardt/prideful.jpg"
+    }
+  ],
+  "roadhog": [
+    {
+      "key": "bajie",
+      "name": "Bajie",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/bajie.jpg"
+    },
+    {
+      "key": "butcher",
+      "name": "Butcher",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/butcher.jpg"
+    },
+    {
+      "key": "cyberhog",
+      "name": "Cyberhog",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/cyberhog.jpg"
+    },
+    {
+      "key": "cyclops",
+      "name": "Cyclops",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/cyclops.jpg"
+    },
+    {
+      "key": "heist",
+      "name": "Heist",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/heist.jpg"
+    },
+    {
+      "key": "horror-hog",
+      "name": "Horror Hog",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/horror-hog.jpg"
+    },
+    {
+      "key": "ice-fisherman",
+      "name": "Ice Fisherman",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/ice-fisherman.jpg"
+    },
+    {
+      "key": "islander",
+      "name": "Islander",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/islander.jpg"
+    },
+    {
+      "key": "junkensteins-monster",
+      "name": "Junkenstein's Monster",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/junkensteins-monster.jpg"
+    },
+    {
+      "key": "kaiju",
+      "name": "Kaiju",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/kaiju.jpg"
+    },
+    {
+      "key": "lacrosse",
+      "name": "Lacrosse",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/lacrosse.jpg"
+    },
+    {
+      "key": "lifeguard",
+      "name": "Lifeguard",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/lifeguard.jpg"
+    },
+    {
+      "key": "lily",
+      "name": "Lily",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/lily.jpg"
+    },
+    {
+      "key": "mako",
+      "name": "Mako",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/mako.jpg"
+    },
+    {
+      "key": "midas",
+      "name": "Midas",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/midas.jpg"
+    },
+    {
+      "key": "militia",
+      "name": "Militia",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/militia.jpg"
+    },
+    {
+      "key": "noxious",
+      "name": "Noxious",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/noxious.jpg"
+    },
+    {
+      "key": "polar-hog",
+      "name": "Polar Hog",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/polar-hog.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/rainy-day.jpg"
+    },
+    {
+      "key": "roadbot",
+      "name": "Roadbot",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/roadbot.jpg"
+    },
+    {
+      "key": "sharkbait",
+      "name": "Sharkbait",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/sharkbait.jpg"
+    },
+    {
+      "key": "tanuki",
+      "name": "Tanuki",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/tanuki.jpg"
+    },
+    {
+      "key": "toa",
+      "name": "Toa",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/toa.jpg"
+    },
+    {
+      "key": "toxic",
+      "name": "Toxic",
+      "rarity": "legendary",
+      "file": "/skins/roadhog/toxic.jpg"
+    },
+    {
+      "key": "cairn",
+      "name": "Cairn",
+      "rarity": "epic",
+      "file": "/skins/roadhog/cairn.jpg"
+    },
+    {
+      "key": "clown",
+      "name": "Clown",
+      "rarity": "epic",
+      "file": "/skins/roadhog/clown.jpg"
+    },
+    {
+      "key": "haunted-doll",
+      "name": "Haunted Doll",
+      "rarity": "epic",
+      "file": "/skins/roadhog/haunted-doll.jpg"
+    },
+    {
+      "key": "pachimari",
+      "name": "Pachimari",
+      "rarity": "epic",
+      "file": "/skins/roadhog/pachimari.jpg"
+    },
+    {
+      "key": "pigpen",
+      "name": "Pigpen",
+      "rarity": "epic",
+      "file": "/skins/roadhog/pigpen.jpg"
+    },
+    {
+      "key": "rudolph",
+      "name": "Rudolph",
+      "rarity": "epic",
+      "file": "/skins/roadhog/rudolph.jpg"
+    },
+    {
+      "key": "stitched",
+      "name": "Stitched",
+      "rarity": "epic",
+      "file": "/skins/roadhog/stitched.jpg"
+    }
+  ],
+  "sigma": [
+    {
+      "key": "archangel",
+      "name": "Archangel",
+      "rarity": "legendary",
+      "file": "/skins/sigma/archangel.jpg"
+    },
+    {
+      "key": "asylum",
+      "name": "Asylum",
+      "rarity": "legendary",
+      "file": "/skins/sigma/asylum.jpg"
+    },
+    {
+      "key": "beekeeper",
+      "name": "Beekeeper",
+      "rarity": "legendary",
+      "file": "/skins/sigma/beekeeper.jpg"
+    },
+    {
+      "key": "beholder",
+      "name": "Beholder",
+      "rarity": "legendary",
+      "file": "/skins/sigma/beholder.jpg"
+    },
+    {
+      "key": "bronze-drake",
+      "name": "Bronze Drake",
+      "rarity": "legendary",
+      "file": "/skins/sigma/bronze-drake.jpg"
+    },
+    {
+      "key": "captain",
+      "name": "Captain",
+      "rarity": "legendary",
+      "file": "/skins/sigma/captain.jpg"
+    },
+    {
+      "key": "chiguo-tianwang",
+      "name": "Chiguo Tianwang",
+      "rarity": "legendary",
+      "file": "/skins/sigma/chiguo-tianwang.jpg"
+    },
+    {
+      "key": "flying-dutchman",
+      "name": "Flying Dutchman",
+      "rarity": "legendary",
+      "file": "/skins/sigma/flying-dutchman.jpg"
+    },
+    {
+      "key": "maestro",
+      "name": "Maestro",
+      "rarity": "legendary",
+      "file": "/skins/sigma/maestro.jpg"
+    },
+    {
+      "key": "monstrosus",
+      "name": "Monstrosus",
+      "rarity": "legendary",
+      "file": "/skins/sigma/monstrosus.jpg"
+    },
+    {
+      "key": "odin",
+      "name": "Odin",
+      "rarity": "legendary",
+      "file": "/skins/sigma/odin.jpg"
+    },
+    {
+      "key": "oracle",
+      "name": "Oracle",
+      "rarity": "legendary",
+      "file": "/skins/sigma/oracle.jpg"
+    },
+    {
+      "key": "plunderer",
+      "name": "Plunderer",
+      "rarity": "legendary",
+      "file": "/skins/sigma/plunderer.jpg"
+    },
+    {
+      "key": "professor-de-kuiper",
+      "name": "Professor De Kuiper",
+      "rarity": "legendary",
+      "file": "/skins/sigma/professor-de-kuiper.jpg"
+    },
+    {
+      "key": "prophet",
+      "name": "Prophet",
+      "rarity": "legendary",
+      "file": "/skins/sigma/prophet.jpg"
+    },
+    {
+      "key": "rime",
+      "name": "Rime",
+      "rarity": "legendary",
+      "file": "/skins/sigma/rime.jpg"
+    },
+    {
+      "key": "scuba",
+      "name": "Scuba",
+      "rarity": "legendary",
+      "file": "/skins/sigma/scuba.jpg"
+    },
+    {
+      "key": "subject-sigma",
+      "name": "Subject Sigma",
+      "rarity": "legendary",
+      "file": "/skins/sigma/subject-sigma.jpg"
+    },
+    {
+      "key": "valhalla",
+      "name": "Valhalla",
+      "rarity": "legendary",
+      "file": "/skins/sigma/valhalla.jpg"
+    },
+    {
+      "key": "voidwalker",
+      "name": "Voidwalker",
+      "rarity": "legendary",
+      "file": "/skins/sigma/voidwalker.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/sigma/carbon-fiber.jpg"
+    },
+    {
+      "key": "dr-de-kuiper",
+      "name": "Dr. De Kuiper",
+      "rarity": "epic",
+      "file": "/skins/sigma/dr-de-kuiper.jpg"
+    },
+    {
+      "key": "drowned-warrior",
+      "name": "Drowned Warrior",
+      "rarity": "epic",
+      "file": "/skins/sigma/drowned-warrior.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/sigma/elite.jpg"
+    },
+    {
+      "key": "galactic",
+      "name": "Galactic",
+      "rarity": "epic",
+      "file": "/skins/sigma/galactic.jpg"
+    },
+    {
+      "key": "m-bison",
+      "name": "M. Bison",
+      "rarity": "epic",
+      "file": "/skins/sigma/m-bison.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "epic",
+      "file": "/skins/sigma/talon.jpg"
+    }
+  ],
+  "sojourn": [
+    {
+      "key": "captain-chase",
+      "name": "Captain Chase",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/captain-chase.jpg"
+    },
+    {
+      "key": "commando",
+      "name": "Commando",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/commando.jpg"
+    },
+    {
+      "key": "cozy",
+      "name": "Cozy",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/cozy.jpg"
+    },
+    {
+      "key": "cyber-detective",
+      "name": "Cyber Detective",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/cyber-detective.jpg"
+    },
+    {
+      "key": "formalwear",
+      "name": "Formalwear",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/formalwear.jpg"
+    },
+    {
+      "key": "instructor-chase",
+      "name": "Instructor Chase",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/instructor-chase.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/new-era.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/polar.jpg"
+    },
+    {
+      "key": "polaris",
+      "name": "Polaris",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/polaris.jpg"
+    },
+    {
+      "key": "sea-soldier",
+      "name": "Sea Soldier",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/sea-soldier.jpg"
+    },
+    {
+      "key": "troop-commander",
+      "name": "Troop Commander",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/troop-commander.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/ultrawatch.jpg"
+    },
+    {
+      "key": "vigilante",
+      "name": "Vigilante",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/vigilante.jpg"
+    },
+    {
+      "key": "water-warrior",
+      "name": "Water Warrior",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/water-warrior.jpg"
+    },
+    {
+      "key": "witchbane",
+      "name": "Witchbane",
+      "rarity": "legendary",
+      "file": "/skins/sojourn/witchbane.jpg"
+    },
+    {
+      "key": "barista",
+      "name": "Barista",
+      "rarity": "epic",
+      "file": "/skins/sojourn/barista.jpg"
+    },
+    {
+      "key": "firefighter",
+      "name": "Firefighter",
+      "rarity": "epic",
+      "file": "/skins/sojourn/firefighter.jpg"
+    },
+    {
+      "key": "infinite-admiral",
+      "name": "Infinite Admiral",
+      "rarity": "epic",
+      "file": "/skins/sojourn/infinite-admiral.jpg"
+    },
+    {
+      "key": "night-ops",
+      "name": "Night Ops",
+      "rarity": "epic",
+      "file": "/skins/sojourn/night-ops.jpg"
+    },
+    {
+      "key": "runner",
+      "name": "Runner",
+      "rarity": "epic",
+      "file": "/skins/sojourn/runner.jpg"
+    }
+  ],
+  "soldier-76": [
+    {
+      "key": "alpine-76",
+      "name": "Alpine: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/alpine-76.jpg"
+    },
+    {
+      "key": "biker-76",
+      "name": "Biker: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/biker-76.jpg"
+    },
+    {
+      "key": "bug-hero",
+      "name": "Bug Hero",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/bug-hero.jpg"
+    },
+    {
+      "key": "charming-76",
+      "name": "Charming: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/charming-76.jpg"
+    },
+    {
+      "key": "class-president-76",
+      "name": "Class President: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/class-president-76.jpg"
+    },
+    {
+      "key": "colder-76",
+      "name": "Colder: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/colder-76.jpg"
+    },
+    {
+      "key": "commando-76",
+      "name": "Commando: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/commando-76.jpg"
+    },
+    {
+      "key": "cyborg-76",
+      "name": "Cyborg: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/cyborg-76.jpg"
+    },
+    {
+      "key": "daredevil-76",
+      "name": "Daredevil: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/daredevil-76.jpg"
+    },
+    {
+      "key": "flamebound",
+      "name": "Flamebound",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/flamebound.jpg"
+    },
+    {
+      "key": "formal-76",
+      "name": "Formal: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/formal-76.jpg"
+    },
+    {
+      "key": "fuel-biker-76",
+      "name": "Fuel Biker: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/fuel-biker-76.jpg"
+    },
+    {
+      "key": "grill-zombie-76",
+      "name": "Grill Zombie: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/grill-zombie-76.jpg"
+    },
+    {
+      "key": "grillmaster-76",
+      "name": "Grillmaster: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/grillmaster-76.jpg"
+    },
+    {
+      "key": "guile",
+      "name": "Guile",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/guile.jpg"
+    },
+    {
+      "key": "heist",
+      "name": "Heist",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/heist.jpg"
+    },
+    {
+      "key": "huntsman-76",
+      "name": "Huntsman: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/huntsman-76.jpg"
+    },
+    {
+      "key": "infinite-guard-76",
+      "name": "Infinite Guard: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/infinite-guard-76.jpg"
+    },
+    {
+      "key": "magepunk",
+      "name": "Magepunk",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/magepunk.jpg"
+    },
+    {
+      "key": "mayhem-biker-76",
+      "name": "Mayhem Biker: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/mayhem-biker-76.jpg"
+    },
+    {
+      "key": "mumen-rider",
+      "name": "Mumen Rider",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/mumen-rider.jpg"
+    },
+    {
+      "key": "night-ops-76",
+      "name": "Night Ops: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/night-ops-76.jpg"
+    },
+    {
+      "key": "proteus-76",
+      "name": "Proteus: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/proteus-76.jpg"
+    },
+    {
+      "key": "robber",
+      "name": "Robber",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/robber.jpg"
+    },
+    {
+      "key": "slasher-76",
+      "name": "Slasher: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/slasher-76.jpg"
+    },
+    {
+      "key": "space-raider",
+      "name": "Space Raider",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/space-raider.jpg"
+    },
+    {
+      "key": "strike-commander-morrison",
+      "name": "Strike Commander Morrison",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/strike-commander-morrison.jpg"
+    },
+    {
+      "key": "stunt-rider-76",
+      "name": "Stunt Rider: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/stunt-rider-76.jpg"
+    },
+    {
+      "key": "survivor-76",
+      "name": "Survivor: 76",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/survivor-76.jpg"
+    },
+    {
+      "key": "tallgeese",
+      "name": "Tallgeese",
+      "rarity": "legendary",
+      "file": "/skins/soldier-76/tallgeese.jpg"
+    },
+    {
+      "key": "auspicious",
+      "name": "Auspicious",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/auspicious.jpg"
+    },
+    {
+      "key": "bone",
+      "name": "Bone",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/bone.jpg"
+    },
+    {
+      "key": "crimson-clown",
+      "name": "Crimson Clown",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/crimson-clown.jpg"
+    },
+    {
+      "key": "gladiator",
+      "name": "Gladiator",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/gladiator.jpg"
+    },
+    {
+      "key": "golden",
+      "name": "Golden",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/golden.jpg"
+    },
+    {
+      "key": "golfer-76",
+      "name": "Golfer: 76",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/golfer-76.jpg"
+    },
+    {
+      "key": "immortal",
+      "name": "Immortal",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/immortal.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "rookie",
+      "name": "Rookie",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/rookie.jpg"
+    },
+    {
+      "key": "ugly-sweater-76",
+      "name": "Ugly Sweater: 76",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/ugly-sweater-76.jpg"
+    },
+    {
+      "key": "venom",
+      "name": "Venom",
+      "rarity": "epic",
+      "file": "/skins/soldier-76/venom.jpg"
+    }
+  ],
+  "sombra": [
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/sombra/8-bit.jpg"
+    },
+    {
+      "key": "antifragile-slay-star",
+      "name": "Antifragile Slay Star",
+      "rarity": "legendary",
+      "file": "/skins/sombra/antifragile-slay-star.jpg"
+    },
+    {
+      "key": "augmented",
+      "name": "Augmented",
+      "rarity": "legendary",
+      "file": "/skins/sombra/augmented.jpg"
+    },
+    {
+      "key": "aztec",
+      "name": "Aztec",
+      "rarity": "legendary",
+      "file": "/skins/sombra/aztec.jpg"
+    },
+    {
+      "key": "az-car",
+      "name": "Azúcar",
+      "rarity": "legendary",
+      "file": "/skins/sombra/az-car.jpg"
+    },
+    {
+      "key": "bian-lian",
+      "name": "Bian Lian",
+      "rarity": "legendary",
+      "file": "/skins/sombra/bian-lian.jpg"
+    },
+    {
+      "key": "black-cat",
+      "name": "Black Cat",
+      "rarity": "legendary",
+      "file": "/skins/sombra/black-cat.jpg"
+    },
+    {
+      "key": "blue-flame",
+      "name": "Blue Flame",
+      "rarity": "legendary",
+      "file": "/skins/sombra/blue-flame.jpg"
+    },
+    {
+      "key": "bride",
+      "name": "Bride",
+      "rarity": "legendary",
+      "file": "/skins/sombra/bride.jpg"
+    },
+    {
+      "key": "cyberspace",
+      "name": "Cyberspace",
+      "rarity": "legendary",
+      "file": "/skins/sombra/cyberspace.jpg"
+    },
+    {
+      "key": "demon-hunter",
+      "name": "Demon Hunter",
+      "rarity": "legendary",
+      "file": "/skins/sombra/demon-hunter.jpg"
+    },
+    {
+      "key": "ed",
+      "name": "Ed",
+      "rarity": "legendary",
+      "file": "/skins/sombra/ed.jpg"
+    },
+    {
+      "key": "face-changer",
+      "name": "Face Changer",
+      "rarity": "legendary",
+      "file": "/skins/sombra/face-changer.jpg"
+    },
+    {
+      "key": "loki",
+      "name": "Loki",
+      "rarity": "legendary",
+      "file": "/skins/sombra/loki.jpg"
+    },
+    {
+      "key": "los-muertos",
+      "name": "Los Muertos",
+      "rarity": "legendary",
+      "file": "/skins/sombra/los-muertos.jpg"
+    },
+    {
+      "key": "magma",
+      "name": "Magma",
+      "rarity": "legendary",
+      "file": "/skins/sombra/magma.jpg"
+    },
+    {
+      "key": "marioneta",
+      "name": "Marioneta",
+      "rarity": "legendary",
+      "file": "/skins/sombra/marioneta.jpg"
+    },
+    {
+      "key": "music-festival",
+      "name": "Music Festival",
+      "rarity": "legendary",
+      "file": "/skins/sombra/music-festival.jpg"
+    },
+    {
+      "key": "neon-cat",
+      "name": "Neon Cat",
+      "rarity": "legendary",
+      "file": "/skins/sombra/neon-cat.jpg"
+    },
+    {
+      "key": "ninja",
+      "name": "Ninja",
+      "rarity": "legendary",
+      "file": "/skins/sombra/ninja.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/sombra/rainy-day.jpg"
+    },
+    {
+      "key": "rime",
+      "name": "Rime",
+      "rarity": "legendary",
+      "file": "/skins/sombra/rime.jpg"
+    },
+    {
+      "key": "sigyn",
+      "name": "Sigyn",
+      "rarity": "legendary",
+      "file": "/skins/sombra/sigyn.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "legendary",
+      "file": "/skins/sombra/streetwear.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "legendary",
+      "file": "/skins/sombra/talon.jpg"
+    },
+    {
+      "key": "tulum",
+      "name": "Tulum",
+      "rarity": "legendary",
+      "file": "/skins/sombra/tulum.jpg"
+    },
+    {
+      "key": "tuxedo-cat",
+      "name": "Tuxedo Cat",
+      "rarity": "legendary",
+      "file": "/skins/sombra/tuxedo-cat.jpg"
+    },
+    {
+      "key": "zhulong",
+      "name": "Zhulong",
+      "rarity": "legendary",
+      "file": "/skins/sombra/zhulong.jpg"
+    },
+    {
+      "key": "agent-colomar",
+      "name": "Agent Colomar",
+      "rarity": "epic",
+      "file": "/skins/sombra/agent-colomar.jpg"
+    },
+    {
+      "key": "fantasma",
+      "name": "Fantasma",
+      "rarity": "epic",
+      "file": "/skins/sombra/fantasma.jpg"
+    },
+    {
+      "key": "folkl-rica",
+      "name": "Folklórica",
+      "rarity": "epic",
+      "file": "/skins/sombra/folkl-rica.jpg"
+    },
+    {
+      "key": "glitch",
+      "name": "Glitch",
+      "rarity": "epic",
+      "file": "/skins/sombra/glitch.jpg"
+    },
+    {
+      "key": "jester",
+      "name": "Jester",
+      "rarity": "epic",
+      "file": "/skins/sombra/jester.jpg"
+    },
+    {
+      "key": "mexicana",
+      "name": "Mexicana",
+      "rarity": "epic",
+      "file": "/skins/sombra/mexicana.jpg"
+    },
+    {
+      "key": "nightshade",
+      "name": "Nightshade",
+      "rarity": "epic",
+      "file": "/skins/sombra/nightshade.jpg"
+    },
+    {
+      "key": "oro",
+      "name": "Oro",
+      "rarity": "epic",
+      "file": "/skins/sombra/oro.jpg"
+    },
+    {
+      "key": "peppermint",
+      "name": "Peppermint",
+      "rarity": "epic",
+      "file": "/skins/sombra/peppermint.jpg"
+    },
+    {
+      "key": "quicksilver",
+      "name": "Quicksilver",
+      "rarity": "epic",
+      "file": "/skins/sombra/quicksilver.jpg"
+    },
+    {
+      "key": "virus",
+      "name": "Virus",
+      "rarity": "epic",
+      "file": "/skins/sombra/virus.jpg"
+    }
+  ],
+  "symmetra": [
+    {
+      "key": "architech",
+      "name": "Architech",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/architech.jpg"
+    },
+    {
+      "key": "art-deco",
+      "name": "Art Deco",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/art-deco.jpg"
+    },
+    {
+      "key": "celestial",
+      "name": "Celestial",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/celestial.jpg"
+    },
+    {
+      "key": "devi",
+      "name": "Devi",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/devi.jpg"
+    },
+    {
+      "key": "dragon",
+      "name": "Dragon",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/dragon.jpg"
+    },
+    {
+      "key": "figure-skater",
+      "name": "Figure Skater",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/figure-skater.jpg"
+    },
+    {
+      "key": "goddess",
+      "name": "Goddess",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/goddess.jpg"
+    },
+    {
+      "key": "hydra",
+      "name": "Hydra",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/hydra.jpg"
+    },
+    {
+      "key": "ice-princess",
+      "name": "Ice Princess",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/ice-princess.jpg"
+    },
+    {
+      "key": "infernal-witch",
+      "name": "Infernal Witch",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/infernal-witch.jpg"
+    },
+    {
+      "key": "junker",
+      "name": "Junker",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/junker.jpg"
+    },
+    {
+      "key": "magepunk",
+      "name": "Magepunk",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/magepunk.jpg"
+    },
+    {
+      "key": "magician",
+      "name": "Magician",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/magician.jpg"
+    },
+    {
+      "key": "mermaid",
+      "name": "Mermaid",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/mermaid.jpg"
+    },
+    {
+      "key": "oasis",
+      "name": "Oasis",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/oasis.jpg"
+    },
+    {
+      "key": "pink-lotus",
+      "name": "Pink Lotus",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/pink-lotus.jpg"
+    },
+    {
+      "key": "romanic",
+      "name": "Romanic",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/romanic.jpg"
+    },
+    {
+      "key": "s-900-sentry",
+      "name": "S-900 Sentry",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/s-900-sentry.jpg"
+    },
+    {
+      "key": "sindorei",
+      "name": "Sin'dorei",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/sindorei.jpg"
+    },
+    {
+      "key": "tyrande",
+      "name": "Tyrande",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/tyrande.jpg"
+    },
+    {
+      "key": "vishkar",
+      "name": "Vishkar",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/vishkar.jpg"
+    },
+    {
+      "key": "xalatath",
+      "name": "Xal'atath",
+      "rarity": "legendary",
+      "file": "/skins/symmetra/xalatath.jpg"
+    },
+    {
+      "key": "butterfly",
+      "name": "Butterfly",
+      "rarity": "epic",
+      "file": "/skins/symmetra/butterfly.jpg"
+    },
+    {
+      "key": "cobra-queen",
+      "name": "Cobra Queen",
+      "rarity": "epic",
+      "file": "/skins/symmetra/cobra-queen.jpg"
+    },
+    {
+      "key": "conjurer",
+      "name": "Conjurer",
+      "rarity": "epic",
+      "file": "/skins/symmetra/conjurer.jpg"
+    },
+    {
+      "key": "gardener",
+      "name": "Gardener",
+      "rarity": "epic",
+      "file": "/skins/symmetra/gardener.jpg"
+    },
+    {
+      "key": "holi",
+      "name": "Holi",
+      "rarity": "epic",
+      "file": "/skins/symmetra/holi.jpg"
+    },
+    {
+      "key": "ice-crystal",
+      "name": "Ice Crystal",
+      "rarity": "epic",
+      "file": "/skins/symmetra/ice-crystal.jpg"
+    },
+    {
+      "key": "marammat",
+      "name": "Marammat",
+      "rarity": "epic",
+      "file": "/skins/symmetra/marammat.jpg"
+    },
+    {
+      "key": "mistletoe",
+      "name": "Mistletoe",
+      "rarity": "epic",
+      "file": "/skins/symmetra/mistletoe.jpg"
+    },
+    {
+      "key": "peacock",
+      "name": "Peacock",
+      "rarity": "epic",
+      "file": "/skins/symmetra/peacock.jpg"
+    },
+    {
+      "key": "qipao",
+      "name": "Qipao",
+      "rarity": "epic",
+      "file": "/skins/symmetra/qipao.jpg"
+    },
+    {
+      "key": "regal",
+      "name": "Regal",
+      "rarity": "epic",
+      "file": "/skins/symmetra/regal.jpg"
+    },
+    {
+      "key": "utopaea",
+      "name": "Utopaea",
+      "rarity": "epic",
+      "file": "/skins/symmetra/utopaea.jpg"
+    },
+    {
+      "key": "vampire",
+      "name": "Vampire",
+      "rarity": "epic",
+      "file": "/skins/symmetra/vampire.jpg"
+    }
+  ],
+  "torbjorn": [
+    {
+      "key": "barbarossa",
+      "name": "Barbarossa",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/barbarossa.jpg"
+    },
+    {
+      "key": "blackbeard",
+      "name": "Blackbeard",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/blackbeard.jpg"
+    },
+    {
+      "key": "captain",
+      "name": "Captain",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/captain.jpg"
+    },
+    {
+      "key": "chief-engineer-lindholm",
+      "name": "Chief Engineer Lindholm",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/chief-engineer-lindholm.jpg"
+    },
+    {
+      "key": "chopper",
+      "name": "Chopper",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/chopper.jpg"
+    },
+    {
+      "key": "cybj-rn",
+      "name": "Cybjörn",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/cybj-rn.jpg"
+    },
+    {
+      "key": "deadlock",
+      "name": "Deadlock",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/deadlock.jpg"
+    },
+    {
+      "key": "diamond-magni",
+      "name": "Diamond Magni",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/diamond-magni.jpg"
+    },
+    {
+      "key": "drowned",
+      "name": "Drowned",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/drowned.jpg"
+    },
+    {
+      "key": "gnome",
+      "name": "Gnome",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/gnome.jpg"
+    },
+    {
+      "key": "ironclad",
+      "name": "Ironclad",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/ironclad.jpg"
+    },
+    {
+      "key": "lumberjack",
+      "name": "Lumberjack",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/lumberjack.jpg"
+    },
+    {
+      "key": "magni",
+      "name": "Magni",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/magni.jpg"
+    },
+    {
+      "key": "norse",
+      "name": "Norse",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/norse.jpg"
+    },
+    {
+      "key": "prospector",
+      "name": "Prospector",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/prospector.jpg"
+    },
+    {
+      "key": "santaclad",
+      "name": "Santaclad",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/santaclad.jpg"
+    },
+    {
+      "key": "starship-engineer",
+      "name": "Starship Engineer",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/starship-engineer.jpg"
+    },
+    {
+      "key": "surf-n-splash",
+      "name": "Surf 'n' Splash",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/surf-n-splash.jpg"
+    },
+    {
+      "key": "tentacle-horror",
+      "name": "Tentacle Horror",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/tentacle-horror.jpg"
+    },
+    {
+      "key": "viking",
+      "name": "Viking",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/viking.jpg"
+    },
+    {
+      "key": "zhang-fei",
+      "name": "Zhang Fei",
+      "rarity": "legendary",
+      "file": "/skins/torbjorn/zhang-fei.jpg"
+    },
+    {
+      "key": "cathode",
+      "name": "Cathode",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/cathode.jpg"
+    },
+    {
+      "key": "cursed-candle",
+      "name": "Cursed Candle",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/cursed-candle.jpg"
+    },
+    {
+      "key": "dark-iron",
+      "name": "Dark Iron",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/dark-iron.jpg"
+    },
+    {
+      "key": "rustclad",
+      "name": "Rustclad",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/rustclad.jpg"
+    },
+    {
+      "key": "sindri",
+      "name": "Sindri",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/sindri.jpg"
+    },
+    {
+      "key": "spring-fairy",
+      "name": "Spring Fairy",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/spring-fairy.jpg"
+    },
+    {
+      "key": "steampunk",
+      "name": "Steampunk",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/steampunk.jpg"
+    },
+    {
+      "key": "tre-kronor",
+      "name": "Tre Kronor",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/tre-kronor.jpg"
+    },
+    {
+      "key": "woodclad",
+      "name": "Woodclad",
+      "rarity": "epic",
+      "file": "/skins/torbjorn/woodclad.jpg"
+    }
+  ],
+  "tracer": [
+    {
+      "key": "2018-atlantic-all-stars",
+      "name": "2018 Atlantic All-Stars",
+      "rarity": "legendary",
+      "file": "/skins/tracer/2018-atlantic-all-stars.jpg"
+    },
+    {
+      "key": "antifragile-traysi",
+      "name": "Antifragile Traysi",
+      "rarity": "legendary",
+      "file": "/skins/tracer/antifragile-traysi.jpg"
+    },
+    {
+      "key": "black-cat",
+      "name": "Black Cat",
+      "rarity": "legendary",
+      "file": "/skins/tracer/black-cat.jpg"
+    },
+    {
+      "key": "blue-flame",
+      "name": "Blue Flame",
+      "rarity": "legendary",
+      "file": "/skins/tracer/blue-flame.jpg"
+    },
+    {
+      "key": "cadet-oxton",
+      "name": "Cadet Oxton",
+      "rarity": "legendary",
+      "file": "/skins/tracer/cadet-oxton.jpg"
+    },
+    {
+      "key": "cavalry",
+      "name": "Cavalry",
+      "rarity": "legendary",
+      "file": "/skins/tracer/cavalry.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/tracer/cosmic.jpg"
+    },
+    {
+      "key": "deku",
+      "name": "Deku",
+      "rarity": "legendary",
+      "file": "/skins/tracer/deku.jpg"
+    },
+    {
+      "key": "evening-wear",
+      "name": "Evening Wear",
+      "rarity": "legendary",
+      "file": "/skins/tracer/evening-wear.jpg"
+    },
+    {
+      "key": "flamebound",
+      "name": "Flamebound",
+      "rarity": "legendary",
+      "file": "/skins/tracer/flamebound.jpg"
+    },
+    {
+      "key": "formalwear",
+      "name": "Formalwear",
+      "rarity": "legendary",
+      "file": "/skins/tracer/formalwear.jpg"
+    },
+    {
+      "key": "graffiti",
+      "name": "Graffiti",
+      "rarity": "legendary",
+      "file": "/skins/tracer/graffiti.jpg"
+    },
+    {
+      "key": "hong-gildong",
+      "name": "Hong Gildong",
+      "rarity": "legendary",
+      "file": "/skins/tracer/hong-gildong.jpg"
+    },
+    {
+      "key": "instructor-oxton",
+      "name": "Instructor Oxton",
+      "rarity": "legendary",
+      "file": "/skins/tracer/instructor-oxton.jpg"
+    },
+    {
+      "key": "jingle",
+      "name": "Jingle",
+      "rarity": "legendary",
+      "file": "/skins/tracer/jingle.jpg"
+    },
+    {
+      "key": "mach-t",
+      "name": "Mach T",
+      "rarity": "legendary",
+      "file": "/skins/tracer/mach-t.jpg"
+    },
+    {
+      "key": "neon-streets",
+      "name": "Neon Streets",
+      "rarity": "legendary",
+      "file": "/skins/tracer/neon-streets.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "legendary",
+      "file": "/skins/tracer/new-era.jpg"
+    },
+    {
+      "key": "nezha",
+      "name": "Nezha",
+      "rarity": "legendary",
+      "file": "/skins/tracer/nezha.jpg"
+    },
+    {
+      "key": "operative-oxton",
+      "name": "Operative Oxton",
+      "rarity": "legendary",
+      "file": "/skins/tracer/operative-oxton.jpg"
+    },
+    {
+      "key": "polar",
+      "name": "Polar",
+      "rarity": "legendary",
+      "file": "/skins/tracer/polar.jpg"
+    },
+    {
+      "key": "punk",
+      "name": "Punk",
+      "rarity": "legendary",
+      "file": "/skins/tracer/punk.jpg"
+    },
+    {
+      "key": "rainy-day",
+      "name": "Rainy Day",
+      "rarity": "legendary",
+      "file": "/skins/tracer/rainy-day.jpg"
+    },
+    {
+      "key": "reindeer",
+      "name": "Reindeer",
+      "rarity": "legendary",
+      "file": "/skins/tracer/reindeer.jpg"
+    },
+    {
+      "key": "slipstream",
+      "name": "Slipstream",
+      "rarity": "legendary",
+      "file": "/skins/tracer/slipstream.jpg"
+    },
+    {
+      "key": "sprinter",
+      "name": "Sprinter",
+      "rarity": "legendary",
+      "file": "/skins/tracer/sprinter.jpg"
+    },
+    {
+      "key": "street-urchin",
+      "name": "Street Urchin",
+      "rarity": "legendary",
+      "file": "/skins/tracer/street-urchin.jpg"
+    },
+    {
+      "key": "t-racer",
+      "name": "T.Racer",
+      "rarity": "legendary",
+      "file": "/skins/tracer/t-racer.jpg"
+    },
+    {
+      "key": "tagged",
+      "name": "Tagged",
+      "rarity": "legendary",
+      "file": "/skins/tracer/tagged.jpg"
+    },
+    {
+      "key": "track-and-field",
+      "name": "Track and Field",
+      "rarity": "legendary",
+      "file": "/skins/tracer/track-and-field.jpg"
+    },
+    {
+      "key": "ultraviolet",
+      "name": "Ultraviolet",
+      "rarity": "legendary",
+      "file": "/skins/tracer/ultraviolet.jpg"
+    },
+    {
+      "key": "will-o-wisp",
+      "name": "Will-O'-Wisp",
+      "rarity": "legendary",
+      "file": "/skins/tracer/will-o-wisp.jpg"
+    },
+    {
+      "key": "cold-front",
+      "name": "Cold Front",
+      "rarity": "epic",
+      "file": "/skins/tracer/cold-front.jpg"
+    },
+    {
+      "key": "comic-book",
+      "name": "Comic Book",
+      "rarity": "epic",
+      "file": "/skins/tracer/comic-book.jpg"
+    },
+    {
+      "key": "constable",
+      "name": "Constable",
+      "rarity": "epic",
+      "file": "/skins/tracer/constable.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/tracer/elite.jpg"
+    },
+    {
+      "key": "hero-of-heart",
+      "name": "Hero of Heart",
+      "rarity": "epic",
+      "file": "/skins/tracer/hero-of-heart.jpg"
+    },
+    {
+      "key": "lightning",
+      "name": "Lightning",
+      "rarity": "epic",
+      "file": "/skins/tracer/lightning.jpg"
+    },
+    {
+      "key": "posh",
+      "name": "Posh",
+      "rarity": "epic",
+      "file": "/skins/tracer/posh.jpg"
+    },
+    {
+      "key": "rose",
+      "name": "Rose",
+      "rarity": "epic",
+      "file": "/skins/tracer/rose.jpg"
+    },
+    {
+      "key": "sporty",
+      "name": "Sporty",
+      "rarity": "epic",
+      "file": "/skins/tracer/sporty.jpg"
+    },
+    {
+      "key": "spring-fairy",
+      "name": "Spring Fairy",
+      "rarity": "epic",
+      "file": "/skins/tracer/spring-fairy.jpg"
+    },
+    {
+      "key": "streetwear",
+      "name": "Streetwear",
+      "rarity": "epic",
+      "file": "/skins/tracer/streetwear.jpg"
+    },
+    {
+      "key": "synthwave",
+      "name": "Synthwave",
+      "rarity": "epic",
+      "file": "/skins/tracer/synthwave.jpg"
+    },
+    {
+      "key": "union-jack",
+      "name": "Union Jack",
+      "rarity": "epic",
+      "file": "/skins/tracer/union-jack.jpg"
+    },
+    {
+      "key": "wooltide",
+      "name": "Wooltide",
+      "rarity": "epic",
+      "file": "/skins/tracer/wooltide.jpg"
+    }
+  ],
+  "vendetta": [
+    {
+      "key": "a2",
+      "name": "A2",
+      "rarity": "legendary",
+      "file": "/skins/vendetta/a2.jpg"
+    },
+    {
+      "key": "exo-pant6ra",
+      "name": "exo-PANT6RA",
+      "rarity": "legendary",
+      "file": "/skins/vendetta/exo-pant6ra.jpg"
+    },
+    {
+      "key": "high-society",
+      "name": "High Society",
+      "rarity": "legendary",
+      "file": "/skins/vendetta/high-society.jpg"
+    },
+    {
+      "key": "new-empire",
+      "name": "New Empire",
+      "rarity": "legendary",
+      "file": "/skins/vendetta/new-empire.jpg"
+    }
+  ],
+  "venture": [
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "legendary",
+      "file": "/skins/venture/8-bit.jpg"
+    },
+    {
+      "key": "celestial",
+      "name": "Celestial",
+      "rarity": "legendary",
+      "file": "/skins/venture/celestial.jpg"
+    },
+    {
+      "key": "toph",
+      "name": "Toph",
+      "rarity": "legendary",
+      "file": "/skins/venture/toph.jpg"
+    },
+    {
+      "key": "toxic",
+      "name": "Toxic",
+      "rarity": "legendary",
+      "file": "/skins/venture/toxic.jpg"
+    },
+    {
+      "key": "voidwalker",
+      "name": "Voidwalker",
+      "rarity": "legendary",
+      "file": "/skins/venture/voidwalker.jpg"
+    },
+    {
+      "key": "away-owcs",
+      "name": "Away OWCS",
+      "rarity": "epic",
+      "file": "/skins/venture/away-owcs.jpg"
+    },
+    {
+      "key": "crazy-raccoon",
+      "name": "Crazy Raccoon",
+      "rarity": "epic",
+      "file": "/skins/venture/crazy-raccoon.jpg"
+    },
+    {
+      "key": "cursed-mummy",
+      "name": "Cursed Mummy",
+      "rarity": "epic",
+      "file": "/skins/venture/cursed-mummy.jpg"
+    },
+    {
+      "key": "gen-g",
+      "name": "Gen.G",
+      "rarity": "epic",
+      "file": "/skins/venture/gen-g.jpg"
+    },
+    {
+      "key": "ice-cream",
+      "name": "Ice Cream",
+      "rarity": "epic",
+      "file": "/skins/venture/ice-cream.jpg"
+    },
+    {
+      "key": "masked-rose",
+      "name": "Masked Rose",
+      "rarity": "epic",
+      "file": "/skins/venture/masked-rose.jpg"
+    },
+    {
+      "key": "owcs",
+      "name": "OWCS",
+      "rarity": "epic",
+      "file": "/skins/venture/owcs.jpg"
+    },
+    {
+      "key": "spacestation-gaming",
+      "name": "Spacestation Gaming",
+      "rarity": "epic",
+      "file": "/skins/venture/spacestation-gaming.jpg"
+    },
+    {
+      "key": "t1",
+      "name": "T1",
+      "rarity": "epic",
+      "file": "/skins/venture/t1.jpg"
+    },
+    {
+      "key": "team-falcons",
+      "name": "Team Falcons",
+      "rarity": "epic",
+      "file": "/skins/venture/team-falcons.jpg"
+    },
+    {
+      "key": "team-liquid",
+      "name": "Team Liquid",
+      "rarity": "epic",
+      "file": "/skins/venture/team-liquid.jpg"
+    },
+    {
+      "key": "twisted-minds",
+      "name": "Twisted Minds",
+      "rarity": "epic",
+      "file": "/skins/venture/twisted-minds.jpg"
+    },
+    {
+      "key": "virtus-pro",
+      "name": "Virtus.pro",
+      "rarity": "epic",
+      "file": "/skins/venture/virtus-pro.jpg"
+    },
+    {
+      "key": "zeta-division",
+      "name": "Zeta Division",
+      "rarity": "epic",
+      "file": "/skins/venture/zeta-division.jpg"
+    }
+  ],
+  "widowmaker": [
+    {
+      "key": "ange-de-la-mort",
+      "name": "Ange de la Mort",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/ange-de-la-mort.jpg"
+    },
+    {
+      "key": "baroness",
+      "name": "Baroness",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/baroness.jpg"
+    },
+    {
+      "key": "biathlon",
+      "name": "Biathlon",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/biathlon.jpg"
+    },
+    {
+      "key": "black-lily",
+      "name": "Black Lily",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/black-lily.jpg"
+    },
+    {
+      "key": "cammy",
+      "name": "Cammy",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/cammy.jpg"
+    },
+    {
+      "key": "captain-lacroix",
+      "name": "Captain Lacroix",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/captain-lacroix.jpg"
+    },
+    {
+      "key": "comtesse",
+      "name": "Comtesse",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/comtesse.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/cosmic.jpg"
+    },
+    {
+      "key": "c-te-dazur",
+      "name": "Côte d'Azur",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/c-te-dazur.jpg"
+    },
+    {
+      "key": "crimson-court",
+      "name": "Crimson Court",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/crimson-court.jpg"
+    },
+    {
+      "key": "cyber-fiend",
+      "name": "Cyber Fiend",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/cyber-fiend.jpg"
+    },
+    {
+      "key": "cyberdevil",
+      "name": "Cyberdevil",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/cyberdevil.jpg"
+    },
+    {
+      "key": "dryad",
+      "name": "Dryad",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/dryad.jpg"
+    },
+    {
+      "key": "euryale",
+      "name": "Euryale",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/euryale.jpg"
+    },
+    {
+      "key": "femme-fatale",
+      "name": "Femme Fatale",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/femme-fatale.jpg"
+    },
+    {
+      "key": "ghostly-bride",
+      "name": "Ghostly Bride",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/ghostly-bride.jpg"
+    },
+    {
+      "key": "heart-of-grace",
+      "name": "Heart of Grace",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/heart-of-grace.jpg"
+    },
+    {
+      "key": "huntress",
+      "name": "Huntress",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/huntress.jpg"
+    },
+    {
+      "key": "jade-serpent",
+      "name": "Jade Serpent",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/jade-serpent.jpg"
+    },
+    {
+      "key": "kerrigan",
+      "name": "Kerrigan",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/kerrigan.jpg"
+    },
+    {
+      "key": "kuromi-skin",
+      "name": "Kuromi Skin",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/kuromi-skin.jpg"
+    },
+    {
+      "key": "medusa",
+      "name": "Medusa",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/medusa.jpg"
+    },
+    {
+      "key": "mousquetaire",
+      "name": "Mousquetaire",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/mousquetaire.jpg"
+    },
+    {
+      "key": "noire",
+      "name": "Noire",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/noire.jpg"
+    },
+    {
+      "key": "nova",
+      "name": "Nova",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/nova.jpg"
+    },
+    {
+      "key": "odette",
+      "name": "Odette",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/odette.jpg"
+    },
+    {
+      "key": "odile",
+      "name": "Odile",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/odile.jpg"
+    },
+    {
+      "key": "pale-serpent",
+      "name": "Pale Serpent",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/pale-serpent.jpg"
+    },
+    {
+      "key": "principal-lacroix",
+      "name": "Principal Lacroix",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/principal-lacroix.jpg"
+    },
+    {
+      "key": "rose-lily",
+      "name": "Rose Lily",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/rose-lily.jpg"
+    },
+    {
+      "key": "saint-tropez",
+      "name": "Saint-Tropez",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/saint-tropez.jpg"
+    },
+    {
+      "key": "scorpion",
+      "name": "Scorpion",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/scorpion.jpg"
+    },
+    {
+      "key": "sylvanas",
+      "name": "Sylvanas",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/sylvanas.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/talon.jpg"
+    },
+    {
+      "key": "vampire-bride",
+      "name": "Vampire Bride",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/vampire-bride.jpg"
+    },
+    {
+      "key": "wild-tracker",
+      "name": "Wild Tracker",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/wild-tracker.jpg"
+    },
+    {
+      "key": "winter-chic",
+      "name": "Winter Chic",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/winter-chic.jpg"
+    },
+    {
+      "key": "yuki-onna",
+      "name": "Yuki-Onna",
+      "rarity": "legendary",
+      "file": "/skins/widowmaker/yuki-onna.jpg"
+    },
+    {
+      "key": "electric",
+      "name": "Electric",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/electric.jpg"
+    },
+    {
+      "key": "endless-sight",
+      "name": "Endless Sight",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/endless-sight.jpg"
+    },
+    {
+      "key": "harlequin",
+      "name": "Harlequin",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/harlequin.jpg"
+    },
+    {
+      "key": "overwatch-league-gray",
+      "name": "Overwatch League Gray",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/overwatch-league-gray.jpg"
+    },
+    {
+      "key": "patina",
+      "name": "Patina",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/patina.jpg"
+    },
+    {
+      "key": "spider",
+      "name": "Spider",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/spider.jpg"
+    },
+    {
+      "key": "tricolore",
+      "name": "Tricolore",
+      "rarity": "epic",
+      "file": "/skins/widowmaker/tricolore.jpg"
+    }
+  ],
+  "winston": [
+    {
+      "key": "blanka",
+      "name": "Blanka",
+      "rarity": "legendary",
+      "file": "/skins/winston/blanka.jpg"
+    },
+    {
+      "key": "catcher",
+      "name": "Catcher",
+      "rarity": "legendary",
+      "file": "/skins/winston/catcher.jpg"
+    },
+    {
+      "key": "explorer",
+      "name": "Explorer",
+      "rarity": "legendary",
+      "file": "/skins/winston/explorer.jpg"
+    },
+    {
+      "key": "extraterrestrial",
+      "name": "Extraterrestrial",
+      "rarity": "legendary",
+      "file": "/skins/winston/extraterrestrial.jpg"
+    },
+    {
+      "key": "flying-ace",
+      "name": "Flying Ace",
+      "rarity": "legendary",
+      "file": "/skins/winston/flying-ace.jpg"
+    },
+    {
+      "key": "frogston",
+      "name": "Frogston",
+      "rarity": "legendary",
+      "file": "/skins/winston/frogston.jpg"
+    },
+    {
+      "key": "gargoyle",
+      "name": "Gargoyle",
+      "rarity": "legendary",
+      "file": "/skins/winston/gargoyle.jpg"
+    },
+    {
+      "key": "lab-technician",
+      "name": "Lab Technician",
+      "rarity": "legendary",
+      "file": "/skins/winston/lab-technician.jpg"
+    },
+    {
+      "key": "ringmaster",
+      "name": "Ringmaster",
+      "rarity": "legendary",
+      "file": "/skins/winston/ringmaster.jpg"
+    },
+    {
+      "key": "safari",
+      "name": "Safari",
+      "rarity": "legendary",
+      "file": "/skins/winston/safari.jpg"
+    },
+    {
+      "key": "siege",
+      "name": "Siege",
+      "rarity": "legendary",
+      "file": "/skins/winston/siege.jpg"
+    },
+    {
+      "key": "specimen-28",
+      "name": "Specimen 28",
+      "rarity": "legendary",
+      "file": "/skins/winston/specimen-28.jpg"
+    },
+    {
+      "key": "toxic",
+      "name": "Toxic",
+      "rarity": "legendary",
+      "file": "/skins/winston/toxic.jpg"
+    },
+    {
+      "key": "undersea",
+      "name": "Undersea",
+      "rarity": "legendary",
+      "file": "/skins/winston/undersea.jpg"
+    },
+    {
+      "key": "werewolf",
+      "name": "Werewolf",
+      "rarity": "legendary",
+      "file": "/skins/winston/werewolf.jpg"
+    },
+    {
+      "key": "wukong",
+      "name": "Wukong",
+      "rarity": "legendary",
+      "file": "/skins/winston/wukong.jpg"
+    },
+    {
+      "key": "yeti",
+      "name": "Yeti",
+      "rarity": "legendary",
+      "file": "/skins/winston/yeti.jpg"
+    },
+    {
+      "key": "ancient-bronze",
+      "name": "Ancient Bronze",
+      "rarity": "epic",
+      "file": "/skins/winston/ancient-bronze.jpg"
+    },
+    {
+      "key": "blizzcon-2017",
+      "name": "BlizzCon 2017",
+      "rarity": "epic",
+      "file": "/skins/winston/blizzcon-2017.jpg"
+    },
+    {
+      "key": "desert",
+      "name": "Desert",
+      "rarity": "epic",
+      "file": "/skins/winston/desert.jpg"
+    },
+    {
+      "key": "horizon",
+      "name": "Horizon",
+      "rarity": "epic",
+      "file": "/skins/winston/horizon.jpg"
+    },
+    {
+      "key": "monkey-business",
+      "name": "Monkey Business",
+      "rarity": "epic",
+      "file": "/skins/winston/monkey-business.jpg"
+    },
+    {
+      "key": "ocean-king",
+      "name": "Ocean King",
+      "rarity": "epic",
+      "file": "/skins/winston/ocean-king.jpg"
+    },
+    {
+      "key": "tactical",
+      "name": "Tactical",
+      "rarity": "epic",
+      "file": "/skins/winston/tactical.jpg"
+    },
+    {
+      "key": "ugly-sweater",
+      "name": "Ugly Sweater",
+      "rarity": "epic",
+      "file": "/skins/winston/ugly-sweater.jpg"
+    }
+  ],
+  "wrecking-ball": [
+    {
+      "key": "azmodan",
+      "name": "Azmodan",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/azmodan.jpg"
+    },
+    {
+      "key": "crustacean",
+      "name": "Crustacean",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/crustacean.jpg"
+    },
+    {
+      "key": "deep-sea",
+      "name": "Deep Sea",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/deep-sea.jpg"
+    },
+    {
+      "key": "ein",
+      "name": "Ein",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/ein.jpg"
+    },
+    {
+      "key": "horizon",
+      "name": "Horizon",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/horizon.jpg"
+    },
+    {
+      "key": "jack-o-lantern",
+      "name": "Jack-O'-Lantern",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/jack-o-lantern.jpg"
+    },
+    {
+      "key": "junker",
+      "name": "Junker",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/junker.jpg"
+    },
+    {
+      "key": "l-cioball",
+      "name": "Lúcioball",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/l-cioball.jpg"
+    },
+    {
+      "key": "lunar",
+      "name": "Lunar",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/lunar.jpg"
+    },
+    {
+      "key": "mayham",
+      "name": "Mayham",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/mayham.jpg"
+    },
+    {
+      "key": "snowman",
+      "name": "Snowman",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/snowman.jpg"
+    },
+    {
+      "key": "submarine",
+      "name": "Submarine",
+      "rarity": "legendary",
+      "file": "/skins/wrecking-ball/submarine.jpg"
+    },
+    {
+      "key": "8-ball",
+      "name": "8 Ball",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/8-ball.jpg"
+    },
+    {
+      "key": "asteroid",
+      "name": "Asteroid",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/asteroid.jpg"
+    },
+    {
+      "key": "biohazard",
+      "name": "Biohazard",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/biohazard.jpg"
+    },
+    {
+      "key": "critter-egg",
+      "name": "Critter Egg",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/critter-egg.jpg"
+    },
+    {
+      "key": "high-roller",
+      "name": "High Roller",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/high-roller.jpg"
+    },
+    {
+      "key": "honeycomb",
+      "name": "Honeycomb",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/honeycomb.jpg"
+    },
+    {
+      "key": "paper-cutting",
+      "name": "Paper Cutting",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/paper-cutting.jpg"
+    },
+    {
+      "key": "porcelain",
+      "name": "Porcelain",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/porcelain.jpg"
+    },
+    {
+      "key": "sakura",
+      "name": "Sakura",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/sakura.jpg"
+    },
+    {
+      "key": "sugar-bomb",
+      "name": "Sugar Bomb",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/sugar-bomb.jpg"
+    },
+    {
+      "key": "ultrawatch",
+      "name": "Ultrawatch",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/ultrawatch.jpg"
+    },
+    {
+      "key": "watermelon",
+      "name": "Watermelon",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/watermelon.jpg"
+    },
+    {
+      "key": "wooden-ball",
+      "name": "Wooden Ball",
+      "rarity": "epic",
+      "file": "/skins/wrecking-ball/wooden-ball.jpg"
+    }
+  ],
+  "wuyang": [
+    {
+      "key": "9s",
+      "name": "9S",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/9s.jpg"
+    },
+    {
+      "key": "borealis",
+      "name": "Borealis",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/borealis.jpg"
+    },
+    {
+      "key": "cozy",
+      "name": "Cozy",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/cozy.jpg"
+    },
+    {
+      "key": "elysian-keeper",
+      "name": "Elysian Keeper",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/elysian-keeper.jpg"
+    },
+    {
+      "key": "garou",
+      "name": "Garou",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/garou.jpg"
+    },
+    {
+      "key": "joker",
+      "name": "Joker",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/joker.jpg"
+    },
+    {
+      "key": "mermonster",
+      "name": "Mermonster",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/mermonster.jpg"
+    },
+    {
+      "key": "poolside",
+      "name": "Poolside",
+      "rarity": "legendary",
+      "file": "/skins/wuyang/poolside.jpg"
+    },
+    {
+      "key": "away-owcs",
+      "name": "Away OWCS",
+      "rarity": "epic",
+      "file": "/skins/wuyang/away-owcs.jpg"
+    },
+    {
+      "key": "owcs",
+      "name": "OWCS",
+      "rarity": "epic",
+      "file": "/skins/wuyang/owcs.jpg"
+    }
+  ],
+  "zarya": [
+    {
+      "key": "alien",
+      "name": "Alien",
+      "rarity": "legendary",
+      "file": "/skins/zarya/alien.jpg"
+    },
+    {
+      "key": "apocalypse",
+      "name": "Apocalypse",
+      "rarity": "legendary",
+      "file": "/skins/zarya/apocalypse.jpg"
+    },
+    {
+      "key": "apocalypse-trainer",
+      "name": "Apocalypse Trainer",
+      "rarity": "legendary",
+      "file": "/skins/zarya/apocalypse-trainer.jpg"
+    },
+    {
+      "key": "arctic",
+      "name": "Arctic",
+      "rarity": "legendary",
+      "file": "/skins/zarya/arctic.jpg"
+    },
+    {
+      "key": "barbarian",
+      "name": "Barbarian",
+      "rarity": "legendary",
+      "file": "/skins/zarya/barbarian.jpg"
+    },
+    {
+      "key": "champion",
+      "name": "Champion",
+      "rarity": "legendary",
+      "file": "/skins/zarya/champion.jpg"
+    },
+    {
+      "key": "charged-climber",
+      "name": "Charged Climber",
+      "rarity": "legendary",
+      "file": "/skins/zarya/charged-climber.jpg"
+    },
+    {
+      "key": "cyber-enforcer",
+      "name": "Cyber Enforcer",
+      "rarity": "legendary",
+      "file": "/skins/zarya/cyber-enforcer.jpg"
+    },
+    {
+      "key": "cybergoth",
+      "name": "Cybergoth",
+      "rarity": "legendary",
+      "file": "/skins/zarya/cybergoth.jpg"
+    },
+    {
+      "key": "cyberian",
+      "name": "Cyberian",
+      "rarity": "legendary",
+      "file": "/skins/zarya/cyberian.jpg"
+    },
+    {
+      "key": "cybervision",
+      "name": "Cybervision",
+      "rarity": "legendary",
+      "file": "/skins/zarya/cybervision.jpg"
+    },
+    {
+      "key": "industrial",
+      "name": "Industrial",
+      "rarity": "legendary",
+      "file": "/skins/zarya/industrial.jpg"
+    },
+    {
+      "key": "reigning-climber",
+      "name": "Reigning Climber",
+      "rarity": "legendary",
+      "file": "/skins/zarya/reigning-climber.jpg"
+    },
+    {
+      "key": "rock-climber",
+      "name": "Rock Climber",
+      "rarity": "legendary",
+      "file": "/skins/zarya/rock-climber.jpg"
+    },
+    {
+      "key": "siberian-front",
+      "name": "Siberian Front",
+      "rarity": "legendary",
+      "file": "/skins/zarya/siberian-front.jpg"
+    },
+    {
+      "key": "snowboarder",
+      "name": "Snowboarder",
+      "rarity": "legendary",
+      "file": "/skins/zarya/snowboarder.jpg"
+    },
+    {
+      "key": "totally-80s",
+      "name": "Totally 80's",
+      "rarity": "legendary",
+      "file": "/skins/zarya/totally-80s.jpg"
+    },
+    {
+      "key": "weightlifter",
+      "name": "Weightlifter",
+      "rarity": "legendary",
+      "file": "/skins/zarya/weightlifter.jpg"
+    },
+    {
+      "key": "workout",
+      "name": "Workout",
+      "rarity": "legendary",
+      "file": "/skins/zarya/workout.jpg"
+    },
+    {
+      "key": "xuanwu",
+      "name": "Xuanwu",
+      "rarity": "legendary",
+      "file": "/skins/zarya/xuanwu.jpg"
+    },
+    {
+      "key": "apep",
+      "name": "Apep",
+      "rarity": "epic",
+      "file": "/skins/zarya/apep.jpg"
+    },
+    {
+      "key": "dawn",
+      "name": "Dawn",
+      "rarity": "epic",
+      "file": "/skins/zarya/dawn.jpg"
+    },
+    {
+      "key": "einherjar",
+      "name": "Einherjar",
+      "rarity": "epic",
+      "file": "/skins/zarya/einherjar.jpg"
+    },
+    {
+      "key": "frosted",
+      "name": "Frosted",
+      "rarity": "epic",
+      "file": "/skins/zarya/frosted.jpg"
+    },
+    {
+      "key": "frozen",
+      "name": "Frozen",
+      "rarity": "epic",
+      "file": "/skins/zarya/frozen.jpg"
+    },
+    {
+      "key": "midnight",
+      "name": "Midnight",
+      "rarity": "epic",
+      "file": "/skins/zarya/midnight.jpg"
+    },
+    {
+      "key": "new-era",
+      "name": "New Era",
+      "rarity": "epic",
+      "file": "/skins/zarya/new-era.jpg"
+    },
+    {
+      "key": "racer",
+      "name": "Racer",
+      "rarity": "epic",
+      "file": "/skins/zarya/racer.jpg"
+    },
+    {
+      "key": "tactical",
+      "name": "Tactical",
+      "rarity": "epic",
+      "file": "/skins/zarya/tactical.jpg"
+    },
+    {
+      "key": "talon",
+      "name": "Talon",
+      "rarity": "epic",
+      "file": "/skins/zarya/talon.jpg"
+    }
+  ],
+  "zenyatta": [
+    {
+      "key": "aang",
+      "name": "Aang",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/aang.jpg"
+    },
+    {
+      "key": "celestial",
+      "name": "Celestial",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/celestial.jpg"
+    },
+    {
+      "key": "clockwork",
+      "name": "Clockwork",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/clockwork.jpg"
+    },
+    {
+      "key": "cosmic",
+      "name": "Cosmic",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/cosmic.jpg"
+    },
+    {
+      "key": "cultist",
+      "name": "Cultist",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/cultist.jpg"
+    },
+    {
+      "key": "cybermonk",
+      "name": "Cybermonk",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/cybermonk.jpg"
+    },
+    {
+      "key": "dhalsim",
+      "name": "Dhalsim",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/dhalsim.jpg"
+    },
+    {
+      "key": "djinnyatta",
+      "name": "Djinnyatta",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/djinnyatta.jpg"
+    },
+    {
+      "key": "fastball",
+      "name": "Fastball",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/fastball.jpg"
+    },
+    {
+      "key": "huitzilopochtli",
+      "name": "Huitzilopochtli",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/huitzilopochtli.jpg"
+    },
+    {
+      "key": "ifrit",
+      "name": "Ifrit",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/ifrit.jpg"
+    },
+    {
+      "key": "kaiju",
+      "name": "Kaiju",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/kaiju.jpg"
+    },
+    {
+      "key": "nutcracker",
+      "name": "Nutcracker",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/nutcracker.jpg"
+    },
+    {
+      "key": "ra",
+      "name": "Ra",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/ra.jpg"
+    },
+    {
+      "key": "royal-astronomer",
+      "name": "Royal Astronomer",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/royal-astronomer.jpg"
+    },
+    {
+      "key": "sanzang",
+      "name": "Sanzang",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/sanzang.jpg"
+    },
+    {
+      "key": "solaris",
+      "name": "Solaris",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/solaris.jpg"
+    },
+    {
+      "key": "sunyatta",
+      "name": "Sunyatta",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/sunyatta.jpg"
+    },
+    {
+      "key": "takoyaki",
+      "name": "Takoyaki",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/takoyaki.jpg"
+    },
+    {
+      "key": "thrall",
+      "name": "Thrall",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/thrall.jpg"
+    },
+    {
+      "key": "z-3n-destroyer",
+      "name": "Z-3N Destroyer",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/z-3n-destroyer.jpg"
+    },
+    {
+      "key": "zealot",
+      "name": "Zealot",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/zealot.jpg"
+    },
+    {
+      "key": "zen-nakji",
+      "name": "Zen-Nakji",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/zen-nakji.jpg"
+    },
+    {
+      "key": "zhuge-liang",
+      "name": "Zhuge Liang",
+      "rarity": "legendary",
+      "file": "/skins/zenyatta/zhuge-liang.jpg"
+    },
+    {
+      "key": "8-bit",
+      "name": "8-Bit",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/8-bit.jpg"
+    },
+    {
+      "key": "ascendant",
+      "name": "Ascendant",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/ascendant.jpg"
+    },
+    {
+      "key": "bathmaster",
+      "name": "Bathmaster",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/bathmaster.jpg"
+    },
+    {
+      "key": "beast-whisperer",
+      "name": "Beast Whisperer",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/beast-whisperer.jpg"
+    },
+    {
+      "key": "carbon-fiber",
+      "name": "Carbon Fiber",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/carbon-fiber.jpg"
+    },
+    {
+      "key": "cursed-teddy",
+      "name": "Cursed Teddy",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/cursed-teddy.jpg"
+    },
+    {
+      "key": "elite",
+      "name": "Elite",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/elite.jpg"
+    },
+    {
+      "key": "harmonious",
+      "name": "Harmonious",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/harmonious.jpg"
+    },
+    {
+      "key": "pinocchio",
+      "name": "Pinocchio",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/pinocchio.jpg"
+    },
+    {
+      "key": "skullyatta",
+      "name": "Skullyatta",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/skullyatta.jpg"
+    },
+    {
+      "key": "subaquatic",
+      "name": "Subaquatic",
+      "rarity": "epic",
+      "file": "/skins/zenyatta/subaquatic.jpg"
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "key": "brigitte-cinematic",
+    "label": "Brigitte",
+    "sublabel": "Mythic key art",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt235c696f642277c0/69eac3bdf31caca724e1bc5e/2600_Brig.png"
+  },
+  {
+    "key": "freja-cinematic",
+    "label": "Freja",
+    "sublabel": "Hero spotlight",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt4604e75db5bc8fa5/69eac3fdd3366916eda7e608/2600_Freja.png"
+  },
+  {
+    "key": "lifeweaver-cinematic",
+    "label": "Lifeweaver",
+    "sublabel": "Hero spotlight",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb76d6abff091cf1b/69eac42c50819a993891b886/2600_Lifeweaver.png"
+  },
+  {
+    "key": "mauga-cinematic",
+    "label": "Mauga",
+    "sublabel": "Hero spotlight",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf3c1be1f80e076cb/69eac454c335b0dd1269c079/2600_Mauga.png"
+  },
+  {
+    "key": "ramattra-cinematic",
+    "label": "Ramattra",
+    "sublabel": "Hero spotlight",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltbacfce9fdcdfb73a/69eac48524ef0e44a1a47370/2600_Ram.png"
+  },
+  {
+    "key": "junker-queen-header",
+    "label": "Junker Queen",
+    "sublabel": "Hero banner",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd3e24332d844a1af/63210b3dbe2fcf0db5eea54a/2600_Header.jpg"
+  },
+  {
+    "key": "season-22-overview",
+    "label": "Season 22",
+    "sublabel": "Spotlight",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt867f1579b15d24c9/69d7def0471d6d5ea7656107/2600_S22_Overview.png"
+  },
+  {
+    "key": "f2p-masthead",
+    "label": "Heroes ensemble",
+    "sublabel": "Masthead",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8ee714c3a0095d0f/6509d6e6fc2ae472f4044625/2600_F2P_Masthead_Fallback.jpg"
+  },
+  {
+    "key": "outro-characters",
+    "label": "Heroes",
+    "sublabel": "Group panorama",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt10ca78298ef6edf0/660c5d270b9c8248765adc18/Desktop_Outro_Characters.png"
+  },
+  {
+    "key": "outro-sky",
+    "label": "Watchpoint",
+    "sublabel": "Atmosphere",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt0783c76a58bd39e2/660c5cce39a9b3d622f86c68/Desktop_Outro_Sky.jpg"
+  },
+  {
+    "key": "heroes-overview",
+    "label": "Heroes",
+    "sublabel": "Roster",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt84ca46ba2606a5ed/6504ca8bf50ed52bc6eb1cc8/Heroes.jpg"
+  },
+  {
+    "key": "action",
+    "label": "Action",
+    "sublabel": "In-game",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt30aabe1c0e164812/6504ca8b0d91ee465b55006b/Action.jpg"
+  }
+]

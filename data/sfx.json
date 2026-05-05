@@ -1,0 +1,1094 @@
+{
+  "ana": [
+    {
+      "url": "/sfx/ana/0.ogg",
+      "duration": 0.95,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/1.ogg",
+      "duration": 0.99,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/2.ogg",
+      "duration": 1.05,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/3.ogg",
+      "duration": 0.87,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/4.ogg",
+      "duration": 0.84,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/5.ogg",
+      "duration": 0.67,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/6.ogg",
+      "duration": 0.93,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/ana/7.ogg",
+      "duration": 0.94,
+      "ability_index": null
+    }
+  ],
+  "zenyatta": [
+    {
+      "url": "/sfx/zenyatta/0.ogg",
+      "duration": 0.85,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/1.ogg",
+      "duration": 0.76,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/2.ogg",
+      "duration": 0.65,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/3.ogg",
+      "duration": 0.67,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/4.ogg",
+      "duration": 0.65,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/5.ogg",
+      "duration": 0.71,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/6.ogg",
+      "duration": 0.65,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zenyatta/7.ogg",
+      "duration": 0.61,
+      "ability_index": null
+    }
+  ],
+  "zarya": [
+    {
+      "url": "/sfx/zarya/0.ogg",
+      "duration": 0.83,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/1.ogg",
+      "duration": 0.84,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/2.ogg",
+      "duration": 0.85,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/3.ogg",
+      "duration": 0.77,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/4.ogg",
+      "duration": 0.92,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/5.ogg",
+      "duration": 0.83,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/6.ogg",
+      "duration": 0.85,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/zarya/7.ogg",
+      "duration": 1.06,
+      "ability_index": null
+    }
+  ],
+  "winston": [
+    {
+      "url": "/sfx/winston/0.ogg",
+      "duration": 1.06,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/1.ogg",
+      "duration": 1.03,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/2.ogg",
+      "duration": 0.91,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/3.ogg",
+      "duration": 0.53,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/4.ogg",
+      "duration": 0.51,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/5.ogg",
+      "duration": 0.66,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/6.ogg",
+      "duration": 0.68,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/winston/7.ogg",
+      "duration": 1.04,
+      "ability_index": null
+    }
+  ],
+  "widowmaker": [
+    {
+      "url": "/sfx/widowmaker/0.ogg",
+      "duration": 0.96,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/1.ogg",
+      "duration": 0.61,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/2.ogg",
+      "duration": 0.8,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/3.ogg",
+      "duration": 0.98,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/4.ogg",
+      "duration": 0.32,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/5.ogg",
+      "duration": 0.37,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/6.ogg",
+      "duration": 0.26,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/widowmaker/7.ogg",
+      "duration": 0.36,
+      "ability_index": null
+    }
+  ],
+  "tracer": [
+    {
+      "url": "/sfx/tracer/0.ogg",
+      "duration": 0.25,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/1.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/2.ogg",
+      "duration": 0.26,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/3.ogg",
+      "duration": 0.62,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/4.ogg",
+      "duration": 0.61,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/5.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/6.ogg",
+      "duration": 0.6,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/tracer/7.ogg",
+      "duration": 0.55,
+      "ability_index": null
+    }
+  ],
+  "torbjorn": [
+    {
+      "url": "/sfx/torbjorn/0.ogg",
+      "duration": 0.67,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/1.ogg",
+      "duration": 0.8,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/2.ogg",
+      "duration": 0.77,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/3.ogg",
+      "duration": 0.87,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/4.ogg",
+      "duration": 0.92,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/5.ogg",
+      "duration": 1.14,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/6.ogg",
+      "duration": 0.73,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/torbjorn/7.ogg",
+      "duration": 0.79,
+      "ability_index": null
+    }
+  ],
+  "symmetra": [
+    {
+      "url": "/sfx/symmetra/0.ogg",
+      "duration": 0.8,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/1.ogg",
+      "duration": 1,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/2.ogg",
+      "duration": 1.12,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/3.ogg",
+      "duration": 1.19,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/4.ogg",
+      "duration": 1.08,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/5.ogg",
+      "duration": 0.75,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/6.ogg",
+      "duration": 0.72,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/symmetra/7.ogg",
+      "duration": 0.68,
+      "ability_index": null
+    }
+  ],
+  "sombra": [
+    {
+      "url": "/sfx/sombra/0.ogg",
+      "duration": 1.03,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/1.ogg",
+      "duration": 0.42,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/2.ogg",
+      "duration": 0.49,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/3.ogg",
+      "duration": 0.82,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/4.ogg",
+      "duration": 0.74,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/5.ogg",
+      "duration": 1.03,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/6.ogg",
+      "duration": 0.84,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/sombra/7.ogg",
+      "duration": 0.64,
+      "ability_index": null
+    }
+  ],
+  "pharah": [
+    {
+      "url": "/sfx/pharah/0.ogg",
+      "duration": 0.25,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/1.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/2.ogg",
+      "duration": 0.28,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/3.ogg",
+      "duration": 0.25,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/4.ogg",
+      "duration": 0.27,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/5.ogg",
+      "duration": 0.45,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/6.ogg",
+      "duration": 0.38,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/pharah/7.ogg",
+      "duration": 0.45,
+      "ability_index": null
+    }
+  ],
+  "reaper": [
+    {
+      "url": "/sfx/reaper/0.ogg",
+      "duration": 0.68,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/1.ogg",
+      "duration": 0.55,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/2.ogg",
+      "duration": 0.75,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/3.ogg",
+      "duration": 0.71,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/4.ogg",
+      "duration": 0.66,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/5.ogg",
+      "duration": 1.06,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/6.ogg",
+      "duration": 0.62,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reaper/7.ogg",
+      "duration": 1.09,
+      "ability_index": null
+    }
+  ],
+  "bastion": [
+    {
+      "url": "/sfx/bastion/0.ogg",
+      "duration": 0.33,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/1.ogg",
+      "duration": 0.32,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/2.ogg",
+      "duration": 0.38,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/3.ogg",
+      "duration": 0.56,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/4.ogg",
+      "duration": 0.6,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/5.ogg",
+      "duration": 0.55,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/6.ogg",
+      "duration": 0.72,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/bastion/7.ogg",
+      "duration": 0.6,
+      "ability_index": null
+    }
+  ],
+  "dva": [
+    {
+      "url": "/sfx/dva/0.ogg",
+      "duration": 0.77,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/1.ogg",
+      "duration": 1.08,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/2.ogg",
+      "duration": 0.47,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/3.ogg",
+      "duration": 0.97,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/4.ogg",
+      "duration": 0.57,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/5.ogg",
+      "duration": 0.8,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/6.ogg",
+      "duration": 0.69,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/dva/7.ogg",
+      "duration": 0.78,
+      "ability_index": null
+    }
+  ],
+  "genji": [
+    {
+      "url": "/sfx/genji/0.ogg",
+      "duration": 0.88,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/1.ogg",
+      "duration": 0.44,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/2.ogg",
+      "duration": 0.44,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/3.ogg",
+      "duration": 1.04,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/4.ogg",
+      "duration": 1.07,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/5.ogg",
+      "duration": 0.89,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/6.ogg",
+      "duration": 0.5,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/genji/7.ogg",
+      "duration": 0.83,
+      "ability_index": null
+    }
+  ],
+  "soldier-76": [
+    {
+      "url": "/sfx/soldier-76/0.ogg",
+      "duration": 0.88,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/1.ogg",
+      "duration": 0.63,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/2.ogg",
+      "duration": 0.57,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/3.ogg",
+      "duration": 0.75,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/4.ogg",
+      "duration": 0.67,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/5.ogg",
+      "duration": 0.92,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/6.ogg",
+      "duration": 0.96,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/soldier-76/7.ogg",
+      "duration": 0.97,
+      "ability_index": null
+    }
+  ],
+  "roadhog": [
+    {
+      "url": "/sfx/roadhog/0.ogg",
+      "duration": 1.23,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/1.ogg",
+      "duration": 1.05,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/2.ogg",
+      "duration": 1.12,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/3.ogg",
+      "duration": 1.3,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/4.ogg",
+      "duration": 1.33,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/5.ogg",
+      "duration": 1.04,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/6.ogg",
+      "duration": 1.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/roadhog/7.ogg",
+      "duration": 0.78,
+      "ability_index": null
+    }
+  ],
+  "reinhardt": [
+    {
+      "url": "/sfx/reinhardt/0.ogg",
+      "duration": 0.77,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/1.ogg",
+      "duration": 0.75,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/2.ogg",
+      "duration": 1.08,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/3.ogg",
+      "duration": 0.86,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/4.ogg",
+      "duration": 0.69,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/5.ogg",
+      "duration": 0.65,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/6.ogg",
+      "duration": 0.79,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/reinhardt/7.ogg",
+      "duration": 0.79,
+      "ability_index": null
+    }
+  ],
+  "mercy": [
+    {
+      "url": "/sfx/mercy/0.ogg",
+      "duration": 0.45,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/1.ogg",
+      "duration": 0.38,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/2.ogg",
+      "duration": 0.45,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/3.ogg",
+      "duration": 0.52,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/4.ogg",
+      "duration": 0.44,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/5.ogg",
+      "duration": 0.3,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/6.ogg",
+      "duration": 0.43,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mercy/7.ogg",
+      "duration": 0.41,
+      "ability_index": null
+    }
+  ],
+  "mei": [
+    {
+      "url": "/sfx/mei/0.ogg",
+      "duration": 0.54,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/1.ogg",
+      "duration": 0.93,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/2.ogg",
+      "duration": 0.44,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/3.ogg",
+      "duration": 0.61,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/4.ogg",
+      "duration": 0.59,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/5.ogg",
+      "duration": 0.41,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/6.ogg",
+      "duration": 0.37,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/mei/7.ogg",
+      "duration": 0.72,
+      "ability_index": null
+    }
+  ],
+  "cassidy": [
+    {
+      "url": "/sfx/cassidy/0.ogg",
+      "duration": 0.98,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/1.ogg",
+      "duration": 1.07,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/2.ogg",
+      "duration": 0.89,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/3.ogg",
+      "duration": 1.04,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/4.ogg",
+      "duration": 0.98,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/5.ogg",
+      "duration": 0.81,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/6.ogg",
+      "duration": 0.84,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/cassidy/7.ogg",
+      "duration": 0.6,
+      "ability_index": null
+    }
+  ],
+  "lucio": [
+    {
+      "url": "/sfx/lucio/0.ogg",
+      "duration": 1.05,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/1.ogg",
+      "duration": 0.63,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/2.ogg",
+      "duration": 1.05,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/3.ogg",
+      "duration": 1.08,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/4.ogg",
+      "duration": 0.74,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/5.ogg",
+      "duration": 1,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/6.ogg",
+      "duration": 0.97,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/lucio/7.ogg",
+      "duration": 0.91,
+      "ability_index": null
+    }
+  ],
+  "junkrat": [
+    {
+      "url": "/sfx/junkrat/0.ogg",
+      "duration": 1.01,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/1.ogg",
+      "duration": 0.42,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/2.ogg",
+      "duration": 0.44,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/3.ogg",
+      "duration": 0.39,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/4.ogg",
+      "duration": 1.12,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/5.ogg",
+      "duration": 0.91,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/6.ogg",
+      "duration": 1,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/junkrat/7.ogg",
+      "duration": 0.85,
+      "ability_index": null
+    }
+  ],
+  "hanzo": [
+    {
+      "url": "/sfx/hanzo/0.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/1.ogg",
+      "duration": 0.27,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/2.ogg",
+      "duration": 0.26,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/3.ogg",
+      "duration": 0.32,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/4.ogg",
+      "duration": 0.3,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/5.ogg",
+      "duration": 0.67,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/6.ogg",
+      "duration": 0.62,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/hanzo/7.ogg",
+      "duration": 0.41,
+      "ability_index": null
+    }
+  ],
+  "orisa": [
+    {
+      "url": "/sfx/orisa/0.ogg",
+      "duration": 0.48,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/1.ogg",
+      "duration": 0.49,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/2.ogg",
+      "duration": 0.49,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/3.ogg",
+      "duration": 0.56,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/4.ogg",
+      "duration": 0.53,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/5.ogg",
+      "duration": 0.33,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/6.ogg",
+      "duration": 0.32,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/orisa/7.ogg",
+      "duration": 0.38,
+      "ability_index": null
+    }
+  ],
+  "doomfist": [
+    {
+      "url": "/sfx/doomfist/0.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/1.ogg",
+      "duration": 0.27,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/2.ogg",
+      "duration": 0.26,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/3.ogg",
+      "duration": 0.32,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/4.ogg",
+      "duration": 0.3,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/5.ogg",
+      "duration": 0.34,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/6.ogg",
+      "duration": 0.32,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/doomfist/7.ogg",
+      "duration": 0.33,
+      "ability_index": null
+    }
+  ],
+  "moira": [
+    {
+      "url": "/sfx/moira/0.ogg",
+      "duration": 1.07,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/1.ogg",
+      "duration": 0.65,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/2.ogg",
+      "duration": 0.95,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/3.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/4.ogg",
+      "duration": 0.31,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/5.ogg",
+      "duration": 0.44,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/6.ogg",
+      "duration": 0.43,
+      "ability_index": null
+    },
+    {
+      "url": "/sfx/moira/7.ogg",
+      "duration": 0.54,
+      "ability_index": null
+    }
+  ]
+}

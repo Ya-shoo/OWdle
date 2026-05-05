@@ -1,0 +1,315 @@
+@import "tailwindcss";
+
+/* =========================================================
+   Theme tokens — Overwatch is the only theme.
+   ========================================================= */
+
+:root {
+  /* surfaces */
+  --bg-base: #0a0e14;
+  --bg-surface: #11161f;
+  --bg-muted: #1a2030;
+  --bg-inset: #0f1420;
+  /* foreground */
+  --fg-default: #f5efe6;
+  --fg-muted: #b1a99d;
+  --fg-subtle: #6b7488;
+  /* lines */
+  --border-default: #243049;
+  --border-strong: #f26522;
+  --hairline: rgba(245, 239, 230, 0.08);
+  /* accent (true Overwatch orange — punchy, not gold) */
+  --accent: #f26522;
+  --accent-fg: #0a0e14;
+  --accent-soft: #ffa466;
+  /* secondary accent (signature OW blue — info, eyebrows, soon-tags) */
+  --info: #2d9cdb;
+  --info-on: #0a0e14;
+  /* tile match colors */
+  --tile-correct: #4ade80;
+  --tile-correct-fg: #0a0e14;
+  --tile-partial: #fbbf24;
+  --tile-partial-fg: #0a0e14;
+  --tile-far: #ef4444;
+  --tile-far-fg: #0a0e14;
+  --tile-wrong: #1a2030;
+  --tile-wrong-fg: #8b95a8;
+  /* fonts */
+  --theme-font-display: var(--font-saira);
+  --theme-font-body: var(--font-plex-sans);
+  --theme-font-mono: var(--font-plex-mono);
+  /* shape — angular */
+  --radius-tile: 0px;
+  --radius-card: 0px;
+  --radius-pill: 0px;
+  --tile-clip: polygon(
+    8px 0,
+    100% 0,
+    100% calc(100% - 8px),
+    calc(100% - 8px) 100%,
+    0 100%,
+    0 8px
+  );
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* atmosphere */
+  --bg-pattern:
+    radial-gradient(
+      ellipse 60% 40% at 10% 0%,
+      rgba(242, 101, 34, 0.08),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 35% at 90% 100%,
+      rgba(45, 156, 219, 0.06),
+      transparent 70%
+    );
+  --noise-opacity: 0.05;
+  --scanline-opacity: 0.035;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-muted: var(--bg-muted);
+  --color-inset: var(--bg-inset);
+  --color-ink: var(--fg-default);
+  --color-ink-soft: var(--fg-muted);
+  --color-ink-faint: var(--fg-subtle);
+  --color-line: var(--border-default);
+  --color-edge: var(--border-strong);
+  --color-hairline: var(--hairline);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-info: var(--info);
+  --color-on-info: var(--info-on);
+  --color-correct: var(--tile-correct);
+  --color-on-correct: var(--tile-correct-fg);
+  --color-partial: var(--tile-partial);
+  --color-on-partial: var(--tile-partial-fg);
+  --color-far: var(--tile-far);
+  --color-on-far: var(--tile-far-fg);
+  --color-wrong: var(--tile-wrong);
+  --color-on-wrong: var(--tile-wrong-fg);
+  --font-display: var(--theme-font-display);
+  --font-sans: var(--theme-font-body);
+  --font-mono: var(--theme-font-mono);
+  --radius-tile: var(--radius-tile);
+  --radius-card: var(--radius-card);
+}
+
+/* ---------- base ---------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--fg-default);
+  font-family: var(--theme-font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* atmospheric background wash */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--bg-pattern);
+  z-index: 0;
+}
+
+/* subtle scanline overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 2px,
+    rgba(255, 255, 255, var(--scanline-opacity)) 2px,
+    rgba(255, 255, 255, var(--scanline-opacity)) 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+main,
+header,
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- typography helpers ---------- */
+
+.font-display {
+  font-family: var(--theme-font-display), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: var(--theme-font-mono), ui-monospace, "SF Mono", monospace;
+}
+
+.display-headline {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+/* ---------- focus ring ----------
+   Global accent ring for keyboard navigation, but form controls handle
+   their own focus visualization (e.g. the combobox wrapper changes border
+   color) so we exempt them to avoid double-ringing inside an existing
+   border. */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none;
+}
+
+/* ---------- selection ---------- */
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* ---------- shared component shapes ---------- */
+
+.tile-shape {
+  border-radius: var(--radius-tile);
+  clip-path: var(--tile-clip);
+}
+
+/* ---------- volume slider ----------
+   Custom-styled <input type="range"> that matches the angular/orange
+   theme. The fill on the track is driven by an inline --vol-fill custom
+   property the React component updates as the user drags.
+
+   We need full pseudo-element styling because Webkit and Firefox both
+   ship their own opinionated defaults — without `appearance: none` on
+   each piece you get a mix of native chrome and our overrides. */
+
+.volume-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  --vol-fill: 0%;
+}
+
+.volume-slider:focus {
+  outline: none;
+}
+
+/* Track — Webkit / Blink */
+.volume-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border: 1px solid var(--border-default);
+  background:
+    linear-gradient(
+      to right,
+      var(--accent) 0%,
+      var(--accent) var(--vol-fill),
+      transparent var(--vol-fill),
+      transparent 100%
+    ),
+    var(--bg-inset);
+  border-radius: 0;
+}
+
+/* Track — Firefox (no progress pseudo on cross-browser, use ::-moz-range-progress) */
+.volume-slider::-moz-range-track {
+  height: 4px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-inset);
+  border-radius: 0;
+}
+
+.volume-slider::-moz-range-progress {
+  height: 4px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 0;
+}
+
+/* Thumb — Webkit / Blink */
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4px;
+  height: 14px;
+  margin-top: -6px;
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 6px rgba(242, 101, 34, 0.35);
+  cursor: ew-resize;
+  transition: background 120ms var(--ease-out);
+}
+
+.volume-slider:hover::-webkit-slider-thumb,
+.volume-slider:focus-visible::-webkit-slider-thumb {
+  background: var(--fg-default);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 10px rgba(242, 101, 34, 0.55);
+}
+
+/* Thumb — Firefox */
+.volume-slider::-moz-range-thumb {
+  width: 4px;
+  height: 14px;
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 6px rgba(242, 101, 34, 0.35);
+  cursor: ew-resize;
+  transition: background 120ms var(--ease-out);
+}
+
+.volume-slider:hover::-moz-range-thumb,
+.volume-slider:focus-visible::-moz-range-thumb {
+  background: var(--fg-default);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 10px rgba(242, 101, 34, 0.55);
+}
+
+/* ---------- view transitions ---------- */
+
+@view-transition {
+  navigation: auto;
+}

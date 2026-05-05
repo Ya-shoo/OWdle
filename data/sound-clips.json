@@ -1,0 +1,383 @@
+{
+  "ana": [
+    {
+      "slug": "biotic-grenade",
+      "label": "Biotic Grenade",
+      "audioUrl": "/sounds/ana/biotic-grenade.mp3",
+      "videoUrl": "/sounds/ana/biotic-grenade.mp4",
+      "duration": 3.62
+    },
+    {
+      "slug": "biotic-rifle",
+      "label": "Biotic Rifle",
+      "audioUrl": "/sounds/ana/biotic-rifle.mp3",
+      "videoUrl": "/sounds/ana/biotic-rifle.mp4",
+      "duration": 10.01
+    },
+    {
+      "slug": "nano-boost",
+      "label": "Nano Boost",
+      "audioUrl": "/sounds/ana/nano-boost.mp3",
+      "videoUrl": "/sounds/ana/nano-boost.mp4",
+      "duration": 2.64
+    },
+    {
+      "slug": "scoped-fire",
+      "label": "Scoped Fire",
+      "audioUrl": "/sounds/ana/scoped-fire.mp3",
+      "videoUrl": "/sounds/ana/scoped-fire.mp4",
+      "duration": 13.58
+    },
+    {
+      "slug": "sleep-dart",
+      "label": "Sleep Dart",
+      "audioUrl": "/sounds/ana/sleep-dart.mp3",
+      "videoUrl": "/sounds/ana/sleep-dart.mp4",
+      "duration": 1.94
+    }
+  ],
+  "baptiste": [
+    {
+      "slug": "amplification-matrix",
+      "label": "Amplification Matrix",
+      "audioUrl": "/sounds/baptiste/amplification-matrix.mp3",
+      "videoUrl": "/sounds/baptiste/amplification-matrix.mp4",
+      "duration": 2.86
+    },
+    {
+      "slug": "biotic-launcher-heal",
+      "label": "Biotic Launcher Heal",
+      "audioUrl": "/sounds/baptiste/biotic-launcher-heal.mp3",
+      "videoUrl": "/sounds/baptiste/biotic-launcher-heal.mp4",
+      "duration": 9.17
+    },
+    {
+      "slug": "immortality-field",
+      "label": "Immortality Field",
+      "audioUrl": "/sounds/baptiste/immortality-field.mp3",
+      "videoUrl": "/sounds/baptiste/immortality-field.mp4",
+      "duration": 6.26
+    },
+    {
+      "slug": "primary-fire",
+      "label": "Primary Fire",
+      "audioUrl": "/sounds/baptiste/primary-fire.mp3",
+      "videoUrl": "/sounds/baptiste/primary-fire.mp4",
+      "duration": 5.14
+    },
+    {
+      "slug": "regenerative-burst",
+      "label": "Regenerative Burst",
+      "audioUrl": "/sounds/baptiste/regenerative-burst.mp3",
+      "videoUrl": "/sounds/baptiste/regenerative-burst.mp4",
+      "duration": 5.78
+    }
+  ],
+  "brigitte": [
+    {
+      "slug": "repair-pack",
+      "label": "Repair Pack",
+      "audioUrl": "/sounds/brigitte/repair-pack.mp3",
+      "videoUrl": "/sounds/brigitte/repair-pack.mp4",
+      "duration": 6.74
+    }
+  ],
+  "illari": [
+    {
+      "slug": "captive-sun",
+      "label": "Captive Sun",
+      "audioUrl": "/sounds/illari/captive-sun.mp3",
+      "videoUrl": "/sounds/illari/captive-sun.mp4",
+      "duration": 7.27
+    },
+    {
+      "slug": "healing-pylon",
+      "label": "Healing Pylon",
+      "audioUrl": "/sounds/illari/healing-pylon.mp3",
+      "videoUrl": "/sounds/illari/healing-pylon.mp4",
+      "duration": 5.59
+    },
+    {
+      "slug": "outburst",
+      "label": "Outburst",
+      "audioUrl": "/sounds/illari/outburst.mp3",
+      "videoUrl": "/sounds/illari/outburst.mp4",
+      "duration": 1.82
+    },
+    {
+      "slug": "solar-rifle",
+      "label": "Solar Rifle",
+      "audioUrl": "/sounds/illari/solar-rifle.mp3",
+      "videoUrl": "/sounds/illari/solar-rifle.mp4",
+      "duration": 9.26
+    }
+  ],
+  "jetpack-cat": [
+    {
+      "slug": "biotic-pawjectiles",
+      "label": "Biotic Pawjectiles",
+      "audioUrl": "/sounds/jetpack-cat/biotic-pawjectiles.mp3",
+      "videoUrl": "/sounds/jetpack-cat/biotic-pawjectiles.mp4",
+      "duration": 4.15
+    },
+    {
+      "slug": "catnapper",
+      "label": "Catnapper",
+      "audioUrl": "/sounds/jetpack-cat/catnapper.mp3",
+      "videoUrl": "/sounds/jetpack-cat/catnapper.mp4",
+      "duration": 5.38
+    },
+    {
+      "slug": "frenetic-flight",
+      "label": "Frenetic Flight",
+      "audioUrl": "/sounds/jetpack-cat/frenetic-flight.mp3",
+      "videoUrl": "/sounds/jetpack-cat/frenetic-flight.mp4",
+      "duration": 9.24
+    },
+    {
+      "slug": "purr",
+      "label": "Purr",
+      "audioUrl": "/sounds/jetpack-cat/purr.mp3",
+      "videoUrl": "/sounds/jetpack-cat/purr.mp4",
+      "duration": 5.62
+    }
+  ],
+  "juno": [
+    {
+      "slug": "glide-boost",
+      "label": "Glide Boost",
+      "audioUrl": "/sounds/juno/glide-boost.mp3",
+      "videoUrl": "/sounds/juno/glide-boost.mp4",
+      "duration": 5.18
+    },
+    {
+      "slug": "hyper-ring",
+      "label": "Hyper Ring",
+      "audioUrl": "/sounds/juno/hyper-ring.mp3",
+      "videoUrl": "/sounds/juno/hyper-ring.mp4",
+      "duration": 5.83
+    },
+    {
+      "slug": "mediblaster",
+      "label": "Mediblaster",
+      "audioUrl": "/sounds/juno/mediblaster.mp3",
+      "videoUrl": "/sounds/juno/mediblaster.mp4",
+      "duration": 4.13
+    },
+    {
+      "slug": "orbital-ray",
+      "label": "Orbital Ray",
+      "audioUrl": "/sounds/juno/orbital-ray.mp3",
+      "videoUrl": "/sounds/juno/orbital-ray.mp4",
+      "duration": 9.1
+    },
+    {
+      "slug": "pulsar-torpedoes",
+      "label": "Pulsar Torpedoes",
+      "audioUrl": "/sounds/juno/pulsar-torpedoes.mp3",
+      "videoUrl": "/sounds/juno/pulsar-torpedoes.mp4",
+      "duration": 7.1
+    }
+  ],
+  "kiriko": [
+    {
+      "slug": "healing-ofuda",
+      "label": "Healing Ofuda",
+      "audioUrl": "/sounds/kiriko/healing-ofuda.mp3",
+      "videoUrl": "/sounds/kiriko/healing-ofuda.mp4",
+      "duration": 5.18
+    },
+    {
+      "slug": "kitsune-rush",
+      "label": "Kitsune Rush",
+      "audioUrl": "/sounds/kiriko/kitsune-rush.mp3",
+      "videoUrl": "/sounds/kiriko/kitsune-rush.mp4",
+      "duration": 4.32
+    },
+    {
+      "slug": "kunai",
+      "label": "Kunai",
+      "audioUrl": "/sounds/kiriko/kunai.mp3",
+      "videoUrl": "/sounds/kiriko/kunai.mp4",
+      "duration": 7.87
+    },
+    {
+      "slug": "protection-suzu",
+      "label": "Protection Suzu",
+      "audioUrl": "/sounds/kiriko/protection-suzu.mp3",
+      "videoUrl": "/sounds/kiriko/protection-suzu.mp4",
+      "duration": 2.35
+    },
+    {
+      "slug": "swift-step",
+      "label": "Swift Step",
+      "audioUrl": "/sounds/kiriko/swift-step.mp3",
+      "videoUrl": "/sounds/kiriko/swift-step.mp4",
+      "duration": 1.01
+    }
+  ],
+  "lifeweaver": [
+    {
+      "slug": "healing-blossom",
+      "label": "Healing Blossom",
+      "audioUrl": "/sounds/lifeweaver/healing-blossom.mp3",
+      "videoUrl": "/sounds/lifeweaver/healing-blossom.mp4",
+      "duration": 8.69
+    },
+    {
+      "slug": "life-grip",
+      "label": "Life Grip",
+      "audioUrl": "/sounds/lifeweaver/life-grip.mp3",
+      "videoUrl": "/sounds/lifeweaver/life-grip.mp4",
+      "duration": 2.33
+    },
+    {
+      "slug": "petal-platform",
+      "label": "Petal Platform",
+      "audioUrl": "/sounds/lifeweaver/petal-platform.mp3",
+      "videoUrl": "/sounds/lifeweaver/petal-platform.mp4",
+      "duration": 3.96
+    },
+    {
+      "slug": "thorn-volley-attack",
+      "label": "Thorn Volley Attack",
+      "audioUrl": "/sounds/lifeweaver/thorn-volley-attack.mp3",
+      "videoUrl": "/sounds/lifeweaver/thorn-volley-attack.mp4",
+      "duration": 4.8
+    },
+    {
+      "slug": "tree-of-life",
+      "label": "Tree Of Life",
+      "audioUrl": "/sounds/lifeweaver/tree-of-life.mp3",
+      "videoUrl": "/sounds/lifeweaver/tree-of-life.mp4",
+      "duration": 8.9
+    }
+  ],
+  "lucio": [
+    {
+      "slug": "amp-it-up",
+      "label": "Amp It Up",
+      "audioUrl": "/sounds/lucio/amp-it-up.mp3",
+      "videoUrl": "/sounds/lucio/amp-it-up.mp4",
+      "duration": 5.64
+    },
+    {
+      "slug": "sonic-amplifier",
+      "label": "Sonic Amplifier",
+      "audioUrl": "/sounds/lucio/sonic-amplifier.mp3",
+      "videoUrl": "/sounds/lucio/sonic-amplifier.mp4",
+      "duration": 11.86
+    },
+    {
+      "slug": "sound-barrier",
+      "label": "Sound Barrier",
+      "audioUrl": "/sounds/lucio/sound-barrier.mp3",
+      "videoUrl": "/sounds/lucio/sound-barrier.mp4",
+      "duration": 5.64
+    },
+    {
+      "slug": "soundwave",
+      "label": "Soundwave",
+      "audioUrl": "/sounds/lucio/soundwave.mp3",
+      "videoUrl": "/sounds/lucio/soundwave.mp4",
+      "duration": 1.49
+    }
+  ],
+  "mizuki": [
+    {
+      "slug": "binding-chain",
+      "label": "Binding Chain",
+      "audioUrl": "/sounds/mizuki/binding-chain.mp3",
+      "videoUrl": "/sounds/mizuki/binding-chain.mp4",
+      "duration": 3.48
+    },
+    {
+      "slug": "healing-kasa",
+      "label": "Healing Kasa",
+      "audioUrl": "/sounds/mizuki/healing-kasa.mp3",
+      "videoUrl": "/sounds/mizuki/healing-kasa.mp4",
+      "duration": 5.11
+    },
+    {
+      "slug": "katashiro-return",
+      "label": "Katashiro Return",
+      "audioUrl": "/sounds/mizuki/katashiro-return.mp3",
+      "videoUrl": "/sounds/mizuki/katashiro-return.mp4",
+      "duration": 4.7
+    },
+    {
+      "slug": "kekkai-sanctuary",
+      "label": "Kekkai Sanctuary",
+      "audioUrl": "/sounds/mizuki/kekkai-sanctuary.mp3",
+      "videoUrl": "/sounds/mizuki/kekkai-sanctuary.mp4",
+      "duration": 10.34
+    },
+    {
+      "slug": "spirit-glaive-primary-fire",
+      "label": "Spirit Glaive Primary Fire",
+      "audioUrl": "/sounds/mizuki/spirit-glaive-primary-fire.mp3",
+      "videoUrl": "/sounds/mizuki/spirit-glaive-primary-fire.mp4",
+      "duration": 6.41
+    }
+  ],
+  "wuyang": [
+    {
+      "slug": "guardian-wave",
+      "label": "Guardian Wave",
+      "audioUrl": "/sounds/wuyang/guardian-wave.mp3",
+      "videoUrl": "/sounds/wuyang/guardian-wave.mp4",
+      "duration": 2.57
+    },
+    {
+      "slug": "rushing-torrent",
+      "label": "Rushing Torrent",
+      "audioUrl": "/sounds/wuyang/rushing-torrent.mp3",
+      "videoUrl": "/sounds/wuyang/rushing-torrent.mp4",
+      "duration": 5.3
+    },
+    {
+      "slug": "tidal-blast",
+      "label": "Tidal Blast",
+      "audioUrl": "/sounds/wuyang/tidal-blast.mp3",
+      "videoUrl": "/sounds/wuyang/tidal-blast.mp4",
+      "duration": 6.17
+    },
+    {
+      "slug": "xuanwu-staff-primary-fire",
+      "label": "Xuanwu Staff Primary Fire",
+      "audioUrl": "/sounds/wuyang/xuanwu-staff-primary-fire.mp3",
+      "videoUrl": "/sounds/wuyang/xuanwu-staff-primary-fire.mp4",
+      "duration": 6.67
+    }
+  ],
+  "zenyatta": [
+    {
+      "slug": "orb-of-harmony",
+      "label": "Orb Of Harmony",
+      "audioUrl": "/sounds/zenyatta/orb-of-harmony.mp3",
+      "videoUrl": "/sounds/zenyatta/orb-of-harmony.mp4",
+      "duration": 5.69
+    },
+    {
+      "slug": "primary-fire",
+      "label": "Primary Fire",
+      "audioUrl": "/sounds/zenyatta/primary-fire.mp3",
+      "videoUrl": "/sounds/zenyatta/primary-fire.mp4",
+      "duration": 3.86
+    },
+    {
+      "slug": "secondary-fire",
+      "label": "Secondary Fire",
+      "audioUrl": "/sounds/zenyatta/secondary-fire.mp3",
+      "videoUrl": "/sounds/zenyatta/secondary-fire.mp4",
+      "duration": 4.73
+    },
+    {
+      "slug": "transcendence",
+      "label": "Transcendence",
+      "audioUrl": "/sounds/zenyatta/transcendence.mp3",
+      "videoUrl": "/sounds/zenyatta/transcendence.mp4",
+      "duration": 6.48
+    }
+  ]
+}

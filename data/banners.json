@@ -1,0 +1,664 @@
+{
+  "keyArt": [
+    {
+      "type": "key-art",
+      "key": "brigitte-cinematic",
+      "label": "Brigitte",
+      "sublabel": "Mythic key art",
+      "file": "/banners/key-art/brigitte-cinematic.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "freja-cinematic",
+      "label": "Freja",
+      "sublabel": "Hero spotlight",
+      "file": "/banners/key-art/freja-cinematic.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "lifeweaver-cinematic",
+      "label": "Lifeweaver",
+      "sublabel": "Hero spotlight",
+      "file": "/banners/key-art/lifeweaver-cinematic.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "mauga-cinematic",
+      "label": "Mauga",
+      "sublabel": "Hero spotlight",
+      "file": "/banners/key-art/mauga-cinematic.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "ramattra-cinematic",
+      "label": "Ramattra",
+      "sublabel": "Hero spotlight",
+      "file": "/banners/key-art/ramattra-cinematic.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "junker-queen-header",
+      "label": "Junker Queen",
+      "sublabel": "Hero banner",
+      "file": "/banners/key-art/junker-queen-header.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "season-22-overview",
+      "label": "Season 22",
+      "sublabel": "Spotlight",
+      "file": "/banners/key-art/season-22-overview.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "f2p-masthead",
+      "label": "Heroes ensemble",
+      "sublabel": "Masthead",
+      "file": "/banners/key-art/f2p-masthead.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "outro-characters",
+      "label": "Heroes",
+      "sublabel": "Group panorama",
+      "file": "/banners/key-art/outro-characters.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "outro-sky",
+      "label": "Watchpoint",
+      "sublabel": "Atmosphere",
+      "file": "/banners/key-art/outro-sky.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "heroes-overview",
+      "label": "Heroes",
+      "sublabel": "Roster",
+      "file": "/banners/key-art/heroes-overview.jpg"
+    },
+    {
+      "type": "key-art",
+      "key": "action",
+      "label": "Action",
+      "sublabel": "In-game",
+      "file": "/banners/key-art/action.jpg"
+    }
+  ],
+  "maps": [
+    {
+      "type": "map",
+      "key": "aatlis",
+      "label": "Aatlis",
+      "sublabel": "Morocco",
+      "gamemodes": [
+        "flashpoint"
+      ],
+      "file": "/banners/maps/aatlis.jpg"
+    },
+    {
+      "type": "map",
+      "key": "antarctic-peninsula",
+      "label": "Antarctic Peninsula",
+      "sublabel": "Antarctica",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/antarctic-peninsula.jpg"
+    },
+    {
+      "type": "map",
+      "key": "anubis",
+      "label": "Temple of Anubis",
+      "sublabel": "Giza Plateau, Egypt",
+      "gamemodes": [
+        "assault"
+      ],
+      "file": "/banners/maps/anubis.jpg"
+    },
+    {
+      "type": "map",
+      "key": "arena-victoriae",
+      "label": "Arena Victoriae",
+      "sublabel": "Colosseo, Rome, Italy",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/arena-victoriae.jpg"
+    },
+    {
+      "type": "map",
+      "key": "ayutthaya",
+      "label": "Ayutthaya",
+      "sublabel": "Thailand",
+      "gamemodes": [
+        "capture-the-flag"
+      ],
+      "file": "/banners/maps/ayutthaya.jpg"
+    },
+    {
+      "type": "map",
+      "key": "black-forest",
+      "label": "Black Forest",
+      "sublabel": "Germany",
+      "gamemodes": [
+        "elimination"
+      ],
+      "file": "/banners/maps/black-forest.jpg"
+    },
+    {
+      "type": "map",
+      "key": "blizzard-world",
+      "label": "Blizzard World",
+      "sublabel": "Irvine, California, United States",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/blizzard-world.jpg"
+    },
+    {
+      "type": "map",
+      "key": "busan",
+      "label": "Busan",
+      "sublabel": "South Korea",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/busan.jpg"
+    },
+    {
+      "type": "map",
+      "key": "castillo",
+      "label": "Castillo",
+      "sublabel": "Mexico",
+      "gamemodes": [
+        "elimination"
+      ],
+      "file": "/banners/maps/castillo.jpg"
+    },
+    {
+      "type": "map",
+      "key": "chateau-guillard",
+      "label": "Château Guillard",
+      "sublabel": "Annecy, France",
+      "gamemodes": [
+        "deathmatch",
+        "team-deathmatch"
+      ],
+      "file": "/banners/maps/chateau-guillard.jpg"
+    },
+    {
+      "type": "map",
+      "key": "circuit-royal",
+      "label": "Circuit Royal",
+      "sublabel": "Monte Carlo, Monaco",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/circuit-royal.jpg"
+    },
+    {
+      "type": "map",
+      "key": "colosseo",
+      "label": "Colosseo",
+      "sublabel": "Rome, Italy",
+      "gamemodes": [
+        "push"
+      ],
+      "file": "/banners/maps/colosseo.jpg"
+    },
+    {
+      "type": "map",
+      "key": "dorado",
+      "label": "Dorado",
+      "sublabel": "Mexico",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/dorado.jpg"
+    },
+    {
+      "type": "map",
+      "key": "ecopoint-antarctica",
+      "label": "Ecopoint: Antarctica",
+      "sublabel": "Antarctica",
+      "gamemodes": [
+        "elimination"
+      ],
+      "file": "/banners/maps/ecopoint-antarctica.jpg"
+    },
+    {
+      "type": "map",
+      "key": "eichenwalde",
+      "label": "Eichenwalde",
+      "sublabel": "Stuttgart, Germany",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/eichenwalde.jpg"
+    },
+    {
+      "type": "map",
+      "key": "esperanca",
+      "label": "Esperança",
+      "sublabel": "Portugal",
+      "gamemodes": [
+        "push"
+      ],
+      "file": "/banners/maps/esperanca.jpg"
+    },
+    {
+      "type": "map",
+      "key": "gogadoro",
+      "label": "Gogadoro",
+      "sublabel": "Busan, South Korea",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/gogadoro.jpg"
+    },
+    {
+      "type": "map",
+      "key": "hanamura",
+      "label": "Hanamura",
+      "sublabel": "Tokyo, Japan",
+      "gamemodes": [
+        "assault"
+      ],
+      "file": "/banners/maps/hanamura.jpg"
+    },
+    {
+      "type": "map",
+      "key": "hanaoka",
+      "label": "Hanaoka",
+      "sublabel": "Tokyo, Japan",
+      "gamemodes": [
+        "clash"
+      ],
+      "file": "/banners/maps/hanaoka.jpg"
+    },
+    {
+      "type": "map",
+      "key": "havana",
+      "label": "Havana",
+      "sublabel": "Havana, Cuba",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/havana.jpg"
+    },
+    {
+      "type": "map",
+      "key": "hollywood",
+      "label": "Hollywood",
+      "sublabel": "Los Angeles, United States",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/hollywood.jpg"
+    },
+    {
+      "type": "map",
+      "key": "horizon",
+      "label": "Horizon Lunar Colony",
+      "sublabel": "Earth's moon",
+      "gamemodes": [
+        "assault"
+      ],
+      "file": "/banners/maps/horizon.jpg"
+    },
+    {
+      "type": "map",
+      "key": "ilios",
+      "label": "Ilios",
+      "sublabel": "Greece",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/ilios.jpg"
+    },
+    {
+      "type": "map",
+      "key": "junkertown",
+      "label": "Junkertown",
+      "sublabel": "Central Australia",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/junkertown.jpg"
+    },
+    {
+      "type": "map",
+      "key": "lijiang-tower",
+      "label": "Lijiang Tower",
+      "sublabel": "China",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/lijiang-tower.jpg"
+    },
+    {
+      "type": "map",
+      "key": "kanezaka",
+      "label": "Kanezaka",
+      "sublabel": "Tokyo, Japan",
+      "gamemodes": [
+        "deathmatch",
+        "team-deathmatch"
+      ],
+      "file": "/banners/maps/kanezaka.jpg"
+    },
+    {
+      "type": "map",
+      "key": "kings-row",
+      "label": "King’s Row",
+      "sublabel": "London, United Kingdom",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/kings-row.jpg"
+    },
+    {
+      "type": "map",
+      "key": "malevento",
+      "label": "Malevento",
+      "sublabel": "Italy",
+      "gamemodes": [
+        "deathmatch",
+        "team-deathmatch"
+      ],
+      "file": "/banners/maps/malevento.jpg"
+    },
+    {
+      "type": "map",
+      "key": "midtown",
+      "label": "Midtown",
+      "sublabel": "New York, United States",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/midtown.jpg"
+    },
+    {
+      "type": "map",
+      "key": "necropolis",
+      "label": "Necropolis",
+      "sublabel": "Egypt",
+      "gamemodes": [
+        "elimination"
+      ],
+      "file": "/banners/maps/necropolis.jpg"
+    },
+    {
+      "type": "map",
+      "key": "nepal",
+      "label": "Nepal",
+      "sublabel": "Nepal",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/nepal.jpg"
+    },
+    {
+      "type": "map",
+      "key": "new-junk-city",
+      "label": "New Junk City",
+      "sublabel": "Central Australia",
+      "gamemodes": [
+        "flashpoint"
+      ],
+      "file": "/banners/maps/new-junk-city.jpg"
+    },
+    {
+      "type": "map",
+      "key": "new-queen-street",
+      "label": "New Queen Street",
+      "sublabel": "Toronto, Canada",
+      "gamemodes": [
+        "push"
+      ],
+      "file": "/banners/maps/new-queen-street.jpg"
+    },
+    {
+      "type": "map",
+      "key": "numbani",
+      "label": "Numbani",
+      "sublabel": "Numbani (near Nigeria)",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/numbani.jpg"
+    },
+    {
+      "type": "map",
+      "key": "oasis",
+      "label": "Oasis",
+      "sublabel": "Iraq",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/oasis.jpg"
+    },
+    {
+      "type": "map",
+      "key": "paraiso",
+      "label": "Paraíso",
+      "sublabel": "Rio de Janeiro, Brazil",
+      "gamemodes": [
+        "hybrid"
+      ],
+      "file": "/banners/maps/paraiso.jpg"
+    },
+    {
+      "type": "map",
+      "key": "paris",
+      "label": "Paris",
+      "sublabel": "Paris, France",
+      "gamemodes": [
+        "assault"
+      ],
+      "file": "/banners/maps/paris.jpg"
+    },
+    {
+      "type": "map",
+      "key": "petra",
+      "label": "Petra",
+      "sublabel": "Southern Jordan",
+      "gamemodes": [
+        "deathmatch",
+        "team-deathmatch"
+      ],
+      "file": "/banners/maps/petra.jpg"
+    },
+    {
+      "type": "map",
+      "key": "place-lacroix",
+      "label": "Place Lacroix",
+      "sublabel": "Paris, France",
+      "gamemodes": [
+        "push"
+      ],
+      "file": "/banners/maps/place-lacroix.jpg"
+    },
+    {
+      "type": "map",
+      "key": "powder-keg-mine",
+      "label": "Powder Keg Mine",
+      "sublabel": "Deadlock Gorge, Arizona, United States",
+      "gamemodes": [
+        "payload-race"
+      ],
+      "file": "/banners/maps/powder-keg-mine.jpg"
+    },
+    {
+      "type": "map",
+      "key": "practice-range",
+      "label": "Practice Range",
+      "sublabel": "Swiss HQ",
+      "gamemodes": [
+        "practice-range"
+      ],
+      "file": "/banners/maps/practice-range.jpg"
+    },
+    {
+      "type": "map",
+      "key": "redwood-dam",
+      "label": "Redwood Dam",
+      "sublabel": "Gibraltar",
+      "gamemodes": [
+        "push"
+      ],
+      "file": "/banners/maps/redwood-dam.jpg"
+    },
+    {
+      "type": "map",
+      "key": "rialto",
+      "label": "Rialto",
+      "sublabel": "Venice, Italy",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/rialto.jpg"
+    },
+    {
+      "type": "map",
+      "key": "route-66",
+      "label": "Route 66",
+      "sublabel": "Albuquerque, New Mexico, United States",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/route-66.jpg"
+    },
+    {
+      "type": "map",
+      "key": "runasapi",
+      "label": "Runasapi",
+      "sublabel": "Peru",
+      "gamemodes": [
+        "push"
+      ],
+      "file": "/banners/maps/runasapi.jpg"
+    },
+    {
+      "type": "map",
+      "key": "samoa",
+      "label": "Samoa",
+      "sublabel": "Samoa",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/samoa.jpg"
+    },
+    {
+      "type": "map",
+      "key": "shambali-monastery",
+      "label": "Shambali Monastery",
+      "sublabel": "Nepal",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/shambali-monastery.jpg"
+    },
+    {
+      "type": "map",
+      "key": "suravasa",
+      "label": "Suravasa",
+      "sublabel": "India",
+      "gamemodes": [
+        "flashpoint"
+      ],
+      "file": "/banners/maps/suravasa.jpg"
+    },
+    {
+      "type": "map",
+      "key": "thames-district",
+      "label": "Thames District",
+      "sublabel": "London, United Kingdom",
+      "gamemodes": [
+        "payload-race"
+      ],
+      "file": "/banners/maps/thames-district.jpg"
+    },
+    {
+      "type": "map",
+      "key": "throne-of-anubis",
+      "label": "Throne of Anubis",
+      "sublabel": "Giza Plateau, Egypt",
+      "gamemodes": [
+        "clash"
+      ],
+      "file": "/banners/maps/throne-of-anubis.jpg"
+    },
+    {
+      "type": "map",
+      "key": "volskaya",
+      "label": "Volskaya Industries",
+      "sublabel": "St. Petersburg, Russia",
+      "gamemodes": [
+        "assault"
+      ],
+      "file": "/banners/maps/volskaya.jpg"
+    },
+    {
+      "type": "map",
+      "key": "watchpoint-gibraltar",
+      "label": "Watchpoint: Gibraltar",
+      "sublabel": "Gibraltar",
+      "gamemodes": [
+        "escort"
+      ],
+      "file": "/banners/maps/watchpoint-gibraltar.jpg"
+    },
+    {
+      "type": "map",
+      "key": "workshop-chamber",
+      "label": "Workshop Chamber",
+      "sublabel": "Earth",
+      "gamemodes": [
+        "workshop"
+      ],
+      "file": "/banners/maps/workshop-chamber.jpg"
+    },
+    {
+      "type": "map",
+      "key": "workshop-expanse",
+      "label": "Workshop Expanse",
+      "sublabel": "Earth",
+      "gamemodes": [
+        "workshop"
+      ],
+      "file": "/banners/maps/workshop-expanse.jpg"
+    },
+    {
+      "type": "map",
+      "key": "workshop-green-screen",
+      "label": "Workshop Green Screen",
+      "sublabel": "Earth",
+      "gamemodes": [
+        "workshop"
+      ],
+      "file": "/banners/maps/workshop-green-screen.jpg"
+    },
+    {
+      "type": "map",
+      "key": "workshop-island",
+      "label": "Workshop Island",
+      "sublabel": "Earth",
+      "gamemodes": [
+        "workshop"
+      ],
+      "file": "/banners/maps/workshop-island.jpg"
+    },
+    {
+      "type": "map",
+      "key": "wuxing-university",
+      "label": "Wuxing University",
+      "sublabel": "Chengdu, Sichuan, China",
+      "gamemodes": [
+        "control"
+      ],
+      "file": "/banners/maps/wuxing-university.jpg"
+    }
+  ]
+}
