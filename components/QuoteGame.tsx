@@ -4,8 +4,14 @@
 // two heroes, with each speaker guessed in their OWN dedicated combobox.
 // Guesses go into a unified history at the bottom, each tagged with which
 // speaker they were targeting and showing attribute tiles vs that speaker.
+//
+// Audio hint cadence: line 1's voice clip unlocks after FIRST_HINT_AT
+// wrong guesses; each subsequent line's clip unlocks every HINT_INTERVAL
+// guesses (5 → line 1, 7 → line 2, 9 → line 3, …). Each button plays the
+// per-line audio file pulled directly from the wiki via
+// scripts/build-quote-audio.mjs — what you hear is exactly the line shown.
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
 import { dayString, getConversationForDay, prettyDay } from "@/lib/daily";
@@ -22,6 +28,22 @@ import { AttributeTile } from "./AttributeTile";
 import { Brand } from "./Brand";
 import { NextModeCTA } from "./NextModeCTA";
 import clsx from "clsx";
+
+const FIRST_HINT_AT = 5;
+const HINT_INTERVAL = 2;
+
+function audioUnlockedCount(guessCount: number, totalLines: number): number {
+  if (guessCount < FIRST_HINT_AT) return 0;
+  return Math.min(
+    1 + Math.floor((guessCount - FIRST_HINT_AT) / HINT_INTERVAL),
+    totalLines,
+  );
+}
+
+function nextAudioAtGuess(currentUnlocked: number): number {
+  if (currentUnlocked === 0) return FIRST_HINT_AT;
+  return FIRST_HINT_AT + currentUnlocked * HINT_INTERVAL;
+}
 
 export function QuoteGame() {
   const [day, setDay] = useState<string | null>(null);
@@ -95,6 +117,16 @@ export function QuoteGame() {
     ? conversation.lines.length
     : Math.min(textLines + BLURRED_AHEAD, conversation.lines.length);
 
+  // Per-line audio unlocks. Once won, every line's button is playable so
+  // the player can replay any voice line.
+  const unlockedAudio = won
+    ? conversation.lines.length
+    : audioUnlockedCount(state.guesses.length, conversation.lines.length);
+  const allAudioUnlocked = unlockedAudio >= conversation.lines.length;
+  const guessesUntilNextAudio = allAudioUnlocked
+    ? null
+    : nextAudioAtGuess(unlockedAudio) - state.guesses.length;
+
   const handleGuess = (hero: Hero, target: 0 | 1) => {
     if (won) return;
     const newGuess: ConversationGuess = { heroKey: hero.key, target };
@@ -144,6 +176,7 @@ export function QuoteGame() {
           bRevealed={bRevealed}
           textLines={textLines}
           renderedLines={renderedLines}
+          unlockedAudio={unlockedAudio}
         />
       </div>
 
@@ -170,12 +203,23 @@ export function QuoteGame() {
       )}
 
       {!won && (
-        <p className="mb-2 font-mono text-xs uppercase tracking-[0.18em] text-info">
-          {state.guesses.length}{" "}
-          {state.guesses.length === 1 ? "guess" : "guesses"}
-          <span className="ml-2 text-ink-faint">
+        <p className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.18em] text-info">
+          <span>
+            {state.guesses.length}{" "}
+            {state.guesses.length === 1 ? "guess" : "guesses"}
+          </span>
+          <span className="text-ink-faint">
             · {(aRevealed ? 1 : 0) + (bRevealed ? 1 : 0)} / 2 found
           </span>
+          {!allAudioUnlocked && guessesUntilNextAudio != null && (
+            <span className="text-accent-soft">
+              · audio hint in {guessesUntilNextAudio}{" "}
+              {guessesUntilNextAudio === 1 ? "guess" : "guesses"}
+            </span>
+          )}
+          {allAudioUnlocked && unlockedAudio > 0 && (
+            <span className="text-accent-soft">· all audio unlocked</span>
+          )}
         </p>
       )}
 
@@ -254,7 +298,9 @@ export function QuoteGame() {
         <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
             Pick a hero in either field to make your first guess. Each guess
-            reveals more dialogue.
+            reveals more dialogue — after {FIRST_HINT_AT} wrong guesses, the
+            first line&apos;s voice clip unlocks, then one more every{" "}
+            {HINT_INTERVAL} guesses.
           </p>
         </div>
       )}
@@ -320,6 +366,7 @@ function ConversationCard({
   bRevealed,
   textLines,
   renderedLines,
+  unlockedAudio,
 }: {
   conversation: Conversation;
   speakers: [Hero, Hero];
@@ -327,7 +374,54 @@ function ConversationCard({
   bRevealed: boolean;
   textLines: number;
   renderedLines: number;
+  unlockedAudio: number;
 }) {
+  // One Audio element per line — each line has its own file, no shared
+  // seeking required. We track which line is playing to swap icon/label
+  // and to stop any other line that was playing when a new one starts.
+  const audioRefs = useRef<Record<number, HTMLAudioElement | null>>({});
+  const [playingLine, setPlayingLine] = useState<number | null>(null);
+
+  const stopAll = useCallback(() => {
+    for (const a of Object.values(audioRefs.current)) {
+      if (a) {
+        a.pause();
+        a.currentTime = 0;
+      }
+    }
+    setPlayingLine(null);
+  }, []);
+
+  // Pause on unmount or when the conversation changes (day rollover).
+  useEffect(() => {
+    return () => stopAll();
+  }, [stopAll]);
+  useEffect(() => {
+    stopAll();
+    audioRefs.current = {};
+  }, [conversation, stopAll]);
+
+  const toggleLine = (i: number, audioUrl: string) => {
+    if (playingLine === i) {
+      stopAll();
+      return;
+    }
+    stopAll();
+    let audio = audioRefs.current[i];
+    if (!audio) {
+      audio = new Audio(audioUrl);
+      audio.addEventListener("ended", () => {
+        setPlayingLine((cur) => (cur === i ? null : cur));
+      });
+      audioRefs.current[i] = audio;
+    }
+    audio.currentTime = 0;
+    audio
+      .play()
+      .then(() => setPlayingLine(i))
+      .catch(() => setPlayingLine(null));
+  };
+
   return (
     <motion.figure
       initial={{ opacity: 0, y: 8 }}
@@ -347,6 +441,7 @@ function ConversationCard({
           const speakerHero = isA ? speakers[0] : speakers[1];
           const revealed = isA ? aRevealed : bRevealed;
           const visible = i < textLines;
+          const audioReady = i < unlockedAudio && !!line.audio;
 
           return (
             <ConversationLineRow
@@ -357,6 +452,9 @@ function ConversationCard({
               revealed={revealed}
               visible={visible}
               text={line.text}
+              audioUnlocked={audioReady}
+              audioPlaying={playingLine === i}
+              onToggleAudio={() => line.audio && toggleLine(i, line.audio)}
             />
           );
         })}
@@ -372,6 +470,9 @@ function ConversationLineRow({
   revealed,
   visible,
   text,
+  audioUnlocked,
+  audioPlaying,
+  onToggleAudio,
 }: {
   isA: boolean;
   speakerHero: Hero;
@@ -379,21 +480,33 @@ function ConversationLineRow({
   revealed: boolean;
   visible: boolean;
   text: string;
+  audioUnlocked: boolean;
+  audioPlaying: boolean;
+  onToggleAudio: () => void;
 }) {
   return (
     <motion.div
       layout
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
-      <p className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em]">
-        {revealed ? (
-          <span className="text-correct">{speakerHero.name}</span>
-        ) : (
-          <span className={isA ? "text-info" : "text-accent-soft"}>
-            {speakerLabel}
-          </span>
+      <div className="mb-1.5 flex items-center justify-between gap-3">
+        <p className="font-mono text-[10px] uppercase tracking-[0.24em]">
+          {revealed ? (
+            <span className="text-correct">{speakerHero.name}</span>
+          ) : (
+            <span className={isA ? "text-info" : "text-accent-soft"}>
+              {speakerLabel}
+            </span>
+          )}
+        </p>
+        {audioUnlocked && (
+          <LineAudioButton
+            playing={audioPlaying}
+            tone={isA ? "info" : "accent-soft"}
+            onToggle={onToggleAudio}
+          />
         )}
-      </p>
+      </div>
       <AnimatePresence mode="wait" initial={false}>
         {visible ? (
           <motion.p
@@ -420,6 +533,63 @@ function ConversationLineRow({
         )}
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+function LineAudioButton({
+  playing,
+  tone,
+  onToggle,
+}: {
+  playing: boolean;
+  tone: "info" | "accent-soft";
+  onToggle: () => void;
+}) {
+  const toneClass =
+    tone === "info"
+      ? "border-info/40 bg-info/10 text-info hover:bg-info/15"
+      : "border-accent-soft/50 bg-accent-soft/10 text-accent-soft hover:bg-accent-soft/15";
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={playing ? "Stop voice line" : "Play this voice line"}
+      className={clsx(
+        "inline-flex items-center gap-1.5 rounded-(--radius-pill) border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.18em] transition-colors",
+        toneClass,
+      )}
+    >
+      {playing ? <StopIcon /> : <PlayIcon />}
+      {playing ? "Playing" : "Play"}
+    </button>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      width="9"
+      height="9"
+      aria-hidden
+      className="shrink-0"
+    >
+      <path d="M3 2 L3 10 L10 6 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function StopIcon() {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      width="9"
+      height="9"
+      aria-hidden
+      className="shrink-0"
+    >
+      <rect x="3" y="3" width="6" height="6" fill="currentColor" />
+    </svg>
   );
 }
 
