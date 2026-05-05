@@ -60,9 +60,9 @@ export function KofiModal({ username }: Props) {
         <img
           src="https://storage.ko-fi.com/cdn/kofi3.png?v=3"
           alt="Support me on Ko-fi"
-          width={185}
-          height={36}
-          style={{ display: "block", border: 0, height: 36, width: 185 }}
+          width={297}
+          height={58}
+          style={{ display: "block", border: 0, height: 58, width: 297 }}
         />
       </button>
 
