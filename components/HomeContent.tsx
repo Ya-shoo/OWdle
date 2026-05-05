@@ -91,14 +91,17 @@ export function HomeContent() {
         <TryDeadlockleCard />
       </section>
 
-      {/* Engagement strip: vote on next game + tip jar. Two equal-width
-          panels divided by a single hairline so it reads as one band. */}
-      <section className="mx-auto max-w-6xl px-6 pb-20">
-        <div className="grid gap-px border border-line bg-line md:grid-cols-2">
-          <div className="bg-surface p-6 sm:p-7">
+      {/* Engagement strip: vote on next game + tip jar. Containerless —
+          content sits on the page canvas, separated from the modes grid
+          by a top hairline and from each other by a single vertical
+          divider. Heights still match (default grid items-stretch) so
+          the divider spans cleanly. */}
+      <section className="mx-auto max-w-6xl border-t border-line px-6 pt-12 pb-20 sm:pt-14">
+        <div className="grid gap-y-14 md:grid-cols-2 md:gap-y-0 md:divide-x md:divide-line">
+          <div className="md:pr-10 lg:pr-14">
             <RequestNextGame />
           </div>
-          <div className="bg-surface p-6 sm:p-7">
+          <div className="md:pl-10 lg:pl-14">
             <SupportLinks />
           </div>
         </div>
