@@ -3,6 +3,7 @@ import {
   Saira_Condensed,
   IBM_Plex_Sans,
   IBM_Plex_Mono,
+  Bricolage_Grotesque,
 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
@@ -33,6 +34,16 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500"],
+});
+
+// Soft accent face — used sparingly for warm headline moments
+// (engagement cards, daily-complete celebration). Keeps the rest of the
+// page structural so this lands as warmth rather than inconsistency.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["600", "700", "800"],
 });
 
 const homeTitle = `${SITE_NAME} — ${SITE_TAGLINE}`;
@@ -83,7 +94,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${saira.variable} ${plexSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${saira.variable} ${plexSans.variable} ${plexMono.variable} ${bricolage.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Header />

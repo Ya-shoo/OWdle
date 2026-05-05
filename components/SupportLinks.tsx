@@ -13,7 +13,7 @@ export function SupportLinks() {
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
         Support the project
       </p>
-      <h3 className="mt-2 font-display text-xl text-ink sm:text-2xl">
+      <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
         Like the daily? Back the next one.
       </h3>
       <p className="mt-2 text-sm text-ink-soft">

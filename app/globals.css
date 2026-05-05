@@ -38,6 +38,9 @@
   --theme-font-display: var(--font-saira);
   --theme-font-body: var(--font-plex-sans);
   --theme-font-mono: var(--font-plex-mono);
+  /* Soft accent — chunky-but-friendly. Used in 3-4 deliberate spots
+     so it reads as a warmth dial-up against the structural Saira. */
+  --theme-font-soft: var(--font-bricolage);
   /* shape — angular */
   --radius-tile: 0px;
   --radius-card: 0px;
@@ -97,6 +100,7 @@
   --font-display: var(--theme-font-display);
   --font-sans: var(--theme-font-body);
   --font-mono: var(--theme-font-mono);
+  --font-soft: var(--theme-font-soft);
   --radius-tile: var(--radius-tile);
   --radius-card: var(--radius-card);
 }

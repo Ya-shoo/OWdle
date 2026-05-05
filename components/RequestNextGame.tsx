@@ -231,7 +231,7 @@ export function RequestNextGame() {
         <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
           ✓ Vote recorded
         </p>
-        <h3 className="mt-2 font-display text-xl text-ink sm:text-2xl">
+        <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
           Thanks — your pick is in.
         </h3>
         <p className="mt-2 text-sm text-ink-soft">
@@ -259,7 +259,7 @@ export function RequestNextGame() {
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
         Request the next game
       </p>
-      <h3 className="mt-2 font-display text-xl text-ink sm:text-2xl">
+      <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
         Which game should I work on next?
       </h3>
       <p className="mt-2 text-sm text-ink-soft">
