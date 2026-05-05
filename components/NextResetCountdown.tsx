@@ -44,12 +44,11 @@ export function NextResetCountdown({
   }, []);
 
   return (
-    <span
-      suppressHydrationWarning
-      className={`text-info tabular-nums ${className ?? ""}`}
-    >
-      {label}
-      {ms == null ? "—" : formatHMS(ms)}
+    <span suppressHydrationWarning className={className}>
+      <span className="text-ink-faint">{label}</span>
+      <span className="font-semibold tabular-nums text-accent-soft">
+        {ms == null ? "—" : formatHMS(ms)}
+      </span>
     </span>
   );
 }

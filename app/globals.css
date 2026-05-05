@@ -312,6 +312,36 @@ select:focus-visible {
     0 0 10px rgba(242, 101, 34, 0.55);
 }
 
+/* ---------- Begin CTA hover halo ----------
+   The Ken Burns banner continuously pans warm/light tones behind the
+   button. A static blurred halo can read as "fading away" once the
+   eye adapts to the new background, so the outer bloom gets a slow
+   gentle pulse while hovered to keep it perceptually present. A
+   crisper inner glow layer is paired with it for a hard-edged
+   presence cue that doesn't blend into bright banner content. */
+
+@keyframes begin-glow-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
+}
+
+.begin-cta:hover .begin-halo,
+.begin-cta:focus-visible .begin-halo {
+  animation: begin-glow-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .begin-cta:hover .begin-halo,
+  .begin-cta:focus-visible .begin-halo {
+    animation: none;
+  }
+}
+
 /* ---------- view transitions ---------- */
 
 @view-transition {
