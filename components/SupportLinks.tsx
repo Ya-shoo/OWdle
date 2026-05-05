@@ -1,7 +1,9 @@
 // Tip-jar / support panel that pairs with RequestNextGame in the
-// engagement section. Links live in lib/site.ts so they can be tweaked
-// without touching the component.
+// engagement section. The Ko-fi action opens an in-page modal containing
+// Ko-fi's official panel iframe — see KofiModal. Share button is a
+// plain Twitter intent link.
 import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL } from "@/lib/site";
+import { KofiModal } from "./KofiModal";
 
 const TWITTER_INTENT = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
   SHARE_TEXT,
@@ -22,15 +24,7 @@ export function SupportLinks() {
       </p>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        <a
-          href={SUPPORT_LINKS.kofi}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group inline-flex items-center gap-2 bg-accent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-on-accent transition-colors hover:bg-accent-soft"
-        >
-          <KofiMark />
-          Tip on Ko-fi
-        </a>
+        <KofiModal username={SUPPORT_LINKS.kofiUsername} />
         <a
           href={TWITTER_INTENT}
           target="_blank"
@@ -46,27 +40,6 @@ export function SupportLinks() {
         Or just tell a friend — every player helps.
       </p>
     </div>
-  );
-}
-
-function KofiMark() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-      <path
-        d="M3 7h15a3 3 0 0 1 0 6h-1M3 7v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-      />
-      <path
-        d="M7 4v2M11 4v2"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="square"
-      />
-    </svg>
   );
 }
 
