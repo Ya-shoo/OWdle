@@ -1,16 +1,47 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { nextBuiltMode, type ModeSlug } from "@/lib/modes";
+import {
+  BUILT_MODE_SLUGS,
+  nextUnfinishedMode,
+  type ModeDef,
+  type ModeSlug,
+} from "@/lib/modes";
+import { dayString } from "@/lib/daily";
+import { loadModeState } from "@/lib/storage";
 
 // Primary CTA shown after a mode is solved. Big, filled, with an animated
 // arrow and entrance — the goal is for the player to immediately see that
 // there is a next game in the daily set and tap straight through.
+//
+// Routing rule: walk canonical play order, skip already-finished modes
+// (won or gave up), and recommend the first remaining one. If everything
+// is done, the CTA flips to a "Daily Complete" link back home.
+//
+// We read all mode statuses synchronously in the initial state. This is
+// safe because the parent only mounts NextModeCTA after its own effect
+// has hydrated localStorage state, so we are guaranteed to be client-side
+// here — the SSR/static prerender omits this component entirely.
 export function NextModeCTA({ current }: { current: ModeSlug }) {
-  const next = nextBuiltMode(current);
+  const [next] = useState<ModeDef | null>(() => {
+    const day = dayString();
+    const done = new Set<ModeSlug>();
+    // Treat both wins and "Show answer" as finished for routing — once
+    // the player has bailed on a mode, looping them back into it isn't
+    // helpful. They can still revisit via the home grid if they want.
+    for (const slug of BUILT_MODE_SLUGS) {
+      const st = loadModeState(slug, day);
+      if (st.won || st.gaveUp) done.add(slug);
+    }
+    // Defensive: ensure the just-won mode is treated as done even if the
+    // localStorage write hasn't been observed by this read yet.
+    done.add(current);
+    return nextUnfinishedMode(current, done);
+  });
 
-  if (!next) {
+  if (next === null) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 6 }}

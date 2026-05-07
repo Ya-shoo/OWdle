@@ -63,13 +63,24 @@ export function getMode(slug: string): ModeDef | null {
   return MODES.find((m) => m.slug === slug) ?? null;
 }
 
-// Next built mode in canonical order. Returns null when there are no more
-// built modes after `current` — that's the cue to show the all-done state.
-export function nextBuiltMode(current: ModeSlug): ModeDef | null {
-  const idx = MODES.findIndex((m) => m.slug === current);
-  if (idx < 0) return null;
-  for (let i = idx + 1; i < MODES.length; i++) {
-    if (MODES[i].built) return MODES[i];
+// First built mode the player hasn't finished yet, in canonical play order.
+// `current` is excluded automatically — the caller has just finished it,
+// so we never recommend it back to them. Returns null when every built
+// mode is done — that's the cue to show the all-done state.
+//
+// Walking from canonical position 0 (rather than from `current` forward)
+// is intentional: if a player jumps ahead and wins a later mode, the next
+// CTA pulls them back to the earliest unfinished mode so they experience
+// the modes in their designed order.
+export function nextUnfinishedMode(
+  current: ModeSlug,
+  done: ReadonlySet<ModeSlug>,
+): ModeDef | null {
+  for (const m of MODES) {
+    if (!m.built) continue;
+    if (m.slug === current) continue;
+    if (done.has(m.slug)) continue;
+    return m;
   }
   return null;
 }

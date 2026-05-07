@@ -76,3 +76,63 @@ export function modeMetadata({
     },
   };
 }
+
+// JSON-LD for individual mode pages. Each mode is presented as its own
+// WebApplication (GameApplication subcategory) so Google can index it as a
+// distinct game in addition to OWdle as a whole. `isPartOf` references the
+// home-page #webapp node defined in app/page.tsx, tying the graph together.
+// Always paired with modeMetadata on the same page.
+export function modeJsonLd({ slug, title, description }: ModeMetaInput) {
+  const fullUrl = `${SITE_URL}/${slug}/`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": `${fullUrl}#mode`,
+        name: `${SITE_NAME} ${title}`,
+        url: fullUrl,
+        description,
+        applicationCategory: "GameApplication",
+        genre: ["Puzzle", "Trivia", "Word Game"],
+        operatingSystem: "Web",
+        browserRequirements: "Requires JavaScript and HTML5.",
+        inLanguage: "en",
+        isAccessibleForFree: true,
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+        isPartOf: { "@id": `${SITE_URL}/#webapp` },
+        about: {
+          "@type": "VideoGame",
+          name: "Overwatch 2",
+          publisher: {
+            "@type": "Organization",
+            name: "Blizzard Entertainment",
+          },
+          gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${fullUrl}#breadcrumbs`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: SITE_NAME,
+            item: SITE_URL,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: title,
+            item: fullUrl,
+          },
+        ],
+      },
+    ],
+  };
+}

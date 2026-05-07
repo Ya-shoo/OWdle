@@ -1,13 +1,25 @@
 import { AbilityGame } from "@/components/AbilityGame";
-import { modeMetadata } from "@/lib/site";
+import { modeJsonLd, modeMetadata } from "@/lib/site";
 
-export const metadata = modeMetadata({
+const META = {
   slug: "ability",
   title: "Ability",
   description:
     "Whose Overwatch ability is this? An ability icon is gradually revealed with each guess. Daily Overwatch ability quiz — name the hero from their kit.",
-});
+};
+
+export const metadata = modeMetadata(META);
+
+const jsonLd = modeJsonLd(META);
 
 export default function AbilityPage() {
-  return <AbilityGame />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <AbilityGame />
+    </>
+  );
 }

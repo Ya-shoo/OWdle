@@ -172,6 +172,18 @@ footer {
   font-weight: 700;
 }
 
+/* Soft utility label — small functional text (counters, status pills,
+   section eyebrows). Bricolage instead of mono so it warms in with the
+   rest of the type system, but kept small + lightly tracked so it still
+   reads as a label rather than body copy. No uppercase: that's where the
+   old mono+caps treatment got rigid. */
+.utility-label {
+  font-family: var(--theme-font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  font-feature-settings: "tnum";
+}
+
 .text-xs.text-ink-faint,
 .text-xs.text-ink-soft {
   font-size: 0.875rem;
@@ -197,6 +209,21 @@ textarea:focus-visible,
 select:focus,
 select:focus-visible {
   outline: none;
+}
+
+/* ---------- iOS Safari auto-zoom guard ----------
+   iOS Safari zooms the viewport whenever a user taps a form control
+   whose computed font-size resolves to less than 16px. The zoom level
+   then persists across same-origin navigations, so a single tap on the
+   hero combobox can leave the next page rendered slightly enlarged.
+   We already use 16px Tailwind classes, but rounding and inheritance
+   can land just below the threshold — this defensive minimum makes the
+   guarantee explicit. Pinch-zoom remains available (we do NOT disable
+   user-scalable in the viewport meta) for accessibility. */
+input,
+textarea,
+select {
+  font-size: max(16px, 1rem);
 }
 
 /* ---------- selection ---------- */

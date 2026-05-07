@@ -1,13 +1,25 @@
 import { ClassicGame } from "@/components/ClassicGame";
-import { modeMetadata } from "@/lib/site";
+import { modeJsonLd, modeMetadata } from "@/lib/site";
 
-export const metadata = modeMetadata({
+const META = {
   slug: "classic",
   title: "Classic",
   description:
-    "Guess the daily Overwatch hero by attributes — role, age, country, gender, species, release year, HP, and more. Each guess returns wordle-style match tiles.",
-});
+    "Daily Overwatch hero quiz. Guess by role, age, country, species, HP and more — each guess returns Wordle-style match tiles. Free, new puzzle daily.",
+};
+
+export const metadata = modeMetadata(META);
+
+const jsonLd = modeJsonLd(META);
 
 export default function ClassicPage() {
-  return <ClassicGame />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ClassicGame />
+    </>
+  );
 }

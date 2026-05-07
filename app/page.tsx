@@ -1,4 +1,5 @@
 import { HomeContent } from "@/components/HomeContent";
+import { MODES } from "@/lib/modes";
 import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_NAME,
@@ -42,6 +43,22 @@ const jsonLd = {
       url: SITE_URL,
       description: SITE_DEFAULT_DESCRIPTION,
       inLanguage: "en",
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${SITE_URL}/#modes`,
+      name: `${SITE_NAME} modes`,
+      description:
+        "Daily Overwatch quiz games offered by OWdle. Each mode is a different way to identify the daily hero.",
+      numberOfItems: MODES.length,
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      itemListElement: MODES.map((mode, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: mode.label,
+        description: mode.blurb,
+        ...(mode.built ? { url: `${SITE_URL}/${mode.slug}/` } : {}),
+      })),
     },
   ],
 };

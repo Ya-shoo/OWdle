@@ -1,13 +1,25 @@
 import { QuoteGame } from "@/components/QuoteGame";
-import { modeMetadata } from "@/lib/site";
+import { modeJsonLd, modeMetadata } from "@/lib/site";
 
-export const metadata = modeMetadata({
+const META = {
   slug: "quote",
   title: "Quote",
   description:
     "A pre-match exchange between two Overwatch heroes. Identify both speakers from a single line of voice dialogue. New daily Overwatch quote quiz every day.",
-});
+};
+
+export const metadata = modeMetadata(META);
+
+const jsonLd = modeJsonLd(META);
 
 export default function QuotePage() {
-  return <QuoteGame />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <QuoteGame />
+    </>
+  );
 }

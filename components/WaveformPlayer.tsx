@@ -16,6 +16,10 @@ type Props = {
   // portion of the waveform is rendered in the accent color; the remainder
   // is dimmed to tease the player with how much is still locked.
   revealDuration: number;
+  // Multiplier applied to the master gain on top of the user's volume.
+  // Used to compensate for support ability sounds being mastered quieter
+  // than damage/tank ones in-game (see ROLE_AUDIO_BOOST). Defaults to 1.
+  boost?: number;
 };
 
 const BAR_COUNT = 96;
@@ -39,7 +43,11 @@ const MIN_SKIP_SECONDS = 0.005;
 // attack that we'd otherwise cut into.
 const MAX_SKIP_SECONDS = 0.25;
 
-export function WaveformPlayer({ audioUrl, revealDuration }: Props) {
+export function WaveformPlayer({
+  audioUrl,
+  revealDuration,
+  boost = 1,
+}: Props) {
   const [peaks, setPeaks] = useState<number[] | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -102,7 +110,7 @@ export function WaveformPlayer({ audioUrl, revealDuration }: Props) {
         // load effect started running.
         if (!gainRef.current) {
           const gain = ctx.createGain();
-          gain.gain.value = gainFromVolume(volumeRef.current);
+          gain.gain.value = gainFromVolume(volumeRef.current) * boost;
           gain.connect(ctx.destination);
           gainRef.current = gain;
         }
@@ -176,17 +184,19 @@ export function WaveformPlayer({ audioUrl, revealDuration }: Props) {
   // Push volume changes to the gain node mid-playback. setTargetAtTime
   // ramps over a short time-constant instead of jumping the gain in one
   // frame, which avoids the "zipper" click you'd otherwise hear when
-  // dragging the slider during playback.
+  // dragging the slider during playback. boost is folded into the same
+  // ramp so a hero/role swap during playback (rare but possible after a
+  // day rotation) doesn't pop.
   useEffect(() => {
     const gain = gainRef.current;
     const ctx = ctxRef.current;
     if (!gain || !ctx) return;
     gain.gain.setTargetAtTime(
-      gainFromVolume(volume),
+      gainFromVolume(volume) * boost,
       ctx.currentTime,
       0.015,
     );
-  }, [volume]);
+  }, [volume, boost]);
 
   useEffect(() => {
     return () => {
@@ -217,36 +227,47 @@ export function WaveformPlayer({ audioUrl, revealDuration }: Props) {
     setError(null);
     setProgress(0);
 
-    // iOS Safari parks contexts in "suspended" state until an explicit
-    // user gesture wakes them — clicking the play button counts.
-    if (ctx.state === "suspended") {
-      ctx.resume().catch(() => {});
-    }
+    const startNow = () => {
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(gainRef.current ?? ctx.destination);
 
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(gainRef.current ?? ctx.destination);
+      // start(when, offset, duration) is sample-accurate against the
+      // context's audio clock and stops itself after `duration`. No
+      // wall-clock setTimeout, no HTMLAudio startup latency.
+      source.start(
+        ctx.currentTime,
+        startOffsetRef.current,
+        revealDuration,
+      );
+      sourceRef.current = source;
 
-    // start(when, offset, duration) is sample-accurate against the
-    // context's audio clock and stops itself after `duration`. No
-    // wall-clock setTimeout, no HTMLAudio startup latency.
-    source.start(
-      ctx.currentTime,
-      startOffsetRef.current,
-      revealDuration,
-    );
-    sourceRef.current = source;
+      source.onended = () => {
+        if (sourceRef.current === source) {
+          sourceRef.current = null;
+          setPlaying(false);
+          setProgress(1);
+        }
+      };
 
-    source.onended = () => {
-      if (sourceRef.current === source) {
-        sourceRef.current = null;
-        setPlaying(false);
-        setProgress(1);
-      }
+      setPlaying(true);
+      startWallRef.current = performance.now();
     };
 
-    setPlaying(true);
-    startWallRef.current = performance.now();
+    // iOS Safari parks contexts in "suspended" state until an explicit
+    // user gesture wakes them. We MUST wait for resume() to actually
+    // settle before scheduling a source — otherwise iOS schedules the
+    // source against an audio clock that hasn't started yet and plays
+    // silence. resume() on an already-running context is a no-op that
+    // resolves on the next microtask, so unconditional await is safe.
+    ctx
+      .resume()
+      .then(startNow)
+      .catch((e) => {
+        setError(
+          e instanceof Error ? e.message : "Audio resume failed",
+        );
+      });
   };
 
   const handleVolumeChange = (v: number) => {

@@ -17,6 +17,7 @@ import { ShareButton } from "./ShareButton";
 import { NextModeCTA } from "./NextModeCTA";
 import { BonusRound } from "./BonusRound";
 import { WaveformPlayer } from "./WaveformPlayer";
+import { ROLE_AUDIO_BOOST } from "@/lib/audio";
 
 const MODE = "sound";
 // Sentinel pushed into guesses[] when the player skips a turn. Counts
@@ -199,6 +200,7 @@ export function SoundGame() {
           <WaveformPlayer
             audioUrl={audioUrl}
             revealDuration={snippetDuration}
+            boost={ROLE_AUDIO_BOOST[answer.role]}
           />
         )}
       </div>

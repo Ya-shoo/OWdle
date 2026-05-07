@@ -35,3 +35,15 @@ export function saveVolume(v: number): void {
 export function gainFromVolume(v: number): number {
   return Math.max(0, Math.min(1, v)) * MAX_GAIN;
 }
+
+// Per-role gain multiplier applied on top of the user's volume setting.
+// Support ability sounds (healing chimes, ambient pulses, gentle UI cues)
+// are mastered noticeably quieter in-game than damage gunshots and tank
+// impacts, so we boost them so a player at default volume can still hear
+// them clearly. Non-support roles stay at 1× to avoid clipping the
+// already-loud transients on Reinhardt charges, Junkrat grenades, etc.
+export const ROLE_AUDIO_BOOST: Record<"tank" | "damage" | "support", number> = {
+  tank: 1,
+  damage: 1,
+  support: 1.6,
+};

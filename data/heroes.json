@@ -66,15 +66,15 @@
     ],
     "portrait": "https://d15f34w2p8l1cc.cloudfront.net/overwatch/2c38b41d79a1ce9a08b9ad8eb7edf3ff819bd448af16a5815be8c7fdb7203aa0.png",
     "location": "Wuxing University, Chengdu (Previous), Watchpoint Gibraltar (Current)",
-    "country": "Chengdu",
-    "continent": null,
+    "country": "China",
+    "continent": "Asia",
     "age": 22,
     "hp": 250,
     "birthday": "Aug 8",
     "birthday_month": "August",
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "human",
+    "gender": "female",
+    "release_year": 2026,
     "abilities": [
       {
         "name": "Zhuque Fans",
@@ -448,15 +448,15 @@
     ],
     "portrait": "https://d15f34w2p8l1cc.cloudfront.net/overwatch/1161c112292c56c052c0ae711792fcde06e3251b98bc9709e582dd7585b5dcd6.png",
     "location": "London, England (Formerly), Utopea, India",
-    "country": "England",
-    "continent": "Europe",
+    "country": "India",
+    "continent": "Asia",
     "age": 32,
     "hp": 650,
     "birthday": "Aug 28",
     "birthday_month": "August",
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "human",
+    "gender": "female",
+    "release_year": 2026,
     "abilities": [
       {
         "name": "Photon Magnum",
@@ -731,9 +731,9 @@
     "hp": 250,
     "birthday": "Nov 8",
     "birthday_month": "November",
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "cyborg",
+    "gender": "male",
+    "release_year": 2026,
     "abilities": [
       {
         "name": "Synthetic Burst Rifle",
@@ -790,7 +790,7 @@
     "birthday_month": "September",
     "species": "human",
     "gender": "female",
-    "release_year": 2024,
+    "release_year": 2025,
     "abilities": [
       {
         "name": "Bola Shot",
@@ -1091,15 +1091,15 @@
     ],
     "portrait": "https://d15f34w2p8l1cc.cloudfront.net/overwatch/03a184cd0de27091e0099ac22635ad9615a8f6997881a5c25cc5f2444764f729.png",
     "location": "Watchpoint: Gibraltar",
-    "country": null,
-    "continent": null,
+    "country": "Sweden",
+    "continent": "Europe",
     "age": null,
     "hp": 225,
     "birthday": null,
     "birthday_month": null,
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "animal",
+    "gender": "female",
+    "release_year": 2026,
     "abilities": [
       {
         "name": "Biotic Pawjectiles",
@@ -1554,7 +1554,7 @@
     "birthday_month": "August",
     "species": "human",
     "gender": "male",
-    "release_year": 2024,
+    "release_year": 2023,
     "abilities": [
       {
         "name": "Overrun",
@@ -1732,9 +1732,9 @@
     "hp": 250,
     "birthday": "Apr 9",
     "birthday_month": "April",
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "human",
+    "gender": "male",
+    "release_year": 2026,
     "abilities": [
       {
         "name": "Spirit Glaive",
@@ -1861,7 +1861,7 @@
     "birthday": "May 9",
     "birthday_month": "May",
     "species": "omnic",
-    "gender": "neutral",
+    "gender": "female",
     "release_year": 2017,
     "abilities": [
       {
@@ -2226,15 +2226,15 @@
     ],
     "portrait": "https://d15f34w2p8l1cc.cloudfront.net/overwatch/4bfd3d8b95844231115cb5bf4db03344c71bc3e865189c52403b2dc51438e63a.png",
     "location": "Grand Mesa, Colorado",
-    "country": "Colorado",
-    "continent": null,
+    "country": "USA",
+    "continent": "North America",
     "age": 25,
     "hp": 250,
     "birthday": "Apr 17",
     "birthday_month": "April",
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "human",
+    "gender": "female",
+    "release_year": 2026,
     "abilities": [
       {
         "name": "Helix Rifle",
@@ -2715,9 +2715,9 @@
     "hp": 275,
     "birthday": "Feb 15",
     "birthday_month": "February",
-    "species": null,
-    "gender": null,
-    "release_year": null,
+    "species": "human",
+    "gender": "female",
+    "release_year": 2025,
     "abilities": [
       {
         "name": "Palatine Fang",
