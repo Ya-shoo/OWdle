@@ -137,20 +137,21 @@ function DefaultHero({ day }: { day: string | null }) {
       {/* Date + countdown line sits directly on the panning Ken Burns
           banner, so the shadow handles bright frames (key art with
           orange/yellow highlights) without dimming on dark frames. */}
-      <p
-        className="font-mono text-xs uppercase tracking-[0.2em] text-info"
+      <div
         style={{
           textShadow:
             "0 1px 0 rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.55)",
         }}
       >
-        <span suppressHydrationWarning>
-          {day ? prettyDay(day) : "Today"}
-        </span>
-        <span className="text-ink-faint"> · daily</span>
-        <span className="text-ink-faint"> · </span>
-        <NextResetCountdown />
-      </p>
+        <p className="font-mono text-sm uppercase tracking-[0.22em] text-info">
+          <span suppressHydrationWarning>
+            {day ? prettyDay(day) : "Today"}
+          </span>
+        </p>
+        <p className="mt-2 font-mono text-sm uppercase tracking-[0.22em] text-ink-faint">
+          Daily · <NextResetCountdown />
+        </p>
+      </div>
       <Brand as="h1" size="2xl" className="mt-6 leading-[0.95]" />
       <p className="mt-6 max-w-xl text-lg text-ink-soft">
         A daily Overwatch quiz. Six modes, one hero.

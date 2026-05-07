@@ -35,16 +35,15 @@
   --tile-wrong: #1a2030;
   --tile-wrong-fg: #8b95a8;
   /* fonts */
-  --theme-font-display: var(--font-saira);
+  --theme-font-display: var(--font-bricolage);
   --theme-font-body: var(--font-plex-sans);
   --theme-font-mono: var(--font-plex-mono);
-  /* Soft accent — chunky-but-friendly. Used in 3-4 deliberate spots
-     so it reads as a warmth dial-up against the structural Saira. */
   --theme-font-soft: var(--font-bricolage);
-  /* shape — angular */
+  --theme-font-structural: var(--font-saira);
+  /* shape — softened for warmth; tile chamfer kept as the OW signature */
   --radius-tile: 0px;
-  --radius-card: 0px;
-  --radius-pill: 0px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
   --tile-clip: polygon(
     8px 0,
     100% 0,
@@ -169,9 +168,14 @@ footer {
 }
 
 .display-headline {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.01em;
   font-weight: 700;
+}
+
+.text-xs.text-ink-faint,
+.text-xs.text-ink-soft {
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 /* ---------- focus ring ----------
