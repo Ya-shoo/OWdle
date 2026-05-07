@@ -170,58 +170,47 @@ function DefaultHero({ day }: { day: string | null }) {
 
 // Primary call-to-action that anchors first-time visitors to the start of
 // the sequential progression. Always points at Classic — the modes grid
-// below shows status for returning users. Visual brief: mostly dark so it
-// doesn't dominate, with "Classic" rendered in a bright gold-orange so the
-// eye still snaps to it.
+// below carries the per-mode entry points for returning users. Body is
+// solid OW orange with dark ink so the eye snaps to it immediately even
+// against the warm tones the banner pans through.
 function BeginButton() {
   return (
     <Link
       href="/classic/"
       className="begin-cta group relative inline-flex"
-      aria-label="Begin with Classic mode"
+      aria-label="Begin"
     >
-      {/* outer warm bloom — soft gold halo. Pulses gently while hovered
-          (see globals.css .begin-cta rule) so it stays perceptually
-          present against the panning banner. */}
+      {/* outer warm bloom — pulses gently while hovered (see globals.css
+          .begin-cta rule). Tuned warmer/stronger than the old dark-body
+          halo since it now reinforces an already-bright body. */}
       <span
         aria-hidden
         className="begin-halo pointer-events-none absolute -inset-3 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
-        style={{ background: "rgba(255, 164, 102, 0.45)" }}
+        style={{ background: "rgba(242, 101, 34, 0.6)" }}
       />
 
-      {/* inner crisp glow — narrower, less blur, holds a hard edge
-          even when the banner pans bright/warm tones behind it. */}
+      {/* button body — solid accent panel with cut top-right + bottom-left
+          corners. Constant base glow keeps it feeling "live" at rest;
+          shifts to accent-soft + lift on hover. */}
       <span
-        aria-hidden
-        className="pointer-events-none absolute -inset-0.5 opacity-0 blur-md transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100"
-        style={{ background: "rgba(255, 164, 102, 0.55)" }}
-      />
-
-      {/* button body — dark slate panel with cut top-right + bottom-left
-          corners, subtle inner gold hairline for OW UI character */}
-      <span
-        className="relative inline-flex items-center gap-4 bg-muted px-8 py-4 font-display text-base font-bold uppercase tracking-[0.14em] shadow-xl shadow-black/50 transition-transform duration-200 group-hover:-translate-y-0.5 group-active:translate-y-0"
+        className="relative inline-flex items-center gap-4 bg-accent px-10 py-5 font-display text-lg font-bold uppercase tracking-[0.18em] text-on-accent shadow-[0_0_28px_-6px_var(--accent)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-accent-soft group-hover:shadow-[0_0_36px_-4px_var(--accent)] group-active:translate-y-0"
         style={{
           clipPath:
             "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
         }}
       >
-        {/* leading triangle in gold-orange */}
+        {/* leading triangle — dark, matches label */}
         <svg
           aria-hidden
           width="10"
           height="12"
           viewBox="0 0 10 12"
-          className="shrink-0 text-accent-soft"
+          className="shrink-0 text-on-accent"
         >
           <polygon points="0,0 10,6 0,12" fill="currentColor" />
         </svg>
 
-        {/* split-color label: muted "Begin with" + bright "Classic" */}
-        <span>
-          <span className="text-ink-soft">Begin with </span>
-          <span className="text-accent-soft">Classic</span>
-        </span>
+        <span>Begin</span>
 
         {/* trailing arrow */}
         <svg
@@ -229,7 +218,7 @@ function BeginButton() {
           width="18"
           height="12"
           viewBox="0 0 18 12"
-          className="shrink-0 text-accent-soft transition-transform duration-200 group-hover:translate-x-1"
+          className="shrink-0 text-on-accent transition-transform duration-200 group-hover:translate-x-1"
         >
           <path
             d="M0 6 L16 6 M11 1 L17 6 L11 11"
