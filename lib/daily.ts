@@ -132,12 +132,12 @@ export function getSoundForDay(day: string): {
   // through the full roster.
   if (LABELED_SOUND_KEYS.length > 0) {
     const heroIdx =
-      fnv1a(`owdle:sound:r6:${day}`) % LABELED_SOUND_KEYS.length;
+      fnv1a(`owdle:sound:r7:${day}`) % LABELED_SOUND_KEYS.length;
     const heroKey = LABELED_SOUND_KEYS[heroIdx];
     const hero = HEROES_BY_KEY[heroKey];
     const clips = SOUND_CLIPS[heroKey];
     if (hero && clips.length > 0) {
-      const clipIdx = fnv1a(`owdle:sound:r6:${day}:idx`) % clips.length;
+      const clipIdx = fnv1a(`owdle:sound:r7:${day}:idx`) % clips.length;
       const clip = clips[clipIdx];
       return {
         hero,
