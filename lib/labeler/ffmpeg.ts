@@ -116,6 +116,36 @@ export function isMemoryError(e: unknown): boolean {
 
 export type Range = { start: number; end: number };
 
+// Sanitize stitched-range input before it hits ffmpeg's filter_complex.
+// Inverted ranges (end < start) and overlaps both produce trim/atrim
+// segments that the concat filter sits on indefinitely — no error, just
+// a hung worker. Normalizing here means any caller (the labeler today,
+// other tools tomorrow) gets the same defensive behavior for free.
+function normalizeRanges(ranges: Range[]): Range[] {
+  const valid: Range[] = [];
+  for (const r of ranges) {
+    const start = Math.min(r.start, r.end);
+    const end = Math.max(r.start, r.end);
+    if (end - start > 0.001) valid.push({ start, end });
+  }
+  if (valid.length === 0) return [];
+  valid.sort((a, b) => a.start - b.start);
+  const merged: Range[] = [{ ...valid[0] }];
+  for (let i = 1; i < valid.length; i++) {
+    const prev = merged[merged.length - 1];
+    const curr = valid[i];
+    // Touching (curr.start === prev.end) also merges — playing them as
+    // two separately-trimmed clips through concat would be identical to
+    // the union but pays the filter_complex cost for no reason.
+    if (curr.start <= prev.end) {
+      prev.end = Math.max(prev.end, curr.end);
+    } else {
+      merged.push({ ...curr });
+    }
+  }
+  return merged;
+}
+
 // Slices [start, end) seconds from the loaded video and returns the audio
 // as an MP3 byte array. We re-encode via libmp3lame so cuts are sample-
 // accurate (audio frames are independently decodable, but MP4 demuxer
@@ -179,97 +209,149 @@ export async function sliceVideo(
 }
 
 // Concatenate multiple non-contiguous ranges from the source into a single
-// MP3 via filter_complex. atrim is sample-accurate, so boundaries between
-// stitched ranges are seamless.
+// MP3. Each range is extracted independently with `-ss` input seek so the
+// decoder only touches the bytes it needs — critical for multi-GB sources
+// where reading from t=0 every time would be unbearably slow. Parts are
+// then concat-demuxer'd together (lossless: same codec params throughout).
 export async function sliceAudioRanges(
-  ranges: Range[],
+  rawRanges: Range[],
 ): Promise<Uint8Array> {
-  if (ranges.length === 0) throw new Error("sliceAudioRanges: empty ranges");
+  const ranges = normalizeRanges(rawRanges);
+  if (ranges.length === 0) {
+    throw new Error("sliceAudioRanges: no valid ranges after normalization");
+  }
   if (ranges.length === 1) {
     return sliceAudio(ranges[0].start, ranges[0].end);
   }
   const ffmpeg = await loadFFmpeg();
-  const out = `clip_${Math.random().toString(16).slice(2)}.mp3`;
-  const trims: string[] = [];
-  const labels: string[] = [];
+  const tag = Math.random().toString(16).slice(2);
+  const partFiles: string[] = [];
   for (let i = 0; i < ranges.length; i++) {
-    const { start, end } = ranges[i];
-    trims.push(
-      `[0:a]atrim=start=${start.toFixed(3)}:end=${end.toFixed(3)},asetpts=PTS-STARTPTS[a${i}]`,
-    );
-    labels.push(`[a${i}]`);
+    const r = ranges[i];
+    const dur = Math.max(0.05, r.end - r.start);
+    const part = `part_${tag}_${i}.mp3`;
+    await ffmpeg.exec([
+      "-ss",
+      String(r.start),
+      "-i",
+      sourcePath,
+      "-t",
+      String(dur),
+      "-vn",
+      "-acodec",
+      "libmp3lame",
+      "-q:a",
+      "5",
+      part,
+    ]);
+    partFiles.push(part);
   }
-  const filter =
-    trims.join(";") +
-    `;${labels.join("")}concat=n=${ranges.length}:v=0:a=1[a]`;
+  const manifestPath = `concat_${tag}.txt`;
+  const manifest = partFiles.map((p) => `file '${p}'`).join("\n");
+  await ffmpeg.writeFile(manifestPath, new TextEncoder().encode(manifest));
+  const out = `clip_${tag}.mp3`;
   await ffmpeg.exec([
+    "-f",
+    "concat",
+    "-safe",
+    "0",
     "-i",
-    sourcePath,
-    "-filter_complex",
-    filter,
-    "-map",
-    "[a]",
-    "-acodec",
-    "libmp3lame",
-    "-q:a",
-    "5",
+    manifestPath,
+    "-c",
+    "copy",
     out,
   ]);
   const data = (await ffmpeg.readFile(out)) as Uint8Array;
+  for (const p of partFiles) {
+    try {
+      await ffmpeg.deleteFile(p);
+    } catch {
+      // ignore
+    }
+  }
+  try {
+    await ffmpeg.deleteFile(manifestPath);
+  } catch {
+    // ignore
+  }
   await ffmpeg.deleteFile(out);
   return data;
 }
 
 // Concatenate multiple non-contiguous ranges from the source into a single
-// MP4. Unlike single-range sliceVideo (stream copy), stitching forces a
-// re-encode so the boundary frames align cleanly. libx264 ultrafast keeps
-// it bearable in WASM — expect ~1× realtime for short stitched clips.
+// MP4. Each range is re-encoded independently with `-ss` input seek (so we
+// don't pay for decoding hundreds of seconds of unused source on a multi-
+// GB recording the way a single filter_complex pass would), then concat-
+// demuxer'd together — lossless because every part has identical codec
+// params from the same encoder invocation.
 export async function sliceVideoRanges(
-  ranges: Range[],
+  rawRanges: Range[],
 ): Promise<Uint8Array> {
-  if (ranges.length === 0) throw new Error("sliceVideoRanges: empty ranges");
+  const ranges = normalizeRanges(rawRanges);
+  if (ranges.length === 0) {
+    throw new Error("sliceVideoRanges: no valid ranges after normalization");
+  }
   if (ranges.length === 1) {
     return sliceVideo(ranges[0].start, ranges[0].end);
   }
   const ffmpeg = await loadFFmpeg();
-  const out = `clip_${Math.random().toString(16).slice(2)}.mp4`;
-  const trims: string[] = [];
-  const labels: string[] = [];
+  const tag = Math.random().toString(16).slice(2);
+  const partFiles: string[] = [];
   for (let i = 0; i < ranges.length; i++) {
-    const { start, end } = ranges[i];
-    trims.push(
-      `[0:v]trim=start=${start.toFixed(3)}:end=${end.toFixed(3)},setpts=PTS-STARTPTS[v${i}]`,
-    );
-    trims.push(
-      `[0:a]atrim=start=${start.toFixed(3)}:end=${end.toFixed(3)},asetpts=PTS-STARTPTS[ai${i}]`,
-    );
-    labels.push(`[v${i}][ai${i}]`);
+    const r = ranges[i];
+    const dur = Math.max(0.05, r.end - r.start);
+    const part = `part_${tag}_${i}.mp4`;
+    await ffmpeg.exec([
+      "-ss",
+      String(r.start),
+      "-i",
+      sourcePath,
+      "-t",
+      String(dur),
+      "-c:v",
+      "libx264",
+      "-preset",
+      "ultrafast",
+      "-c:a",
+      "aac",
+      "-b:a",
+      "128k",
+      "-movflags",
+      "+faststart",
+      part,
+    ]);
+    partFiles.push(part);
   }
-  const filter =
-    trims.join(";") +
-    `;${labels.join("")}concat=n=${ranges.length}:v=1:a=1[v][a]`;
+  const manifestPath = `concat_${tag}.txt`;
+  const manifest = partFiles.map((p) => `file '${p}'`).join("\n");
+  await ffmpeg.writeFile(manifestPath, new TextEncoder().encode(manifest));
+  const out = `clip_${tag}.mp4`;
   await ffmpeg.exec([
+    "-f",
+    "concat",
+    "-safe",
+    "0",
     "-i",
-    sourcePath,
-    "-filter_complex",
-    filter,
-    "-map",
-    "[v]",
-    "-map",
-    "[a]",
-    "-c:v",
-    "libx264",
-    "-preset",
-    "ultrafast",
-    "-c:a",
-    "aac",
-    "-b:a",
-    "128k",
+    manifestPath,
+    "-c",
+    "copy",
     "-movflags",
     "+faststart",
     out,
   ]);
   const data = (await ffmpeg.readFile(out)) as Uint8Array;
+  for (const p of partFiles) {
+    try {
+      await ffmpeg.deleteFile(p);
+    } catch {
+      // ignore
+    }
+  }
+  try {
+    await ffmpeg.deleteFile(manifestPath);
+  } catch {
+    // ignore
+  }
   await ffmpeg.deleteFile(out);
   return data;
 }

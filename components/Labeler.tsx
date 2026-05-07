@@ -383,12 +383,6 @@ export function Labeler() {
     setExportProgress(0);
     setError(null);
 
-    // Reload ffmpeg every N clips. ffmpeg.wasm's WASM heap fragments
-    // across long runs of exec() and eventually a slice fails with
-    // "memory access out of bounds" or exit code -1. Bouncing the
-    // worker resets the heap; the core itself is browser-cached so the
-    // overhead per reload is ~200ms.
-    const RELOAD_EVERY = 12;
     // Split the export into many small ZIPs. JSZip + JS heap can't hold
     // hundreds of MP4 clips at once — at OBS-quality bitrates a single
     // 200-clip archive blows past the ~2 GB ArrayBuffer ceiling and
@@ -396,6 +390,13 @@ export function Labeler() {
     // batch size of 10 keeps each archive under ~100 MB on typical
     // recordings. The sync-clips script unzips them all at once.
     const CLIPS_PER_ZIP = 10;
+    // Hard ceiling per clip so a single hang can't freeze the whole
+    // export. ffmpeg.wasm sometimes wedges silently (no error, no
+    // progress) — this turns that into a recoverable error that the
+    // skip-and-log path can deal with. Tuned generously: even a
+    // pathological re-encode of a multi-second stitched clip from a
+    // multi-GB source should finish well under this in practice.
+    const CLIP_TIMEOUT_MS = 90_000;
 
     const refreshFFmpeg = async () => {
       await terminateFFmpeg();
@@ -410,6 +411,7 @@ export function Labeler() {
       let inCurrentZip = 0;
       let zipIndex = 1;
       const totalZips = Math.ceil(segments.length / CLIPS_PER_ZIP);
+      const failures: { index: number; id: string; reason: string }[] = [];
 
       const flushZip = async () => {
         if (inCurrentZip === 0) return;
@@ -432,37 +434,91 @@ export function Labeler() {
         zipIndex++;
       };
 
+      console.log(
+        `[export] starting: ${segments.length} clips → ${totalZips} zip(s)`,
+      );
+
       for (let i = 0; i < segments.length; i++) {
-        if (i > 0 && i % RELOAD_EVERY === 0) {
-          await refreshFFmpeg();
-        }
         const s = segments[i];
         const folder = sounds.folder(s.heroKey);
         if (!folder) continue;
 
-        // Each clip gets one retry on memory errors: terminate, reload,
-        // re-mount the source, and re-slice. If it fails again with the
-        // same kind of error, surface it — something else is wrong.
+        const id = `${s.heroKey}/${s.slug}`;
+        const totalDur = totalDuration(s.ranges).toFixed(2);
+        const rangeNote =
+          s.ranges.length === 1
+            ? `1 range, ${totalDur}s`
+            : `${s.ranges.length} stitched, ${totalDur}s`;
+        console.log(
+          `[export] ${i + 1}/${segments.length} ${id} (${rangeNote})`,
+        );
+        const startMs = performance.now();
+
+        // Race the slice against a hard timeout. ffmpeg.wasm hangs
+        // silently in some edge cases — a Promise.race lets us treat
+        // that as an error we can retry-then-skip rather than an
+        // indefinite freeze. The retry covers memory errors AND
+        // timeouts (one fresh worker often unsticks both).
         let attempts = 0;
-        while (true) {
+        let succeeded = false;
+        let lastErr: unknown = null;
+        while (attempts < 2) {
           try {
-            const mp4 = await sliceVideoRanges(s.ranges);
-            folder.file(`${s.slug}.mp4`, mp4);
-            const mp3 = await sliceAudioRanges(s.ranges);
-            folder.file(`${s.slug}.mp3`, mp3);
+            await Promise.race([
+              (async () => {
+                const mp4 = await sliceVideoRanges(s.ranges);
+                folder.file(`${s.slug}.mp4`, mp4);
+                const mp3 = await sliceAudioRanges(s.ranges);
+                folder.file(`${s.slug}.mp3`, mp3);
+              })(),
+              new Promise<never>((_, reject) =>
+                setTimeout(
+                  () =>
+                    reject(
+                      new Error(
+                        `clip exceeded ${CLIP_TIMEOUT_MS / 1000}s timeout`,
+                      ),
+                    ),
+                  CLIP_TIMEOUT_MS,
+                ),
+              ),
+            ]);
+            succeeded = true;
             break;
           } catch (e) {
-            if (attempts < 1 && isMemoryError(e)) {
+            lastErr = e;
+            const isTimeout =
+              e instanceof Error && e.message.includes("timeout");
+            if (attempts < 1 && (isMemoryError(e) || isTimeout)) {
               attempts++;
+              console.warn(
+                `[export]   retry after ${isTimeout ? "timeout" : "memory error"}: refreshing ffmpeg`,
+              );
               await refreshFFmpeg();
               continue;
             }
-            throw new Error(
-              `Clip ${i + 1}/${segments.length} (${s.heroKey}/${s.slug}): ${e instanceof Error ? e.message : e}`,
-            );
+            break;
           }
         }
-        inCurrentZip++;
+
+        if (succeeded) {
+          const elapsed = Math.round(performance.now() - startMs);
+          console.log(`[export]   ✓ ${elapsed}ms`);
+          inCurrentZip++;
+        } else {
+          const reason =
+            lastErr instanceof Error ? lastErr.message : String(lastErr);
+          console.error(`[export]   ✗ skipped: ${reason}`);
+          failures.push({ index: i + 1, id, reason });
+          // After a skipped clip the worker may be in a bad state
+          // (especially after a timeout). Refresh proactively so the
+          // next clip starts clean.
+          try {
+            await refreshFFmpeg();
+          } catch {
+            // ignore — next clip will try anyway
+          }
+        }
         setExportProgress((i + 1) / segments.length);
 
         if (inCurrentZip >= CLIPS_PER_ZIP) {
@@ -471,7 +527,26 @@ export function Labeler() {
       }
 
       await flushZip();
-      if (totalZips > 1) {
+      const ok = segments.length - failures.length;
+      console.log(
+        `[export] done: ${ok}/${segments.length} clips across ${zipIndex - 1} zip(s)` +
+          (failures.length > 0
+            ? `, ${failures.length} skipped — see warnings above`
+            : ""),
+      );
+      if (failures.length > 0) {
+        console.table(failures);
+      }
+      if (failures.length > 0) {
+        const list = failures
+          .slice(0, 5)
+          .map((f) => `#${f.index} ${f.id}`)
+          .join(", ");
+        const more = failures.length > 5 ? ` (+${failures.length - 5} more)` : "";
+        setError(
+          `Exported ${ok}/${segments.length} clips. Skipped: ${list}${more}. See console for full list and reasons.`,
+        );
+      } else if (totalZips > 1) {
         // Brief one-off feedback so the user knows to expect multiple
         // downloads. Not an error; clears on the next user action.
         setError(
