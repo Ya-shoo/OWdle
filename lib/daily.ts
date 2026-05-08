@@ -8,6 +8,7 @@ import {
 import { CONVERSATIONS, type Conversation } from "./conversations";
 import sfxData from "@/data/sfx.json";
 import soundClipsData from "@/data/sound-clips.json";
+import iconOverridesData from "@/data/sound-clip-icons.json";
 
 type SfxEntry = {
   url: string;
@@ -24,6 +25,15 @@ type SoundClip = {
   duration: number;
 };
 const SOUND_CLIPS = soundClipsData as Record<string, SoundClip[]>;
+
+// Hand-curated mapping for clip slugs whose label doesn't match a press-kit
+// ability name. Outer key is hero, inner key is the clip slug, value is the
+// ability slug (slugified ability name) whose icon should be borrowed for
+// that clip's bonus tile. Maintained via the dev /icons page.
+const ICON_OVERRIDES = iconOverridesData as Record<
+  string,
+  Record<string, string>
+>;
 
 // Returns the UTC date string YYYY-MM-DD for a given Date (default: now).
 export function dayString(d: Date = new Date()): string {
@@ -117,7 +127,7 @@ export function getSplashForDay(day: string): {
   return { hero, imageUrl: skin.file, skin };
 }
 
-export function getSoundForDay(day: string): {
+export type ResolvedSoundClip = {
   hero: Hero;
   audioUrl: string;
   videoUrl: string | null;
@@ -125,19 +135,21 @@ export function getSoundForDay(day: string): {
   slug: string | null;
   duration: number | null;
   abilityIndex: number | null;
-} {
+};
+
+export function getSoundForDay(day: string): ResolvedSoundClip {
   // Prefer labeled clips when available — known label, paired MP4 reveal,
   // accurate duration. Fall back to the unlabeled item-tracker SFX dump
   // for heroes we haven't recorded yet, so the daily quiz keeps rotating
   // through the full roster.
   if (LABELED_SOUND_KEYS.length > 0) {
     const heroIdx =
-      fnv1a(`owdle:sound:r7:${day}`) % LABELED_SOUND_KEYS.length;
+      fnv1a(`owdle:sound:r8:${day}`) % LABELED_SOUND_KEYS.length;
     const heroKey = LABELED_SOUND_KEYS[heroIdx];
     const hero = HEROES_BY_KEY[heroKey];
     const clips = SOUND_CLIPS[heroKey];
     if (hero && clips.length > 0) {
-      const clipIdx = fnv1a(`owdle:sound:r7:${day}:idx`) % clips.length;
+      const clipIdx = fnv1a(`owdle:sound:r8:${day}:idx`) % clips.length;
       const clip = clips[clipIdx];
       return {
         hero,
@@ -170,15 +182,68 @@ export function getSoundForDay(day: string): {
   };
 }
 
+// Lightweight reference into the labeled-clip set, used by the dev-only
+// sound picker to enumerate every (hero, clip) pair without paying for
+// hero portraits or ability metadata up front.
+export type LabeledSoundClipRef = {
+  heroKey: string;
+  heroName: string;
+  slug: string;
+  label: string;
+  duration: number;
+};
+
+export function getAllLabeledSoundClips(): LabeledSoundClipRef[] {
+  const out: LabeledSoundClipRef[] = [];
+  for (const heroKey of Object.keys(SOUND_CLIPS)) {
+    const hero = HEROES_BY_KEY[heroKey];
+    if (!hero) continue;
+    for (const clip of SOUND_CLIPS[heroKey]) {
+      out.push({
+        heroKey,
+        heroName: hero.name,
+        slug: clip.slug,
+        label: clip.label,
+        duration: clip.duration,
+      });
+    }
+  }
+  out.sort((a, b) =>
+    a.heroName === b.heroName
+      ? a.label.localeCompare(b.label)
+      : a.heroName.localeCompare(b.heroName),
+  );
+  return out;
+}
+
+export function resolveLabeledSoundClip(
+  heroKey: string,
+  slug: string,
+): ResolvedSoundClip | null {
+  const hero = HEROES_BY_KEY[heroKey];
+  const clips = SOUND_CLIPS[heroKey];
+  if (!hero || !clips) return null;
+  const clip = clips.find((c) => c.slug === slug);
+  if (!clip) return null;
+  return {
+    hero,
+    audioUrl: clip.audioUrl,
+    videoUrl: clip.videoUrl,
+    label: clip.label,
+    slug: clip.slug,
+    duration: clip.duration,
+    abilityIndex: null,
+  };
+}
+
 // Bonus-round option built from a labeled clip. The label and slug come
-// from sound-clips.json; the icon/description are best-effort matched
-// from the hero's press-kit abilities by name. Custom variants like
-// "Scoped Fire" that aren't in heroes.json get null for those.
+// from sound-clips.json; the icon is best-effort matched from the hero's
+// press-kit abilities by name, with overrides in sound-clip-icons.json
+// for custom variants like "Scoped Fire" that don't slug-match.
 export type SoundBonusOption = {
   slug: string;
   label: string;
   icon: string | null;
-  description: string | null;
   isCorrect: boolean;
 };
 
@@ -196,15 +261,24 @@ export function getSoundBonusOptions(
 ): SoundBonusOption[] {
   const hero = HEROES_BY_KEY[heroKey];
   const clips = SOUND_CLIPS[heroKey] ?? [];
+  const overrides = ICON_OVERRIDES[heroKey] ?? {};
   return clips.map((clip) => {
-    const ability = hero?.abilities.find(
+    // Override wins when present (covers labels like "Scoped Fire" that
+    // don't slugify to a real ability name). Fall back to the auto-match.
+    const overrideAbilitySlug = overrides[clip.slug];
+    const overrideAbility = overrideAbilitySlug
+      ? hero?.abilities.find(
+          (a) => abilityNameToSlug(a.name) === overrideAbilitySlug,
+        )
+      : undefined;
+    const autoAbility = hero?.abilities.find(
       (a) => abilityNameToSlug(a.name) === clip.slug,
     );
+    const ability = overrideAbility ?? autoAbility;
     return {
       slug: clip.slug,
       label: clip.label,
       icon: ability?.icon ?? null,
-      description: ability?.description ?? null,
       isCorrect: clip.slug === correctSlug,
     };
   });
