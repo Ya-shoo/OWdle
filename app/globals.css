@@ -123,6 +123,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Image deterrent: block click-and-drag (so casual users can't drag a
+   hero portrait into a Discord chat) and disable text-selection on the
+   image element itself. Universal selector — applies to every <img> on
+   the site. Branding/UI images don't need to be draggable either, so
+   the side effect is negligible. Doesn't stop devtools or right-click →
+   save, but raises the bar for grab-and-go scraping. */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 /* atmospheric background wash */
 body::before {
   content: "";

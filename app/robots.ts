@@ -8,7 +8,11 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/labeler/"],
+      // Internal-only routes — keep them out of search results. Game
+      // assets are NOT disallowed here because Google Images is a real
+      // discovery channel; _headers blocks cross-origin embedding but
+      // leaves indexing open.
+      disallow: ["/labeler/", "/dev/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

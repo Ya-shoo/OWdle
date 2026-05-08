@@ -7,3 +7,34 @@
 
 /robots.txt
   Content-Type: text/plain; charset=utf-8
+
+# Game-asset directories. Hero skin/sound/voiceline assets we hand-curated
+# (and don't own copyright on) — block cross-origin <img>/<audio>
+# embedding ("hotlinking") by other sites. Same-origin usage on our own
+# pages is unaffected, and crawlers (Googlebot, Bing) still fetch and
+# index normally because CORP is browser-only — so Google Images traffic
+# stays open as a discovery channel.
+
+/skins/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+
+/banners/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+
+/splash/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+
+/voicelines/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+
+/sfx/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+
+/sounds/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
