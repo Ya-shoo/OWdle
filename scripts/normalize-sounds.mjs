@@ -1,18 +1,24 @@
-// Two-pass EBU R128 loudness normalization for every voice/sound clip in
-// public/sounds/<hero>/. Brings all clips (both .mp3 and the matching .mp4
-// reveal videos) to a consistent perceived loudness so support and DPS
-// audio sit at the same level instead of supports being ~10 dB quieter.
+// Loudness normalization for every voice/sound clip in public/sounds/<hero>/.
+// Brings all clips (.mp3 + matching .mp4 reveal videos) up to TikTok-loud
+// (-9 to -13 LUFS, ~5 dB louder than YouTube/Spotify) so they're audible
+// on laptop speakers and consistent across hero classes — supports were
+// originally at -40 to -49 LUFS, DPS at -27 to -36 LUFS.
 //
-// Target: -16 LUFS integrated, true peak ceiling -1.5 dBTP. That's the
-// streaming-loud range (close to YouTube/Spotify) — loud enough to hear on
-// laptop speakers but with enough headroom to avoid intersample clipping.
+// Filter chain: stacked-limiter approach.
 //
-// Pass 1 measures with `loudnorm=...:print_format=json`, pass 2 re-encodes
-// with the measured values fed back in — much more accurate than one-pass
-// on short clips where there isn't enough audio to gather statistics
-// reliably during the encode.
+//   volume=20dB                          coarse boost
+//   alimiter=limit=0.5  (≈-6 dBFS)      catches loud peaks, compresses
+//   volume=15dB                          second boost on the now-flatter signal
+//   alimiter=limit=0.79 (≈-2 dBFS)      final brick-wall, leaves headroom
+//                                         to avoid intersample clipping
+//
+// Net: ~30 dB of effective loudness gain with the dynamic range squashed
+// hard. We tried EBU R128 loudnorm at -16 then -8 LUFS and dynaudnorm —
+// both left short, transient-heavy game audio either too quiet or with
+// inconsistent loudness across clips. Game UI audio doesn't need to
+// preserve dynamic range; it needs to be reliably audible.
 
-import { readdir, rename, stat } from "node:fs/promises";
+import { readdir, rename } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
@@ -20,67 +26,55 @@ import ffmpegPath from "ffmpeg-static";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SOUNDS_DIR = resolve(__dirname, "..", "public", "sounds");
-const TARGET_I = -16;
-const TARGET_TP = -1.5;
-const TARGET_LRA = 11;
 const CONCURRENCY = 4;
 
-function run(args, { capture = false } = {}) {
+const FILTER_CHAIN = [
+  "volume=20dB",
+  "alimiter=limit=0.5:asc=1:level=disabled",
+  "volume=15dB",
+  "alimiter=limit=0.79:asc=1:level=disabled",
+].join(",");
+
+function run(args) {
   return new Promise((res, rej) => {
     const proc = spawn(ffmpegPath, args, {
-      stdio: ["ignore", capture ? "pipe" : "ignore", "pipe"],
+      stdio: ["ignore", "ignore", "pipe"],
     });
-    let stdout = "";
     let stderr = "";
-    if (capture) proc.stdout.on("data", (d) => (stdout += d.toString()));
     proc.stderr.on("data", (d) => (stderr += d.toString()));
     proc.on("exit", (code) => {
-      if (code === 0) res({ stdout, stderr });
-      else rej(new Error(`ffmpeg exit ${code}\n${stderr}`));
+      if (code === 0) res({ stderr });
+      else rej(new Error(`ffmpeg exit ${code}\n${stderr.slice(-500)}`));
     });
     proc.on("error", rej);
   });
 }
 
 async function measure(input) {
-  const filter = `loudnorm=I=${TARGET_I}:TP=${TARGET_TP}:LRA=${TARGET_LRA}:print_format=json`;
-  const { stderr } = await run(["-hide_banner", "-i", input, "-af", filter, "-f", "null", "-"]);
-  const m = stderr.match(/\{[\s\S]*?\}/);
-  if (!m) throw new Error(`no loudnorm JSON in stderr for ${input}`);
-  return JSON.parse(m[0]);
+  const { stderr } = await run([
+    "-hide_banner", "-i", input,
+    "-af", "ebur128=peak=true",
+    "-f", "null", "-",
+  ]);
+  const m = stderr.match(/Integrated loudness:[\s\S]*?I:\s*(-?[\d.]+|-?inf)/);
+  return m ? parseFloat(m[1]) : null;
 }
 
-async function normalizeMp3(input, tmp, measured) {
-  const filter =
-    `loudnorm=I=${TARGET_I}:TP=${TARGET_TP}:LRA=${TARGET_LRA}` +
-    `:measured_I=${measured.input_i}` +
-    `:measured_TP=${measured.input_tp}` +
-    `:measured_LRA=${measured.input_lra}` +
-    `:measured_thresh=${measured.input_thresh}` +
-    `:offset=${measured.target_offset}` +
-    `:linear=true:print_format=summary`;
+async function normalizeMp3(input, tmp) {
   await run([
     "-y", "-hide_banner", "-i", input,
-    "-af", filter,
+    "-af", FILTER_CHAIN,
     "-ar", "48000",
     "-c:a", "libmp3lame", "-q:a", "2",
     tmp,
   ]);
 }
 
-async function normalizeMp4(input, tmp, measured) {
-  const filter =
-    `loudnorm=I=${TARGET_I}:TP=${TARGET_TP}:LRA=${TARGET_LRA}` +
-    `:measured_I=${measured.input_i}` +
-    `:measured_TP=${measured.input_tp}` +
-    `:measured_LRA=${measured.input_lra}` +
-    `:measured_thresh=${measured.input_thresh}` +
-    `:offset=${measured.target_offset}` +
-    `:linear=true:print_format=summary`;
+async function normalizeMp4(input, tmp) {
   await run([
     "-y", "-hide_banner", "-i", input,
     "-c:v", "copy",
-    "-af", filter,
+    "-af", FILTER_CHAIN,
     "-ar", "48000",
     "-c:a", "aac", "-b:a", "128k",
     "-movflags", "+faststart",
@@ -90,20 +84,12 @@ async function normalizeMp4(input, tmp, measured) {
 
 async function processOne(file) {
   const tmp = `${file}.tmp.${file.endsWith(".mp4") ? "mp4" : "mp3"}`;
-  const measured = await measure(file);
-  if (measured.input_i === "-inf" || measured.input_i === "inf") {
-    console.warn(`  skip silent: ${file}`);
-    return { file, before: null, after: null, skipped: true };
-  }
-  if (file.endsWith(".mp4")) await normalizeMp4(file, tmp, measured);
-  else await normalizeMp3(file, tmp, measured);
+  const before = await measure(file);
+  if (file.endsWith(".mp4")) await normalizeMp4(file, tmp);
+  else await normalizeMp3(file, tmp);
   await rename(tmp, file);
-  return {
-    file,
-    before: parseFloat(measured.input_i),
-    after: parseFloat(measured.output_i),
-    skipped: false,
-  };
+  const after = await measure(file);
+  return { file, before, after };
 }
 
 async function pool(items, fn, n) {
@@ -140,7 +126,7 @@ async function main() {
     }
   }
   console.log(`Found ${files.length} files across ${heroes.length} heroes.`);
-  console.log(`Target: ${TARGET_I} LUFS, ${TARGET_TP} dBTP, LRA ${TARGET_LRA}.`);
+  console.log(`Filter chain: ${FILTER_CHAIN}`);
   console.log(`Concurrency: ${CONCURRENCY}\n`);
 
   const t0 = Date.now();
@@ -151,21 +137,33 @@ async function main() {
       const r = await processOne(f);
       done++;
       const rel = f.replace(SOUNDS_DIR + "/", "");
-      if (r.skipped) console.log(`[${done}/${files.length}] SKIP ${rel}`);
-      else if (r.error) console.log(`[${done}/${files.length}] ERR  ${rel}: ${r.error}`);
-      else console.log(`[${done}/${files.length}] ok   ${rel}  ${r.before.toFixed(1)} → ${r.after.toFixed(1)} LUFS`);
+      if (r.error) {
+        console.log(`[${done}/${files.length}] ERR  ${rel}: ${r.error}`);
+      } else {
+        const b = r.before == null ? "?" : r.before.toFixed(1);
+        const a = r.after == null ? "?" : r.after.toFixed(1);
+        console.log(`[${done}/${files.length}] ok   ${rel}  ${b} → ${a} LUFS`);
+      }
       return r;
     },
     CONCURRENCY,
   );
 
-  const ok = results.filter((r) => !r.error && !r.skipped);
+  const ok = results.filter((r) => !r.error);
   const errs = results.filter((r) => r.error);
-  const skipped = results.filter((r) => r.skipped);
   const dt = ((Date.now() - t0) / 1000).toFixed(1);
-  console.log(
-    `\nDone in ${dt}s — ${ok.length} normalized, ${skipped.length} skipped, ${errs.length} errors.`,
-  );
+  console.log(`\nDone in ${dt}s — ${ok.length} normalized, ${errs.length} errors.`);
+
+  const afterVals = ok.map((r) => r.after).filter((v) => v != null && Number.isFinite(v));
+  if (afterVals.length > 0) {
+    afterVals.sort((a, b) => a - b);
+    const mean = afterVals.reduce((s, v) => s + v, 0) / afterVals.length;
+    const median = afterVals[Math.floor(afterVals.length / 2)];
+    console.log(
+      `Post-norm LUFS: min=${afterVals[0].toFixed(1)} max=${afterVals[afterVals.length - 1].toFixed(1)} mean=${mean.toFixed(1)} median=${median.toFixed(1)}`,
+    );
+  }
+
   if (errs.length) {
     for (const e of errs) console.log(`  err ${e.file}: ${e.error}`);
     process.exit(1);

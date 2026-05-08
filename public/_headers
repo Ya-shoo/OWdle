@@ -56,3 +56,13 @@
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/portraits/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/abilities/*
+  Cross-Origin-Resource-Policy: same-origin
+  Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
