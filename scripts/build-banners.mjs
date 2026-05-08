@@ -57,7 +57,7 @@ function expandSourceUrl(url) {
 }
 
 async function downloadAndResize(url, outPath, opts = {}) {
-  const { cropMode = "attention" } = opts;
+  const { cropMode = "attention", format = "jpeg" } = opts;
   const fetchUrl = expandSourceUrl(url);
   let buf;
   let lastErr;
@@ -90,10 +90,20 @@ async function downloadAndResize(url, outPath, opts = {}) {
   const position =
     cropMode === "center" ? "center" : sharp.strategy.attention;
 
-  await sharp(buf)
-    .resize(TARGET_W, TARGET_H, { fit: "cover", position })
-    .jpeg({ quality: QUALITY, progressive: true, chromaSubsampling: "4:4:4" })
-    .toFile(outPath);
+  const pipeline = sharp(buf).resize(TARGET_W, TARGET_H, {
+    fit: "cover",
+    position,
+  });
+  // WebP at q82 produces ~25-30% the size of our JPEGs at q92 with no
+  // perceptible quality loss on the painterly comic key art that headlines
+  // the homepage. The hero banner is the LCP element, so this is real.
+  if (format === "webp") {
+    await pipeline.webp({ quality: 82, effort: 5 }).toFile(outPath);
+  } else {
+    await pipeline
+      .jpeg({ quality: QUALITY, progressive: true, chromaSubsampling: "4:4:4" })
+      .toFile(outPath);
+  }
 }
 
 async function buildKeyArt() {
@@ -109,17 +119,20 @@ async function buildKeyArt() {
 
   const out = [];
   for (const e of entries) {
-    const outPath = resolve(BANNERS_OUT, "key-art", `${e.key}.jpg`);
+    const outPath = resolve(BANNERS_OUT, "key-art", `${e.key}.webp`);
     process.stdout.write(`  ${e.label.padEnd(28)} `);
     try {
-      await downloadAndResize(e.url, outPath, { cropMode: e.cropMode });
+      await downloadAndResize(e.url, outPath, {
+        cropMode: e.cropMode,
+        format: "webp",
+      });
       out.push({
         type: "key-art",
         subtype: e.type || "key-art",
         key: e.key,
         label: e.label,
         sublabel: e.sublabel || null,
-        file: `/banners/key-art/${e.key}.jpg`,
+        file: `/banners/key-art/${e.key}.webp`,
       });
       console.log("ok");
     } catch (err) {

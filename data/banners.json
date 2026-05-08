@@ -6,7 +6,7 @@
       "key": "comic-crossroads",
       "label": "Crossroads",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-crossroads.jpg"
+      "file": "/banners/key-art/comic-crossroads.webp"
     },
     {
       "type": "key-art",
@@ -14,7 +14,7 @@
       "key": "comic-new-heights",
       "label": "New Heights",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-new-heights.jpg"
+      "file": "/banners/key-art/comic-new-heights.webp"
     },
     {
       "type": "key-art",
@@ -22,7 +22,7 @@
       "key": "comic-overwatch-undivided",
       "label": "Overwatch Undivided",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-overwatch-undivided.jpg"
+      "file": "/banners/key-art/comic-overwatch-undivided.webp"
     },
     {
       "type": "key-art",
@@ -30,7 +30,7 @@
       "key": "comic-from-the-ashes",
       "label": "From the Ashes",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-from-the-ashes.jpg"
+      "file": "/banners/key-art/comic-from-the-ashes.webp"
     },
     {
       "type": "key-art",
@@ -38,7 +38,7 @@
       "key": "comic-vested-interests",
       "label": "Vested Interests",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-vested-interests.jpg"
+      "file": "/banners/key-art/comic-vested-interests.webp"
     },
     {
       "type": "key-art",
@@ -46,7 +46,7 @@
       "key": "comic-project-jetpack-katt",
       "label": "Project Jetpack Katt",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-project-jetpack-katt.jpg"
+      "file": "/banners/key-art/comic-project-jetpack-katt.webp"
     },
     {
       "type": "key-art",
@@ -54,7 +54,7 @@
       "key": "comic-vengeance-comes",
       "label": "Vengeance Comes",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-vengeance-comes.jpg"
+      "file": "/banners/key-art/comic-vengeance-comes.webp"
     },
     {
       "type": "key-art",
@@ -62,7 +62,7 @@
       "key": "story-signs-of-life",
       "label": "Signs of Life",
       "sublabel": "Short story",
-      "file": "/banners/key-art/story-signs-of-life.jpg"
+      "file": "/banners/key-art/story-signs-of-life.webp"
     },
     {
       "type": "key-art",
@@ -70,7 +70,7 @@
       "key": "comic-against-the-tide",
       "label": "Against the Tide",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-against-the-tide.jpg"
+      "file": "/banners/key-art/comic-against-the-tide.webp"
     },
     {
       "type": "key-art",
@@ -78,7 +78,7 @@
       "key": "comic-dokiwatch",
       "label": "DokiWatch",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-dokiwatch.jpg"
+      "file": "/banners/key-art/comic-dokiwatch.webp"
     },
     {
       "type": "key-art",
@@ -86,7 +86,7 @@
       "key": "comic-together",
       "label": "Together",
       "sublabel": "Comic cover",
-      "file": "/banners/key-art/comic-together.jpg"
+      "file": "/banners/key-art/comic-together.webp"
     },
     {
       "type": "key-art",
@@ -94,7 +94,7 @@
       "key": "story-thoughtless-gods",
       "label": "Thoughtless Gods",
       "sublabel": "Short story",
-      "file": "/banners/key-art/story-thoughtless-gods.jpg"
+      "file": "/banners/key-art/story-thoughtless-gods.webp"
     }
   ],
   "maps": [

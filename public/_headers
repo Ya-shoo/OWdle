@@ -1,3 +1,10 @@
+# Next.js content-hashed assets — filename changes whenever content changes,
+# so they're safe to cache forever. Without this, Cloudflare Pages defaults
+# to max-age=14400 + must-revalidate, which forces a revalidation roundtrip
+# every 4h on every chunk for every visitor.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /opengraph-image
   Content-Type: image/png
   Cache-Control: public, max-age=86400, must-revalidate
@@ -14,27 +21,38 @@
 # pages is unaffected, and crawlers (Googlebot, Bing) still fetch and
 # index normally because CORP is browser-only — so Google Images traffic
 # stays open as a discovery channel.
+#
+# Cache-Control on these assets: 1 day fresh + 7 day stale-while-revalidate.
+# Filenames are stable but contents can change (e.g. when we re-normalize
+# audio or re-crop banners), so we don't want infinite cache — but we do
+# want repeat visitors to render instantly from the edge.
 
 /skins/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /banners/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /splash/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /voicelines/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /sfx/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
 /sounds/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
