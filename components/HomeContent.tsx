@@ -64,10 +64,8 @@ export function HomeContent() {
 
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-12 sm:pt-16">
         <div className="mb-6 flex items-baseline justify-between border-b border-line pb-3">
-          <h2 className="font-mono text-xs uppercase tracking-[0.2em] text-info">
-            Modes
-          </h2>
-          <span className="font-mono text-xs text-ink-faint">
+          <h2 className="utility-label text-sm text-info">Modes</h2>
+          <span className="utility-label text-sm text-ink-faint">
             {day
               ? `${completedCount} / ${BUILT_MODE_SLUGS.length} done`
               : `${BUILT_MODE_SLUGS.length} live`}
@@ -108,16 +106,25 @@ export function HomeContent() {
 
       <footer className="border-t border-line bg-inset/40">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 font-mono text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            Hero data:{" "}
+          <div className="max-w-3xl text-[10px] leading-relaxed">
+            Sources:{" "}
             <a
               className="underline-offset-2 hover:underline"
               href="https://overfast-api.tekrop.fr/"
             >
               OverFast API
             </a>
-            . Overwatch is a trademark of Blizzard Entertainment, Inc. OWdle
-            is an unofficial fan project.
+            ,{" "}
+            <a
+              className="underline-offset-2 hover:underline"
+              href="https://overwatch.fandom.com/"
+            >
+              Overwatch Fandom wiki
+            </a>{" "}
+            (CC-BY-SA), Blizzard press kit. Overwatch and all related
+            assets are © and ™ Blizzard Entertainment, Inc. OWdle is an
+            unofficial fan project, not endorsed by or affiliated with
+            Blizzard, and claims no ownership of assets used.
           </div>
           <Link
             href="/how-to-play/"
@@ -139,8 +146,7 @@ function DefaultHero({ day }: { day: string | null }) {
           orange/yellow highlights) without dimming on dark frames. */}
       <div
         style={{
-          textShadow:
-            "0 1px 0 rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.55)",
+          textShadow: "1px 1px 2px rgba(0,0,0,0.25)",
         }}
       >
         <p className="font-mono text-sm uppercase tracking-[0.22em] text-info">
@@ -160,7 +166,8 @@ function DefaultHero({ day }: { day: string | null }) {
         <BeginButton />
         <Link
           href="/how-to-play/"
-          className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint transition-colors hover:text-accent-soft"
+          className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft transition-colors hover:text-accent-soft"
+          style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.4)" }}
         >
           First time? How to play →
         </Link>
@@ -186,7 +193,7 @@ function BeginButton() {
           halo since it now reinforces an already-bright body. */}
       <span
         aria-hidden
-        className="begin-halo pointer-events-none absolute -inset-3 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+        className="begin-halo pointer-events-none absolute -inset-1.5 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
         style={{ background: "rgba(242, 101, 34, 0.6)" }}
       />
 
@@ -194,7 +201,7 @@ function BeginButton() {
           corners. Constant base glow keeps it feeling "live" at rest;
           shifts to accent-soft + lift on hover. */}
       <span
-        className="relative inline-flex items-center gap-4 bg-accent px-10 py-5 font-display text-lg font-bold uppercase tracking-[0.18em] text-on-accent shadow-[0_0_28px_-6px_var(--accent)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-accent-soft group-hover:shadow-[0_0_36px_-4px_var(--accent)] group-active:translate-y-0"
+        className="relative inline-flex items-center gap-4 bg-accent px-10 py-5 font-display text-lg font-bold uppercase tracking-[0.18em] text-on-accent shadow-[0_0_20px_-6px_var(--accent)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-accent-soft group-hover:shadow-[0_0_24px_-6px_var(--accent)] group-active:translate-y-0"
         style={{
           clipPath:
             "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
@@ -254,10 +261,9 @@ function DailyCompleteHero({
       <CompleteBadge count={count} totalGuesses={totalGuesses} />
       <div className="flex-1 text-center sm:text-left">
         <p
-          className="font-mono text-xs uppercase tracking-[0.2em] text-correct"
+          className="utility-label text-sm text-correct"
           style={{
-            textShadow:
-              "0 1px 0 rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.55)",
+            textShadow: "1px 1px 2px rgba(0,0,0,0.25)",
           }}
         >
           <span aria-hidden>✓</span> Daily complete · {prettyDay(day)}
@@ -392,7 +398,7 @@ function CompleteBadge({
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.86 }}
-          className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-info"
+          className="mt-2 utility-label text-xs text-info"
         >
           {totalGuesses} guesses
         </motion.div>
@@ -412,9 +418,7 @@ function ModeCard({
     return (
       <div className="block h-full p-6 opacity-50">
         <ModeCardInner label={mode.label} blurb={mode.blurb}>
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-info">
-            Soon
-          </span>
+          <span className="utility-label text-xs text-info">Soon</span>
         </ModeCardInner>
       </div>
     );
@@ -423,22 +427,19 @@ function ModeCard({
   let tag: React.ReactNode;
   if (status?.won) {
     tag = (
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-correct">
+      <span className="utility-label text-xs text-correct">
         <span aria-hidden>✓</span> in {status.guesses}
       </span>
     );
   } else if (status && status.guesses > 0) {
     tag = (
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-info">
-        {status.guesses} {status.guesses === 1 ? "guess" : "guesses"} ·
-        Resume →
+      <span className="utility-label text-xs text-info">
+        {status.guesses} {status.guesses === 1 ? "guess" : "guesses"} · Resume →
       </span>
     );
   } else {
     tag = (
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent">
-        Play →
-      </span>
+      <span className="utility-label text-xs text-accent">Play →</span>
     );
   }
 

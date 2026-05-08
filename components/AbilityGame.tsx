@@ -17,7 +17,6 @@ import {
 } from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
-import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
 import { ShareButton } from "./ShareButton";
 import { NextModeCTA } from "./NextModeCTA";
@@ -202,18 +201,13 @@ export function AbilityGame() {
         )}
       </AnimatePresence>
 
-      <div className="space-y-4">
+      <div className="space-y-2.5">
         <AnimatePresence initial={false}>
           {[...guessedHeroes].reverse().map((hero, revIdx) => {
             const originalIdx = guessedHeroes.length - 1 - revIdx;
             const isLatest = originalIdx === guessedHeroes.length - 1;
             return (
-              <GuessRow
-                key={hero.key}
-                guess={hero}
-                answer={answer}
-                isLatest={isLatest}
-              />
+              <WrongGuessCard key={hero.key} hero={hero} isLatest={isLatest} />
             );
           })}
         </AnimatePresence>
@@ -273,6 +267,30 @@ function HardModeToggle({
         {on ? "ON" : "OFF"}
       </span>
     </button>
+  );
+}
+
+function WrongGuessCard({ hero, isLatest }: { hero: Hero; isLatest: boolean }) {
+  return (
+    <motion.div
+      layout
+      initial={isLatest ? { opacity: 0, y: -10 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="tile-shape mx-auto flex w-full max-w-sm flex-col items-center justify-center gap-4 border border-far/40 bg-far/15 px-6 py-8"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={hero.portrait}
+        alt={hero.name}
+        width={144}
+        height={144}
+        className="h-32 w-32 rounded-(--radius-card) bg-muted object-cover sm:h-36 sm:w-36"
+      />
+      <div className="font-display text-3xl uppercase tracking-wide text-ink sm:text-4xl">
+        {hero.name}
+      </div>
+    </motion.div>
   );
 }
 

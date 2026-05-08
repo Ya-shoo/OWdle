@@ -26,7 +26,7 @@ export function TryDeadlockleCard() {
 
       <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex-1">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          <p className="utility-label text-xs text-info">
             Sister site · OWdle recommends
           </p>
           <h3 className="mt-2 font-display text-2xl text-ink sm:text-3xl">
@@ -42,7 +42,7 @@ export function TryDeadlockleCard() {
           </p>
         </div>
 
-        <span className="inline-flex items-center gap-2 self-start border border-line bg-canvas px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink transition-colors group-hover:border-edge group-hover:text-accent-soft sm:self-auto">
+        <span className="utility-label inline-flex items-center gap-2 self-start border border-line bg-canvas px-4 py-2.5 text-sm text-ink transition-colors group-hover:border-edge group-hover:text-accent-soft sm:self-auto">
           Try Deadlockle
           <svg
             aria-hidden

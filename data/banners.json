@@ -2,87 +2,99 @@
   "keyArt": [
     {
       "type": "key-art",
-      "key": "brigitte-cinematic",
-      "label": "Brigitte",
-      "sublabel": "Mythic key art",
-      "file": "/banners/key-art/brigitte-cinematic.jpg"
+      "subtype": "comic",
+      "key": "comic-crossroads",
+      "label": "Crossroads",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-crossroads.jpg"
     },
     {
       "type": "key-art",
-      "key": "freja-cinematic",
-      "label": "Freja",
-      "sublabel": "Hero spotlight",
-      "file": "/banners/key-art/freja-cinematic.jpg"
+      "subtype": "comic",
+      "key": "comic-new-heights",
+      "label": "New Heights",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-new-heights.jpg"
     },
     {
       "type": "key-art",
-      "key": "lifeweaver-cinematic",
-      "label": "Lifeweaver",
-      "sublabel": "Hero spotlight",
-      "file": "/banners/key-art/lifeweaver-cinematic.jpg"
+      "subtype": "comic",
+      "key": "comic-overwatch-undivided",
+      "label": "Overwatch Undivided",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-overwatch-undivided.jpg"
     },
     {
       "type": "key-art",
-      "key": "mauga-cinematic",
-      "label": "Mauga",
-      "sublabel": "Hero spotlight",
-      "file": "/banners/key-art/mauga-cinematic.jpg"
+      "subtype": "comic",
+      "key": "comic-from-the-ashes",
+      "label": "From the Ashes",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-from-the-ashes.jpg"
     },
     {
       "type": "key-art",
-      "key": "ramattra-cinematic",
-      "label": "Ramattra",
-      "sublabel": "Hero spotlight",
-      "file": "/banners/key-art/ramattra-cinematic.jpg"
+      "subtype": "comic",
+      "key": "comic-vested-interests",
+      "label": "Vested Interests",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-vested-interests.jpg"
     },
     {
       "type": "key-art",
-      "key": "junker-queen-header",
-      "label": "Junker Queen",
-      "sublabel": "Hero banner",
-      "file": "/banners/key-art/junker-queen-header.jpg"
+      "subtype": "comic",
+      "key": "comic-project-jetpack-katt",
+      "label": "Project Jetpack Katt",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-project-jetpack-katt.jpg"
     },
     {
       "type": "key-art",
-      "key": "season-22-overview",
-      "label": "Season 22",
-      "sublabel": "Spotlight",
-      "file": "/banners/key-art/season-22-overview.jpg"
+      "subtype": "comic",
+      "key": "comic-vengeance-comes",
+      "label": "Vengeance Comes",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-vengeance-comes.jpg"
     },
     {
       "type": "key-art",
-      "key": "f2p-masthead",
-      "label": "Heroes ensemble",
-      "sublabel": "Masthead",
-      "file": "/banners/key-art/f2p-masthead.jpg"
+      "subtype": "story",
+      "key": "story-signs-of-life",
+      "label": "Signs of Life",
+      "sublabel": "Short story",
+      "file": "/banners/key-art/story-signs-of-life.jpg"
     },
     {
       "type": "key-art",
-      "key": "outro-characters",
-      "label": "Heroes",
-      "sublabel": "Group panorama",
-      "file": "/banners/key-art/outro-characters.jpg"
+      "subtype": "comic",
+      "key": "comic-against-the-tide",
+      "label": "Against the Tide",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-against-the-tide.jpg"
     },
     {
       "type": "key-art",
-      "key": "outro-sky",
-      "label": "Watchpoint",
-      "sublabel": "Atmosphere",
-      "file": "/banners/key-art/outro-sky.jpg"
+      "subtype": "comic",
+      "key": "comic-dokiwatch",
+      "label": "DokiWatch",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-dokiwatch.jpg"
     },
     {
       "type": "key-art",
-      "key": "heroes-overview",
-      "label": "Heroes",
-      "sublabel": "Roster",
-      "file": "/banners/key-art/heroes-overview.jpg"
+      "subtype": "comic",
+      "key": "comic-together",
+      "label": "Together",
+      "sublabel": "Comic cover",
+      "file": "/banners/key-art/comic-together.jpg"
     },
     {
       "type": "key-art",
-      "key": "action",
-      "label": "Action",
-      "sublabel": "In-game",
-      "file": "/banners/key-art/action.jpg"
+      "subtype": "story",
+      "key": "story-thoughtless-gods",
+      "label": "Thoughtless Gods",
+      "sublabel": "Short story",
+      "file": "/banners/key-art/story-thoughtless-gods.jpg"
     }
   ],
   "maps": [
@@ -196,16 +208,6 @@
         "escort"
       ],
       "file": "/banners/maps/circuit-royal.jpg"
-    },
-    {
-      "type": "map",
-      "key": "colosseo",
-      "label": "Colosseo",
-      "sublabel": "Rome, Italy",
-      "gamemodes": [
-        "push"
-      ],
-      "file": "/banners/maps/colosseo.jpg"
     },
     {
       "type": "map",
@@ -336,17 +338,6 @@
         "control"
       ],
       "file": "/banners/maps/lijiang-tower.jpg"
-    },
-    {
-      "type": "map",
-      "key": "kanezaka",
-      "label": "Kanezaka",
-      "sublabel": "Tokyo, Japan",
-      "gamemodes": [
-        "deathmatch",
-        "team-deathmatch"
-      ],
-      "file": "/banners/maps/kanezaka.jpg"
     },
     {
       "type": "map",
@@ -609,56 +600,6 @@
         "escort"
       ],
       "file": "/banners/maps/watchpoint-gibraltar.jpg"
-    },
-    {
-      "type": "map",
-      "key": "workshop-chamber",
-      "label": "Workshop Chamber",
-      "sublabel": "Earth",
-      "gamemodes": [
-        "workshop"
-      ],
-      "file": "/banners/maps/workshop-chamber.jpg"
-    },
-    {
-      "type": "map",
-      "key": "workshop-expanse",
-      "label": "Workshop Expanse",
-      "sublabel": "Earth",
-      "gamemodes": [
-        "workshop"
-      ],
-      "file": "/banners/maps/workshop-expanse.jpg"
-    },
-    {
-      "type": "map",
-      "key": "workshop-green-screen",
-      "label": "Workshop Green Screen",
-      "sublabel": "Earth",
-      "gamemodes": [
-        "workshop"
-      ],
-      "file": "/banners/maps/workshop-green-screen.jpg"
-    },
-    {
-      "type": "map",
-      "key": "workshop-island",
-      "label": "Workshop Island",
-      "sublabel": "Earth",
-      "gamemodes": [
-        "workshop"
-      ],
-      "file": "/banners/maps/workshop-island.jpg"
-    },
-    {
-      "type": "map",
-      "key": "wuxing-university",
-      "label": "Wuxing University",
-      "sublabel": "Chengdu, Sichuan, China",
-      "gamemodes": [
-        "control"
-      ],
-      "file": "/banners/maps/wuxing-university.jpg"
     }
   ]
 }

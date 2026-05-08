@@ -1,5 +1,7 @@
 // Banner asset pipeline. Two sources:
-//   1. Map screenshots from OverFast `/maps` (programmatic; 57 maps)
+//   1. Map screenshots — primarily Fandom wiki (2560px painterly art),
+//      falling back to OverFast `/maps` (~1000-1200px gameplay shots) only
+//      when the Fandom override is missing.
 //   2. Hand-curated Overwatch key-art URLs from `data/key-art.json`
 //      (atmospheric / ensemble / season spotlight pieces — the kind of
 //       imagery that headlines overwatch.blizzard.com)
@@ -19,11 +21,24 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const BANNERS_OUT = resolve(__dirname, "..", "public", "banners");
 const OUT_JSON = resolve(__dirname, "..", "data", "banners.json");
 const KEY_ART_PATH = resolve(__dirname, "..", "data", "key-art.json");
+const MAP_OVERRIDES_PATH = resolve(
+  __dirname,
+  "..",
+  "data",
+  "map-art-overrides.json",
+);
 const OVERFAST = "https://overfast-api.tekrop.fr";
 
-const TARGET_W = 2000;
-const TARGET_H = 900;
-const QUALITY = 78;
+// 1920×864 is the native ceiling on most Fandom map images and matches
+// the practical max display size on virtually all consumer displays. Going
+// wider would force upscaling somewhere — either at build time (bad) or at
+// browser render time (acceptable but not better). Aspect held at ~2.22:1.
+const TARGET_W = 1920;
+const TARGET_H = 864;
+const QUALITY = 92;
+// Strict no-upscale floor. Sources smaller than the banner target get
+// SKIPped — better to drop a banner than ship a soft one.
+const MIN_SOURCE_W = TARGET_W;
 
 async function fetchJson(url) {
   const res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -31,12 +46,24 @@ async function fetchJson(url) {
   return res.json();
 }
 
-async function downloadAndResize(url, outPath) {
+// Blizzard's contentstack CDN returns a 1553w default but accepts a
+// `?width=N` query that re-serves at the requested resolution from a
+// higher-res original. 2560 gives us crisp downsampling to our 1920w
+// target without upscaling the comic source.
+function expandSourceUrl(url) {
+  if (!url.includes("blz-contentstack-images.akamaized.net")) return url;
+  if (url.includes("?")) return url; // already has params, don't second-guess
+  return `${url}?width=2560`;
+}
+
+async function downloadAndResize(url, outPath, opts = {}) {
+  const { cropMode = "attention" } = opts;
+  const fetchUrl = expandSourceUrl(url);
   let buf;
   let lastErr;
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(fetchUrl);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       buf = Buffer.from(await res.arrayBuffer());
       break;
@@ -47,16 +74,25 @@ async function downloadAndResize(url, outPath) {
   }
   if (!buf) throw new Error(`download ${lastErr?.message ?? "unknown"}`);
 
-  // `position: attention` uses sharp's entropy heuristic to keep the most
-  // visually salient region of the source inside the cover-cropped target.
-  // For character key art this lands the figure inside the frame; for map
-  // screenshots it picks the most detailed slice.
+  // Quality gate: skip sources too small to upscale cleanly. Painterly art
+  // hides modest upscaling; this floor cuts pre-2018 thumbnails.
+  const meta = await sharp(buf).metadata();
+  if (!meta.width || meta.width < MIN_SOURCE_W) {
+    throw new Error(`source ${meta.width}x${meta.height} below ${MIN_SOURCE_W}w floor`);
+  }
+
+  // Crop strategy:
+  //   - "attention": entropy heuristic, keeps the most visually salient
+  //     region — ideal for maps and clean key art.
+  //   - "center": dead-center crop — used for in-game menu screenshots
+  //     where UI bars sit at top/bottom and the painterly art lives in the
+  //     middle band. Attention would otherwise lock onto bright UI text.
+  const position =
+    cropMode === "center" ? "center" : sharp.strategy.attention;
+
   await sharp(buf)
-    .resize(TARGET_W, TARGET_H, {
-      fit: "cover",
-      position: sharp.strategy.attention,
-    })
-    .jpeg({ quality: QUALITY, progressive: true })
+    .resize(TARGET_W, TARGET_H, { fit: "cover", position })
+    .jpeg({ quality: QUALITY, progressive: true, chromaSubsampling: "4:4:4" })
     .toFile(outPath);
 }
 
@@ -74,11 +110,12 @@ async function buildKeyArt() {
   const out = [];
   for (const e of entries) {
     const outPath = resolve(BANNERS_OUT, "key-art", `${e.key}.jpg`);
-    process.stdout.write(`  ${e.label.padEnd(22)} `);
+    process.stdout.write(`  ${e.label.padEnd(28)} `);
     try {
-      await downloadAndResize(e.url, outPath);
+      await downloadAndResize(e.url, outPath, { cropMode: e.cropMode });
       out.push({
         type: "key-art",
+        subtype: e.type || "key-art",
         key: e.key,
         label: e.label,
         sublabel: e.sublabel || null,
@@ -92,19 +129,49 @@ async function buildKeyArt() {
   return out;
 }
 
+// Workshop maps are flat sandbox test environments (literal green-screen,
+// blank chambers) — not real Overwatch locations. Skip them so they don't
+// land in the banner rotation looking like placeholder art.
+const MAP_BLOCKLIST = new Set([
+  "workshop-green-screen",
+  "workshop-chamber",
+  "workshop-expanse",
+  "workshop-island",
+]);
+
 async function buildMaps() {
   console.log("\nMaps: fetching OverFast /maps");
   const maps = await fetchJson(`${OVERFAST}/maps`);
   console.log(`Got ${maps.length} maps`);
   await mkdir(resolve(BANNERS_OUT, "maps"), { recursive: true });
 
+  // Fandom overrides — 2560px wiki images keyed by OverFast map key.
+  // Generated by scripts/discover-map-art.mjs; preferred over OverFast.
+  let overrides = {};
+  try {
+    overrides = JSON.parse(await readFile(MAP_OVERRIDES_PATH, "utf8"));
+    console.log(`Overrides: ${Object.keys(overrides).length} from Fandom`);
+  } catch (e) {
+    console.log(`No map-art-overrides.json (${e.message}); OverFast only.`);
+  }
+
   const out = [];
   for (const m of maps) {
-    if (!m.screenshot) continue;
+    if (MAP_BLOCKLIST.has(m.key)) {
+      console.log(`  ${m.name.padEnd(28)} SKIP — blocklist`);
+      continue;
+    }
+    const override = overrides[m.key];
+    const url = override?.url || m.screenshot;
+    if (!url) {
+      console.log(`  ${m.name.padEnd(28)} SKIP — no source`);
+      continue;
+    }
+    const source = override ? "fandom" : "overfast";
     const outPath = resolve(BANNERS_OUT, "maps", `${m.key}.jpg`);
-    process.stdout.write(`  ${m.name.padEnd(28)} `);
+    process.stdout.write(`  ${m.name.padEnd(28)} ${source.padEnd(8)} `);
     try {
-      await downloadAndResize(m.screenshot, outPath);
+      await downloadAndResize(url, outPath);
       out.push({
         type: "map",
         key: m.key,

@@ -1,74 +1,86 @@
 [
   {
-    "key": "brigitte-cinematic",
-    "label": "Brigitte",
-    "sublabel": "Mythic key art",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt235c696f642277c0/69eac3bdf31caca724e1bc5e/2600_Brig.png"
+    "type": "comic",
+    "key": "comic-crossroads",
+    "label": "Crossroads",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt9d9b415012477db0/69e90d9a6add873c6ab38817/Crossroads.png"
   },
   {
-    "key": "freja-cinematic",
-    "label": "Freja",
-    "sublabel": "Hero spotlight",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt4604e75db5bc8fa5/69eac3fdd3366916eda7e608/2600_Freja.png"
+    "type": "comic",
+    "key": "comic-new-heights",
+    "label": "New Heights",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt3d01d69cc3c53d93/69d6bd01c843ea0f5dbf068e/New_Heights.png"
   },
   {
-    "key": "lifeweaver-cinematic",
-    "label": "Lifeweaver",
-    "sublabel": "Hero spotlight",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb76d6abff091cf1b/69eac42c50819a993891b886/2600_Lifeweaver.png"
+    "type": "comic",
+    "key": "comic-overwatch-undivided",
+    "label": "Overwatch Undivided",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb2373933514e1eed/69c48c0dfa418b0008e96399/Undivided.png"
   },
   {
-    "key": "mauga-cinematic",
-    "label": "Mauga",
-    "sublabel": "Hero spotlight",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf3c1be1f80e076cb/69eac454c335b0dd1269c079/2600_Mauga.png"
+    "type": "comic",
+    "key": "comic-from-the-ashes",
+    "label": "From the Ashes",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt48f5d2b0ba3e0c40/69af085ffa418b0008e96018/From_the_Ashes.png"
   },
   {
-    "key": "ramattra-cinematic",
-    "label": "Ramattra",
-    "sublabel": "Hero spotlight",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltbacfce9fdcdfb73a/69eac48524ef0e44a1a47370/2600_Ram.png"
+    "type": "comic",
+    "key": "comic-vested-interests",
+    "label": "Vested Interests",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5b9bab19d9b46cb2/69653a86fb2fd9af2fda49e8/Vested_Interests_Thumbnail.png"
   },
   {
-    "key": "junker-queen-header",
-    "label": "Junker Queen",
-    "sublabel": "Hero banner",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd3e24332d844a1af/63210b3dbe2fcf0db5eea54a/2600_Header.jpg"
+    "type": "comic",
+    "key": "comic-project-jetpack-katt",
+    "label": "Project Jetpack Katt",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf0a2e3b65e0cba57/698d237502e69d5313f100c5/Jetpack_Katt.png"
   },
   {
-    "key": "season-22-overview",
-    "label": "Season 22",
-    "sublabel": "Spotlight",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt867f1579b15d24c9/69d7def0471d6d5ea7656107/2600_S22_Overview.png"
+    "type": "comic",
+    "key": "comic-vengeance-comes",
+    "label": "Vengeance Comes",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd85098bf95b604ae/6982768819662469e5aefe34/Vengeance_Comes.png"
   },
   {
-    "key": "f2p-masthead",
-    "label": "Heroes ensemble",
-    "sublabel": "Masthead",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8ee714c3a0095d0f/6509d6e6fc2ae472f4044625/2600_F2P_Masthead_Fallback.jpg"
+    "type": "story",
+    "key": "story-signs-of-life",
+    "label": "Signs of Life",
+    "sublabel": "Short story",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt55d2185d5a77a346/690aaa2637ded43aabe74df5/Juno_Thumbnail.png"
   },
   {
-    "key": "outro-characters",
-    "label": "Heroes",
-    "sublabel": "Group panorama",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt10ca78298ef6edf0/660c5d270b9c8248765adc18/Desktop_Outro_Characters.png"
+    "type": "comic",
+    "key": "comic-against-the-tide",
+    "label": "Against the Tide",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt0e80644e0dde951c/68929db655c3d68b0cbdd573/Aqua_Thumbnail.png"
   },
   {
-    "key": "outro-sky",
-    "label": "Watchpoint",
-    "sublabel": "Atmosphere",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt0783c76a58bd39e2/660c5cce39a9b3d622f86c68/Desktop_Outro_Sky.jpg"
+    "type": "comic",
+    "key": "comic-dokiwatch",
+    "label": "DokiWatch",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltc00cb343e085e9b0/6838ae11a219d900479e3057/DokiWatch_Thumbnail.png"
   },
   {
-    "key": "heroes-overview",
-    "label": "Heroes",
-    "sublabel": "Roster",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt84ca46ba2606a5ed/6504ca8bf50ed52bc6eb1cc8/Heroes.jpg"
+    "type": "comic",
+    "key": "comic-together",
+    "label": "Together",
+    "sublabel": "Comic cover",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt0c8fac2ad4703b8d/6763520f0f4cd2266ed21dca/Together_Thumbnail.png"
   },
   {
-    "key": "action",
-    "label": "Action",
-    "sublabel": "In-game",
-    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt30aabe1c0e164812/6504ca8b0d91ee465b55006b/Action.jpg"
+    "type": "story",
+    "key": "story-thoughtless-gods",
+    "label": "Thoughtless Gods",
+    "sublabel": "Short story",
+    "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt37194bb13cf01b07/664f7d11958c44028536125f/Wrecking_Ball_Thumbnail_thumbnail.jpg"
   }
 ]
