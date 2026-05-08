@@ -1,22 +1,29 @@
 // Loudness normalization for every voice/sound clip in public/sounds/<hero>/.
-// Brings all clips (.mp3 + matching .mp4 reveal videos) up to TikTok-loud
-// (-9 to -13 LUFS, ~5 dB louder than YouTube/Spotify) so they're audible
-// on laptop speakers and consistent across hero classes — supports were
-// originally at -40 to -49 LUFS, DPS at -27 to -36 LUFS.
+// Brings all clips (.mp3 + matching .mp4 reveal videos) to a consistent
+// perceived loudness around -15 LUFS so support and DPS audio sit at the
+// same level instead of supports being ~10 dB quieter, and so that the
+// overall playback is audible on laptop speakers WITHOUT brick-wall
+// limiter distortion.
 //
-// Filter chain: stacked-limiter approach.
+// Filter: ffmpeg `loudnorm` single-pass, dynamic mode (linear=false).
 //
-//   volume=20dB                          coarse boost
-//   alimiter=limit=0.5  (≈-6 dBFS)      catches loud peaks, compresses
-//   volume=15dB                          second boost on the now-flatter signal
-//   alimiter=limit=0.79 (≈-2 dBFS)      final brick-wall, leaves headroom
-//                                         to avoid intersample clipping
+//   loudnorm=I=-13:TP=-1.5:LRA=7:linear=false
 //
-// Net: ~30 dB of effective loudness gain with the dynamic range squashed
-// hard. We tried EBU R128 loudnorm at -16 then -8 LUFS and dynaudnorm —
-// both left short, transient-heavy game audio either too quiet or with
-// inconsistent loudness across clips. Game UI audio doesn't need to
-// preserve dynamic range; it needs to be reliably audible.
+// loudnorm is EBU R128 multi-band — it lifts integrated loudness by
+// mixing fixed gain with smooth band-limited compression, and enforces
+// the true-peak ceiling internally. Output lands clips at -13 to -19 LUFS
+// (mean ~-15) with all true peaks under -0.7 dBFS. No additional limiter
+// stage is needed.
+//
+// History:
+//   v1 — loudnorm at -16 LUFS, linear=true: clean but too quiet on
+//        laptop speakers, peaks left clips stuck at -16 to -22 LUFS.
+//   v2 — stacked volume + alimiter chain to -10 LUFS: loud and consistent
+//        but the brick-wall limiter introduced audible distortion ("to
+//        the point of being distorted").
+//   v3 — current. loudnorm dynamic mode at -13 LUFS. Loud enough,
+//        clean transients, ~6 dB spread between supports/DPS — within
+//        the natural-sounding range.
 
 import { readdir, rename } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
@@ -28,12 +35,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SOUNDS_DIR = resolve(__dirname, "..", "public", "sounds");
 const CONCURRENCY = 4;
 
-const FILTER_CHAIN = [
-  "volume=20dB",
-  "alimiter=limit=0.5:asc=1:level=disabled",
-  "volume=15dB",
-  "alimiter=limit=0.79:asc=1:level=disabled",
-].join(",");
+const FILTER = "loudnorm=I=-13:TP=-1.5:LRA=7:linear=false";
 
 function run(args) {
   return new Promise((res, rej) => {
@@ -63,7 +65,7 @@ async function measure(input) {
 async function normalizeMp3(input, tmp) {
   await run([
     "-y", "-hide_banner", "-i", input,
-    "-af", FILTER_CHAIN,
+    "-af", FILTER,
     "-ar", "48000",
     "-c:a", "libmp3lame", "-q:a", "2",
     tmp,
@@ -74,7 +76,7 @@ async function normalizeMp4(input, tmp) {
   await run([
     "-y", "-hide_banner", "-i", input,
     "-c:v", "copy",
-    "-af", FILTER_CHAIN,
+    "-af", FILTER,
     "-ar", "48000",
     "-c:a", "aac", "-b:a", "128k",
     "-movflags", "+faststart",
@@ -126,7 +128,7 @@ async function main() {
     }
   }
   console.log(`Found ${files.length} files across ${heroes.length} heroes.`);
-  console.log(`Filter chain: ${FILTER_CHAIN}`);
+  console.log(`Filter: ${FILTER}`);
   console.log(`Concurrency: ${CONCURRENCY}\n`);
 
   const t0 = Date.now();
