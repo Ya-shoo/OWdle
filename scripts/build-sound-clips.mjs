@@ -4,15 +4,27 @@
 // daily quiz reads this manifest at build time to pick the day's puzzle
 // and to know how much of the clip to reveal per guess.
 
-import { readdir, writeFile, access } from "node:fs/promises";
+import { readdir, writeFile, access, readFile } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import ffmpegPath from "ffmpeg-static";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SOUNDS_DIR = resolve(__dirname, "..", "public", "sounds");
 const OUT_FILE = resolve(__dirname, "..", "data", "sound-clips.json");
+
+// Cache-bust suffix for the audio/video URL. CF Pages serves /sounds/* with
+// a 1-day max-age + 7-day stale-while-revalidate, and re-deploys to the
+// same path do NOT immediately invalidate the edge cache — visitors keep
+// hearing the previous version until their TTL expires. Appending an
+// 8-char content hash makes each re-encoded clip a distinct URL, so the
+// browser and edge both treat it as a brand-new resource and fetch fresh.
+async function contentHash(path) {
+  const buf = await readFile(path);
+  return createHash("sha256").update(buf).digest("hex").slice(0, 8);
+}
 
 function probeDuration(path) {
   return new Promise((res) => {
@@ -77,11 +89,13 @@ async function main() {
         console.warn(`  skipping ${hero}/${slug} — no usable duration`);
         continue;
       }
+      const mp3Hash = await contentHash(mp3Path);
+      const mp4Hash = hasMp4 ? await contentHash(mp4Path) : null;
       clips.push({
         slug,
         label: slugToLabel(slug),
-        audioUrl: `/sounds/${hero}/${slug}.mp3`,
-        videoUrl: hasMp4 ? `/sounds/${hero}/${slug}.mp4` : null,
+        audioUrl: `/sounds/${hero}/${slug}.mp3?v=${mp3Hash}`,
+        videoUrl: hasMp4 ? `/sounds/${hero}/${slug}.mp4?v=${mp4Hash}` : null,
         duration: Number(duration.toFixed(3)),
       });
     }

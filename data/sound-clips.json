@@ -3,36 +3,36 @@
     {
       "slug": "biotic-grenade",
       "label": "Biotic Grenade",
-      "audioUrl": "/sounds/ana/biotic-grenade.mp3",
-      "videoUrl": "/sounds/ana/biotic-grenade.mp4",
+      "audioUrl": "/sounds/ana/biotic-grenade.mp3?v=96adcbd8",
+      "videoUrl": "/sounds/ana/biotic-grenade.mp4?v=e28d461c",
       "duration": 3.62
     },
     {
       "slug": "biotic-rifle",
       "label": "Biotic Rifle",
-      "audioUrl": "/sounds/ana/biotic-rifle.mp3",
-      "videoUrl": "/sounds/ana/biotic-rifle.mp4",
+      "audioUrl": "/sounds/ana/biotic-rifle.mp3?v=45e4afa8",
+      "videoUrl": "/sounds/ana/biotic-rifle.mp4?v=c1a0b341",
       "duration": 10.01
     },
     {
       "slug": "nano-boost",
       "label": "Nano Boost",
-      "audioUrl": "/sounds/ana/nano-boost.mp3",
-      "videoUrl": "/sounds/ana/nano-boost.mp4",
+      "audioUrl": "/sounds/ana/nano-boost.mp3?v=d684f464",
+      "videoUrl": "/sounds/ana/nano-boost.mp4?v=12ea3791",
       "duration": 2.64
     },
     {
       "slug": "scoped-fire",
       "label": "Scoped Fire",
-      "audioUrl": "/sounds/ana/scoped-fire.mp3",
-      "videoUrl": "/sounds/ana/scoped-fire.mp4",
+      "audioUrl": "/sounds/ana/scoped-fire.mp3?v=46bbfbe9",
+      "videoUrl": "/sounds/ana/scoped-fire.mp4?v=41bf98ca",
       "duration": 13.58
     },
     {
       "slug": "sleep-dart",
       "label": "Sleep Dart",
-      "audioUrl": "/sounds/ana/sleep-dart.mp3",
-      "videoUrl": "/sounds/ana/sleep-dart.mp4",
+      "audioUrl": "/sounds/ana/sleep-dart.mp3?v=dcf590d4",
+      "videoUrl": "/sounds/ana/sleep-dart.mp4?v=02e4a665",
       "duration": 1.94
     }
   ],
@@ -40,22 +40,22 @@
     {
       "slug": "fan-the-flames",
       "label": "Fan The Flames",
-      "audioUrl": "/sounds/anran/fan-the-flames.mp3",
-      "videoUrl": "/sounds/anran/fan-the-flames.mp4",
+      "audioUrl": "/sounds/anran/fan-the-flames.mp3?v=e668763f",
+      "videoUrl": "/sounds/anran/fan-the-flames.mp4?v=b26d623c",
       "duration": 8.66
     },
     {
       "slug": "vermillion-ascent",
       "label": "Vermillion Ascent",
-      "audioUrl": "/sounds/anran/vermillion-ascent.mp3",
-      "videoUrl": "/sounds/anran/vermillion-ascent.mp4",
+      "audioUrl": "/sounds/anran/vermillion-ascent.mp3?v=ff61cc57",
+      "videoUrl": "/sounds/anran/vermillion-ascent.mp4?v=192466e1",
       "duration": 4.66
     },
     {
       "slug": "zhuque-fans",
       "label": "Zhuque Fans",
-      "audioUrl": "/sounds/anran/zhuque-fans.mp3",
-      "videoUrl": "/sounds/anran/zhuque-fans.mp4",
+      "audioUrl": "/sounds/anran/zhuque-fans.mp3?v=364c0396",
+      "videoUrl": "/sounds/anran/zhuque-fans.mp4?v=38198689",
       "duration": 5.66
     }
   ],
@@ -63,15 +63,15 @@
     {
       "slug": "coach-gun",
       "label": "Coach Gun",
-      "audioUrl": "/sounds/ashe/coach-gun.mp3",
-      "videoUrl": "/sounds/ashe/coach-gun.mp4",
+      "audioUrl": "/sounds/ashe/coach-gun.mp3?v=f594915b",
+      "videoUrl": "/sounds/ashe/coach-gun.mp4?v=146bcbe3",
       "duration": 6.43
     },
     {
       "slug": "the-viper",
       "label": "The Viper",
-      "audioUrl": "/sounds/ashe/the-viper.mp3",
-      "videoUrl": "/sounds/ashe/the-viper.mp4",
+      "audioUrl": "/sounds/ashe/the-viper.mp3?v=449c8005",
+      "videoUrl": "/sounds/ashe/the-viper.mp4?v=6b22c22a",
       "duration": 6.41
     }
   ],
@@ -79,36 +79,36 @@
     {
       "slug": "amplification-matrix",
       "label": "Amplification Matrix",
-      "audioUrl": "/sounds/baptiste/amplification-matrix.mp3",
-      "videoUrl": "/sounds/baptiste/amplification-matrix.mp4",
+      "audioUrl": "/sounds/baptiste/amplification-matrix.mp3?v=9590324d",
+      "videoUrl": "/sounds/baptiste/amplification-matrix.mp4?v=2cd14d1a",
       "duration": 2.86
     },
     {
       "slug": "biotic-launcher-heal",
       "label": "Biotic Launcher Heal",
-      "audioUrl": "/sounds/baptiste/biotic-launcher-heal.mp3",
-      "videoUrl": "/sounds/baptiste/biotic-launcher-heal.mp4",
+      "audioUrl": "/sounds/baptiste/biotic-launcher-heal.mp3?v=d2746861",
+      "videoUrl": "/sounds/baptiste/biotic-launcher-heal.mp4?v=5713206c",
       "duration": 9.17
     },
     {
       "slug": "immortality-field",
       "label": "Immortality Field",
-      "audioUrl": "/sounds/baptiste/immortality-field.mp3",
-      "videoUrl": "/sounds/baptiste/immortality-field.mp4",
+      "audioUrl": "/sounds/baptiste/immortality-field.mp3?v=ebd82fb9",
+      "videoUrl": "/sounds/baptiste/immortality-field.mp4?v=1b2f53b8",
       "duration": 6.26
     },
     {
       "slug": "primary-fire",
       "label": "Primary Fire",
-      "audioUrl": "/sounds/baptiste/primary-fire.mp3",
-      "videoUrl": "/sounds/baptiste/primary-fire.mp4",
+      "audioUrl": "/sounds/baptiste/primary-fire.mp3?v=7b490d9d",
+      "videoUrl": "/sounds/baptiste/primary-fire.mp4?v=ca4ec32e",
       "duration": 5.14
     },
     {
       "slug": "regenerative-burst",
       "label": "Regenerative Burst",
-      "audioUrl": "/sounds/baptiste/regenerative-burst.mp3",
-      "videoUrl": "/sounds/baptiste/regenerative-burst.mp4",
+      "audioUrl": "/sounds/baptiste/regenerative-burst.mp3?v=c5d70ac0",
+      "videoUrl": "/sounds/baptiste/regenerative-burst.mp4?v=4a59d64c",
       "duration": 5.78
     }
   ],
@@ -116,29 +116,29 @@
     {
       "slug": "a-36-tactical-grenade",
       "label": "A 36 Tactical Grenade",
-      "audioUrl": "/sounds/bastion/a-36-tactical-grenade.mp3",
-      "videoUrl": "/sounds/bastion/a-36-tactical-grenade.mp4",
+      "audioUrl": "/sounds/bastion/a-36-tactical-grenade.mp3?v=83fc6983",
+      "videoUrl": "/sounds/bastion/a-36-tactical-grenade.mp4?v=e91476e9",
       "duration": 2.5
     },
     {
       "slug": "configuration-artillery",
       "label": "Configuration Artillery",
-      "audioUrl": "/sounds/bastion/configuration-artillery.mp3",
-      "videoUrl": "/sounds/bastion/configuration-artillery.mp4",
+      "audioUrl": "/sounds/bastion/configuration-artillery.mp3?v=a529fcda",
+      "videoUrl": "/sounds/bastion/configuration-artillery.mp4?v=a730bd60",
       "duration": 5.57
     },
     {
       "slug": "configuration-assault",
       "label": "Configuration Assault",
-      "audioUrl": "/sounds/bastion/configuration-assault.mp3",
-      "videoUrl": "/sounds/bastion/configuration-assault.mp4",
+      "audioUrl": "/sounds/bastion/configuration-assault.mp3?v=76cc985c",
+      "videoUrl": "/sounds/bastion/configuration-assault.mp4?v=bfaf1c08",
       "duration": 5.69
     },
     {
       "slug": "configuration-recon",
       "label": "Configuration Recon",
-      "audioUrl": "/sounds/bastion/configuration-recon.mp3",
-      "videoUrl": "/sounds/bastion/configuration-recon.mp4",
+      "audioUrl": "/sounds/bastion/configuration-recon.mp3?v=daed91f2",
+      "videoUrl": "/sounds/bastion/configuration-recon.mp4?v=211535cb",
       "duration": 4.3
     }
   ],
@@ -146,8 +146,8 @@
     {
       "slug": "repair-pack",
       "label": "Repair Pack",
-      "audioUrl": "/sounds/brigitte/repair-pack.mp3",
-      "videoUrl": "/sounds/brigitte/repair-pack.mp4",
+      "audioUrl": "/sounds/brigitte/repair-pack.mp3?v=aaea6f77",
+      "videoUrl": "/sounds/brigitte/repair-pack.mp4?v=def19029",
       "duration": 6.74
     }
   ],
@@ -155,22 +155,22 @@
     {
       "slug": "deadeye",
       "label": "Deadeye",
-      "audioUrl": "/sounds/cassidy/deadeye.mp3",
-      "videoUrl": "/sounds/cassidy/deadeye.mp4",
+      "audioUrl": "/sounds/cassidy/deadeye.mp3?v=641b8cee",
+      "videoUrl": "/sounds/cassidy/deadeye.mp4?v=4d4cab5a",
       "duration": 5.9
     },
     {
       "slug": "fan-the-hammer",
       "label": "Fan The Hammer",
-      "audioUrl": "/sounds/cassidy/fan-the-hammer.mp3",
-      "videoUrl": "/sounds/cassidy/fan-the-hammer.mp4",
+      "audioUrl": "/sounds/cassidy/fan-the-hammer.mp3?v=10ed7d6f",
+      "videoUrl": "/sounds/cassidy/fan-the-hammer.mp4?v=336d5e01",
       "duration": 4.97
     },
     {
       "slug": "peacekeeper",
       "label": "Peacekeeper",
-      "audioUrl": "/sounds/cassidy/peacekeeper.mp3",
-      "videoUrl": "/sounds/cassidy/peacekeeper.mp4",
+      "audioUrl": "/sounds/cassidy/peacekeeper.mp3?v=bfa24271",
+      "videoUrl": "/sounds/cassidy/peacekeeper.mp4?v=7ad2d8d5",
       "duration": 5.21
     }
   ],
@@ -178,22 +178,22 @@
     {
       "slug": "flight",
       "label": "Flight",
-      "audioUrl": "/sounds/echo/flight.mp3",
-      "videoUrl": "/sounds/echo/flight.mp4",
+      "audioUrl": "/sounds/echo/flight.mp3?v=ce20fba9",
+      "videoUrl": "/sounds/echo/flight.mp4?v=97155fce",
       "duration": 7.03
     },
     {
       "slug": "focusing-beam",
       "label": "Focusing Beam",
-      "audioUrl": "/sounds/echo/focusing-beam.mp3",
-      "videoUrl": "/sounds/echo/focusing-beam.mp4",
+      "audioUrl": "/sounds/echo/focusing-beam.mp3?v=c103c682",
+      "videoUrl": "/sounds/echo/focusing-beam.mp4?v=86285474",
       "duration": 8.04
     },
     {
       "slug": "tri-shot",
       "label": "Tri Shot",
-      "audioUrl": "/sounds/echo/tri-shot.mp3",
-      "videoUrl": "/sounds/echo/tri-shot.mp4",
+      "audioUrl": "/sounds/echo/tri-shot.mp3?v=805a71ed",
+      "videoUrl": "/sounds/echo/tri-shot.mp4?v=b4baf2f6",
       "duration": 5.35
     }
   ],
@@ -201,29 +201,29 @@
     {
       "slug": "cyber-frag",
       "label": "Cyber Frag",
-      "audioUrl": "/sounds/emre/cyber-frag.mp3",
-      "videoUrl": "/sounds/emre/cyber-frag.mp4",
+      "audioUrl": "/sounds/emre/cyber-frag.mp3?v=01c14466",
+      "videoUrl": "/sounds/emre/cyber-frag.mp4?v=8292cb11",
       "duration": 5.78
     },
     {
       "slug": "override-protocol",
       "label": "Override Protocol",
-      "audioUrl": "/sounds/emre/override-protocol.mp3",
-      "videoUrl": "/sounds/emre/override-protocol.mp4",
+      "audioUrl": "/sounds/emre/override-protocol.mp3?v=6e74d4a4",
+      "videoUrl": "/sounds/emre/override-protocol.mp4?v=8975feb2",
       "duration": 13.03
     },
     {
       "slug": "siphon-blaster",
       "label": "Siphon Blaster",
-      "audioUrl": "/sounds/emre/siphon-blaster.mp3",
-      "videoUrl": "/sounds/emre/siphon-blaster.mp4",
+      "audioUrl": "/sounds/emre/siphon-blaster.mp3?v=809bd5fc",
+      "videoUrl": "/sounds/emre/siphon-blaster.mp4?v=6d2d0aa6",
       "duration": 4.44
     },
     {
       "slug": "synthetic-burst-rifle",
       "label": "Synthetic Burst Rifle",
-      "audioUrl": "/sounds/emre/synthetic-burst-rifle.mp3",
-      "videoUrl": "/sounds/emre/synthetic-burst-rifle.mp4",
+      "audioUrl": "/sounds/emre/synthetic-burst-rifle.mp3?v=3669b1ad",
+      "videoUrl": "/sounds/emre/synthetic-burst-rifle.mp4?v=9f7ab4dc",
       "duration": 4.54
     }
   ],
@@ -231,15 +231,15 @@
     {
       "slug": "bola-shot",
       "label": "Bola Shot",
-      "audioUrl": "/sounds/freja/bola-shot.mp3",
-      "videoUrl": "/sounds/freja/bola-shot.mp4",
+      "audioUrl": "/sounds/freja/bola-shot.mp3?v=667a7ebd",
+      "videoUrl": "/sounds/freja/bola-shot.mp4?v=a9df77b3",
       "duration": 7.44
     },
     {
       "slug": "take-aim",
       "label": "Take Aim",
-      "audioUrl": "/sounds/freja/take-aim.mp3",
-      "videoUrl": "/sounds/freja/take-aim.mp4",
+      "audioUrl": "/sounds/freja/take-aim.mp3?v=11f4c984",
+      "videoUrl": "/sounds/freja/take-aim.mp4?v=b5f52542",
       "duration": 9.22
     }
   ],
@@ -247,22 +247,22 @@
     {
       "slug": "deflect",
       "label": "Deflect",
-      "audioUrl": "/sounds/genji/deflect.mp3",
-      "videoUrl": "/sounds/genji/deflect.mp4",
+      "audioUrl": "/sounds/genji/deflect.mp3?v=85c84936",
+      "videoUrl": "/sounds/genji/deflect.mp4?v=ec34d45b",
       "duration": 3.72
     },
     {
       "slug": "shuriken",
       "label": "Shuriken",
-      "audioUrl": "/sounds/genji/shuriken.mp3",
-      "videoUrl": "/sounds/genji/shuriken.mp4",
+      "audioUrl": "/sounds/genji/shuriken.mp3?v=61e3f3a4",
+      "videoUrl": "/sounds/genji/shuriken.mp4?v=f3409e3b",
       "duration": 4.66
     },
     {
       "slug": "swift-strike",
       "label": "Swift Strike",
-      "audioUrl": "/sounds/genji/swift-strike.mp3",
-      "videoUrl": "/sounds/genji/swift-strike.mp4",
+      "audioUrl": "/sounds/genji/swift-strike.mp3?v=7c406940",
+      "videoUrl": "/sounds/genji/swift-strike.mp4?v=99e3e634",
       "duration": 2.62
     }
   ],
@@ -270,29 +270,29 @@
     {
       "slug": "dragonstrike",
       "label": "Dragonstrike",
-      "audioUrl": "/sounds/hanzo/dragonstrike.mp3",
-      "videoUrl": "/sounds/hanzo/dragonstrike.mp4",
+      "audioUrl": "/sounds/hanzo/dragonstrike.mp3?v=049da3f8",
+      "videoUrl": "/sounds/hanzo/dragonstrike.mp4?v=5b78c370",
       "duration": 7.99
     },
     {
       "slug": "sonic-arrow",
       "label": "Sonic Arrow",
-      "audioUrl": "/sounds/hanzo/sonic-arrow.mp3",
-      "videoUrl": "/sounds/hanzo/sonic-arrow.mp4",
+      "audioUrl": "/sounds/hanzo/sonic-arrow.mp3?v=02ee9e45",
+      "videoUrl": "/sounds/hanzo/sonic-arrow.mp4?v=cd0a9c8e",
       "duration": 3.74
     },
     {
       "slug": "storm-arrows",
       "label": "Storm Arrows",
-      "audioUrl": "/sounds/hanzo/storm-arrows.mp3",
-      "videoUrl": "/sounds/hanzo/storm-arrows.mp4",
+      "audioUrl": "/sounds/hanzo/storm-arrows.mp3?v=eccb3f41",
+      "videoUrl": "/sounds/hanzo/storm-arrows.mp4?v=86c83676",
       "duration": 2.4
     },
     {
       "slug": "storm-bow",
       "label": "Storm Bow",
-      "audioUrl": "/sounds/hanzo/storm-bow.mp3",
-      "videoUrl": "/sounds/hanzo/storm-bow.mp4",
+      "audioUrl": "/sounds/hanzo/storm-bow.mp3?v=22c4c103",
+      "videoUrl": "/sounds/hanzo/storm-bow.mp4?v=fcad7c2e",
       "duration": 4.73
     }
   ],
@@ -300,29 +300,29 @@
     {
       "slug": "captive-sun",
       "label": "Captive Sun",
-      "audioUrl": "/sounds/illari/captive-sun.mp3",
-      "videoUrl": "/sounds/illari/captive-sun.mp4",
+      "audioUrl": "/sounds/illari/captive-sun.mp3?v=6130254c",
+      "videoUrl": "/sounds/illari/captive-sun.mp4?v=c5ce5ddf",
       "duration": 7.27
     },
     {
       "slug": "healing-pylon",
       "label": "Healing Pylon",
-      "audioUrl": "/sounds/illari/healing-pylon.mp3",
-      "videoUrl": "/sounds/illari/healing-pylon.mp4",
+      "audioUrl": "/sounds/illari/healing-pylon.mp3?v=cf3354dc",
+      "videoUrl": "/sounds/illari/healing-pylon.mp4?v=1ddad3be",
       "duration": 5.59
     },
     {
       "slug": "outburst",
       "label": "Outburst",
-      "audioUrl": "/sounds/illari/outburst.mp3",
-      "videoUrl": "/sounds/illari/outburst.mp4",
+      "audioUrl": "/sounds/illari/outburst.mp3?v=f656f5cb",
+      "videoUrl": "/sounds/illari/outburst.mp4?v=ee148592",
       "duration": 1.82
     },
     {
       "slug": "solar-rifle",
       "label": "Solar Rifle",
-      "audioUrl": "/sounds/illari/solar-rifle.mp3",
-      "videoUrl": "/sounds/illari/solar-rifle.mp4",
+      "audioUrl": "/sounds/illari/solar-rifle.mp3?v=6affeb78",
+      "videoUrl": "/sounds/illari/solar-rifle.mp4?v=94ccf297",
       "duration": 9.26
     }
   ],
@@ -330,29 +330,29 @@
     {
       "slug": "biotic-pawjectiles",
       "label": "Biotic Pawjectiles",
-      "audioUrl": "/sounds/jetpack-cat/biotic-pawjectiles.mp3",
-      "videoUrl": "/sounds/jetpack-cat/biotic-pawjectiles.mp4",
+      "audioUrl": "/sounds/jetpack-cat/biotic-pawjectiles.mp3?v=6a7592fc",
+      "videoUrl": "/sounds/jetpack-cat/biotic-pawjectiles.mp4?v=696b9428",
       "duration": 4.15
     },
     {
       "slug": "catnapper",
       "label": "Catnapper",
-      "audioUrl": "/sounds/jetpack-cat/catnapper.mp3",
-      "videoUrl": "/sounds/jetpack-cat/catnapper.mp4",
+      "audioUrl": "/sounds/jetpack-cat/catnapper.mp3?v=ed28cc7f",
+      "videoUrl": "/sounds/jetpack-cat/catnapper.mp4?v=ef700c9e",
       "duration": 5.38
     },
     {
       "slug": "frenetic-flight",
       "label": "Frenetic Flight",
-      "audioUrl": "/sounds/jetpack-cat/frenetic-flight.mp3",
-      "videoUrl": "/sounds/jetpack-cat/frenetic-flight.mp4",
+      "audioUrl": "/sounds/jetpack-cat/frenetic-flight.mp3?v=76f5ba6a",
+      "videoUrl": "/sounds/jetpack-cat/frenetic-flight.mp4?v=5e40741e",
       "duration": 9.24
     },
     {
       "slug": "purr",
       "label": "Purr",
-      "audioUrl": "/sounds/jetpack-cat/purr.mp3",
-      "videoUrl": "/sounds/jetpack-cat/purr.mp4",
+      "audioUrl": "/sounds/jetpack-cat/purr.mp3?v=25c0abf1",
+      "videoUrl": "/sounds/jetpack-cat/purr.mp4?v=5ebb3525",
       "duration": 5.62
     }
   ],
@@ -360,22 +360,22 @@
     {
       "slug": "concussion-mine",
       "label": "Concussion Mine",
-      "audioUrl": "/sounds/junkrat/concussion-mine.mp3",
-      "videoUrl": "/sounds/junkrat/concussion-mine.mp4",
+      "audioUrl": "/sounds/junkrat/concussion-mine.mp3?v=3993c49b",
+      "videoUrl": "/sounds/junkrat/concussion-mine.mp4?v=557aa41d",
       "duration": 2.76
     },
     {
       "slug": "frag-launcher",
       "label": "Frag Launcher",
-      "audioUrl": "/sounds/junkrat/frag-launcher.mp3",
-      "videoUrl": "/sounds/junkrat/frag-launcher.mp4",
+      "audioUrl": "/sounds/junkrat/frag-launcher.mp3?v=0319141d",
+      "videoUrl": "/sounds/junkrat/frag-launcher.mp4?v=6b0a3136",
       "duration": 5.28
     },
     {
       "slug": "rip-tire",
       "label": "Rip Tire",
-      "audioUrl": "/sounds/junkrat/rip-tire.mp3",
-      "videoUrl": "/sounds/junkrat/rip-tire.mp4",
+      "audioUrl": "/sounds/junkrat/rip-tire.mp3?v=7c7148ab",
+      "videoUrl": "/sounds/junkrat/rip-tire.mp4?v=0b27dbac",
       "duration": 6.84
     }
   ],
@@ -383,36 +383,36 @@
     {
       "slug": "glide-boost",
       "label": "Glide Boost",
-      "audioUrl": "/sounds/juno/glide-boost.mp3",
-      "videoUrl": "/sounds/juno/glide-boost.mp4",
+      "audioUrl": "/sounds/juno/glide-boost.mp3?v=f6f61d90",
+      "videoUrl": "/sounds/juno/glide-boost.mp4?v=57d864dc",
       "duration": 5.18
     },
     {
       "slug": "hyper-ring",
       "label": "Hyper Ring",
-      "audioUrl": "/sounds/juno/hyper-ring.mp3",
-      "videoUrl": "/sounds/juno/hyper-ring.mp4",
+      "audioUrl": "/sounds/juno/hyper-ring.mp3?v=18875666",
+      "videoUrl": "/sounds/juno/hyper-ring.mp4?v=fc3beadd",
       "duration": 5.83
     },
     {
       "slug": "mediblaster",
       "label": "Mediblaster",
-      "audioUrl": "/sounds/juno/mediblaster.mp3",
-      "videoUrl": "/sounds/juno/mediblaster.mp4",
+      "audioUrl": "/sounds/juno/mediblaster.mp3?v=211116fa",
+      "videoUrl": "/sounds/juno/mediblaster.mp4?v=e156ce21",
       "duration": 4.13
     },
     {
       "slug": "orbital-ray",
       "label": "Orbital Ray",
-      "audioUrl": "/sounds/juno/orbital-ray.mp3",
-      "videoUrl": "/sounds/juno/orbital-ray.mp4",
+      "audioUrl": "/sounds/juno/orbital-ray.mp3?v=8d02fc83",
+      "videoUrl": "/sounds/juno/orbital-ray.mp4?v=cadf77bb",
       "duration": 9.1
     },
     {
       "slug": "pulsar-torpedoes",
       "label": "Pulsar Torpedoes",
-      "audioUrl": "/sounds/juno/pulsar-torpedoes.mp3",
-      "videoUrl": "/sounds/juno/pulsar-torpedoes.mp4",
+      "audioUrl": "/sounds/juno/pulsar-torpedoes.mp3?v=37277c4f",
+      "videoUrl": "/sounds/juno/pulsar-torpedoes.mp4?v=2aad9d57",
       "duration": 7.1
     }
   ],
@@ -420,36 +420,36 @@
     {
       "slug": "healing-ofuda",
       "label": "Healing Ofuda",
-      "audioUrl": "/sounds/kiriko/healing-ofuda.mp3",
-      "videoUrl": "/sounds/kiriko/healing-ofuda.mp4",
+      "audioUrl": "/sounds/kiriko/healing-ofuda.mp3?v=fd6c2f9c",
+      "videoUrl": "/sounds/kiriko/healing-ofuda.mp4?v=a9bd6c54",
       "duration": 5.18
     },
     {
       "slug": "kitsune-rush",
       "label": "Kitsune Rush",
-      "audioUrl": "/sounds/kiriko/kitsune-rush.mp3",
-      "videoUrl": "/sounds/kiriko/kitsune-rush.mp4",
+      "audioUrl": "/sounds/kiriko/kitsune-rush.mp3?v=92a477a9",
+      "videoUrl": "/sounds/kiriko/kitsune-rush.mp4?v=ce126874",
       "duration": 4.32
     },
     {
       "slug": "kunai",
       "label": "Kunai",
-      "audioUrl": "/sounds/kiriko/kunai.mp3",
-      "videoUrl": "/sounds/kiriko/kunai.mp4",
+      "audioUrl": "/sounds/kiriko/kunai.mp3?v=423ece33",
+      "videoUrl": "/sounds/kiriko/kunai.mp4?v=61f7ec2b",
       "duration": 7.87
     },
     {
       "slug": "protection-suzu",
       "label": "Protection Suzu",
-      "audioUrl": "/sounds/kiriko/protection-suzu.mp3",
-      "videoUrl": "/sounds/kiriko/protection-suzu.mp4",
+      "audioUrl": "/sounds/kiriko/protection-suzu.mp3?v=d1c65cf3",
+      "videoUrl": "/sounds/kiriko/protection-suzu.mp4?v=1758a282",
       "duration": 2.35
     },
     {
       "slug": "swift-step",
       "label": "Swift Step",
-      "audioUrl": "/sounds/kiriko/swift-step.mp3",
-      "videoUrl": "/sounds/kiriko/swift-step.mp4",
+      "audioUrl": "/sounds/kiriko/swift-step.mp3?v=1e472326",
+      "videoUrl": "/sounds/kiriko/swift-step.mp4?v=486d311c",
       "duration": 1.01
     }
   ],
@@ -457,36 +457,36 @@
     {
       "slug": "healing-blossom",
       "label": "Healing Blossom",
-      "audioUrl": "/sounds/lifeweaver/healing-blossom.mp3",
-      "videoUrl": "/sounds/lifeweaver/healing-blossom.mp4",
+      "audioUrl": "/sounds/lifeweaver/healing-blossom.mp3?v=2321af13",
+      "videoUrl": "/sounds/lifeweaver/healing-blossom.mp4?v=b3814333",
       "duration": 8.69
     },
     {
       "slug": "life-grip",
       "label": "Life Grip",
-      "audioUrl": "/sounds/lifeweaver/life-grip.mp3",
-      "videoUrl": "/sounds/lifeweaver/life-grip.mp4",
+      "audioUrl": "/sounds/lifeweaver/life-grip.mp3?v=434ad796",
+      "videoUrl": "/sounds/lifeweaver/life-grip.mp4?v=31931dd3",
       "duration": 2.33
     },
     {
       "slug": "petal-platform",
       "label": "Petal Platform",
-      "audioUrl": "/sounds/lifeweaver/petal-platform.mp3",
-      "videoUrl": "/sounds/lifeweaver/petal-platform.mp4",
+      "audioUrl": "/sounds/lifeweaver/petal-platform.mp3?v=671cc484",
+      "videoUrl": "/sounds/lifeweaver/petal-platform.mp4?v=41ea64da",
       "duration": 3.96
     },
     {
       "slug": "thorn-volley-attack",
       "label": "Thorn Volley Attack",
-      "audioUrl": "/sounds/lifeweaver/thorn-volley-attack.mp3",
-      "videoUrl": "/sounds/lifeweaver/thorn-volley-attack.mp4",
+      "audioUrl": "/sounds/lifeweaver/thorn-volley-attack.mp3?v=44962e21",
+      "videoUrl": "/sounds/lifeweaver/thorn-volley-attack.mp4?v=b1db2782",
       "duration": 4.8
     },
     {
       "slug": "tree-of-life",
       "label": "Tree Of Life",
-      "audioUrl": "/sounds/lifeweaver/tree-of-life.mp3",
-      "videoUrl": "/sounds/lifeweaver/tree-of-life.mp4",
+      "audioUrl": "/sounds/lifeweaver/tree-of-life.mp3?v=8f1f5b37",
+      "videoUrl": "/sounds/lifeweaver/tree-of-life.mp4?v=b89688bf",
       "duration": 8.9
     }
   ],
@@ -494,29 +494,29 @@
     {
       "slug": "amp-it-up",
       "label": "Amp It Up",
-      "audioUrl": "/sounds/lucio/amp-it-up.mp3",
-      "videoUrl": "/sounds/lucio/amp-it-up.mp4",
+      "audioUrl": "/sounds/lucio/amp-it-up.mp3?v=157a260d",
+      "videoUrl": "/sounds/lucio/amp-it-up.mp4?v=489b25b0",
       "duration": 5.64
     },
     {
       "slug": "sonic-amplifier",
       "label": "Sonic Amplifier",
-      "audioUrl": "/sounds/lucio/sonic-amplifier.mp3",
-      "videoUrl": "/sounds/lucio/sonic-amplifier.mp4",
+      "audioUrl": "/sounds/lucio/sonic-amplifier.mp3?v=d2576c5d",
+      "videoUrl": "/sounds/lucio/sonic-amplifier.mp4?v=585aaf47",
       "duration": 11.86
     },
     {
       "slug": "sound-barrier",
       "label": "Sound Barrier",
-      "audioUrl": "/sounds/lucio/sound-barrier.mp3",
-      "videoUrl": "/sounds/lucio/sound-barrier.mp4",
+      "audioUrl": "/sounds/lucio/sound-barrier.mp3?v=7ce3d5ec",
+      "videoUrl": "/sounds/lucio/sound-barrier.mp4?v=bbe207dc",
       "duration": 5.64
     },
     {
       "slug": "soundwave",
       "label": "Soundwave",
-      "audioUrl": "/sounds/lucio/soundwave.mp3",
-      "videoUrl": "/sounds/lucio/soundwave.mp4",
+      "audioUrl": "/sounds/lucio/soundwave.mp3?v=8df4852e",
+      "videoUrl": "/sounds/lucio/soundwave.mp4?v=651bb7c8",
       "duration": 1.49
     }
   ],
@@ -524,29 +524,29 @@
     {
       "slug": "cryo-freeze",
       "label": "Cryo Freeze",
-      "audioUrl": "/sounds/mei/cryo-freeze.mp3",
-      "videoUrl": "/sounds/mei/cryo-freeze.mp4",
+      "audioUrl": "/sounds/mei/cryo-freeze.mp3?v=aa157549",
+      "videoUrl": "/sounds/mei/cryo-freeze.mp4?v=90432e71",
       "duration": 4.13
     },
     {
       "slug": "endothermic-blaster-close-range",
       "label": "Endothermic Blaster Close Range",
-      "audioUrl": "/sounds/mei/endothermic-blaster-close-range.mp3",
-      "videoUrl": "/sounds/mei/endothermic-blaster-close-range.mp4",
+      "audioUrl": "/sounds/mei/endothermic-blaster-close-range.mp3?v=b605b738",
+      "videoUrl": "/sounds/mei/endothermic-blaster-close-range.mp4?v=331b2c8c",
       "duration": 4.42
     },
     {
       "slug": "endothermic-blaster-long-range",
       "label": "Endothermic Blaster Long Range",
-      "audioUrl": "/sounds/mei/endothermic-blaster-long-range.mp3",
-      "videoUrl": "/sounds/mei/endothermic-blaster-long-range.mp4",
+      "audioUrl": "/sounds/mei/endothermic-blaster-long-range.mp3?v=c6cf3b5b",
+      "videoUrl": "/sounds/mei/endothermic-blaster-long-range.mp4?v=ba8ba255",
       "duration": 5.71
     },
     {
       "slug": "ice-wall",
       "label": "Ice Wall",
-      "audioUrl": "/sounds/mei/ice-wall.mp3",
-      "videoUrl": "/sounds/mei/ice-wall.mp4",
+      "audioUrl": "/sounds/mei/ice-wall.mp3?v=a6b0d520",
+      "videoUrl": "/sounds/mei/ice-wall.mp4?v=d5120855",
       "duration": 5.33
     }
   ],
@@ -554,36 +554,36 @@
     {
       "slug": "binding-chain",
       "label": "Binding Chain",
-      "audioUrl": "/sounds/mizuki/binding-chain.mp3",
-      "videoUrl": "/sounds/mizuki/binding-chain.mp4",
+      "audioUrl": "/sounds/mizuki/binding-chain.mp3?v=c424f013",
+      "videoUrl": "/sounds/mizuki/binding-chain.mp4?v=649ec5f4",
       "duration": 3.48
     },
     {
       "slug": "healing-kasa",
       "label": "Healing Kasa",
-      "audioUrl": "/sounds/mizuki/healing-kasa.mp3",
-      "videoUrl": "/sounds/mizuki/healing-kasa.mp4",
+      "audioUrl": "/sounds/mizuki/healing-kasa.mp3?v=1a03f805",
+      "videoUrl": "/sounds/mizuki/healing-kasa.mp4?v=4f104737",
       "duration": 5.11
     },
     {
       "slug": "katashiro-return",
       "label": "Katashiro Return",
-      "audioUrl": "/sounds/mizuki/katashiro-return.mp3",
-      "videoUrl": "/sounds/mizuki/katashiro-return.mp4",
+      "audioUrl": "/sounds/mizuki/katashiro-return.mp3?v=e193a71d",
+      "videoUrl": "/sounds/mizuki/katashiro-return.mp4?v=b09c7b04",
       "duration": 4.7
     },
     {
       "slug": "kekkai-sanctuary",
       "label": "Kekkai Sanctuary",
-      "audioUrl": "/sounds/mizuki/kekkai-sanctuary.mp3",
-      "videoUrl": "/sounds/mizuki/kekkai-sanctuary.mp4",
+      "audioUrl": "/sounds/mizuki/kekkai-sanctuary.mp3?v=1bbc8438",
+      "videoUrl": "/sounds/mizuki/kekkai-sanctuary.mp4?v=c364b12f",
       "duration": 10.34
     },
     {
       "slug": "spirit-glaive-primary-fire",
       "label": "Spirit Glaive Primary Fire",
-      "audioUrl": "/sounds/mizuki/spirit-glaive-primary-fire.mp3",
-      "videoUrl": "/sounds/mizuki/spirit-glaive-primary-fire.mp4",
+      "audioUrl": "/sounds/mizuki/spirit-glaive-primary-fire.mp3?v=961f83fb",
+      "videoUrl": "/sounds/mizuki/spirit-glaive-primary-fire.mp4?v=08f581f8",
       "duration": 6.41
     }
   ],
@@ -591,15 +591,15 @@
     {
       "slug": "barrage",
       "label": "Barrage",
-      "audioUrl": "/sounds/pharah/barrage.mp3",
-      "videoUrl": "/sounds/pharah/barrage.mp4",
+      "audioUrl": "/sounds/pharah/barrage.mp3?v=707fef95",
+      "videoUrl": "/sounds/pharah/barrage.mp4?v=bcecb130",
       "duration": 4.39
     },
     {
       "slug": "rocket-launcher",
       "label": "Rocket Launcher",
-      "audioUrl": "/sounds/pharah/rocket-launcher.mp3",
-      "videoUrl": "/sounds/pharah/rocket-launcher.mp4",
+      "audioUrl": "/sounds/pharah/rocket-launcher.mp3?v=9a9e822a",
+      "videoUrl": "/sounds/pharah/rocket-launcher.mp4?v=0e955958",
       "duration": 5.78
     }
   ],
@@ -607,29 +607,29 @@
     {
       "slug": "death-blossom",
       "label": "Death Blossom",
-      "audioUrl": "/sounds/reaper/death-blossom.mp3",
-      "videoUrl": "/sounds/reaper/death-blossom.mp4",
+      "audioUrl": "/sounds/reaper/death-blossom.mp3?v=ad71cbc3",
+      "videoUrl": "/sounds/reaper/death-blossom.mp4?v=910080bd",
       "duration": 4.08
     },
     {
       "slug": "hellfire-shotguns",
       "label": "Hellfire Shotguns",
-      "audioUrl": "/sounds/reaper/hellfire-shotguns.mp3",
-      "videoUrl": "/sounds/reaper/hellfire-shotguns.mp4",
+      "audioUrl": "/sounds/reaper/hellfire-shotguns.mp3?v=0243a847",
+      "videoUrl": "/sounds/reaper/hellfire-shotguns.mp4?v=1454cd79",
       "duration": 4.27
     },
     {
       "slug": "shadow-step",
       "label": "Shadow Step",
-      "audioUrl": "/sounds/reaper/shadow-step.mp3",
-      "videoUrl": "/sounds/reaper/shadow-step.mp4",
+      "audioUrl": "/sounds/reaper/shadow-step.mp3?v=7d7cbf0e",
+      "videoUrl": "/sounds/reaper/shadow-step.mp4?v=c9ba51b3",
       "duration": 3.14
     },
     {
       "slug": "wraith-form",
       "label": "Wraith Form",
-      "audioUrl": "/sounds/reaper/wraith-form.mp3",
-      "videoUrl": "/sounds/reaper/wraith-form.mp4",
+      "audioUrl": "/sounds/reaper/wraith-form.mp3?v=6f9d143e",
+      "videoUrl": "/sounds/reaper/wraith-form.mp4?v=32bf7a9b",
       "duration": 3.82
     }
   ],
@@ -637,36 +637,36 @@
     {
       "slug": "anchor-drone",
       "label": "Anchor Drone",
-      "audioUrl": "/sounds/sierra/anchor-drone.mp3",
-      "videoUrl": "/sounds/sierra/anchor-drone.mp4",
+      "audioUrl": "/sounds/sierra/anchor-drone.mp3?v=37e8d827",
+      "videoUrl": "/sounds/sierra/anchor-drone.mp4?v=29c6a5de",
       "duration": 5.98
     },
     {
       "slug": "helix-rifle",
       "label": "Helix Rifle",
-      "audioUrl": "/sounds/sierra/helix-rifle.mp3",
-      "videoUrl": "/sounds/sierra/helix-rifle.mp4",
+      "audioUrl": "/sounds/sierra/helix-rifle.mp3?v=df84160f",
+      "videoUrl": "/sounds/sierra/helix-rifle.mp4?v=baf8debb",
       "duration": 5.38
     },
     {
       "slug": "tracking-shot",
       "label": "Tracking Shot",
-      "audioUrl": "/sounds/sierra/tracking-shot.mp3",
-      "videoUrl": "/sounds/sierra/tracking-shot.mp4",
+      "audioUrl": "/sounds/sierra/tracking-shot.mp3?v=c5bcbf6e",
+      "videoUrl": "/sounds/sierra/tracking-shot.mp4?v=5598ac18",
       "duration": 4.92
     },
     {
       "slug": "trailblazer",
       "label": "Trailblazer",
-      "audioUrl": "/sounds/sierra/trailblazer.mp3",
-      "videoUrl": "/sounds/sierra/trailblazer.mp4",
+      "audioUrl": "/sounds/sierra/trailblazer.mp3?v=6429180d",
+      "videoUrl": "/sounds/sierra/trailblazer.mp4?v=8a3213b8",
       "duration": 8.28
     },
     {
       "slug": "tremor-charge",
       "label": "Tremor Charge",
-      "audioUrl": "/sounds/sierra/tremor-charge.mp3",
-      "videoUrl": "/sounds/sierra/tremor-charge.mp4",
+      "audioUrl": "/sounds/sierra/tremor-charge.mp3?v=b46f64c3",
+      "videoUrl": "/sounds/sierra/tremor-charge.mp4?v=6065676f",
       "duration": 4.49
     }
   ],
@@ -674,29 +674,29 @@
     {
       "slug": "disruptor-shot",
       "label": "Disruptor Shot",
-      "audioUrl": "/sounds/sojourn/disruptor-shot.mp3",
-      "videoUrl": "/sounds/sojourn/disruptor-shot.mp4",
+      "audioUrl": "/sounds/sojourn/disruptor-shot.mp3?v=f2470bee",
+      "videoUrl": "/sounds/sojourn/disruptor-shot.mp4?v=ae363993",
       "duration": 4.44
     },
     {
       "slug": "overclock",
       "label": "Overclock",
-      "audioUrl": "/sounds/sojourn/overclock.mp3",
-      "videoUrl": "/sounds/sojourn/overclock.mp4",
+      "audioUrl": "/sounds/sojourn/overclock.mp3?v=1e719b56",
+      "videoUrl": "/sounds/sojourn/overclock.mp4?v=2277c20d",
       "duration": 10.06
     },
     {
       "slug": "railgun-alt-fire-hitscan",
       "label": "Railgun Alt Fire Hitscan",
-      "audioUrl": "/sounds/sojourn/railgun-alt-fire-hitscan.mp3",
-      "videoUrl": "/sounds/sojourn/railgun-alt-fire-hitscan.mp4",
+      "audioUrl": "/sounds/sojourn/railgun-alt-fire-hitscan.mp3?v=c2aa2f2c",
+      "videoUrl": "/sounds/sojourn/railgun-alt-fire-hitscan.mp4?v=c90f6760",
       "duration": 1.99
     },
     {
       "slug": "railgun-primary",
       "label": "Railgun Primary",
-      "audioUrl": "/sounds/sojourn/railgun-primary.mp3",
-      "videoUrl": "/sounds/sojourn/railgun-primary.mp4",
+      "audioUrl": "/sounds/sojourn/railgun-primary.mp3?v=ee06ec37",
+      "videoUrl": "/sounds/sojourn/railgun-primary.mp4?v=9c1c9aa0",
       "duration": 3.34
     }
   ],
@@ -704,15 +704,15 @@
     {
       "slug": "heavy-pulse-rifle",
       "label": "Heavy Pulse Rifle",
-      "audioUrl": "/sounds/soldier-76/heavy-pulse-rifle.mp3",
-      "videoUrl": "/sounds/soldier-76/heavy-pulse-rifle.mp4",
+      "audioUrl": "/sounds/soldier-76/heavy-pulse-rifle.mp3?v=f0489217",
+      "videoUrl": "/sounds/soldier-76/heavy-pulse-rifle.mp4?v=71d1be7f",
       "duration": 4.01
     },
     {
       "slug": "helix-rockets",
       "label": "Helix Rockets",
-      "audioUrl": "/sounds/soldier-76/helix-rockets.mp3",
-      "videoUrl": "/sounds/soldier-76/helix-rockets.mp4",
+      "audioUrl": "/sounds/soldier-76/helix-rockets.mp3?v=2f783f0f",
+      "videoUrl": "/sounds/soldier-76/helix-rockets.mp4?v=4883d796",
       "duration": 2.66
     }
   ],
@@ -720,36 +720,36 @@
     {
       "slug": "emp",
       "label": "Emp",
-      "audioUrl": "/sounds/sombra/emp.mp3",
-      "videoUrl": "/sounds/sombra/emp.mp4",
+      "audioUrl": "/sounds/sombra/emp.mp3?v=c686c02d",
+      "videoUrl": "/sounds/sombra/emp.mp4?v=b3aa2389",
       "duration": 4.13
     },
     {
       "slug": "hack",
       "label": "Hack",
-      "audioUrl": "/sounds/sombra/hack.mp3",
-      "videoUrl": "/sounds/sombra/hack.mp4",
+      "audioUrl": "/sounds/sombra/hack.mp3?v=d51c6ea6",
+      "videoUrl": "/sounds/sombra/hack.mp4?v=d25062f2",
       "duration": 3.91
     },
     {
       "slug": "machine-pistol",
       "label": "Machine Pistol",
-      "audioUrl": "/sounds/sombra/machine-pistol.mp3",
-      "videoUrl": "/sounds/sombra/machine-pistol.mp4",
+      "audioUrl": "/sounds/sombra/machine-pistol.mp3?v=26cc0d03",
+      "videoUrl": "/sounds/sombra/machine-pistol.mp4?v=d066be87",
       "duration": 4.87
     },
     {
       "slug": "translocator",
       "label": "Translocator",
-      "audioUrl": "/sounds/sombra/translocator.mp3",
-      "videoUrl": "/sounds/sombra/translocator.mp4",
+      "audioUrl": "/sounds/sombra/translocator.mp3?v=5bb38741",
+      "videoUrl": "/sounds/sombra/translocator.mp4?v=4a5443aa",
       "duration": 8.42
     },
     {
       "slug": "virus",
       "label": "Virus",
-      "audioUrl": "/sounds/sombra/virus.mp3",
-      "videoUrl": "/sounds/sombra/virus.mp4",
+      "audioUrl": "/sounds/sombra/virus.mp3?v=932d8ec5",
+      "videoUrl": "/sounds/sombra/virus.mp4?v=0bfb23f3",
       "duration": 5.3
     }
   ],
@@ -757,22 +757,22 @@
     {
       "slug": "photon-projector-alt-fire-right-click",
       "label": "Photon Projector Alt Fire Right Click",
-      "audioUrl": "/sounds/symmetra/photon-projector-alt-fire-right-click.mp3",
-      "videoUrl": "/sounds/symmetra/photon-projector-alt-fire-right-click.mp4",
+      "audioUrl": "/sounds/symmetra/photon-projector-alt-fire-right-click.mp3?v=c9094782",
+      "videoUrl": "/sounds/symmetra/photon-projector-alt-fire-right-click.mp4?v=e8e1c04e",
       "duration": 10.92
     },
     {
       "slug": "photon-projector-laser",
       "label": "Photon Projector Laser",
-      "audioUrl": "/sounds/symmetra/photon-projector-laser.mp3",
-      "videoUrl": "/sounds/symmetra/photon-projector-laser.mp4",
+      "audioUrl": "/sounds/symmetra/photon-projector-laser.mp3?v=d3c941c1",
+      "videoUrl": "/sounds/symmetra/photon-projector-laser.mp4?v=cdd92d44",
       "duration": 6.5
     },
     {
       "slug": "teleporter",
       "label": "Teleporter",
-      "audioUrl": "/sounds/symmetra/teleporter.mp3",
-      "videoUrl": "/sounds/symmetra/teleporter.mp4",
+      "audioUrl": "/sounds/symmetra/teleporter.mp3?v=7362ebc5",
+      "videoUrl": "/sounds/symmetra/teleporter.mp4?v=ca120427",
       "duration": 6.89
     }
   ],
@@ -780,15 +780,15 @@
     {
       "slug": "molten-core",
       "label": "Molten Core",
-      "audioUrl": "/sounds/torbjorn/molten-core.mp3",
-      "videoUrl": "/sounds/torbjorn/molten-core.mp4",
+      "audioUrl": "/sounds/torbjorn/molten-core.mp3?v=6d47f12b",
+      "videoUrl": "/sounds/torbjorn/molten-core.mp4?v=69bfaf0e",
       "duration": 9.41
     },
     {
       "slug": "rivet-gun",
       "label": "Rivet Gun",
-      "audioUrl": "/sounds/torbjorn/rivet-gun.mp3",
-      "videoUrl": "/sounds/torbjorn/rivet-gun.mp4",
+      "audioUrl": "/sounds/torbjorn/rivet-gun.mp3?v=00ddfaea",
+      "videoUrl": "/sounds/torbjorn/rivet-gun.mp4?v=1ddaa592",
       "duration": 7.34
     }
   ],
@@ -796,29 +796,29 @@
     {
       "slug": "blink",
       "label": "Blink",
-      "audioUrl": "/sounds/tracer/blink.mp3",
-      "videoUrl": "/sounds/tracer/blink.mp4",
+      "audioUrl": "/sounds/tracer/blink.mp3?v=043ef6f2",
+      "videoUrl": "/sounds/tracer/blink.mp4?v=a98e3a0b",
       "duration": 5.02
     },
     {
       "slug": "pulse-bomb",
       "label": "Pulse Bomb",
-      "audioUrl": "/sounds/tracer/pulse-bomb.mp3",
-      "videoUrl": "/sounds/tracer/pulse-bomb.mp4",
+      "audioUrl": "/sounds/tracer/pulse-bomb.mp3?v=1604ca43",
+      "videoUrl": "/sounds/tracer/pulse-bomb.mp4?v=0f3aa4e8",
       "duration": 3.17
     },
     {
       "slug": "pulse-pistols",
       "label": "Pulse Pistols",
-      "audioUrl": "/sounds/tracer/pulse-pistols.mp3",
-      "videoUrl": "/sounds/tracer/pulse-pistols.mp4",
+      "audioUrl": "/sounds/tracer/pulse-pistols.mp3?v=26b3d43d",
+      "videoUrl": "/sounds/tracer/pulse-pistols.mp4?v=b624076d",
       "duration": 5.33
     },
     {
       "slug": "recall",
       "label": "Recall",
-      "audioUrl": "/sounds/tracer/recall.mp3",
-      "videoUrl": "/sounds/tracer/recall.mp4",
+      "audioUrl": "/sounds/tracer/recall.mp3?v=9d338fce",
+      "videoUrl": "/sounds/tracer/recall.mp4?v=e42eb979",
       "duration": 1.9
     }
   ],
@@ -826,36 +826,36 @@
     {
       "slug": "palatine-fang",
       "label": "Palatine Fang",
-      "audioUrl": "/sounds/vendetta/palatine-fang.mp3",
-      "videoUrl": "/sounds/vendetta/palatine-fang.mp4",
+      "audioUrl": "/sounds/vendetta/palatine-fang.mp3?v=5f2b0610",
+      "videoUrl": "/sounds/vendetta/palatine-fang.mp4?v=e5bfa3f6",
       "duration": 4.8
     },
     {
       "slug": "projected-edge",
       "label": "Projected Edge",
-      "audioUrl": "/sounds/vendetta/projected-edge.mp3",
-      "videoUrl": "/sounds/vendetta/projected-edge.mp4",
+      "audioUrl": "/sounds/vendetta/projected-edge.mp3?v=4db12021",
+      "videoUrl": "/sounds/vendetta/projected-edge.mp4?v=457b1237",
       "duration": 4.15
     },
     {
       "slug": "soaring-slice",
       "label": "Soaring Slice",
-      "audioUrl": "/sounds/vendetta/soaring-slice.mp3",
-      "videoUrl": "/sounds/vendetta/soaring-slice.mp4",
+      "audioUrl": "/sounds/vendetta/soaring-slice.mp3?v=5de9b6c8",
+      "videoUrl": "/sounds/vendetta/soaring-slice.mp4?v=eb8eae1f",
       "duration": 4.03
     },
     {
       "slug": "sundering-blade",
       "label": "Sundering Blade",
-      "audioUrl": "/sounds/vendetta/sundering-blade.mp3",
-      "videoUrl": "/sounds/vendetta/sundering-blade.mp4",
+      "audioUrl": "/sounds/vendetta/sundering-blade.mp3?v=e5cee395",
+      "videoUrl": "/sounds/vendetta/sundering-blade.mp4?v=d835f8fd",
       "duration": 5.86
     },
     {
       "slug": "whirlwind-dash",
       "label": "Whirlwind Dash",
-      "audioUrl": "/sounds/vendetta/whirlwind-dash.mp3",
-      "videoUrl": "/sounds/vendetta/whirlwind-dash.mp4",
+      "audioUrl": "/sounds/vendetta/whirlwind-dash.mp3?v=d02d9ef9",
+      "videoUrl": "/sounds/vendetta/whirlwind-dash.mp4?v=005fcc7f",
       "duration": 3.62
     }
   ],
@@ -863,29 +863,29 @@
     {
       "slug": "burrow",
       "label": "Burrow",
-      "audioUrl": "/sounds/venture/burrow.mp3",
-      "videoUrl": "/sounds/venture/burrow.mp4",
+      "audioUrl": "/sounds/venture/burrow.mp3?v=4f9224cc",
+      "videoUrl": "/sounds/venture/burrow.mp4?v=a64b7f45",
       "duration": 6.94
     },
     {
       "slug": "drill-dash",
       "label": "Drill Dash",
-      "audioUrl": "/sounds/venture/drill-dash.mp3",
-      "videoUrl": "/sounds/venture/drill-dash.mp4",
+      "audioUrl": "/sounds/venture/drill-dash.mp3?v=b48432bc",
+      "videoUrl": "/sounds/venture/drill-dash.mp4?v=3ed76fc0",
       "duration": 5.09
     },
     {
       "slug": "smart-excavator",
       "label": "Smart Excavator",
-      "audioUrl": "/sounds/venture/smart-excavator.mp3",
-      "videoUrl": "/sounds/venture/smart-excavator.mp4",
+      "audioUrl": "/sounds/venture/smart-excavator.mp3?v=74bafa8b",
+      "videoUrl": "/sounds/venture/smart-excavator.mp4?v=3679160f",
       "duration": 5.78
     },
     {
       "slug": "tectonic-shock",
       "label": "Tectonic Shock",
-      "audioUrl": "/sounds/venture/tectonic-shock.mp3",
-      "videoUrl": "/sounds/venture/tectonic-shock.mp4",
+      "audioUrl": "/sounds/venture/tectonic-shock.mp3?v=3d6bcc13",
+      "videoUrl": "/sounds/venture/tectonic-shock.mp4?v=01feadb0",
       "duration": 6.62
     }
   ],
@@ -893,8 +893,8 @@
     {
       "slug": "widow-s-kiss",
       "label": "Widow S Kiss",
-      "audioUrl": "/sounds/widowmaker/widow-s-kiss.mp3",
-      "videoUrl": "/sounds/widowmaker/widow-s-kiss.mp4",
+      "audioUrl": "/sounds/widowmaker/widow-s-kiss.mp3?v=473832dc",
+      "videoUrl": "/sounds/widowmaker/widow-s-kiss.mp4?v=7f5447a6",
       "duration": 6.58
     }
   ],
@@ -902,29 +902,29 @@
     {
       "slug": "guardian-wave",
       "label": "Guardian Wave",
-      "audioUrl": "/sounds/wuyang/guardian-wave.mp3",
-      "videoUrl": "/sounds/wuyang/guardian-wave.mp4",
+      "audioUrl": "/sounds/wuyang/guardian-wave.mp3?v=c2f121cf",
+      "videoUrl": "/sounds/wuyang/guardian-wave.mp4?v=eb082a7e",
       "duration": 2.57
     },
     {
       "slug": "rushing-torrent",
       "label": "Rushing Torrent",
-      "audioUrl": "/sounds/wuyang/rushing-torrent.mp3",
-      "videoUrl": "/sounds/wuyang/rushing-torrent.mp4",
+      "audioUrl": "/sounds/wuyang/rushing-torrent.mp3?v=becdfa37",
+      "videoUrl": "/sounds/wuyang/rushing-torrent.mp4?v=c43dbc48",
       "duration": 5.3
     },
     {
       "slug": "tidal-blast",
       "label": "Tidal Blast",
-      "audioUrl": "/sounds/wuyang/tidal-blast.mp3",
-      "videoUrl": "/sounds/wuyang/tidal-blast.mp4",
+      "audioUrl": "/sounds/wuyang/tidal-blast.mp3?v=96c1c16f",
+      "videoUrl": "/sounds/wuyang/tidal-blast.mp4?v=43621434",
       "duration": 6.17
     },
     {
       "slug": "xuanwu-staff-primary-fire",
       "label": "Xuanwu Staff Primary Fire",
-      "audioUrl": "/sounds/wuyang/xuanwu-staff-primary-fire.mp3",
-      "videoUrl": "/sounds/wuyang/xuanwu-staff-primary-fire.mp4",
+      "audioUrl": "/sounds/wuyang/xuanwu-staff-primary-fire.mp3?v=798dc26a",
+      "videoUrl": "/sounds/wuyang/xuanwu-staff-primary-fire.mp4?v=ad3eb99c",
       "duration": 6.67
     }
   ],
@@ -932,29 +932,29 @@
     {
       "slug": "orb-of-harmony",
       "label": "Orb Of Harmony",
-      "audioUrl": "/sounds/zenyatta/orb-of-harmony.mp3",
-      "videoUrl": "/sounds/zenyatta/orb-of-harmony.mp4",
+      "audioUrl": "/sounds/zenyatta/orb-of-harmony.mp3?v=761a75e5",
+      "videoUrl": "/sounds/zenyatta/orb-of-harmony.mp4?v=ec2c46c7",
       "duration": 5.69
     },
     {
       "slug": "primary-fire",
       "label": "Primary Fire",
-      "audioUrl": "/sounds/zenyatta/primary-fire.mp3",
-      "videoUrl": "/sounds/zenyatta/primary-fire.mp4",
+      "audioUrl": "/sounds/zenyatta/primary-fire.mp3?v=3b9308d2",
+      "videoUrl": "/sounds/zenyatta/primary-fire.mp4?v=35226900",
       "duration": 3.86
     },
     {
       "slug": "secondary-fire",
       "label": "Secondary Fire",
-      "audioUrl": "/sounds/zenyatta/secondary-fire.mp3",
-      "videoUrl": "/sounds/zenyatta/secondary-fire.mp4",
+      "audioUrl": "/sounds/zenyatta/secondary-fire.mp3?v=27cd5096",
+      "videoUrl": "/sounds/zenyatta/secondary-fire.mp4?v=27d0a56a",
       "duration": 4.73
     },
     {
       "slug": "transcendence",
       "label": "Transcendence",
-      "audioUrl": "/sounds/zenyatta/transcendence.mp3",
-      "videoUrl": "/sounds/zenyatta/transcendence.mp4",
+      "audioUrl": "/sounds/zenyatta/transcendence.mp3?v=ecfab51d",
+      "videoUrl": "/sounds/zenyatta/transcendence.mp4?v=2f7542b4",
       "duration": 6.48
     }
   ]
