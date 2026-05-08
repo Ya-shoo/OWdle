@@ -105,15 +105,30 @@ export function modeJsonLd({ slug, title, description }: ModeMetaInput) {
           priceCurrency: "USD",
         },
         isPartOf: { "@id": `${SITE_URL}/#webapp` },
-        about: {
-          "@type": "VideoGame",
-          name: "Overwatch 2",
-          publisher: {
-            "@type": "Organization",
-            name: "Blizzard Entertainment",
+        // OWdle's hero pool spans the entire Overwatch franchise — original
+        // Overwatch (2016–2022) and Overwatch 2 (2022–present) — so we
+        // reference both as subjects rather than implying we cover only
+        // one. Both share Blizzard as publisher.
+        about: [
+          {
+            "@type": "VideoGame",
+            name: "Overwatch",
+            publisher: {
+              "@type": "Organization",
+              name: "Blizzard Entertainment",
+            },
+            gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
           },
-          gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
-        },
+          {
+            "@type": "VideoGame",
+            name: "Overwatch 2",
+            publisher: {
+              "@type": "Organization",
+              name: "Blizzard Entertainment",
+            },
+            gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
+          },
+        ],
       },
       {
         "@type": "BreadcrumbList",

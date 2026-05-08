@@ -26,15 +26,26 @@ const jsonLd = {
         price: "0",
         priceCurrency: "USD",
       },
-      about: {
-        "@type": "VideoGame",
-        name: "Overwatch 2",
-        publisher: {
-          "@type": "Organization",
-          name: "Blizzard Entertainment",
+      about: [
+        {
+          "@type": "VideoGame",
+          name: "Overwatch",
+          publisher: {
+            "@type": "Organization",
+            name: "Blizzard Entertainment",
+          },
+          gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
         },
-        gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
-      },
+        {
+          "@type": "VideoGame",
+          name: "Overwatch 2",
+          publisher: {
+            "@type": "Organization",
+            name: "Blizzard Entertainment",
+          },
+          gamePlatform: ["PC", "PlayStation", "Xbox", "Nintendo Switch"],
+        },
+      ],
     },
     {
       "@type": "WebSite",

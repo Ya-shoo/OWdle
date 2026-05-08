@@ -1,7 +1,14 @@
-// Renders app/icon.svg into the binary favicon assets that legacy
-// browsers and iOS expect:
-//   - app/favicon.ico  (multi-resolution ICO with PNG-embedded frames)
-//   - app/apple-icon.png  (180×180 for iOS home-screen)
+// Renders app/icon.svg into every favicon asset the platform needs:
+//   - app/favicon.ico       (multi-resolution ICO for legacy browsers)
+//   - app/apple-icon.png    (180×180 for iOS home-screen)
+//   - app/icon0.png         (192×192 — Google SERP favicon)
+//   - app/icon1.png         (512×512 — PWA install icon, high-DPI)
+//
+// Google specifically requires favicons at multiples of 48 (192 is the
+// canonical size) to show in search results. The ICO + SVG alone gets
+// rejected because the served frames are too small. icon0/icon1 use
+// Next's app-icon file convention so Next emits the right <link> tags
+// automatically with explicit sizes attributes.
 //
 // One-shot script — re-run when icon.svg changes.
 
@@ -14,6 +21,8 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const SVG_PATH = join(ROOT, "app", "icon.svg");
 const ICO_PATH = join(ROOT, "app", "favicon.ico");
 const APPLE_PATH = join(ROOT, "app", "apple-icon.png");
+const ICON_192_PATH = join(ROOT, "app", "icon0.png");
+const ICON_512_PATH = join(ROOT, "app", "icon1.png");
 
 const ICO_SIZES = [16, 32, 48, 64, 128, 256];
 
@@ -71,3 +80,11 @@ console.log(`wrote ${ICO_PATH} (${frames.length} frames: ${ICO_SIZES.join(", ")}
 const applePng = await svgToPng(svg, 180);
 await writeFile(APPLE_PATH, applePng);
 console.log(`wrote ${APPLE_PATH} (180×180)`);
+
+const icon192 = await svgToPng(svg, 192);
+await writeFile(ICON_192_PATH, icon192);
+console.log(`wrote ${ICON_192_PATH} (192×192 — Google SERP)`);
+
+const icon512 = await svgToPng(svg, 512);
+await writeFile(ICON_512_PATH, icon512);
+console.log(`wrote ${ICON_512_PATH} (512×512 — PWA install)`);
