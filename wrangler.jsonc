@@ -4,10 +4,11 @@
   "compatibility_date": "2026-04-28",
   "pages_build_output_dir": "./out",
 
-  // D1 database for "request next game" votes. The database_id below is a
-  // placeholder — replace with the UUID printed by `wrangler d1 create
-  // owdle-votes` before the first deploy. RAWG_API_KEY is set as a Pages
-  // secret (`wrangler pages secret put RAWG_API_KEY`), not in this file.
+  // D1 database for "request next game" votes. Shared with Deadlockle so
+  // that the leaderboard pools both sites' votes; this is the canonical DB
+  // and the `source` column on every row records which site the vote came
+  // from. RAWG_API_KEY is set as a Pages secret (`wrangler pages secret
+  // put RAWG_API_KEY`), not in this file.
   "d1_databases": [
     {
       "binding": "DB",
