@@ -262,7 +262,7 @@ export function RequestNextGame() {
               Which game should I work on next?
             </h3>
             <p className="mt-2 text-sm text-ink-soft">
-              Search any game and vote. The most-requested ones get built.
+              Search any game and vote. The most requested ones get built.
             </p>
 
             <div className="relative mt-5">
