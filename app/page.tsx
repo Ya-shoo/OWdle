@@ -13,6 +13,12 @@ const jsonLd = {
       "@type": "WebApplication",
       "@id": `${SITE_URL}/#webapp`,
       name: SITE_NAME,
+      alternateName: [
+        "OW dle",
+        "Overwatch Wordle",
+        "OW Wordle",
+        "Daily Overwatch Quiz",
+      ],
       url: SITE_URL,
       description: SITE_DEFAULT_DESCRIPTION,
       applicationCategory: "GameApplication",
@@ -26,6 +32,7 @@ const jsonLd = {
         price: "0",
         priceCurrency: "USD",
       },
+      isPartOf: { "@id": `${SITE_URL}/#website` },
       about: [
         {
           "@type": "VideoGame",
@@ -51,9 +58,22 @@ const jsonLd = {
       "@type": "WebSite",
       "@id": `${SITE_URL}/#website`,
       name: SITE_NAME,
+      alternateName: [
+        "OW dle",
+        "Overwatch Wordle",
+        "OW Wordle",
+        "Daily Overwatch Quiz",
+      ],
       url: SITE_URL,
       description: SITE_DEFAULT_DESCRIPTION,
       inLanguage: "en",
+      publisher: { "@id": `${SITE_URL}/#publisher` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#publisher`,
+      name: SITE_NAME,
+      url: SITE_URL,
     },
     {
       "@type": "ItemList",
@@ -79,7 +99,9 @@ export default function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
       />
       <HomeContent />
     </>
