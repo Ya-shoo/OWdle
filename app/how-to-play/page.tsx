@@ -5,58 +5,14 @@ export const metadata = modeMetadata({
   slug: "how-to-play",
   title: "How to play",
   description:
-    "How to play OWdle, the daily Overwatch hero quiz. Rules, tile colors, strategy tips, and a breakdown of all five wordle-style game modes: Classic, Quote, Ability, Spotlight, and Sound.",
+    "How to play OWdle, the daily Overwatch hero quiz. Rules, tile colors, and a breakdown of all five wordle-style game modes: Classic, Quote, Ability, Spotlight, and Sound.",
 });
-
-const FAQS: { q: string; a: string }[] = [
-  {
-    q: "Is OWdle free?",
-    a: "Yes. OWdle is free, has no ads, requires no account, and stores your progress only in your own browser. Nothing is sent to a server.",
-  },
-  {
-    q: "When does the daily puzzle reset?",
-    a: "Midnight UTC. Every mode rolls over to a new puzzle simultaneously, so every player in the world is solving the same hero on the same day.",
-  },
-  {
-    q: "How is the daily hero chosen?",
-    a: "A deterministic shuffle keyed to the calendar date. The same date always yields the same hero, and the order won't repeat for years. The daily lineup is identical for everyone, which is what makes streaks and shareable scores work.",
-  },
-  {
-    q: "What do the tile colors mean in Classic?",
-    a: "Green means an exact match: the guess and the answer share that attribute. Yellow means a partial match: same role family, neighboring continent, or a numeric value within a small window (HP, age, release year). Red means it's wrong, with arrows for higher/lower on numeric attributes.",
-  },
-  {
-    q: "Does it work on mobile?",
-    a: "Yes. Every mode is designed to work on a phone first: combobox autocomplete, tap-friendly tiles, and audio that respects silent mode.",
-  },
-  {
-    q: "Are new heroes added when Blizzard releases them?",
-    a: "Yes. The hero roster is rebuilt from the OverFast API plus a hand-curated overlay, so new heroes appear in the puzzle pool soon after they go live in Overwatch 2.",
-  },
-  {
-    q: "What if I get stuck?",
-    a: "There's no skip. The design is one shot per day, win or learn. Each mode does reveal more information per guess, so even a long run gives you better odds. You can always come back tomorrow.",
-  },
-  {
-    q: "Is OWdle affiliated with Blizzard?",
-    a: "No. OWdle is an unofficial fan project. Overwatch is a trademark of Blizzard Entertainment, Inc. Hero data is sourced from public APIs and the Overwatch Fandom wiki.",
-  },
-];
 
 const PAGE_URL = `${SITE_URL}/how-to-play/`;
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
-    {
-      "@type": "FAQPage",
-      "@id": `${PAGE_URL}#faq`,
-      mainEntity: FAQS.map((f) => ({
-        "@type": "Question",
-        name: f.q,
-        acceptedAnswer: { "@type": "Answer", text: f.a },
-      })),
-    },
     {
       "@type": "BreadcrumbList",
       "@id": `${PAGE_URL}#breadcrumbs`,
@@ -200,25 +156,6 @@ const MODE_SECTIONS: {
   },
 ];
 
-const TIPS = [
-  {
-    label: "Spread your first guess",
-    body: "In Classic, start with a hero whose attributes split the roster. A damage hero from Asia in their twenties, for example, narrows the field much faster than a famous tank.",
-  },
-  {
-    label: "Use yellow tiles aggressively",
-    body: "A yellow continent or partial role is more information than a green tile on a generic attribute. Pivot toward that family next.",
-  },
-  {
-    label: "In Quote, listen for accent and tone",
-    body: "Even short lines carry vowel patterns and cadence that pin a hero down. Localized voice acting in Overwatch is unusually distinct.",
-  },
-  {
-    label: "Don't burn guesses you don't need",
-    body: "Each mode reveals more on every miss. If you're unsure between two heroes, picking one and learning from the result is often better than guessing wildly.",
-  },
-];
-
 export default function HowToPlayPage() {
   return (
     <>
@@ -335,59 +272,7 @@ export default function HowToPlayPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-4xl px-6 pt-20 sm:pt-24">
-          <header className="mb-10 flex items-baseline justify-between border-b border-line pb-3">
-            <h2 className="font-mono text-xs uppercase tracking-[0.22em] text-info">
-              Tips
-            </h2>
-            <span className="font-mono text-xs text-ink-faint">
-              {TIPS.length} starters
-            </span>
-          </header>
-          <ul className="grid gap-px bg-line sm:grid-cols-2">
-            {TIPS.map((tip) => (
-              <li key={tip.label} className="bg-canvas p-6">
-                <h3 className="font-display text-xl text-ink">{tip.label}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                  {tip.body}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="mx-auto max-w-4xl px-6 pb-20 pt-20 sm:pb-24 sm:pt-24">
-          <header className="mb-10 flex items-baseline justify-between border-b border-line pb-3">
-            <h2 className="font-mono text-xs uppercase tracking-[0.22em] text-info">
-              FAQ
-            </h2>
-            <span className="font-mono text-xs text-ink-faint">
-              {FAQS.length} answers
-            </span>
-          </header>
-          <div className="divide-y divide-line border-y border-line">
-            {FAQS.map((f) => (
-              <details key={f.q} className="group">
-                <summary className="flex cursor-pointer items-baseline justify-between gap-6 px-1 py-5 text-left transition-colors hover:bg-muted/30 [&::-webkit-details-marker]:hidden">
-                  <span className="font-display text-lg text-ink sm:text-xl">
-                    {f.q}
-                  </span>
-                  <span
-                    aria-hidden
-                    className="font-mono text-sm text-ink-faint transition-transform group-open:rotate-45"
-                  >
-                    +
-                  </span>
-                </summary>
-                <p className="px-1 pb-6 pr-12 text-base leading-relaxed text-ink-soft [text-wrap:pretty]">
-                  {f.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-t border-line bg-inset/40">
+        <section className="mt-20 border-t border-line bg-inset/40 sm:mt-24">
           <div className="mx-auto flex max-w-4xl flex-col items-start gap-6 px-6 py-12 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-mono text-xs uppercase tracking-[0.22em] text-info">
