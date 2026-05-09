@@ -8,7 +8,6 @@ import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
-import { ShareButton } from "./ShareButton";
 import { NextModeCTA } from "./NextModeCTA";
 
 const MODE = "splash";
@@ -155,13 +154,6 @@ export function SplashGame() {
                   <NextModeCTA current="splash" />
                 </div>
               </div>
-              <ShareButton
-                modeLabel="Spotlight"
-                answer={answer}
-                guesses={state.guesses}
-                day={day}
-                headline={skin ? `${answer.name} · ${skin.name}` : answer.name}
-              />
             </div>
           </motion.div>
         )}

@@ -261,11 +261,6 @@ export function QuoteGame() {
                   <NextModeCTA current="quote" />
                 </div>
               </div>
-              <ConversationShareButton
-                day={day}
-                guesses={state.guesses}
-                speakers={[speakerA, speakerB]}
-              />
             </div>
           </motion.div>
         )}
@@ -662,60 +657,3 @@ function ConversationGuessRow({
   );
 }
 
-function ConversationShareButton({
-  day,
-  guesses,
-  speakers,
-}: {
-  day: string;
-  guesses: ConversationGuess[];
-  speakers: [Hero, Hero];
-}) {
-  const [copied, setCopied] = useState(false);
-
-  const buildText = () => {
-    const [a, b] = speakers;
-    const lines: string[] = [];
-    lines.push(`OWdle Quote · ${day}`);
-    lines.push(`${a.name} & ${b.name} in ${guesses.length}`);
-    lines.push("");
-    for (const g of guesses) {
-      const hero = HEROES_BY_KEY[g.heroKey];
-      if (!hero) continue;
-      const speaker = g.target === 0 ? a : b;
-      const row = compareHero(hero, speaker)
-        .map((r) => emojiFor(r.status))
-        .join("");
-      const targetTag = g.target === 0 ? "🅰" : "🅱";
-      lines.push(`${targetTag} ${row}`);
-    }
-    return lines.join("\n");
-  };
-
-  const onClick = () => {
-    if (!navigator.clipboard) return;
-    navigator.clipboard
-      .writeText(buildText())
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
-      })
-      .catch(() => {});
-  };
-
-  return (
-    <button
-      onClick={onClick}
-      className="rounded-(--radius-pill) bg-accent px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-on-accent transition-opacity hover:opacity-90"
-    >
-      {copied ? "Copied" : "Share"}
-    </button>
-  );
-}
-
-function emojiFor(status: string): string {
-  if (status === "correct") return "🟩";
-  if (status === "partial") return "🟨";
-  if (status === "far") return "🟥";
-  return "⬛";
-}

@@ -8,7 +8,6 @@ import { loadClassic, saveClassic, type ClassicState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
-import { ShareButton } from "./ShareButton";
 import { NextModeCTA } from "./NextModeCTA";
 
 export function ClassicGame() {
@@ -111,12 +110,6 @@ export function ClassicGame() {
                   <NextModeCTA current="classic" />
                 </div>
               </div>
-              <ShareButton
-                modeLabel="Classic"
-                answer={answer}
-                guesses={state.guesses}
-                day={day}
-              />
             </div>
           </motion.div>
         )}

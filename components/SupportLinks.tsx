@@ -26,14 +26,25 @@ export function SupportLinks() {
         {/* Ko-fi profile-card preview — anchors the tip button so visitors
             see who they'd be supporting before they click. */}
         <div className="flex items-center gap-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/kofi-avatar.jpg"
-            alt=""
-            width={80}
-            height={80}
-            className="h-20 w-20 shrink-0 rounded-full border border-line object-cover"
-          />
+          {/* Avatar doubles as a quick hop to the creator's Instagram —
+              same destination as the IG icon below, but a much bigger
+              tap target on mobile. */}
+          <a
+            href="https://www.instagram.com/hiamyush/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Creator's Instagram"
+            className="shrink-0 rounded-full transition-opacity hover:opacity-90"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/kofi-avatar.jpg"
+              alt=""
+              width={80}
+              height={80}
+              className="h-20 w-20 rounded-full border border-line object-cover"
+            />
+          </a>
           <div>
             <p className="font-soft text-xl font-bold leading-none text-ink">
               yush

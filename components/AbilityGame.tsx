@@ -18,7 +18,6 @@ import {
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
 import { Brand } from "./Brand";
-import { ShareButton } from "./ShareButton";
 import { NextModeCTA } from "./NextModeCTA";
 
 const MODE = "ability";
@@ -189,13 +188,6 @@ export function AbilityGame() {
                   <NextModeCTA current="ability" />
                 </div>
               </div>
-              <ShareButton
-                modeLabel="Ability"
-                answer={answer}
-                guesses={state.guesses}
-                day={day}
-                headline={`${answer.name}'s "${ability.name}"`}
-              />
             </div>
           </motion.div>
         )}
@@ -277,17 +269,17 @@ function WrongGuessCard({ hero, isLatest }: { hero: Hero; isLatest: boolean }) {
       initial={isLatest ? { opacity: 0, y: -10 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      className="tile-shape mx-auto flex w-full max-w-sm flex-col items-center justify-center gap-4 border border-far/40 bg-far/15 px-6 py-8"
+      className="tile-shape mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 border border-far/40 bg-far/15 px-5 py-6"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={hero.portrait}
         alt={hero.name}
-        width={144}
-        height={144}
-        className="h-32 w-32 rounded-(--radius-card) bg-muted object-cover sm:h-36 sm:w-36"
+        width={112}
+        height={112}
+        className="h-24 w-24 rounded-(--radius-card) bg-muted object-cover sm:h-28 sm:w-28"
       />
-      <div className="font-display text-3xl uppercase tracking-wide text-ink sm:text-4xl">
+      <div className="font-display text-2xl uppercase tracking-wide text-ink sm:text-3xl">
         {hero.name}
       </div>
     </motion.div>

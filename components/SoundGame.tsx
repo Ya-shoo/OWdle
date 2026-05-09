@@ -8,16 +8,19 @@ import {
   getSoundBonusOptions,
   getSoundForDay,
   prettyDay,
+  type ResolvedSoundClip,
 } from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
-import { ShareButton } from "./ShareButton";
 import { NextModeCTA } from "./NextModeCTA";
 import { BonusRound } from "./BonusRound";
 import { WaveformPlayer } from "./WaveformPlayer";
+import { DevSoundPicker } from "./DevSoundPicker";
 import { ROLE_AUDIO_BOOST } from "@/lib/audio";
+
+const IS_DEV = process.env.NODE_ENV !== "production";
 
 const MODE = "sound";
 // Sentinel pushed into guesses[] when the player skips a turn. Counts
@@ -57,6 +60,13 @@ function snippetDurationFor(
 export function SoundGame() {
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ModeState | null>(null);
+  // Dev-only override. When set, the picker has chosen a specific clip;
+  // we serve it instead of the daily seed and skip localStorage so test
+  // playthroughs don't pollute the user's real progress for that day.
+  const [overrideClip, setOverrideClip] = useState<ResolvedSoundClip | null>(
+    null,
+  );
+  const isOverride = overrideClip !== null;
 
   useEffect(() => {
     const d = dayString();
@@ -92,6 +102,7 @@ export function SoundGame() {
     );
   }
 
+  const resolved = overrideClip ?? getSoundForDay(day);
   const {
     hero: answer,
     audioUrl,
@@ -99,7 +110,7 @@ export function SoundGame() {
     label,
     slug,
     duration: clipDuration,
-  } = getSoundForDay(day);
+  } = resolved;
   const guessedHeroes = state.guesses
     .map((k) => HEROES_BY_KEY[k])
     .filter(Boolean);
@@ -132,45 +143,49 @@ export function SoundGame() {
     clipDuration,
   );
 
+  const persist = (next: ModeState) => {
+    setState(next);
+    if (!isOverride) saveModeState(MODE, next);
+  };
+
   const handleGuess = (hero: Hero) => {
     if (reveal) return;
-    const next: ModeState = {
+    persist({
       ...state,
       guesses: [...state.guesses, hero.key],
       won: hero.key === answer.key,
-    };
-    setState(next);
-    saveModeState(MODE, next);
+    });
   };
 
   const handleSkip = () => {
     if (reveal) return;
-    const next: ModeState = {
+    persist({
       ...state,
       guesses: [...state.guesses, SKIP_MARKER],
-    };
-    setState(next);
-    saveModeState(MODE, next);
+    });
   };
 
   const handleGiveUp = () => {
     if (reveal) return;
-    const next: ModeState = {
-      ...state,
-      gaveUp: true,
-    };
-    setState(next);
-    saveModeState(MODE, next);
+    persist({ ...state, gaveUp: true });
   };
 
   const handleBonus = (selected: number, correct: boolean | null) => {
     if (!state.won || state.bonus) return;
-    const next: ModeState = {
-      ...state,
-      bonus: { selected, correct },
-    };
-    setState(next);
-    saveModeState(MODE, next);
+    persist({ ...state, bonus: { selected, correct } });
+  };
+
+  const applyOverride = (clip: ResolvedSoundClip | null) => {
+    setOverrideClip(clip);
+    if (!day) return;
+    if (clip) {
+      // Fresh in-memory state for the new clip; localStorage is left
+      // alone so the user's real daily progress survives dev poking.
+      setState({ day, guesses: [], won: false });
+    } else {
+      // Restoring the daily — re-hydrate from localStorage.
+      setState(loadModeState(MODE, day));
+    }
   };
 
   return (
@@ -192,6 +207,14 @@ export function SoundGame() {
           <span className="mt-1 text-info">sound mode</span>
         </div>
       </header>
+
+      {IS_DEV && (
+        <DevSoundPicker
+          currentClip={resolved}
+          overrideActive={isOverride}
+          onApply={applyOverride}
+        />
+      )}
 
       <div className="mb-8 flex flex-col items-center">
         {reveal && videoUrl ? (
@@ -304,15 +327,6 @@ export function SoundGame() {
                   <NextModeCTA current="sound" />
                 </div>
               </div>
-              {state.won && (
-                <ShareButton
-                  modeLabel="Sound"
-                  answer={answer}
-                  guesses={heroGuessKeys}
-                  day={day}
-                  headline={answer.name}
-                />
-              )}
             </div>
           </motion.div>
         )}
