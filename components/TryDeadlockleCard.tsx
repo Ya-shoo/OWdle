@@ -37,7 +37,7 @@ export function TryDeadlockleCard() {
             <span className="text-ink-soft">— the daily Deadlock quiz</span>
           </h3>
           <p className="mt-2 max-w-lg text-sm text-ink-soft">
-            Same daily-puzzle format, different game. Heroes, abilities,
+            Same daily puzzle format, different game. Heroes, abilities,
             splash, items. Resets at midnight UTC.
           </p>
         </div>
