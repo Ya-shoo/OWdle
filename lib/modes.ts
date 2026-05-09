@@ -20,13 +20,13 @@ export const MODES: ModeDef[] = [
   {
     slug: "classic",
     label: "Classic",
-    blurb: "Type a hero, get attribute-match tiles. Eight categories.",
+    blurb: "Type a hero, get attribute match tiles. Eight categories.",
     built: true,
   },
   {
     slug: "quote",
     label: "Quote",
-    blurb: "A pre-match exchange between two heroes. Identify both speakers.",
+    blurb: "Two heroes talk before a match. Identify both speakers.",
     built: true,
   },
   {
