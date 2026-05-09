@@ -5,7 +5,7 @@ const META = {
   slug: "classic",
   title: "Classic",
   description:
-    "Daily Overwatch hero quiz. Guess by role, age, country, species, HP and more — each guess returns Wordle-style match tiles. Free, new puzzle daily.",
+    "Daily Overwatch hero quiz. Guess by role, age, country, species, HP and more. Each guess returns Wordle-style match tiles. Free, new puzzle daily.",
 };
 
 export const metadata = modeMetadata(META);

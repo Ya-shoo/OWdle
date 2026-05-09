@@ -1,16 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import clsx from "clsx";
 import type { SoundBonusOption } from "@/lib/daily";
 
 // Sound mode bonus: after the player gets the hero right, they pick which
 // ability the clip belonged to. Options are sourced from the labeled clip
 // set for that hero (sound-clips.json), so custom variants like
-// "Scoped Fire" appear alongside press-kit abilities. Icons + descriptions
-// are best-effort: if the slug matches a press-kit ability by name, we
-// use that ability's art; otherwise we fall back to a label-only tile.
+// "Scoped Fire" appear alongside press-kit abilities. Icons are best-effort:
+// auto-matched by slugified name, with a hand-curated override map in
+// data/sound-clip-icons.json for labels that don't slug-match.
 export function BonusRound({
   heroName,
   options,
@@ -22,7 +21,6 @@ export function BonusRound({
   saved: { selected: number; correct: boolean | null } | undefined;
   onSelect: (selectedIndex: number, correct: boolean | null) => void;
 }) {
-  const [hovering, setHovering] = useState<number | null>(null);
   const answered = saved != null;
   const selectedIndex = saved?.selected ?? null;
   const correctIndex = options.findIndex((o) => o.isCorrect);
@@ -73,7 +71,7 @@ export function BonusRound({
       <p className="mb-5 max-w-md font-display text-base leading-snug text-ink sm:text-lg">
         {answered
           ? saved!.correct
-            ? `Yep — that was ${heroName}'s ${correctLabel}.`
+            ? `Yep, that was ${heroName}'s ${correctLabel}.`
             : correctLabel
               ? `Not quite. The clip was ${heroName}'s ${correctLabel}.`
               : `Answer locked in.`
@@ -91,7 +89,6 @@ export function BonusRound({
           const showAsRight = answered && opt.isCorrect;
           const showAsWrong =
             answered && isPicked && !saved!.correct;
-          const isExpanded = answered ? isPicked : hovering === i;
 
           return (
             <BonusOptionCard
@@ -101,30 +98,12 @@ export function BonusRound({
               showAsRight={showAsRight}
               showAsWrong={showAsWrong}
               dimmed={answered && !isPicked && !opt.isCorrect}
-              isExpanded={isExpanded}
               disabled={answered}
-              onMouseEnter={() => setHovering(i)}
-              onMouseLeave={() => setHovering(null)}
               onClick={() => handlePick(i)}
             />
           );
         })}
       </div>
-
-      <AnimatePresence>
-        {answered && options[selectedIndex!]?.description && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <p className="mt-4 max-w-md text-sm text-ink-soft">
-              {options[selectedIndex!].description}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.section>
   );
 }
@@ -135,10 +114,7 @@ function BonusOptionCard({
   showAsRight,
   showAsWrong,
   dimmed,
-  isExpanded,
   disabled,
-  onMouseEnter,
-  onMouseLeave,
   onClick,
 }: {
   option: SoundBonusOption;
@@ -146,10 +122,7 @@ function BonusOptionCard({
   showAsRight: boolean;
   showAsWrong: boolean;
   dimmed: boolean;
-  isExpanded: boolean;
   disabled: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
   onClick: () => void;
 }) {
   // First letter fallback when we don't have a press-kit icon (e.g., a
@@ -164,8 +137,6 @@ function BonusOptionCard({
     <button
       type="button"
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
       disabled={disabled}
       aria-pressed={isPicked}
       className={clsx(
@@ -193,7 +164,6 @@ function BonusOptionCard({
             src={option.icon}
             alt=""
             className="h-full w-full object-contain p-1"
-            loading="lazy"
           />
         ) : (
           <span
@@ -244,11 +214,6 @@ function BonusOptionCard({
       >
         {option.label}
       </div>
-      {isExpanded && !disabled && option.description && (
-        <div className="absolute left-full top-0 z-10 ml-2 hidden w-56 rounded-(--radius-card) border border-line bg-surface p-3 text-left text-xs text-ink-soft shadow-2xl shadow-black/30 sm:block">
-          {option.description}
-        </div>
-      )}
     </button>
   );
 }

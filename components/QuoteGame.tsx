@@ -159,7 +159,7 @@ export function QuoteGame() {
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
             A pre-match exchange between two heroes. Guess each speaker in
-            their own field — more dialogue reveals as you go.
+            their own field. More dialogue reveals as you go.
           </p>
         </div>
         <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">
@@ -298,7 +298,7 @@ export function QuoteGame() {
         <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
             Pick a hero in either field to make your first guess. Each guess
-            reveals more dialogue — after {FIRST_HINT_AT} wrong guesses, the
+            reveals more dialogue. After {FIRST_HINT_AT} wrong guesses, the
             first line&apos;s voice clip unlocks, then one more every{" "}
             {HINT_INTERVAL} guesses.
           </p>

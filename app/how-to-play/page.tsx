@@ -5,7 +5,7 @@ export const metadata = modeMetadata({
   slug: "how-to-play",
   title: "How to play",
   description:
-    "How to play OWdle, the daily Overwatch hero quiz. Rules, tile colors, strategy tips, and a breakdown of all five wordle-style game modes — Classic, Quote, Ability, Spotlight, and Sound.",
+    "How to play OWdle, the daily Overwatch hero quiz. Rules, tile colors, strategy tips, and a breakdown of all five wordle-style game modes: Classic, Quote, Ability, Spotlight, and Sound.",
 });
 
 const FAQS: { q: string; a: string }[] = [
@@ -19,15 +19,15 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "How is the daily hero chosen?",
-    a: "A deterministic shuffle keyed to the calendar date. The same date always yields the same hero, and the order won't repeat for years — but the daily lineup is identical for everyone, which is what makes streaks and shareable scores work.",
+    a: "A deterministic shuffle keyed to the calendar date. The same date always yields the same hero, and the order won't repeat for years. The daily lineup is identical for everyone, which is what makes streaks and shareable scores work.",
   },
   {
     q: "What do the tile colors mean in Classic?",
-    a: "Green means an exact match — the guess and the answer share that attribute. Yellow means a partial match: same role family, neighboring continent, or a numeric value within a small window (HP, age, release year). Red means it's wrong, with arrows for higher/lower on numeric attributes.",
+    a: "Green means an exact match: the guess and the answer share that attribute. Yellow means a partial match: same role family, neighboring continent, or a numeric value within a small window (HP, age, release year). Red means it's wrong, with arrows for higher/lower on numeric attributes.",
   },
   {
     q: "Does it work on mobile?",
-    a: "Yes. Every mode is designed to work on a phone first — combobox autocomplete, tap-friendly tiles, and audio that respects silent mode.",
+    a: "Yes. Every mode is designed to work on a phone first: combobox autocomplete, tap-friendly tiles, and audio that respects silent mode.",
   },
   {
     q: "Are new heroes added when Blizzard releases them?",
@@ -35,7 +35,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What if I get stuck?",
-    a: "There's no skip — the design is one shot per day, win or learn. Each mode does reveal more information per guess, so even a long run gives you better odds. You can always come back tomorrow.",
+    a: "There's no skip. The design is one shot per day, win or learn. Each mode does reveal more information per guess, so even a long run gives you better odds. You can always come back tomorrow.",
   },
   {
     q: "Is OWdle affiliated with Blizzard?",
@@ -94,7 +94,7 @@ const MODE_SECTIONS: {
       <>
         <p>
           You have unlimited guesses to identify the daily hero. Each guess
-          returns eight tiles — one per attribute — colored by how close that
+          returns eight tiles, one per attribute, colored by how close that
           attribute is to the answer.
         </p>
         <p>
@@ -107,7 +107,7 @@ const MODE_SECTIONS: {
           <strong className="text-ink">age</strong>,{" "}
           <strong className="text-ink">HP</strong>, and{" "}
           <strong className="text-ink">release year</strong>. Green is an exact
-          match. Yellow is partial — same role family, neighboring continent,
+          match. Yellow is partial: same role family, neighboring continent,
           or a numeric value within a window. Red is wrong, with arrows on
           numeric tiles pointing toward the answer.
         </p>
@@ -124,7 +124,7 @@ const MODE_SECTIONS: {
         <p>
           You're shown two lines of in-game dialogue, one from each speaker, in
           the format Overwatch uses before a match begins. Your job is to name
-          both heroes — the speaker and the addressee.
+          both heroes: the speaker and the addressee.
         </p>
         <p>
           The exchange is real game audio transcribed faithfully, so accents,
@@ -144,8 +144,8 @@ const MODE_SECTIONS: {
       <>
         <p>
           The puzzle starts with a tightly cropped, heavily blurred ability
-          icon. Each wrong guess reveals more of it — wider crop, sharper
-          detail — until you've identified the hero.
+          icon. Each wrong guess reveals more of it (wider crop, sharper
+          detail) until you've identified the hero.
         </p>
         <p>
           A few abilities are obvious at first frame (Tracer's Recall, Reaper's
@@ -171,7 +171,7 @@ const MODE_SECTIONS: {
         <p>
           The crop sometimes lands on a costume detail rather than a face, so
           knowing legendary skins helps. The pool covers base portraits and
-          curated skins — over a thousand total — so even veteran players run
+          curated skins (over a thousand total), so even veteran players run
           into pieces they haven't seen.
         </p>
       </>
@@ -185,7 +185,7 @@ const MODE_SECTIONS: {
     body: (
       <>
         <p>
-          You hear a fragment of a voice line — sometimes mid-syllable, often
+          You hear a fragment of a voice line, sometimes mid-syllable, often
           under a second. Each wrong guess plays a longer clip from the same
           line.
         </p>
@@ -203,7 +203,7 @@ const MODE_SECTIONS: {
 const TIPS = [
   {
     label: "Spread your first guess",
-    body: "In Classic, start with a hero whose attributes split the roster — a damage hero from Asia in their twenties, for example, narrows the field much faster than a famous tank.",
+    body: "In Classic, start with a hero whose attributes split the roster. A damage hero from Asia in their twenties, for example, narrows the field much faster than a famous tank.",
   },
   {
     label: "Use yellow tiles aggressively",
@@ -237,7 +237,7 @@ export default function HowToPlayPage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft">
               OWdle is a daily Overwatch hero quiz. Five modes, one hero per
-              day, midnight-UTC reset. Every mode is wordle-style — your
+              day, midnight-UTC reset. Every mode is wordle-style: your
               guesses tell you how close you are, and you keep going until you
               land it.
             </p>
@@ -272,7 +272,7 @@ export default function HowToPlayPage() {
             <RuleCard
               num="iii"
               label="One reset, all modes"
-              body="At 00:00 UTC every mode rolls over together. There's no rush — solve at your own pace within the day."
+              body="At 00:00 UTC every mode rolls over together. There's no rush. Solve at your own pace within the day."
             />
           </ul>
         </section>

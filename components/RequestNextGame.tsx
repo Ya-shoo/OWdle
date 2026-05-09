@@ -189,7 +189,7 @@ export function RequestNextGame() {
         } else {
           setStatus({
             tag: "error",
-            message: "Couldn't submit — please try again in a moment.",
+            message: "Couldn't submit. Please try again in a moment.",
           });
         }
         return;
@@ -202,7 +202,7 @@ export function RequestNextGame() {
     } catch {
       setStatus({
         tag: "error",
-        message: "Network error — please try again.",
+        message: "Network error. Please try again.",
       });
     }
   };
@@ -235,7 +235,7 @@ export function RequestNextGame() {
               ✓ Vote recorded
             </p>
             <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
-              Thanks — your pick is in.
+              Thanks, your pick is in.
             </h3>
             <p className="mt-2 text-sm text-ink-soft">
               You voted for{" "}
@@ -436,7 +436,7 @@ function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
         </p>
       ) : data.length === 0 ? (
         <p className="mt-3 text-sm text-ink-soft">
-          No votes yet — be the first to weigh in.
+          No votes yet. Be the first to weigh in.
         </p>
       ) : (
         <ol className="mt-3 space-y-2">
