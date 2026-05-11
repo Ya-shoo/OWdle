@@ -22,20 +22,23 @@
 # index normally because CORP is browser-only — so Google Images traffic
 # stays open as a discovery channel.
 #
-# Cache-Control on these assets: 1 day fresh + 7 day stale-while-revalidate.
-# Filenames are stable but contents can change (e.g. when we re-normalize
-# audio or re-crop banners), so we don't want infinite cache — but we do
-# want repeat visitors to render instantly from the edge.
+# Cache-Control on these assets: 1 day fresh + 7 day stale-while-revalidate
+# is the default for asset directories whose contents may be re-cropped or
+# re-normalized in place (sounds, voicelines, sfx). Banners and skins use a
+# longer 30-day fresh window since their filenames are stable forever and
+# Lighthouse flags shorter cache lifetimes as a perf regression for repeat
+# visitors. Stale-while-revalidate is bumped to 1 year so the edge can serve
+# instantly even after the fresh window lapses.
 
 /skins/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=31536000
 
 /banners/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=31536000
 
 /splash/*
   Cross-Origin-Resource-Policy: same-origin

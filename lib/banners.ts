@@ -10,6 +10,27 @@ export type Banner = {
   file: string;
 };
 
+export type BannerVariants = {
+  mobileAvif: string;
+  mobileWebp: string;
+  desktopAvif: string;
+  desktopWebp: string;
+};
+
+// Derives the responsive-variant URLs that scripts/build-banner-variants.mjs
+// emits beside each original banner. Generated as `<base>.mobile.{avif,webp}`
+// (768w) and `<base>.desktop.{avif,webp}` (1920w). The original `file` stays
+// the universal fallback for the `<img>` inside `<picture>`.
+export function bannerVariants(file: string): BannerVariants {
+  const base = file.replace(/\.(jpg|jpeg|png|webp)$/i, "");
+  return {
+    mobileAvif: `${base}.mobile.avif`,
+    mobileWebp: `${base}.mobile.webp`,
+    desktopAvif: `${base}.desktop.avif`,
+    desktopWebp: `${base}.desktop.webp`,
+  };
+}
+
 const KEY_ART: Banner[] = (bannersData.keyArt as Banner[]) ?? [];
 const MAPS: Banner[] = (bannersData.maps as Banner[]) ?? [];
 

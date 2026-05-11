@@ -4,10 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { dayString } from "@/lib/daily";
 import {
+  bannerVariants,
   getDailyBanners,
   STATIC_BANNERS,
   type Banner,
 } from "@/lib/banners";
+
+const MOBILE_BREAKPOINT = "(max-width: 767px)";
 
 const ROTATE_MS = 10000;
 const FADE_MS = 1400;
@@ -70,14 +73,7 @@ export function HomeBanner() {
               }}
               className="absolute inset-0"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={current.file}
-                alt=""
-                className="block h-full w-full object-cover"
-                loading="eager"
-                decoding="async"
-              />
+              <BannerPicture banner={current} />
             </motion.div>
           </motion.div>
         </AnimatePresence>
@@ -104,5 +100,38 @@ export function HomeBanner() {
         }}
       />
     </div>
+  );
+}
+
+// Renders the banner via <picture> so phones get a 768w AVIF/WebP variant
+// (~15-30 KB) instead of the full 1920w original (~400 KB). The fallback
+// <img src> still points at the manifest file, which keeps the SSR HTML byte
+// stream pointing at a real asset for crawlers and ancient browsers.
+function BannerPicture({ banner }: { banner: Banner }) {
+  const v = bannerVariants(banner.file);
+  return (
+    <picture>
+      <source
+        type="image/avif"
+        media={MOBILE_BREAKPOINT}
+        srcSet={v.mobileAvif}
+      />
+      <source
+        type="image/webp"
+        media={MOBILE_BREAKPOINT}
+        srcSet={v.mobileWebp}
+      />
+      <source type="image/avif" srcSet={v.desktopAvif} />
+      <source type="image/webp" srcSet={v.desktopWebp} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={banner.file}
+        alt=""
+        className="block h-full w-full object-cover"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+      />
+    </picture>
   );
 }

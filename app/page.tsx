@@ -1,10 +1,18 @@
 import { HomeContent } from "@/components/HomeContent";
+import { bannerVariants, STATIC_BANNERS } from "@/lib/banners";
 import { MODES } from "@/lib/modes";
 import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
 } from "@/lib/site";
+
+// SSR's deterministic first frame is STATIC_BANNERS[0] (the highest-weighted
+// key art entry). Preloading its mobile + desktop AVIFs lets the browser kick
+// off the LCP image fetch from the very first chunk of HTML — before the
+// <picture> tag is even parsed — which is the single biggest mobile-LCP win.
+const FIRST_BANNER = STATIC_BANNERS[0];
+const FIRST_BANNER_VARIANTS = FIRST_BANNER ? bannerVariants(FIRST_BANNER.file) : null;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -97,6 +105,26 @@ const jsonLd = {
 export default function Home() {
   return (
     <>
+      {FIRST_BANNER_VARIANTS && (
+        <>
+          <link
+            rel="preload"
+            as="image"
+            href={FIRST_BANNER_VARIANTS.mobileAvif}
+            type="image/avif"
+            media="(max-width: 767px)"
+            fetchPriority="high"
+          />
+          <link
+            rel="preload"
+            as="image"
+            href={FIRST_BANNER_VARIANTS.desktopAvif}
+            type="image/avif"
+            media="(min-width: 768px)"
+            fetchPriority="high"
+          />
+        </>
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
