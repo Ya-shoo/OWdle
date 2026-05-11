@@ -66,6 +66,38 @@ function year(released: string | null): string | null {
   return m ? m[1] : null;
 }
 
+// Voter dedup uses a 2-day bucket aligned to the Unix epoch (see
+// functions/_lib/types.ts:voterHash). This countdown tells the user how
+// long until the bucket flips and a fresh round of votes opens up.
+const TWO_DAYS_MS = 2 * 86400 * 1000;
+
+function formatCountdown(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
+}
+
+function useVoteRefreshCountdown(): string | null {
+  const [text, setText] = useState<string | null>(null);
+  useEffect(() => {
+    const tick = () => {
+      const now = Date.now();
+      const next = (Math.floor(now / TWO_DAYS_MS) + 1) * TWO_DAYS_MS;
+      setText(formatCountdown(next - now));
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+  return text;
+}
+
 export function RequestNextGame() {
   const inputId = useId();
   const listboxId = `${inputId}-listbox`;
@@ -78,6 +110,7 @@ export function RequestNextGame() {
   const [status, setStatus] = useState<Status>({ tag: "idle" });
   const [voted, setVoted] = useState<string[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderEntry[] | null>(null);
+  const refreshIn = useVoteRefreshCountdown();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -241,8 +274,14 @@ export function RequestNextGame() {
               You voted for{" "}
               <span className="text-ink">{status.game.name}</span>
               {year(status.game.released) ? ` (${year(status.game.released)})` : ""}.
-              Vote for another, or come back next month.
+              Vote for another below.
             </p>
+            {refreshIn ? (
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+                Vote again in{" "}
+                <span className="tabular-nums text-info">{refreshIn}</span>
+              </p>
+            ) : null}
             <div className="mt-5">
               <button
                 type="button"
@@ -264,6 +303,12 @@ export function RequestNextGame() {
             <p className="mt-2 text-sm text-ink-soft">
               Search any game and vote. The most requested ones get built.
             </p>
+            {refreshIn ? (
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+                Vote again in{" "}
+                <span className="tabular-nums text-info">{refreshIn}</span>
+              </p>
+            ) : null}
 
             <div className="relative mt-5">
               <div
