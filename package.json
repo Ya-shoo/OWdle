@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "deploy:live": "npm run build && wrangler pages deploy --branch=main && git push",
+    "votes:admin": "node scripts/votes-admin-server.mjs",
     "sync-clips": "for f in ~/Downloads/owdle-clips*.zip; do unzip -o \"$f\" -d public/; done && node scripts/build-sound-clips.mjs"
   },
   "dependencies": {

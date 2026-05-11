@@ -6,6 +6,7 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { spawnSync } from "node:child_process";
 import sharp from "sharp";
 import smartcrop from "smartcrop-sharp";
 
@@ -261,6 +262,20 @@ async function main() {
 
   await mkdir(resolve(__dirname, "..", "data"), { recursive: true });
   await writeFile(OUT, JSON.stringify(out, null, 2));
+
+  // Mirror portraits + ability icons locally and rewrite heroes.json paths.
+  // Splashes are already self-hosted by processSplash() above; this covers
+  // the remaining Blizzard CDN URLs so the site survives an upstream
+  // outage. Idempotent: re-runs are no-ops once everything is mirrored.
+  console.log("\nMirroring portraits + ability icons…");
+  const fetcher = spawnSync(
+    process.execPath,
+    [resolve(__dirname, "fetch-hero-assets.mjs"), "--rewrite"],
+    { stdio: "inherit" },
+  );
+  if (fetcher.status !== 0) {
+    throw new Error(`fetch-hero-assets exited with code ${fetcher.status}`);
+  }
 
   console.log(`\nWrote ${out.length} heroes → ${OUT}`);
   console.log(`  with full overlay: ${out.filter((h) => h.species && h.gender && h.release_year).length}`);
