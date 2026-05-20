@@ -16,6 +16,21 @@ type Props = {
   // Used to compensate for support ability sounds being mastered quieter
   // than damage/tank ones in-game (see ROLE_AUDIO_BOOST). Defaults to 1.
   boost?: number;
+  // Manual trim window (seconds from the START of the source file). When
+  // either is provided, it supersedes the corresponding side of the auto
+  // silence-skip — startOffset replaces the head trim, endOffset caps the
+  // tail. Persisted in data/sound-clip-trims.json and maintained from the
+  // dev trim editor on the sound page.
+  startOffset?: number | null;
+  endOffset?: number | null;
+  // Fires once per audio load with metadata the dev trim UI needs: the
+  // raw file duration and the auto silence-skip the player would have used
+  // if no manual override were set. Lets the editor show both values for
+  // reference. No-op when not provided (production sound game path).
+  onAudioMetadata?: (info: {
+    fileDuration: number;
+    autoStartOffset: number;
+  }) => void;
 };
 
 const BAR_COUNT = 96;
@@ -43,7 +58,18 @@ export function WaveformPlayer({
   audioUrl,
   revealDuration,
   boost = 1,
+  startOffset = null,
+  endOffset = null,
+  onAudioMetadata,
 }: Props) {
+  // Pin the callback in a ref so changing identity (parent re-renders
+  // each keystroke in the dev trim editor) doesn't re-trigger the audio
+  // load effect — which would refetch and re-decode the file on every
+  // nudge button press.
+  const onAudioMetadataRef = useRef(onAudioMetadata);
+  useEffect(() => {
+    onAudioMetadataRef.current = onAudioMetadata;
+  }, [onAudioMetadata]);
   const [peaks, setPeaks] = useState<number[] | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +88,23 @@ export function WaveformPlayer({
   const peaksCtxRef = useRef<AudioContext | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const stopTimerRef = useRef<number | null>(null);
+  // Effective playback window in seconds (post-trim). startOffsetRef is
+  // where play() seeks to; endOffsetRef caps how far playback may run
+  // before the stop timer fires. Kept in refs (not state) because play()
+  // reads them synchronously inside the click handler.
   const startOffsetRef = useRef<number>(0);
+  const endOffsetRef = useRef<number>(Infinity);
+
+  // Decoded sample data retained across trim adjustments so the user can
+  // nudge start/end without paying for a re-fetch + re-decode on each
+  // keypress. Updated only when the audioUrl itself changes.
+  const decodedRef = useRef<{
+    data: Float32Array;
+    sampleRate: number;
+    fileDuration: number;
+    autoStartOffset: number;
+  } | null>(null);
+  const [decodeVersion, setDecodeVersion] = useState(0);
 
   // Volume is global across modes. Hydrate from localStorage on mount —
   // SSR sees the default, then we swap in the saved value. A ref tracks
@@ -86,6 +128,7 @@ export function WaveformPlayer({
     setError(null);
     setProgress(0);
     setPlaying(false);
+    decodedRef.current = null;
 
     // Tear down any in-flight playback from the previous audioUrl.
     if (stopTimerRef.current != null) {
@@ -115,9 +158,10 @@ export function WaveformPlayer({
 
         const data = audio.getChannelData(0);
 
-        // Find the first audibly non-silent sample and skip past it on
-        // playback — that way "0.6s reveal" really is 0.6s of *audio*,
-        // not 0.6s including encoder priming or pre-roll silence.
+        // Find the first audibly non-silent sample. This is the fallback
+        // head trim used when no manual startOffset is provided — the
+        // dev trim editor exposes it as "auto" so the editor can show
+        // what the player would otherwise use.
         let firstAudible = 0;
         for (let i = 0; i < data.length; i++) {
           if (Math.abs(data[i]) > SILENCE_THRESHOLD) {
@@ -125,28 +169,10 @@ export function WaveformPlayer({
             break;
           }
         }
-        let skipSeconds = firstAudible / audio.sampleRate;
-        if (skipSeconds < MIN_SKIP_SECONDS) skipSeconds = 0;
-        if (skipSeconds > MAX_SKIP_SECONDS) skipSeconds = MAX_SKIP_SECONDS;
-        const skipSamples = Math.floor(skipSeconds * audio.sampleRate);
-        const audibleDuration = audio.duration - skipSeconds;
-
-        // Build peaks from the audible portion only so the bars line up
-        // visually with what the player actually hears.
-        const audibleLength = Math.max(1, data.length - skipSamples);
-        const bucketSize = Math.max(1, Math.floor(audibleLength / BAR_COUNT));
-        const out: number[] = [];
-        for (let i = 0; i < BAR_COUNT; i++) {
-          let max = 0;
-          const start = skipSamples + i * bucketSize;
-          const end = Math.min(start + bucketSize, data.length);
-          for (let j = start; j < end; j++) {
-            const v = Math.abs(data[j]);
-            if (v > max) max = v;
-          }
-          out.push(max);
-        }
-        const peak = Math.max(...out, 0.001);
+        let autoStartSeconds = firstAudible / audio.sampleRate;
+        if (autoStartSeconds < MIN_SKIP_SECONDS) autoStartSeconds = 0;
+        if (autoStartSeconds > MAX_SKIP_SECONDS)
+          autoStartSeconds = MAX_SKIP_SECONDS;
 
         // Construct the playback element. Re-fetching the same URL is
         // cheap — the browser cache short-circuits the second hit — and
@@ -161,9 +187,20 @@ export function WaveformPlayer({
         el.load();
         audioRef.current = el;
 
-        startOffsetRef.current = skipSeconds;
-        setPeaks(out.map((v) => v / peak));
-        setDuration(audibleDuration);
+        // Float32Array is backed by a transferable ArrayBuffer; copy it
+        // so the AudioBuffer can be GC'd while we keep just the channel
+        // data we need for re-bucketing on trim changes.
+        decodedRef.current = {
+          data: new Float32Array(data),
+          sampleRate: audio.sampleRate,
+          fileDuration: audio.duration,
+          autoStartOffset: autoStartSeconds,
+        };
+        setDecodeVersion((v) => v + 1);
+        onAudioMetadataRef.current?.({
+          fileDuration: audio.duration,
+          autoStartOffset: autoStartSeconds,
+        });
       } catch (e) {
         if (!cancelled) {
           setError(e instanceof Error ? e.message : "Audio load failed");
@@ -175,6 +212,46 @@ export function WaveformPlayer({
       cancelled = true;
     };
   }, [audioUrl]);
+
+  // Re-bucket peaks and update the playback window whenever the user
+  // adjusts the trim. Pure compute over already-decoded samples — no
+  // refetch, no re-decode. Splitting this off the load effect means the
+  // dev trim editor can nudge ±10ms without thrashing the network.
+  useEffect(() => {
+    const decoded = decodedRef.current;
+    if (!decoded) return;
+    const { data, sampleRate, fileDuration, autoStartOffset } = decoded;
+
+    const rawStart = startOffset != null ? startOffset : autoStartOffset;
+    const rawEnd = endOffset != null ? endOffset : fileDuration;
+    // Clamp to valid bounds and guarantee a non-empty window so a typo
+    // in the trim editor can't render an empty waveform / divide-by-zero.
+    const start = Math.max(0, Math.min(fileDuration, rawStart));
+    const end = Math.max(start + 0.05, Math.min(fileDuration, rawEnd));
+    const audibleDuration = end - start;
+
+    const startSample = Math.floor(start * sampleRate);
+    const endSample = Math.min(data.length, Math.ceil(end * sampleRate));
+    const windowLength = Math.max(1, endSample - startSample);
+    const bucketSize = Math.max(1, Math.floor(windowLength / BAR_COUNT));
+    const out: number[] = [];
+    for (let i = 0; i < BAR_COUNT; i++) {
+      let max = 0;
+      const s = startSample + i * bucketSize;
+      const e = Math.min(s + bucketSize, endSample);
+      for (let j = s; j < e; j++) {
+        const v = Math.abs(data[j]);
+        if (v > max) max = v;
+      }
+      out.push(max);
+    }
+    const peak = Math.max(...out, 0.001);
+
+    startOffsetRef.current = start;
+    endOffsetRef.current = end;
+    setPeaks(out.map((v) => v / peak));
+    setDuration(audibleDuration);
+  }, [decodeVersion, startOffset, endOffset]);
 
   useEffect(() => {
     if (!playing) return;
@@ -202,7 +279,13 @@ export function WaveformPlayer({
       const elapsed = el.currentTime - startOffsetRef.current;
       const p = Math.max(0, Math.min(1, elapsed / revealDuration));
       setProgress(p);
-      if (elapsed >= revealDuration) {
+      // Stop on whichever fires first: the revealed snippet length is up,
+      // OR the playhead has crossed the manual end-trim. The latter
+      // matters when the trim editor caps a clip shorter than its full
+      // file length and the snippet ladder is still scaled to the full
+      // reveal — without the endOffsetRef guard, the player would keep
+      // running into the trimmed-out tail.
+      if (elapsed >= revealDuration || el.currentTime >= endOffsetRef.current) {
         el.pause();
         if (stopTimerRef.current != null) {
           window.clearTimeout(stopTimerRef.current);

@@ -19,6 +19,8 @@ import { NextModeCTA } from "./NextModeCTA";
 import { BonusRound } from "./BonusRound";
 import { WaveformPlayer } from "./WaveformPlayer";
 import { DevSoundPicker } from "./DevSoundPicker";
+import { DevSoundTrimmer } from "./DevSoundTrimmer";
+import { saveSoundClipTrim, type SavedTrim } from "@/lib/soundTrims";
 import { ROLE_AUDIO_BOOST } from "@/lib/audio";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
@@ -69,6 +71,31 @@ export function SoundGame() {
   );
   const isOverride = overrideClip !== null;
 
+  // Dev-only trim state.
+  //
+  // `trimDraft` holds the values the trim editor is currently showing
+  // for the active clip. It resets when the active slug changes so that
+  // switching clips doesn't carry over an unsaved edit to a different
+  // file. Null means "no live edit — use whatever the persisted value is."
+  //
+  // `trimOverrides` holds successfully-saved values that haven't yet been
+  // picked up by the static JSON import (which only refreshes on browser
+  // reload). Without it, a successful save would visually "snap back" to
+  // the old value after we clear the draft. Keyed by `${hero}:${slug}`.
+  const [trimDraft, setTrimDraft] = useState<{
+    slug: string;
+    start: number | null;
+    end: number | null;
+  } | null>(null);
+  const [trimOverrides, setTrimOverrides] = useState<
+    Record<string, SavedTrim>
+  >({});
+  const [audioMeta, setAudioMeta] = useState<{
+    audioUrl: string;
+    fileDuration: number;
+    autoStartOffset: number;
+  } | null>(null);
+
   useEffect(() => {
     const d = dayString();
     setDay(d);
@@ -112,6 +139,26 @@ export function SoundGame() {
     slug,
     duration: clipDuration,
   } = resolved;
+
+  // Persisted trim for this clip — JSON-import value, optionally upgraded
+  // by an in-session save that hasn't been picked up by a reload yet.
+  const overrideKey = slug ? `${answer.key}:${slug}` : null;
+  const sessionOverride =
+    overrideKey != null ? trimOverrides[overrideKey] : undefined;
+  const persistedStart =
+    sessionOverride !== undefined
+      ? sessionOverride.start
+      : resolved.startOffset;
+  const persistedEnd =
+    sessionOverride !== undefined
+      ? sessionOverride.end
+      : resolved.endOffset;
+
+  // Trim values used for actual playback. Live draft wins when it's for
+  // the current clip; otherwise fall back to the persisted value above.
+  const draftMatches = trimDraft != null && trimDraft.slug === slug;
+  const activeStart = draftMatches ? trimDraft!.start : persistedStart;
+  const activeEnd = draftMatches ? trimDraft!.end : persistedEnd;
   const guessedHeroes = state.guesses
     .map((k) => HEROES_BY_KEY[k])
     .filter(Boolean);
@@ -147,10 +194,23 @@ export function SoundGame() {
   // While the bonus round is pending, treat the clip as fully revealed
   // (they nailed the hero and can replay the whole sound while picking
   // the ability).
+  //
+  // Snippet ladder is sized against the AUDIBLE window (post-trim) so
+  // that a clip trimmed to 2.4s ramps from a small taste up to 2.4s
+  // over the ten reveal steps — not up to the raw 8s file length, which
+  // would never actually play because the WaveformPlayer caps at the
+  // end-trim anyway.
+  const effectiveDuration =
+    clipDuration != null
+      ? Math.max(
+          0.4,
+          (activeEnd ?? clipDuration) - (activeStart ?? 0),
+        )
+      : null;
   const snippetDuration = snippetDurationFor(
     turnsUsed,
     reveal || bonusPending,
-    clipDuration,
+    effectiveDuration,
   );
 
   const persist = (next: ModeState) => {
@@ -187,6 +247,8 @@ export function SoundGame() {
 
   const applyOverride = (clip: ResolvedSoundClip | null) => {
     setOverrideClip(clip);
+    setTrimDraft(null);
+    setAudioMeta(null);
     if (!day) return;
     if (clip) {
       // Fresh in-memory state for the new clip; localStorage is left
@@ -197,6 +259,43 @@ export function SoundGame() {
       setState(loadModeState(MODE, day));
     }
   };
+
+  const handleTrimChange = (next: {
+    start: number | null;
+    end: number | null;
+  }) => {
+    if (!slug) return;
+    setTrimDraft({ slug, start: next.start, end: next.end });
+  };
+
+  const handleTrimSave = async (next: {
+    start: number | null;
+    end: number | null;
+  }) => {
+    if (!slug || !overrideKey) return;
+    await saveSoundClipTrim(answer.key, slug, next);
+    // Promote the saved values into the in-session override map so the
+    // editor's "saved" indicator and the persisted-vs-draft diff reflect
+    // the write without waiting for a page reload to re-import the JSON.
+    setTrimOverrides((prev) => ({
+      ...prev,
+      [overrideKey]: { start: next.start, end: next.end },
+    }));
+    setTrimDraft(null);
+  };
+
+  const handleAudioMetadata = (info: {
+    fileDuration: number;
+    autoStartOffset: number;
+  }) => {
+    setAudioMeta({ audioUrl, ...info });
+  };
+
+  // Reset the audio metadata snapshot when the underlying file changes,
+  // so the trimmer doesn't briefly display the prior clip's duration
+  // during the new clip's load.
+  const audioMetaForCurrent =
+    audioMeta && audioMeta.audioUrl === audioUrl ? audioMeta : null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
@@ -235,12 +334,31 @@ export function SoundGame() {
               audioUrl={audioUrl}
               revealDuration={snippetDuration}
               boost={ROLE_AUDIO_BOOST[answer.role]}
+              startOffset={activeStart}
+              endOffset={activeEnd}
+              onAudioMetadata={IS_DEV ? handleAudioMetadata : undefined}
             />
+            {IS_DEV && slug && (
+              <DevSoundTrimmer
+                heroKey={answer.key}
+                slug={slug}
+                fileDuration={audioMetaForCurrent?.fileDuration ?? null}
+                autoStartOffset={
+                  audioMetaForCurrent?.autoStartOffset ?? null
+                }
+                persistedStart={persistedStart}
+                persistedEnd={persistedEnd}
+                draftStart={activeStart}
+                draftEnd={activeEnd}
+                onChange={handleTrimChange}
+                onSave={handleTrimSave}
+              />
+            )}
             {!state.won && !state.gaveUp && (
               <button
                 type="button"
                 onClick={handleSkip}
-                className="rounded-(--radius-card) border border-line bg-inset/60 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:border-accent/60 hover:bg-accent/10 hover:text-accent"
+                className="rounded-(--radius-card) border border-line bg-inset/60 px-5 py-3 font-mono text-xs uppercase tracking-[0.2em] text-ink-soft transition-colors hover:border-accent/60 hover:bg-accent/10 hover:text-accent active:scale-[0.98] sm:py-2.5 sm:text-[11px]"
               >
                 Skip turn · reveal more →
               </button>

@@ -9,6 +9,7 @@ import { CONVERSATIONS, type Conversation } from "./conversations";
 import sfxData from "@/data/sfx.json";
 import soundClipsData from "@/data/sound-clips.json";
 import iconOverridesData from "@/data/sound-clip-icons.json";
+import soundClipTrimsData from "@/data/sound-clip-trims.json";
 
 type SfxEntry = {
   url: string;
@@ -25,6 +26,25 @@ type SoundClip = {
   duration: number;
 };
 const SOUND_CLIPS = soundClipsData as Record<string, SoundClip[]>;
+
+// Per-clip manual trim overrides, keyed by [heroKey][slug]. When present,
+// these supersede WaveformPlayer's automatic silence detection so the
+// snippet ladder lines up with the actual ability cue — useful when a
+// clip has noisy pre-roll the silence threshold can't catch, or trailing
+// tail noise we want to lop off the end. Maintained from the dev sound
+// page (DevSoundTrimmer); values in seconds.
+type TrimEntry = { startOffset?: number; endOffset?: number };
+const SOUND_CLIP_TRIMS = soundClipTrimsData as Record<
+  string,
+  Record<string, TrimEntry>
+>;
+
+export function getSoundClipTrim(
+  heroKey: string,
+  slug: string,
+): TrimEntry | null {
+  return SOUND_CLIP_TRIMS[heroKey]?.[slug] ?? null;
+}
 
 // Hand-curated mapping for clip slugs whose label doesn't match a press-kit
 // ability name. Outer key is hero, inner key is the clip slug, value is the
@@ -135,6 +155,12 @@ export type ResolvedSoundClip = {
   slug: string | null;
   duration: number | null;
   abilityIndex: number | null;
+  // Manual trim window in seconds, null when no override has been set
+  // for this clip. WaveformPlayer uses these to override its auto
+  // silence-skip; SoundGame uses them to size the snippet ladder so it
+  // ramps to the audible portion rather than the raw file length.
+  startOffset: number | null;
+  endOffset: number | null;
 };
 
 export function getSoundForDay(day: string): ResolvedSoundClip {
@@ -151,6 +177,7 @@ export function getSoundForDay(day: string): ResolvedSoundClip {
     if (hero && clips.length > 0) {
       const clipIdx = fnv1a(`owdle:sound:r8:${day}:idx`) % clips.length;
       const clip = clips[clipIdx];
+      const trim = getSoundClipTrim(heroKey, clip.slug);
       return {
         hero,
         audioUrl: clip.audioUrl,
@@ -159,6 +186,8 @@ export function getSoundForDay(day: string): ResolvedSoundClip {
         slug: clip.slug,
         duration: clip.duration,
         abilityIndex: null,
+        startOffset: trim?.startOffset ?? null,
+        endOffset: trim?.endOffset ?? null,
       };
     }
   }
@@ -179,6 +208,8 @@ export function getSoundForDay(day: string): ResolvedSoundClip {
     slug: null,
     duration: clip.duration,
     abilityIndex: clip.ability_index,
+    startOffset: null,
+    endOffset: null,
   };
 }
 
@@ -225,6 +256,7 @@ export function resolveLabeledSoundClip(
   if (!hero || !clips) return null;
   const clip = clips.find((c) => c.slug === slug);
   if (!clip) return null;
+  const trim = getSoundClipTrim(heroKey, slug);
   return {
     hero,
     audioUrl: clip.audioUrl,
@@ -233,6 +265,8 @@ export function resolveLabeledSoundClip(
     slug: clip.slug,
     duration: clip.duration,
     abilityIndex: null,
+    startOffset: trim?.startOffset ?? null,
+    endOffset: trim?.endOffset ?? null,
   };
 }
 
