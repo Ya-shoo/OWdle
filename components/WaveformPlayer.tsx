@@ -2,12 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import {
-  DEFAULT_VOLUME,
-  gainFromVolume,
-  loadVolume,
-  saveVolume,
-} from "@/lib/audio";
+import { DEFAULT_VOLUME, loadVolume, saveVolume } from "@/lib/audio";
 import { VolumeSlider } from "./VolumeSlider";
 
 type Props = {
@@ -54,10 +49,18 @@ export function WaveformPlayer({
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const ctxRef = useRef<AudioContext | null>(null);
-  const bufferRef = useRef<AudioBuffer | null>(null);
-  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
-  const gainRef = useRef<GainNode | null>(null);
+  // WebAudio is used only for offline peak detection (decodeAudioData) to
+  // render the waveform. Playback goes through an HTMLAudioElement so iOS
+  // Safari routes it as a media element rather than ambient WebAudio —
+  // otherwise the device's physical ringer-mute switch silences the
+  // snippet (which is what mobile users were hitting: the post-reveal
+  // <video> still played because <video> is already media category).
+  // Tradeoff: HTMLAudioElement.volume is clamped to [0, 1], so the >1
+  // role-boost (1.6× for support clips) used to ride on WebAudio's
+  // GainNode is lost on this path — see the volume effect below.
+  const peaksCtxRef = useRef<AudioContext | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const stopTimerRef = useRef<number | null>(null);
   const startOffsetRef = useRef<number>(0);
   const startWallRef = useRef<number>(0);
 
@@ -83,13 +86,18 @@ export function WaveformPlayer({
     setError(null);
     setProgress(0);
     setPlaying(false);
-    bufferRef.current = null;
-    try {
-      sourceRef.current?.stop();
-    } catch {
-      // not running
+
+    // Tear down any in-flight playback from the previous audioUrl.
+    if (stopTimerRef.current != null) {
+      window.clearTimeout(stopTimerRef.current);
+      stopTimerRef.current = null;
     }
-    sourceRef.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.removeAttribute("src");
+      audioRef.current.load();
+      audioRef.current = null;
+    }
 
     (async () => {
       try {
@@ -100,20 +108,8 @@ export function WaveformPlayer({
           window.AudioContext ||
           (window as unknown as { webkitAudioContext: typeof AudioContext })
             .webkitAudioContext;
-        const ctx = ctxRef.current ?? new Ctx();
-        ctxRef.current = ctx;
-        // Master gain sits between every source and the destination so
-        // we can amplify the (often quiet) ability clips without re-
-        // encoding, and so volume changes during playback take effect
-        // immediately. Initialize from the ref so we pick up whatever
-        // volume hydration settled on, even if that happened after the
-        // load effect started running.
-        if (!gainRef.current) {
-          const gain = ctx.createGain();
-          gain.gain.value = gainFromVolume(volumeRef.current) * boost;
-          gain.connect(ctx.destination);
-          gainRef.current = gain;
-        }
+        const ctx = peaksCtxRef.current ?? new Ctx();
+        peaksCtxRef.current = ctx;
         const audio = await ctx.decodeAudioData(buf);
         if (cancelled) return;
 
@@ -152,7 +148,19 @@ export function WaveformPlayer({
         }
         const peak = Math.max(...out, 0.001);
 
-        bufferRef.current = audio;
+        // Construct the playback element. Re-fetching the same URL is
+        // cheap — the browser cache short-circuits the second hit — and
+        // setting src + load() is the documented path that keeps iOS's
+        // audio session in media category. We don't pipe through
+        // createMediaElementSource: that re-introduces a WebAudio
+        // destination, which reports of iOS's silent-switch handling are
+        // mixed on. Plain HTMLAudio is the bulletproof route.
+        const el = new Audio();
+        el.src = audioUrl;
+        el.preload = "auto";
+        el.load();
+        audioRef.current = el;
+
         startOffsetRef.current = skipSeconds;
         setPeaks(out.map((v) => v / peak));
         setDuration(audibleDuration);
@@ -181,93 +189,103 @@ export function WaveformPlayer({
     return () => cancelAnimationFrame(raf);
   }, [playing, revealDuration]);
 
-  // Push volume changes to the gain node mid-playback. setTargetAtTime
-  // ramps over a short time-constant instead of jumping the gain in one
-  // frame, which avoids the "zipper" click you'd otherwise hear when
-  // dragging the slider during playback. boost is folded into the same
-  // ramp so a hero/role swap during playback (rare but possible after a
-  // day rotation) doesn't pop.
+  // HTMLAudioElement.volume is clamped to [0, 1], so the >1 headroom we
+  // used to get from a WebAudio GainNode is gone. Folding `boost` in
+  // here and clamping means support clips (boost=1.6) reach max volume
+  // at slider position ~62% instead of receiving an actual amplification.
+  // Audible result: support sounds are still meaningfully louder than
+  // damage clips at the same slider position, which is the perceptual
+  // goal of the boost. Listed as deps: `peaks` so the volume is applied
+  // the moment the element is constructed, not only when the user later
+  // moves the slider.
   useEffect(() => {
-    const gain = gainRef.current;
-    const ctx = ctxRef.current;
-    if (!gain || !ctx) return;
-    gain.gain.setTargetAtTime(
-      gainFromVolume(volume) * boost,
-      ctx.currentTime,
-      0.015,
-    );
-  }, [volume, boost]);
+    const el = audioRef.current;
+    if (!el) return;
+    el.volume = Math.max(0, Math.min(1, volume * boost));
+  }, [volume, boost, peaks]);
 
   useEffect(() => {
     return () => {
-      try {
-        sourceRef.current?.stop();
-      } catch {
-        // not running
+      if (stopTimerRef.current != null) {
+        window.clearTimeout(stopTimerRef.current);
+        stopTimerRef.current = null;
       }
-      sourceRef.current = null;
-      const ctx = ctxRef.current;
-      ctxRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.removeAttribute("src");
+        audioRef.current.load();
+        audioRef.current = null;
+      }
+      const ctx = peaksCtxRef.current;
+      peaksCtxRef.current = null;
       ctx?.close().catch(() => {});
     };
   }, []);
 
   const play = () => {
-    const ctx = ctxRef.current;
-    const buffer = bufferRef.current;
-    if (!ctx || !buffer) return;
-
-    try {
-      sourceRef.current?.stop();
-    } catch {
-      // not running
-    }
-    sourceRef.current = null;
+    const el = audioRef.current;
+    if (!el) return;
 
     setError(null);
     setProgress(0);
 
-    const startNow = () => {
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(gainRef.current ?? ctx.destination);
+    // Cancel any pending stop from a prior tap so a fast re-tap doesn't
+    // get its snippet cut short by the previous one's pause timer.
+    if (stopTimerRef.current != null) {
+      window.clearTimeout(stopTimerRef.current);
+      stopTimerRef.current = null;
+    }
 
-      // start(when, offset, duration) is sample-accurate against the
-      // context's audio clock and stops itself after `duration`. No
-      // wall-clock setTimeout, no HTMLAudio startup latency.
-      source.start(
-        ctx.currentTime,
-        startOffsetRef.current,
-        revealDuration,
-      );
-      sourceRef.current = source;
+    // Seek + volume must be set *before* play() so the first audible
+    // frame is at the right offset and amplitude. Reading volumeRef
+    // (not the `volume` state directly) keeps us off the closure-
+    // staleness footgun if the slider was dragged between renders.
+    try {
+      el.currentTime = startOffsetRef.current;
+    } catch {
+      // Some browsers throw if metadata isn't loaded yet — leave
+      // currentTime at 0 and let the silence-skip happen on replay.
+    }
+    el.volume = Math.max(0, Math.min(1, volumeRef.current * boost));
 
-      source.onended = () => {
-        if (sourceRef.current === source) {
-          sourceRef.current = null;
-          setPlaying(false);
-          setProgress(1);
-        }
-      };
-
+    // play() must be called synchronously from inside the click handler
+    // for iOS to count it as a user gesture. We call it directly (not
+    // from inside a .then()) and wire success/failure off the returned
+    // promise. Older browsers may return undefined from play() — fall
+    // back to assuming success in that branch.
+    const result = el.play();
+    if (result && typeof result.then === "function") {
+      result
+        .then(() => {
+          setPlaying(true);
+          startWallRef.current = performance.now();
+          // Pause the element at exactly revealDuration. A timeupdate
+          // listener fires 4× per second on most browsers, so setTimeout
+          // is actually more accurate at this scale — and cheaper.
+          stopTimerRef.current = window.setTimeout(() => {
+            stopTimerRef.current = null;
+            const cur = audioRef.current;
+            if (!cur) return;
+            cur.pause();
+            setPlaying(false);
+            setProgress(1);
+          }, revealDuration * 1000);
+        })
+        .catch((e) => {
+          setError(e instanceof Error ? e.message : "Audio play failed");
+        });
+    } else {
       setPlaying(true);
       startWallRef.current = performance.now();
-    };
-
-    // iOS Safari parks contexts in "suspended" state until an explicit
-    // user gesture wakes them. We MUST wait for resume() to actually
-    // settle before scheduling a source — otherwise iOS schedules the
-    // source against an audio clock that hasn't started yet and plays
-    // silence. resume() on an already-running context is a no-op that
-    // resolves on the next microtask, so unconditional await is safe.
-    ctx
-      .resume()
-      .then(startNow)
-      .catch((e) => {
-        setError(
-          e instanceof Error ? e.message : "Audio resume failed",
-        );
-      });
+      stopTimerRef.current = window.setTimeout(() => {
+        stopTimerRef.current = null;
+        const cur = audioRef.current;
+        if (!cur) return;
+        cur.pause();
+        setPlaying(false);
+        setProgress(1);
+      }, revealDuration * 1000);
+    }
   };
 
   const handleVolumeChange = (v: number) => {
