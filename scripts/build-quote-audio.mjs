@@ -372,6 +372,14 @@ async function main() {
       const t = c.turns[i];
       const localName = t.audioFile
         .replace(/[^A-Za-z0-9._-]/g, "_")
+        // Collapse runs of dots and trim trailing dots before the
+        // extension — Cloudflare R2's API rejects object keys containing
+        // `..` (path-traversal guard), so a triple-dot ellipsis or a
+        // sentence-ending period in the wiki audio filename would 404
+        // on R2 even though it sits fine on Pages. Single dots in the
+        // middle (e.g. abbreviations) survive.
+        .replace(/\.{2,}/g, "_")
+        .replace(/\.+(?=\.[A-Za-z0-9]+$)/, "")
         .toLowerCase()
         .replace(/\.ogg$/, ".mp3");
       const outPath = resolve(OUT_DIR, localName);
