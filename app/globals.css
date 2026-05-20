@@ -390,3 +390,23 @@ select {
 @view-transition {
   navigation: auto;
 }
+
+/* ---------- prefers-reduced-motion ----------
+   Honors OS-level "reduce motion" preference by collapsing animation and
+   transition durations to a near-zero value. We don't set 0s because some
+   libraries (motion/react in particular) gate "did this transition complete"
+   callbacks on a non-zero duration — going fully to 0 can break state
+   machines that wait for `onAnimationComplete`. 1ms is short enough to be
+   imperceptible and still fires the lifecycle. The `!important` is needed
+   because most of the motion in this app comes from inline styles set by
+   motion/react, which beat normal selector specificity. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -14,19 +14,30 @@ const STATUS_BG: Record<AttrResult["status"], string> = {
 export function AttributeTile({
   result,
   index,
+  animate = true,
 }: {
   result: AttrResult;
   index: number;
+  // When false, the row renders in its final state without the flip
+  // cascade. Used for guess history rows older than the most-recent one
+  // so a player on guess 5 isn't watching the same 8-tile animation five
+  // times. Defaults to animating so call sites that don't care still
+  // get the reveal on the first render.
+  animate?: boolean;
 }) {
   return (
     <motion.div
-      initial={{ rotateX: -90, opacity: 0 }}
+      initial={animate ? { rotateX: -90, opacity: 0 } : false}
       animate={{ rotateX: 0, opacity: 1 }}
-      transition={{
-        duration: 0.45,
-        delay: index * 0.08,
-        ease: [0.22, 1, 0.36, 1],
-      }}
+      transition={
+        animate
+          ? {
+              duration: 0.45,
+              delay: index * 0.08,
+              ease: [0.22, 1, 0.36, 1],
+            }
+          : { duration: 0 }
+      }
       style={{ transformOrigin: "top center", transformStyle: "preserve-3d" }}
       className={clsx(
         "tile-shape relative flex min-h-[72px] flex-col items-center justify-center px-2 py-2 text-center sm:min-h-[80px]",

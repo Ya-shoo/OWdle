@@ -49,10 +49,16 @@ export function GuessRow({
         </div>
       </div>
 
-      {/* Attribute tiles */}
+      {/* Attribute tiles — only animate the cascade on the newest row so
+          older guesses don't replay the same flip on every re-render. */}
       <div className="grid flex-1 grid-cols-4 gap-1.5 sm:grid-cols-8 sm:gap-2">
         {results.map((result, idx) => (
-          <AttributeTile key={result.attr} result={result} index={idx} />
+          <AttributeTile
+            key={result.attr}
+            result={result}
+            index={idx}
+            animate={isLatest}
+          />
         ))}
       </div>
     </motion.div>

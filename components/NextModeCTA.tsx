@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
   BUILT_MODE_SLUGS,
@@ -41,9 +41,24 @@ export function NextModeCTA({ current }: { current: ModeSlug }) {
     return nextUnfinishedMode(current, done);
   });
 
+  // After a win, the result card sits above an arbitrarily long guess
+  // history — on long sessions the CTA can land below the fold without
+  // any visible cue. Scrolling it into view on mount keeps the "next
+  // game" affordance discoverable without forcing a sticky bar layout.
+  // We delay one frame so the parent's win animation has a chance to
+  // lock in its final layout height before we measure scroll position.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => {
+      wrapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
   if (next === null) {
     return (
       <motion.div
+        ref={wrapRef}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -72,6 +87,7 @@ export function NextModeCTA({ current }: { current: ModeSlug }) {
 
   return (
     <motion.div
+      ref={wrapRef}
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}

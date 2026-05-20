@@ -16,7 +16,7 @@ export const SUPPORT_LINKS = {
 } as const;
 
 export const SHARE_TEXT =
-  "Playing OWdle, the daily Overwatch hero quiz. Six modes, one hero.";
+  "Playing OWdle, the daily Overwatch hero quiz.";
 
 export const SITE_KEYWORDS = [
   "Overwatch quiz",

@@ -134,13 +134,55 @@ export function ClassicGame() {
       </div>
 
       {state.guesses.length === 0 && (
-        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-6 sm:p-8">
+          <p className="text-center font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
             Start by typing a hero name above.
           </p>
+          {/* First-guess legend — surfaces the tile-color semantics
+              inline so first-time players don't have to detour to
+              /how-to-play to interpret their first row of feedback.
+              Disappears as soon as a guess is submitted. */}
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-line pt-4">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              Tiles mean
+            </span>
+            <LegendChip color="correct" label="Match" />
+            <LegendChip color="partial" label="Close" />
+            <LegendChip color="far" label="Far" />
+            <LegendChip color="wrong" label="Miss" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              ↑ ↓ point toward the answer
+            </span>
+          </div>
         </div>
       )}
     </main>
+  );
+}
+
+function LegendChip({
+  color,
+  label,
+}: {
+  color: "correct" | "partial" | "far" | "wrong";
+  label: string;
+}) {
+  const swatch = {
+    correct: "bg-correct",
+    partial: "bg-partial",
+    far: "bg-far",
+    wrong: "bg-wrong",
+  }[color];
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span
+        aria-hidden
+        className={`tile-shape inline-block h-3 w-3 ${swatch}`}
+      />
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft">
+        {label}
+      </span>
+    </span>
   );
 }
 

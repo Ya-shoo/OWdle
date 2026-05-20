@@ -18,7 +18,7 @@ import { RequestNextGame } from "./RequestNextGame";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 
-type Status = { won: boolean; guesses: number };
+type Status = { won: boolean; gaveUp: boolean; guesses: number };
 type StatusMap = Partial<Record<ModeSlug, Status>>;
 
 export function HomeContent() {
@@ -31,11 +31,18 @@ export function HomeContent() {
     const map: StatusMap = {};
     for (const slug of BUILT_MODE_SLUGS) {
       const st = loadModeState(slug, d);
-      map[slug] = { won: st.won, guesses: st.guesses.length };
+      map[slug] = {
+        won: st.won,
+        gaveUp: st.gaveUp === true,
+        guesses: st.guesses.length,
+      };
     }
     setStatuses(map);
   }, []);
 
+  // Celebratory state only — solely tied to wins, not "Show answer." The
+  // mode grid below distinguishes won vs gave-up per card, but the hero
+  // copy below assumes every mode was actually solved.
   const allDone =
     day != null && BUILT_MODE_SLUGS.every((s) => statuses[s]?.won);
   const completedCount = BUILT_MODE_SLUGS.filter((s) => statuses[s]?.won)
@@ -160,13 +167,13 @@ function DefaultHero({ day }: { day: string | null }) {
       </div>
       <Brand as="h1" size="2xl" className="mt-6 leading-[0.95]" />
       <p className="mt-6 max-w-xl text-lg text-ink-soft">
-        A daily Overwatch quiz. Six modes, one hero.
+        A daily Overwatch hero quiz.
       </p>
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <BeginButton />
         <Link
           href="/how-to-play/"
-          className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft transition-colors hover:text-accent-soft"
+          className="font-mono text-xs font-medium uppercase tracking-[0.22em] text-accent-soft transition-colors hover:text-accent"
           style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.4)" }}
         >
           First time? How to play →
@@ -429,6 +436,15 @@ function ModeCard({
     tag = (
       <span className="utility-label text-xs text-correct">
         <span aria-hidden>✓</span> in {status.guesses}
+      </span>
+    );
+  } else if (status?.gaveUp) {
+    // Distinct from "won" — the player tapped Show Answer rather than
+    // solving. Same "finished" vibe so they don't loop back in, but the
+    // muted color + word "revealed" communicates it's an unsolved finish.
+    tag = (
+      <span className="utility-label text-xs text-ink-faint">
+        Revealed
       </span>
     );
   } else if (status && status.guesses > 0) {

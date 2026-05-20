@@ -125,7 +125,7 @@ export function HeroCombobox({
           id={`${id}-listbox`}
           role="listbox"
           className={clsx(
-            "absolute left-0 right-0 z-50 mt-2 max-h-80 overflow-y-auto",
+            "absolute left-0 right-0 z-50 mt-2 max-h-64 overflow-y-auto sm:max-h-80",
             "border border-line bg-surface",
             "rounded-(--radius-card) shadow-2xl shadow-black/10",
           )}
@@ -144,7 +144,7 @@ export function HeroCombobox({
                   commit(hero);
                 }}
                 className={clsx(
-                  "flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors",
+                  "flex cursor-pointer items-center gap-3 px-3 py-3 transition-colors sm:py-2",
                   active ? "bg-muted" : "hover:bg-muted/60",
                 )}
               >

@@ -53,13 +53,16 @@ export function SupportLinks() {
             {/* Personal social icons — signal a real human behind the tip jar.
                 Universal HTTPS links so iOS/Android open the X & Instagram
                 apps automatically when installed, falling back to the web. */}
-            <div className="mt-2.5 flex items-center gap-3">
+            {/* Icons themselves are 16px; the surrounding -mx-1.5 / p-1.5
+                pads each link out to a ~28px tap area without visually
+                shifting the cluster. */}
+            <div className="-mx-1.5 mt-1 flex items-center gap-1">
               <a
                 href="https://x.com/hiamYush"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Creator on X"
-                className="text-ink-soft transition-colors hover:text-info"
+                className="inline-flex items-center justify-center p-1.5 text-ink-soft transition-colors hover:text-info"
               >
                 <XMark />
               </a>
@@ -68,7 +71,7 @@ export function SupportLinks() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Creator on Instagram"
-                className="transition-opacity hover:opacity-80"
+                className="inline-flex items-center justify-center p-1.5 transition-opacity hover:opacity-80"
               >
                 <InstagramMark />
               </a>

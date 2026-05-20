@@ -78,10 +78,14 @@ export function BonusRound({
           : `Which of ${heroName}'s abilities was the sound from?`}
       </p>
 
+      {/* auto-fit wraps to multiple rows on narrow phones so we don't force
+          5 cramped <44px cells on a 320px screen. Caps target column count
+          at the option count so we never leave a half-empty trailing row on
+          wide viewports. */}
       <div
         className="grid gap-3 sm:gap-4"
         style={{
-          gridTemplateColumns: `repeat(${Math.min(options.length, 5)}, minmax(0, 1fr))`,
+          gridTemplateColumns: `repeat(auto-fit, minmax(72px, 1fr))`,
         }}
       >
         {options.map((opt, i) => {

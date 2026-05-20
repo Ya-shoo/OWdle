@@ -119,6 +119,15 @@ export function SoundGame() {
 
   const turnsUsed = state.guesses.length;
   const canShowAnswer = turnsUsed >= SHOW_ANSWER_AFTER && !state.won;
+  // Surface a proximity hint two turns out so a player nearing the limit
+  // sees the escape hatch coming. Without this, the "Show answer" button
+  // pops in unannounced at turn 10 — fine on a fresh play but jarring if
+  // they've spent eight rounds wondering whether there's any way out.
+  const turnsUntilShowAnswer = canShowAnswer
+    ? 0
+    : Math.max(0, SHOW_ANSWER_AFTER - turnsUsed);
+  const showAnswerHint =
+    !state.won && !canShowAnswer && turnsUntilShowAnswer > 0 && turnsUntilShowAnswer <= 2;
 
   // Bonus options come from the labeled clip set for this hero. Empty
   // for legacy unlabeled clips. Skip the bonus round entirely when
@@ -216,15 +225,26 @@ export function SoundGame() {
         />
       )}
 
-      <div className="mb-8 flex flex-col items-center">
+      <div className="mb-6 flex flex-col items-center gap-3">
         {reveal && videoUrl ? (
           <RevealPlayer videoUrl={videoUrl} />
         ) : (
-          <WaveformPlayer
-            audioUrl={audioUrl}
-            revealDuration={snippetDuration}
-            boost={ROLE_AUDIO_BOOST[answer.role]}
-          />
+          <>
+            <WaveformPlayer
+              audioUrl={audioUrl}
+              revealDuration={snippetDuration}
+              boost={ROLE_AUDIO_BOOST[answer.role]}
+            />
+            {!state.won && !state.gaveUp && (
+              <button
+                type="button"
+                onClick={handleSkip}
+                className="rounded-(--radius-card) border border-line bg-inset/60 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:border-accent/60 hover:bg-accent/10 hover:text-accent"
+              >
+                Skip turn · reveal more →
+              </button>
+            )}
+          </>
         )}
       </div>
 
@@ -244,6 +264,12 @@ export function SoundGame() {
               </span>
             </p>
             <div className="flex items-center gap-3">
+              {showAnswerHint && (
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                  show answer in {turnsUntilShowAnswer}{" "}
+                  {turnsUntilShowAnswer === 1 ? "guess" : "guesses"}
+                </span>
+              )}
               {canShowAnswer && (
                 <button
                   type="button"
@@ -253,13 +279,6 @@ export function SoundGame() {
                   Show answer
                 </button>
               )}
-              <button
-                type="button"
-                onClick={handleSkip}
-                className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint underline-offset-4 transition-colors hover:text-accent hover:underline"
-              >
-                Skip turn →
-              </button>
             </div>
           </div>
         </div>
