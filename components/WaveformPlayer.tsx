@@ -62,7 +62,6 @@ export function WaveformPlayer({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const stopTimerRef = useRef<number | null>(null);
   const startOffsetRef = useRef<number>(0);
-  const startWallRef = useRef<number>(0);
 
   // Volume is global across modes. Hydrate from localStorage on mount —
   // SSR sees the default, then we swap in the saved value. A ref tracks
@@ -178,12 +177,41 @@ export function WaveformPlayer({
 
   useEffect(() => {
     if (!playing) return;
+    const el = audioRef.current;
+    if (!el) return;
     let raf = 0;
+    // Read directly from the audio playhead instead of a wall-clock
+    // anchor. el.play()'s promise can resolve ~100-200ms before iOS
+    // Safari's audio hardware actually starts producing sound, so a
+    // wall-clock cursor anchored at promise resolution would lead the
+    // audio by that startup latency — exactly the desync users reported.
+    // Reading el.currentTime at rAF rate is interpolated sub-frame on
+    // modern browsers, so motion stays smooth, and the cursor and the
+    // audio share the same source of truth (el.currentTime), so they
+    // can't drift apart by definition.
+    //
+    // The stop trigger also rides on the playhead here. Doing it via a
+    // setTimeout from play()'s promise would cut audio short by the same
+    // startup latency the cursor used to lead by — at small revealDuration
+    // values (0.4s early-game) that's a noticeable 25% loss. The outer
+    // setTimeout in play() is still scheduled but with a generous safety
+    // margin: it's a fallback for backgrounded tabs where rAF doesn't
+    // fire, not the primary stop path.
     const tick = () => {
-      const elapsed = (performance.now() - startWallRef.current) / 1000;
-      const p = Math.min(1, elapsed / revealDuration);
+      const elapsed = el.currentTime - startOffsetRef.current;
+      const p = Math.max(0, Math.min(1, elapsed / revealDuration));
       setProgress(p);
-      if (p < 1) raf = requestAnimationFrame(tick);
+      if (elapsed >= revealDuration) {
+        el.pause();
+        if (stopTimerRef.current != null) {
+          window.clearTimeout(stopTimerRef.current);
+          stopTimerRef.current = null;
+        }
+        setPlaying(false);
+        setProgress(1);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
@@ -253,30 +281,14 @@ export function WaveformPlayer({
     // from inside a .then()) and wire success/failure off the returned
     // promise. Older browsers may return undefined from play() — fall
     // back to assuming success in that branch.
-    const result = el.play();
-    if (result && typeof result.then === "function") {
-      result
-        .then(() => {
-          setPlaying(true);
-          startWallRef.current = performance.now();
-          // Pause the element at exactly revealDuration. A timeupdate
-          // listener fires 4× per second on most browsers, so setTimeout
-          // is actually more accurate at this scale — and cheaper.
-          stopTimerRef.current = window.setTimeout(() => {
-            stopTimerRef.current = null;
-            const cur = audioRef.current;
-            if (!cur) return;
-            cur.pause();
-            setPlaying(false);
-            setProgress(1);
-          }, revealDuration * 1000);
-        })
-        .catch((e) => {
-          setError(e instanceof Error ? e.message : "Audio play failed");
-        });
-    } else {
-      setPlaying(true);
-      startWallRef.current = performance.now();
+    //
+    // The setTimeout below is a safety net for backgrounded tabs (where
+    // the rAF tick in the progress effect doesn't fire). It's padded by
+    // 750ms beyond the nominal revealDuration so that, in a foreground
+    // tab, the playhead-anchored stop inside the tick always wins the
+    // race against this fallback. Without the padding, this timer would
+    // cut audio short by the iOS play()-vs-actual-start latency.
+    const scheduleSafetyStop = () => {
       stopTimerRef.current = window.setTimeout(() => {
         stopTimerRef.current = null;
         const cur = audioRef.current;
@@ -284,7 +296,22 @@ export function WaveformPlayer({
         cur.pause();
         setPlaying(false);
         setProgress(1);
-      }, revealDuration * 1000);
+      }, revealDuration * 1000 + 750);
+    };
+
+    const result = el.play();
+    if (result && typeof result.then === "function") {
+      result
+        .then(() => {
+          setPlaying(true);
+          scheduleSafetyStop();
+        })
+        .catch((e) => {
+          setError(e instanceof Error ? e.message : "Audio play failed");
+        });
+    } else {
+      setPlaying(true);
+      scheduleSafetyStop();
     }
   };
 
