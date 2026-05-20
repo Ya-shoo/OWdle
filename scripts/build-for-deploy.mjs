@@ -26,7 +26,10 @@ import { spawn } from "node:child_process";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
 const STAGE_ROOT = join(REPO_ROOT, ".staged-media");
-const STAGED = ["sounds", "maps"];
+// Dirs that serve from R2 in production — stash them out of public/
+// before next build so they don't ship via Pages. Keep in sync with
+// scripts/sync-to-r2.mjs SYNC_DIRS.
+const STAGED = ["sounds", "maps", "skins", "voicelines", "banners"];
 
 async function exists(p) {
   try {

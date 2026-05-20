@@ -49,5 +49,8 @@ next-env.d.ts
 # labeling; canonical store is the R2 bucket synced via `npm run sync-to-r2`.
 /public/sounds/
 /public/maps/
+/public/skins/
+/public/voicelines/
+/public/banners/
 # staging dir used by scripts/build-for-deploy.mjs to keep media out of out/
 /.staged-media/

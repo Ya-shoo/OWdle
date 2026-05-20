@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "build:deploy": "node scripts/build-for-deploy.mjs",
-    "deploy:live": "npm run build:deploy && wrangler pages deploy --branch=main && git push",
+    "deploy:live": "npm run sync-to-r2 && npm run build:deploy && wrangler pages deploy --branch=main && git push",
     "votes:admin": "node scripts/votes-admin-server.mjs",
     "sound:trims": "node scripts/sound-trims-server.mjs",
     "sync-clips": "bash -c 'for f in ~/Downloads/owdle-clips*.zip; do unzip -o \"$f\" -d public/; done' && node scripts/build-sound-clips.mjs",

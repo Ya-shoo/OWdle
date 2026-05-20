@@ -9,6 +9,7 @@ import {
   STATIC_BANNERS,
   type Banner,
 } from "@/lib/banners";
+import { media } from "@/lib/media";
 
 const MOBILE_BREAKPOINT = "(max-width: 767px)";
 
@@ -114,18 +115,18 @@ function BannerPicture({ banner }: { banner: Banner }) {
       <source
         type="image/avif"
         media={MOBILE_BREAKPOINT}
-        srcSet={v.mobileAvif}
+        srcSet={media(v.mobileAvif)}
       />
       <source
         type="image/webp"
         media={MOBILE_BREAKPOINT}
-        srcSet={v.mobileWebp}
+        srcSet={media(v.mobileWebp)}
       />
-      <source type="image/avif" srcSet={v.desktopAvif} />
-      <source type="image/webp" srcSet={v.desktopWebp} />
+      <source type="image/avif" srcSet={media(v.desktopAvif)} />
+      <source type="image/webp" srcSet={media(v.desktopWebp)} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={banner.file}
+        src={media(banner.file)}
         alt=""
         className="block h-full w-full object-cover"
         loading="eager"

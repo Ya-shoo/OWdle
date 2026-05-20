@@ -1,5 +1,6 @@
 import { HomeContent } from "@/components/HomeContent";
 import { bannerVariants, STATIC_BANNERS } from "@/lib/banners";
+import { media } from "@/lib/media";
 import { MODES } from "@/lib/modes";
 import {
   SITE_DEFAULT_DESCRIPTION,
@@ -110,7 +111,7 @@ export default function Home() {
           <link
             rel="preload"
             as="image"
-            href={FIRST_BANNER_VARIANTS.mobileAvif}
+            href={media(FIRST_BANNER_VARIANTS.mobileAvif)}
             type="image/avif"
             media="(max-width: 767px)"
             fetchPriority="high"
@@ -118,7 +119,7 @@ export default function Home() {
           <link
             rel="preload"
             as="image"
-            href={FIRST_BANNER_VARIANTS.desktopAvif}
+            href={media(FIRST_BANNER_VARIANTS.desktopAvif)}
             type="image/avif"
             media="(min-width: 768px)"
             fetchPriority="high"

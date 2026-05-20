@@ -31,7 +31,18 @@ import mime from "mime";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
-const SYNC_DIRS = ["public/sounds", "public/maps"];
+// All directories whose canonical store is the dailydles R2 bucket.
+// Listed under public/ for Next.js to serve locally during dev (when the
+// files are present); the deploy pipeline stages these out so they don't
+// ship via Pages. /portraits, /abilities, /splash, /sfx stay Pages-served
+// (small, change rarely).
+const SYNC_DIRS = [
+  "public/sounds",
+  "public/maps",
+  "public/skins",
+  "public/voicelines",
+  "public/banners",
+];
 const CONCURRENCY = 8;
 const CACHE_CONTROL = "public, max-age=86400, s-maxage=31536000, immutable";
 const FORCE = process.argv.includes("--force");

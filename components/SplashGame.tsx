@@ -8,6 +8,7 @@ import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
+import { media } from "@/lib/media";
 import { NextModeCTA } from "./NextModeCTA";
 
 const MODE = "splash";
@@ -210,7 +211,7 @@ function SplashFrame({
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={imageUrl}
+          src={media(imageUrl)}
           alt=""
           className="block h-full w-full object-cover transition-transform duration-700 ease-out"
           style={{
