@@ -28,6 +28,7 @@ import {
 import { HeroCombobox } from "./HeroCombobox";
 import { AttributeTile } from "./AttributeTile";
 import { Brand } from "./Brand";
+import { media } from "@/lib/media";
 import { NextModeCTA } from "./NextModeCTA";
 import clsx from "clsx";
 
@@ -466,7 +467,7 @@ function ConversationCard({
     stopAll();
     let audio = audioRefs.current[i];
     if (!audio) {
-      audio = new Audio(audioUrl);
+      audio = new Audio(media(audioUrl));
       audio.addEventListener("ended", () => {
         setPlayingLine((cur) => (cur === i ? null : cur));
       });

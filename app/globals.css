@@ -135,6 +135,48 @@ img {
   -webkit-user-select: none;
 }
 
+/* ---------- dev-ui scope (everything under /labeler) ----------
+   Overrides for the dev-tools surfaces (calibrate / edit / review /
+   admin / sound labeler). The game-facing routes (/classic, /quote,
+   /ability, /splash, /sound, /map, /how-to-play) keep the original
+   token values so the marketed UI stays consistent.
+
+   Three goals:
+     1. Lighter muted + subtle foreground — the original tokens fail
+        WCAG AA against the dark canvas, which is fine for atmospheric
+        game eyebrows but unreadable for tool labels you actually need
+        to read.
+     2. No saturated blue (--info) for important text. Redirected to
+        a warm cream so labels with `text-info` stay legible and don't
+        compete with the orange accent for attention.
+     3. Bump small font sizes. The dev pages lean heavily on
+        `text-[9px]` / `text-[10px]` for labels — bumping them up via
+        attribute selectors avoids a sweeping find/replace across
+        every component.
+*/
+.dev-ui {
+  --fg-muted: #d6cfc0;
+  --fg-subtle: #b0b7c5;
+  --info: #ffd9b0;
+  --info-on: #0a0e14;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Bump hard-coded Tailwind arbitrary text sizes in dev-ui only.
+   Class names from Tailwind look like `text-[9px]` (with literal
+   brackets in the CSS class). Attribute selector matches them by
+   substring presence in the element's class string. */
+.dev-ui [class*="text-[9px]"] {
+  font-size: 11px !important;
+}
+.dev-ui [class*="text-[10px]"] {
+  font-size: 12px !important;
+}
+.dev-ui [class*="text-[11px]"] {
+  font-size: 13px !important;
+}
+
 /* atmospheric background wash */
 body::before {
   content: "";

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { DEFAULT_VOLUME, loadVolume, saveVolume } from "@/lib/audio";
+import { media } from "@/lib/media";
 import { VolumeSlider } from "./VolumeSlider";
 
 type Props = {
@@ -100,7 +101,7 @@ export function WaveformPlayer({
 
     (async () => {
       try {
-        const res = await fetch(audioUrl);
+        const res = await fetch(media(audioUrl));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const buf = await res.arrayBuffer();
         const Ctx =

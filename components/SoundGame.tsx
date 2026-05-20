@@ -14,6 +14,7 @@ import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
+import { media } from "@/lib/media";
 import { NextModeCTA } from "./NextModeCTA";
 import { BonusRound } from "./BonusRound";
 import { WaveformPlayer } from "./WaveformPlayer";
@@ -389,7 +390,7 @@ function RevealPlayer({ videoUrl }: { videoUrl: string }) {
   return (
     <div className="w-full max-w-2xl">
       <video
-        src={videoUrl}
+        src={media(videoUrl)}
         controls
         autoPlay
         playsInline

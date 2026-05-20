@@ -43,3 +43,11 @@ next-env.d.ts
 # claude code / wrangler local state
 /.claude/
 /.wrangler/
+
+# media — hosted in Cloudflare R2 via lib/media.ts + NEXT_PUBLIC_MEDIA_BASE.
+# Local files in these directories are working state for capture /
+# labeling; canonical store is the R2 bucket synced via `npm run sync-to-r2`.
+/public/sounds/
+/public/maps/
+# staging dir used by scripts/build-for-deploy.mjs to keep media out of out/
+/.staged-media/

@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy:live": "npm run build && wrangler pages deploy --branch=main && git push",
+    "build:deploy": "node scripts/build-for-deploy.mjs",
+    "deploy:live": "npm run build:deploy && wrangler pages deploy --branch=main && git push",
     "votes:admin": "node scripts/votes-admin-server.mjs",
-    "sync-clips": "for f in ~/Downloads/owdle-clips*.zip; do unzip -o \"$f\" -d public/; done && node scripts/build-sound-clips.mjs"
+    "sync-clips": "bash -c 'for f in ~/Downloads/owdle-clips*.zip; do unzip -o \"$f\" -d public/; done' && node scripts/build-sound-clips.mjs",
+    "sync-to-r2": "node scripts/sync-to-r2.mjs"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
@@ -19,7 +21,8 @@
     "motion": "^12.38.0",
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -29,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "ffmpeg-static": "^5.3.0",
+    "mime": "^4.1.0",
     "sharp": "^0.32.6",
     "smartcrop-sharp": "^2.0.8",
     "tailwindcss": "^4",
