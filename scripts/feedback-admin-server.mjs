@@ -6,7 +6,10 @@
 //
 // Usage:
 //   npm run feedback:admin
-//     → http://localhost:8789
+//     → http://localhost:8790
+//
+// Moved off 8789 (the sound-trims server's port) so `npm run dev` can
+// run both concurrently without a port-in-use collision.
 
 import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
@@ -34,7 +37,7 @@ function readSecret() {
 
 const SECRET = readSecret();
 const ORIGIN = process.env.FEEDBACK_ADMIN_ORIGIN ?? "https://playowdle.com";
-const PORT = Number(process.env.FEEDBACK_ADMIN_PORT ?? 8789);
+const PORT = Number(process.env.FEEDBACK_ADMIN_PORT ?? 8790);
 
 const HTML = `<!DOCTYPE html>
 <html lang="en">

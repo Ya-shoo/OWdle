@@ -98,7 +98,7 @@ const TOOL_GROUPS: ReadonlyArray<{
         label: "Feedback admin",
         description:
           "Free-form feedback submissions, filterable by site + keywords.",
-        helper: "localhost:8789",
+        helper: "localhost:8790",
       },
     ],
   },

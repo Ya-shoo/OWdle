@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { FeedbackAdminFrame } from "@/components/FeedbackAdminFrame";
 
 // Embeds the local feedback admin viewer (scripts/feedback-admin-
-// server.mjs on :8789) so it lives inside the dev hub. The helper
+// server.mjs on :8790) so it lives inside the dev hub. The helper
 // server reads ADMIN_SECRET from .env.secrets and proxies to
 // playowdle.com/api/feedback-raw so the secret never leaves the dev
 // machine. `npm run dev` chains the helper server in via concurrently,

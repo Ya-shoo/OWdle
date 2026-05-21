@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 // Embeds the feedback-admin helper server's dashboard in an iframe. The
-// helper runs on http://localhost:8789 (configurable via
+// helper runs on http://localhost:8790 (configurable via
 // FEEDBACK_ADMIN_PORT in scripts/feedback-admin-server.mjs) and serves
 // the HTML + proxies /api/feedback-raw back to the live site using
 // ADMIN_SECRET from .env.secrets.
@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 // Mirrors VotesAdminFrame's reachability probe so port collisions or a
 // missing secret render a clear inline error instead of a blank iframe.
 
-const HELPER_URL = "http://localhost:8789";
+const HELPER_URL = "http://localhost:8790";
 
 export function FeedbackAdminFrame() {
   const [status, setStatus] = useState<"checking" | "ok" | "down">(
@@ -55,7 +55,7 @@ export function FeedbackAdminFrame() {
               the helpers.
             </li>
             <li>
-              Port <code>8789</code> is busy. Override with{" "}
+              Port <code>8790</code> is busy. Override with{" "}
               <code>FEEDBACK_ADMIN_PORT=…</code> on the helper and update
               the embedded URL below.
             </li>
