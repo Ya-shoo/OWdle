@@ -613,7 +613,7 @@ function LineAudioButton({
       onClick={onToggle}
       aria-label={playing ? "Stop voice line" : "Play this voice line"}
       className={clsx(
-        "inline-flex h-6 w-6 items-center justify-center rounded-(--radius-pill) border transition-colors",
+        "inline-flex h-6 w-6 items-center justify-center rounded-(--radius-pill) border transition-colors sm:h-9 sm:w-9",
         toneClass,
       )}
     >
@@ -626,10 +626,8 @@ function PlayIcon() {
   return (
     <svg
       viewBox="0 0 12 12"
-      width="9"
-      height="9"
       aria-hidden
-      className="shrink-0"
+      className="h-2.5 w-2.5 shrink-0 sm:h-3.5 sm:w-3.5"
     >
       <path d="M3 2 L3 10 L10 6 Z" fill="currentColor" />
     </svg>
@@ -640,10 +638,8 @@ function StopIcon() {
   return (
     <svg
       viewBox="0 0 12 12"
-      width="9"
-      height="9"
       aria-hidden
-      className="shrink-0"
+      className="h-2.5 w-2.5 shrink-0 sm:h-3.5 sm:w-3.5"
     >
       <rect x="3" y="3" width="6" height="6" fill="currentColor" />
     </svg>
