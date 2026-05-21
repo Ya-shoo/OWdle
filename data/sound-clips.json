@@ -178,36 +178,36 @@
     {
       "slug": "barrier-array",
       "label": "Barrier Array",
-      "audioUrl": "/sounds/domina/barrier-array.mp3",
-      "videoUrl": "/sounds/domina/barrier-array.mp4",
+      "audioUrl": "/sounds/domina/barrier-array.mp3?v=b8ecebe2",
+      "videoUrl": "/sounds/domina/barrier-array.mp4?v=8979a7dd",
       "duration": 1.46
     },
     {
       "slug": "crystal-charge",
       "label": "Crystal Charge",
-      "audioUrl": "/sounds/domina/crystal-charge.mp3",
-      "videoUrl": "/sounds/domina/crystal-charge.mp4",
+      "audioUrl": "/sounds/domina/crystal-charge.mp3?v=d9116255",
+      "videoUrl": "/sounds/domina/crystal-charge.mp4?v=45b6ae7a",
       "duration": 3
     },
     {
       "slug": "panopticon",
       "label": "Panopticon",
-      "audioUrl": "/sounds/domina/panopticon.mp3",
-      "videoUrl": "/sounds/domina/panopticon.mp4",
+      "audioUrl": "/sounds/domina/panopticon.mp3?v=4ff4a0bd",
+      "videoUrl": "/sounds/domina/panopticon.mp4?v=874dd8ec",
       "duration": 7.32
     },
     {
       "slug": "photon-magnum",
       "label": "Photon Magnum",
-      "audioUrl": "/sounds/domina/photon-magnum.mp3",
-      "videoUrl": "/sounds/domina/photon-magnum.mp4",
+      "audioUrl": "/sounds/domina/photon-magnum.mp3?v=6190ee57",
+      "videoUrl": "/sounds/domina/photon-magnum.mp4?v=ee8936e2",
       "duration": 6.98
     },
     {
       "slug": "sonic-repulsors",
       "label": "Sonic Repulsors",
-      "audioUrl": "/sounds/domina/sonic-repulsors.mp3",
-      "videoUrl": "/sounds/domina/sonic-repulsors.mp4",
+      "audioUrl": "/sounds/domina/sonic-repulsors.mp3?v=f9761a8a",
+      "videoUrl": "/sounds/domina/sonic-repulsors.mp4?v=2dfbcc1b",
       "duration": 2.23
     }
   ],
@@ -215,22 +215,22 @@
     {
       "slug": "hand-cannon",
       "label": "Hand Cannon",
-      "audioUrl": "/sounds/doomfist/hand-cannon.mp3",
-      "videoUrl": "/sounds/doomfist/hand-cannon.mp4",
+      "audioUrl": "/sounds/doomfist/hand-cannon.mp3?v=9dea07e3",
+      "videoUrl": "/sounds/doomfist/hand-cannon.mp4?v=9688258d",
       "duration": 4.2
     },
     {
       "slug": "meteor-strike",
       "label": "Meteor Strike",
-      "audioUrl": "/sounds/doomfist/meteor-strike.mp3",
-      "videoUrl": "/sounds/doomfist/meteor-strike.mp4",
+      "audioUrl": "/sounds/doomfist/meteor-strike.mp3?v=0a7e4710",
+      "videoUrl": "/sounds/doomfist/meteor-strike.mp4?v=2c3278f7",
       "duration": 5.28
     },
     {
       "slug": "rocket-punch",
       "label": "Rocket Punch",
-      "audioUrl": "/sounds/doomfist/rocket-punch.mp3",
-      "videoUrl": "/sounds/doomfist/rocket-punch.mp4",
+      "audioUrl": "/sounds/doomfist/rocket-punch.mp3?v=10a2d59e",
+      "videoUrl": "/sounds/doomfist/rocket-punch.mp4?v=9e51bef8",
       "duration": 2.28
     }
   ],
@@ -238,29 +238,29 @@
     {
       "slug": "defense-matrix",
       "label": "Defense Matrix",
-      "audioUrl": "/sounds/dva/defense-matrix.mp3",
-      "videoUrl": "/sounds/dva/defense-matrix.mp4",
+      "audioUrl": "/sounds/dva/defense-matrix.mp3?v=f800a932",
+      "videoUrl": "/sounds/dva/defense-matrix.mp4?v=766351be",
       "duration": 3.7
     },
     {
       "slug": "fusion-cannons",
       "label": "Fusion Cannons",
-      "audioUrl": "/sounds/dva/fusion-cannons.mp3",
-      "videoUrl": "/sounds/dva/fusion-cannons.mp4",
+      "audioUrl": "/sounds/dva/fusion-cannons.mp3?v=786b0197",
+      "videoUrl": "/sounds/dva/fusion-cannons.mp4?v=62e0013d",
       "duration": 6.43
     },
     {
       "slug": "micro-missiles",
       "label": "Micro Missiles",
-      "audioUrl": "/sounds/dva/micro-missiles.mp3",
-      "videoUrl": "/sounds/dva/micro-missiles.mp4",
+      "audioUrl": "/sounds/dva/micro-missiles.mp3?v=9317e53c",
+      "videoUrl": "/sounds/dva/micro-missiles.mp4?v=734fdfa5",
       "duration": 2.33
     },
     {
       "slug": "self-destruct",
       "label": "Self Destruct",
-      "audioUrl": "/sounds/dva/self-destruct.mp3",
-      "videoUrl": "/sounds/dva/self-destruct.mp4",
+      "audioUrl": "/sounds/dva/self-destruct.mp3?v=a606ff8d",
+      "videoUrl": "/sounds/dva/self-destruct.mp4?v=0bfaff81",
       "duration": 4.54
     }
   ],
@@ -390,22 +390,22 @@
     {
       "slug": "bonespur",
       "label": "Bonespur",
-      "audioUrl": "/sounds/hazard/bonespur.mp3",
-      "videoUrl": "/sounds/hazard/bonespur.mp4",
+      "audioUrl": "/sounds/hazard/bonespur.mp3?v=7c60b62c",
+      "videoUrl": "/sounds/hazard/bonespur.mp4?v=10e2c40b",
       "duration": 8.09
     },
     {
       "slug": "downpour",
       "label": "Downpour",
-      "audioUrl": "/sounds/hazard/downpour.mp3",
-      "videoUrl": "/sounds/hazard/downpour.mp4",
+      "audioUrl": "/sounds/hazard/downpour.mp3?v=124dbe3a",
+      "videoUrl": "/sounds/hazard/downpour.mp4?v=0d39a902",
       "duration": 3.17
     },
     {
       "slug": "spike-guard",
       "label": "Spike Guard",
-      "audioUrl": "/sounds/hazard/spike-guard.mp3",
-      "videoUrl": "/sounds/hazard/spike-guard.mp4",
+      "audioUrl": "/sounds/hazard/spike-guard.mp3?v=620ae618",
+      "videoUrl": "/sounds/hazard/spike-guard.mp4?v=a4ba8fe9",
       "duration": 3.84
     }
   ],
@@ -473,15 +473,15 @@
     {
       "slug": "carnage",
       "label": "Carnage",
-      "audioUrl": "/sounds/junker-queen/carnage.mp3",
-      "videoUrl": "/sounds/junker-queen/carnage.mp4",
+      "audioUrl": "/sounds/junker-queen/carnage.mp3?v=a7ba2c98",
+      "videoUrl": "/sounds/junker-queen/carnage.mp4?v=69233a95",
       "duration": 4.58
     },
     {
       "slug": "rampage",
       "label": "Rampage",
-      "audioUrl": "/sounds/junker-queen/rampage.mp3",
-      "videoUrl": "/sounds/junker-queen/rampage.mp4",
+      "audioUrl": "/sounds/junker-queen/rampage.mp3?v=d4bcc052",
+      "videoUrl": "/sounds/junker-queen/rampage.mp4?v=d5b08780",
       "duration": 6.22
     }
   ],
@@ -653,15 +653,15 @@
     {
       "slug": "cage-fight",
       "label": "Cage Fight",
-      "audioUrl": "/sounds/mauga/cage-fight.mp3",
-      "videoUrl": "/sounds/mauga/cage-fight.mp4",
+      "audioUrl": "/sounds/mauga/cage-fight.mp3?v=d7e71816",
+      "videoUrl": "/sounds/mauga/cage-fight.mp4?v=447613a1",
       "duration": 9.19
     },
     {
       "slug": "overrun",
       "label": "Overrun",
-      "audioUrl": "/sounds/mauga/overrun.mp3",
-      "videoUrl": "/sounds/mauga/overrun.mp4",
+      "audioUrl": "/sounds/mauga/overrun.mp3?v=5f7cd155",
+      "videoUrl": "/sounds/mauga/overrun.mp4?v=58a78e1b",
       "duration": 4.61
     }
   ],
@@ -736,22 +736,22 @@
     {
       "slug": "augmented-fusion-driver",
       "label": "Augmented Fusion Driver",
-      "audioUrl": "/sounds/orisa/augmented-fusion-driver.mp3",
-      "videoUrl": "/sounds/orisa/augmented-fusion-driver.mp4",
+      "audioUrl": "/sounds/orisa/augmented-fusion-driver.mp3?v=ccc43a44",
+      "videoUrl": "/sounds/orisa/augmented-fusion-driver.mp4?v=77233f4f",
       "duration": 8.81
     },
     {
       "slug": "energy-javelin",
       "label": "Energy Javelin",
-      "audioUrl": "/sounds/orisa/energy-javelin.mp3",
-      "videoUrl": "/sounds/orisa/energy-javelin.mp4",
+      "audioUrl": "/sounds/orisa/energy-javelin.mp3?v=cca5b057",
+      "videoUrl": "/sounds/orisa/energy-javelin.mp4?v=d141c4f0",
       "duration": 2.11
     },
     {
       "slug": "terra-surge",
       "label": "Terra Surge",
-      "audioUrl": "/sounds/orisa/terra-surge.mp3",
-      "videoUrl": "/sounds/orisa/terra-surge.mp4",
+      "audioUrl": "/sounds/orisa/terra-surge.mp3?v=9b655699",
+      "videoUrl": "/sounds/orisa/terra-surge.mp4?v=2d364e97",
       "duration": 5.66
     }
   ],
@@ -775,15 +775,15 @@
     {
       "slug": "annihilation",
       "label": "Annihilation",
-      "audioUrl": "/sounds/ramattra/annihilation.mp3",
-      "videoUrl": "/sounds/ramattra/annihilation.mp4",
+      "audioUrl": "/sounds/ramattra/annihilation.mp3?v=0696ae59",
+      "videoUrl": "/sounds/ramattra/annihilation.mp4?v=c9c44097",
       "duration": 14.04
     },
     {
       "slug": "void-accelerator-omnic-form",
       "label": "Void Accelerator Omnic Form",
-      "audioUrl": "/sounds/ramattra/void-accelerator-omnic-form.mp3",
-      "videoUrl": "/sounds/ramattra/void-accelerator-omnic-form.mp4",
+      "audioUrl": "/sounds/ramattra/void-accelerator-omnic-form.mp3?v=d1a3dc63",
+      "videoUrl": "/sounds/ramattra/void-accelerator-omnic-form.mp4?v=4a84e798",
       "duration": 5.64
     }
   ],
@@ -821,22 +821,22 @@
     {
       "slug": "charge",
       "label": "Charge",
-      "audioUrl": "/sounds/reinhardt/charge.mp3",
-      "videoUrl": "/sounds/reinhardt/charge.mp4",
+      "audioUrl": "/sounds/reinhardt/charge.mp3?v=902718e1",
+      "videoUrl": "/sounds/reinhardt/charge.mp4?v=846b9841",
       "duration": 4.82
     },
     {
       "slug": "earthshatter",
       "label": "Earthshatter",
-      "audioUrl": "/sounds/reinhardt/earthshatter.mp3",
-      "videoUrl": "/sounds/reinhardt/earthshatter.mp4",
+      "audioUrl": "/sounds/reinhardt/earthshatter.mp3?v=06b51776",
+      "videoUrl": "/sounds/reinhardt/earthshatter.mp4?v=61182a19",
       "duration": 3.62
     },
     {
       "slug": "rocket-hammer",
       "label": "Rocket Hammer",
-      "audioUrl": "/sounds/reinhardt/rocket-hammer.mp3",
-      "videoUrl": "/sounds/reinhardt/rocket-hammer.mp4",
+      "audioUrl": "/sounds/reinhardt/rocket-hammer.mp3?v=156711e1",
+      "videoUrl": "/sounds/reinhardt/rocket-hammer.mp4?v=f2005d5a",
       "duration": 8.74
     }
   ],
@@ -844,22 +844,22 @@
     {
       "slug": "chain-hook",
       "label": "Chain Hook",
-      "audioUrl": "/sounds/roadhog/chain-hook.mp3",
-      "videoUrl": "/sounds/roadhog/chain-hook.mp4",
+      "audioUrl": "/sounds/roadhog/chain-hook.mp3?v=880c219c",
+      "videoUrl": "/sounds/roadhog/chain-hook.mp4?v=f0da13be",
       "duration": 2.18
     },
     {
       "slug": "take-a-breather",
       "label": "Take A Breather",
-      "audioUrl": "/sounds/roadhog/take-a-breather.mp3",
-      "videoUrl": "/sounds/roadhog/take-a-breather.mp4",
+      "audioUrl": "/sounds/roadhog/take-a-breather.mp3?v=53c55f0f",
+      "videoUrl": "/sounds/roadhog/take-a-breather.mp4?v=263ecb7b",
       "duration": 4.97
     },
     {
       "slug": "whole-hog",
       "label": "Whole Hog",
-      "audioUrl": "/sounds/roadhog/whole-hog.mp3",
-      "videoUrl": "/sounds/roadhog/whole-hog.mp4",
+      "audioUrl": "/sounds/roadhog/whole-hog.mp3?v=3aee3eb3",
+      "videoUrl": "/sounds/roadhog/whole-hog.mp4?v=2db6f6fc",
       "duration": 9.89
     }
   ],
@@ -904,22 +904,22 @@
     {
       "slug": "accretion",
       "label": "Accretion",
-      "audioUrl": "/sounds/sigma/accretion.mp3",
-      "videoUrl": "/sounds/sigma/accretion.mp4",
+      "audioUrl": "/sounds/sigma/accretion.mp3?v=299aa410",
+      "videoUrl": "/sounds/sigma/accretion.mp4?v=f2e8d2da",
       "duration": 2.59
     },
     {
       "slug": "gravitic-flux",
       "label": "Gravitic Flux",
-      "audioUrl": "/sounds/sigma/gravitic-flux.mp3",
-      "videoUrl": "/sounds/sigma/gravitic-flux.mp4",
+      "audioUrl": "/sounds/sigma/gravitic-flux.mp3?v=8fee79b3",
+      "videoUrl": "/sounds/sigma/gravitic-flux.mp4?v=652a5052",
       "duration": 7.25
     },
     {
       "slug": "hyperspheres",
       "label": "Hyperspheres",
-      "audioUrl": "/sounds/sigma/hyperspheres.mp3",
-      "videoUrl": "/sounds/sigma/hyperspheres.mp4",
+      "audioUrl": "/sounds/sigma/hyperspheres.mp3?v=3ee05f81",
+      "videoUrl": "/sounds/sigma/hyperspheres.mp4?v=e9012797",
       "duration": 8.14
     }
   ],
@@ -1155,15 +1155,15 @@
     {
       "slug": "primal-rage",
       "label": "Primal Rage",
-      "audioUrl": "/sounds/winston/primal-rage.mp3",
-      "videoUrl": "/sounds/winston/primal-rage.mp4",
+      "audioUrl": "/sounds/winston/primal-rage.mp3?v=dd75f5a3",
+      "videoUrl": "/sounds/winston/primal-rage.mp4?v=d1f54191",
       "duration": 9.1
     },
     {
       "slug": "tesla-cannon",
       "label": "Tesla Cannon",
-      "audioUrl": "/sounds/winston/tesla-cannon.mp3",
-      "videoUrl": "/sounds/winston/tesla-cannon.mp4",
+      "audioUrl": "/sounds/winston/tesla-cannon.mp3?v=e2c43859",
+      "videoUrl": "/sounds/winston/tesla-cannon.mp4?v=bd1bba75",
       "duration": 9.36
     }
   ],
@@ -1171,15 +1171,15 @@
     {
       "slug": "adaptive-shield",
       "label": "Adaptive Shield",
-      "audioUrl": "/sounds/wrecking-ball/adaptive-shield.mp3",
-      "videoUrl": "/sounds/wrecking-ball/adaptive-shield.mp4",
+      "audioUrl": "/sounds/wrecking-ball/adaptive-shield.mp3?v=f5b019f8",
+      "videoUrl": "/sounds/wrecking-ball/adaptive-shield.mp4?v=645dbfe4",
       "duration": 7.58
     },
     {
       "slug": "piledriver",
       "label": "Piledriver",
-      "audioUrl": "/sounds/wrecking-ball/piledriver.mp3",
-      "videoUrl": "/sounds/wrecking-ball/piledriver.mp4",
+      "audioUrl": "/sounds/wrecking-ball/piledriver.mp3?v=b5bf5ea9",
+      "videoUrl": "/sounds/wrecking-ball/piledriver.mp4?v=b149afa5",
       "duration": 2.93
     }
   ],
@@ -1217,15 +1217,15 @@
     {
       "slug": "graviton-surge",
       "label": "Graviton Surge",
-      "audioUrl": "/sounds/zarya/graviton-surge.mp3",
-      "videoUrl": "/sounds/zarya/graviton-surge.mp4",
+      "audioUrl": "/sounds/zarya/graviton-surge.mp3?v=bbe27c4f",
+      "videoUrl": "/sounds/zarya/graviton-surge.mp4?v=fa7c4f18",
       "duration": 5.57
     },
     {
       "slug": "particle-cannon",
       "label": "Particle Cannon",
-      "audioUrl": "/sounds/zarya/particle-cannon.mp3",
-      "videoUrl": "/sounds/zarya/particle-cannon.mp4",
+      "audioUrl": "/sounds/zarya/particle-cannon.mp3?v=4a0e837c",
+      "videoUrl": "/sounds/zarya/particle-cannon.mp4?v=e4a744f5",
       "duration": 10.34
     }
   ],
