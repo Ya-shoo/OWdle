@@ -45,6 +45,22 @@ What the Mac side should NOT do without coordinating with Windows:
 - `npm run sync-clips` — only works on the PC where the source zips live in `~/Downloads/owdle-clips*.zip`. Mac-side dev pulls finished media from R2.
 - `npm run sync-spots` — operates on locally captured spots files. Same reasoning.
 
+# Dev hub
+
+Local-only tools live at `/labeler/*` (dev-only — production builds emit 404s for every page under it via `notFound()` in `app/labeler/layout.tsx`). Open them at `http://localhost:3000/labeler/` after `npm run dev`. The vision is one place where both OWdle and Deadlockle internal workflows live — test new features, edit/correct data, optimize before launching.
+
+Current tools:
+
+- `/labeler/` — audio labeler. Loads a capture video, lets you mark in/out ranges per ability, exports a ZIP of trimmed clips for `npm run sync-clips`.
+- `/labeler/votes/` — embeds the votes admin dashboard (next-game vote tally across OWdle + Deadlockle).
+
+`npm run dev` is wired through `concurrently` to start three processes in parallel: `next dev`, `scripts/votes-admin-server.mjs` (votes proxy on `:8788`, reads `ADMIN_SECRET` from `.env.secrets`), and `scripts/sound-trims-server.mjs` (sound clip trim editor). Use `npm run dev:next` if you only want Next without the helpers.
+
+Adding a new tool:
+1. Create `app/labeler/<tool>/page.tsx` — call `notFound()` when `NODE_ENV === "production"`.
+2. Add an entry to the `TOOLS` array in `components/DevHubNav.tsx`.
+3. If it needs a helper server (proxying secrets, hitting D1, etc.), add a `scripts/<tool>-server.mjs` and append it to the `concurrently` chain in `dev` and the `--kill-others-on-fail` group.
+
 # Tracked-state notes for future sessions
 
 Multiple modes are in-flight. As of the R2 migration commit (`f6efdf6 Move media to Cloudflare R2…`):

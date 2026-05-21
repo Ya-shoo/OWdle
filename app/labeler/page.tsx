@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Labeler } from "@/components/Labeler";
 
-// Internal labeling tool — kept out of production builds. Renders only
-// when running locally (`npm run dev`); a production prerender hits the
-// notFound() branch and the static export emits a 404 for /labeler/.
+// Audio labeler — first tool under OWdle's local dev hub. The shared
+// /labeler/layout.tsx renders the cross-tool nav and the dev-only gate;
+// this page just owns the tool's body.
 const IS_DEV = process.env.NODE_ENV !== "production";
 
 export const metadata: Metadata = IS_DEV
   ? {
-      title: "Labeler — OWdle",
+      title: "Audio labeler — OWdle dev hub",
       robots: { index: false, follow: false },
     }
   : {};
