@@ -503,7 +503,7 @@ function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
               <img
                 src={g.game_image ?? PLACEHOLDER_IMG}
                 alt=""
-                className="h-8 w-12 shrink-0 border border-line bg-inset object-cover"
+                className="h-14 w-24 shrink-0 border border-line bg-inset object-cover"
                 loading="lazy"
               />
               <span className="min-w-0 flex-1 truncate text-sm text-ink">
