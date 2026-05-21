@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n next,trims -c cyan,magenta --kill-others-on-fail \"next dev\" \"node scripts/sound-trims-server.mjs\"",
+    "dev": "concurrently -n next,votes,feedback,trims -c cyan,yellow,blue,magenta --kill-others-on-fail \"next dev\" \"node scripts/votes-admin-server.mjs\" \"node scripts/feedback-admin-server.mjs\" \"node scripts/sound-trims-server.mjs\"",
     "dev:next": "next dev",
     "build": "next build",
     "start": "next start",

@@ -58,14 +58,14 @@ Current tools:
 - `/labeler/votes/` — embeds the votes admin dashboard (next-game vote tally across OWdle + Deadlockle).
 - `/labeler/feedback/` — embeds the free-form feedback admin dashboard.
 
-`npm run dev` is wired through `concurrently` to start two processes in parallel: `next dev` and `scripts/sound-trims-server.mjs` (sound clip trim editor on `:8789`). `npm run dev:next` runs Next alone.
+`npm run dev` is wired through `concurrently` to start four processes in parallel: `next dev`, `scripts/votes-admin-server.mjs` (`:8788`), `scripts/feedback-admin-server.mjs` (`:8790`), and `scripts/sound-trims-server.mjs` (`:8789`). One command, every dev tool reachable. `npm run dev:next` runs Next alone.
 
-Votes admin (`:8788`) and feedback admin (`:8790`) are deliberately NOT in the unified dev script, because both require `ADMIN_SECRET` from `.env.secrets` to start and that file isn't present on either dev machine in the routine map-mode workflow. Start them on demand: `npm run votes:admin` / `npm run feedback:admin`.
+The votes / feedback helpers proxy authenticated requests to the live site using `ADMIN_SECRET` from `.env.secrets`. That file is gitignored and not committed to either machine by default. **The helpers are designed to survive a missing `.env.secrets`** — they still boot, but serve a "viewer offline · set ADMIN_SECRET" stub page instead of the real dashboard. The `npm run dev` flow therefore works on a fresh clone without ceremony; you only need `.env.secrets` when you actually want to read prod votes / feedback data, and then it's drop-the-file-and-restart.
 
 Adding a new tool:
 1. Create `app/labeler/<tool>/page.tsx` — call `notFound()` when `NODE_ENV === "production"`.
 2. Append a row to the `TOOL_GROUPS` config in `app/labeler/page.tsx` (pick the right section, or add a new one).
-3. If it needs a helper server: add a `scripts/<tool>-server.mjs` and either chain it into `npm run dev` (if it has no secret requirement) or expose it as a standalone `npm run <tool>:server` script (if it does).
+3. If it needs a helper server: add a `scripts/<tool>-server.mjs`, chain it into the `concurrently` invocation in `npm run dev`, and — if it depends on a secret or other external resource — make startup survive that resource being missing so a clean clone of the repo still gets a working dev flow.
 
 # Tracked-state notes for future sessions
 

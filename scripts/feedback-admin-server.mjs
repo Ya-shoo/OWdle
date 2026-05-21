@@ -19,25 +19,70 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
 
+// Returns the secret string if .env.secrets exists and parses cleanly,
+// otherwise null. Never throws — see votes-admin-server.mjs for the
+// rationale (graceful degradation so the unified `npm run dev` doesn't
+// die on a missing secret).
 function readSecret() {
   const path = resolve(repoRoot, ".env.secrets");
   let raw;
   try {
     raw = readFileSync(path, "utf8");
   } catch {
-    throw new Error(`Could not read ${path}. Is .env.secrets present?`);
+    return null;
   }
   for (const line of raw.split("\n")) {
     if (line.trim().startsWith("#")) continue;
     const m = line.match(/^\s*ADMIN_SECRET\s*=\s*["']?([^"'\n\r]+?)["']?\s*$/);
     if (m) return m[1];
   }
-  throw new Error("ADMIN_SECRET not found in .env.secrets");
+  return null;
 }
 
 const SECRET = readSecret();
 const ORIGIN = process.env.FEEDBACK_ADMIN_ORIGIN ?? "https://playowdle.com";
 const PORT = Number(process.env.FEEDBACK_ADMIN_PORT ?? 8790);
+
+// Shown inside the iframe whenever SECRET is null. Self-contained so it
+// works under the iframe's `sandbox` restrictions (no external CSS/JS).
+const NO_SECRET_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Feedback admin · ADMIN_SECRET needed</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body { margin: 0; padding: 32px; font: 14px/1.55 ui-sans-serif, system-ui, sans-serif;
+         background: #0c0d10; color: #e7e9ee; }
+  main { max-width: 640px; }
+  h1 { font-size: 16px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .tag { display: inline-block; margin-bottom: 16px; padding: 2px 8px; border-radius: 999px;
+         font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+         background: #1b1e25; border: 1px solid #262a33; color: #ff8a3c; }
+  p { margin: 12px 0; color: #c8ccd4; }
+  code { background: #14161b; padding: 1px 6px; border-radius: 4px;
+         border: 1px solid #262a33; font: 12px ui-monospace, Menlo, monospace; }
+  ol { padding-left: 22px; }
+  li { margin: 6px 0; color: #c8ccd4; }
+  .muted { color: #8a91a0; font-size: 12px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <span class="tag">Viewer offline</span>
+  <h1>Set <code>ADMIN_SECRET</code> to view feedback</h1>
+  <p>This dashboard reads from <code>${ORIGIN}/api/feedback-raw</code>, which is
+     authenticated. Provide the admin token locally and refresh:</p>
+  <ol>
+    <li>Create <code>.env.secrets</code> at the repo root.</li>
+    <li>Add a line: <code>ADMIN_SECRET=&lt;your token&gt;</code></li>
+    <li>Restart <code>npm run dev</code>.</li>
+  </ol>
+  <p class="muted">The rest of the dev hub works without this — it only matters when you want to read
+     prod feedback submissions. Local-only file; never committed (gitignored via <code>.env*</code>).</p>
+</main>
+</body>
+</html>`;
 
 const HTML = `<!DOCTYPE html>
 <html lang="en">
@@ -341,11 +386,22 @@ const server = createServer(async (req, res) => {
 
   if (url === "/" || url.startsWith("/?")) {
     res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
-    res.end(HTML);
+    res.end(SECRET == null ? NO_SECRET_HTML : HTML);
     return;
   }
 
   if (url.startsWith("/api/feedback-raw")) {
+    if (SECRET == null) {
+      res.writeHead(503, { "content-type": "application/json" });
+      res.end(
+        JSON.stringify({
+          error: "no_admin_secret",
+          message:
+            "Server is running without ADMIN_SECRET. Set it in .env.secrets and restart npm run dev.",
+        }),
+      );
+      return;
+    }
     const target = ORIGIN + url;
     try {
       const upstream = await fetch(target, {
@@ -371,6 +427,12 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, "127.0.0.1", () => {
   console.log(`\nFeedback admin viewer running:`);
   console.log(`  http://localhost:${PORT}`);
-  console.log(`\n  proxying ${ORIGIN}/api/feedback-raw`);
+  if (SECRET == null) {
+    console.log(
+      `  ⚠ ADMIN_SECRET not found in .env.secrets — serving "viewer offline" page`,
+    );
+  } else {
+    console.log(`\n  proxying ${ORIGIN}/api/feedback-raw`);
+  }
   console.log(`  bound to 127.0.0.1 only · ctrl-c to stop\n`);
 });
