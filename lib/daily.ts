@@ -55,9 +55,43 @@ const ICON_OVERRIDES = iconOverridesData as Record<
   Record<string, string>
 >;
 
-// Returns the UTC date string YYYY-MM-DD for a given Date (default: now).
+// Daily puzzles roll over at 2:15am Pacific Time (America/Los_Angeles).
+// DST-aware: the actual UTC moment shifts between 10:15 UTC in winter (PST,
+// UTC-8) and 09:15 UTC in summer (PDT, UTC-7). All day strings and seeds
+// downstream of dayString() are therefore "Pacific puzzle days," not UTC
+// calendar days.
+const RESET_HOUR_PT = 2;
+const RESET_MIN_PT = 15;
+const RESET_TZ = "America/Los_Angeles";
+
+// Returns the Pacific puzzle-day string YYYY-MM-DD for a given Date
+// (default: now). The puzzle day rolls over at 2:15am Pacific, so the
+// hours between Pacific midnight and 2:15am still belong to the previous
+// puzzle day.
 export function dayString(d: Date = new Date()): string {
-  return d.toISOString().slice(0, 10);
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: RESET_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(d);
+  const get = (type: string) =>
+    parts.find((p) => p.type === type)?.value ?? "0";
+  const y = parseInt(get("year"), 10);
+  const mo = parseInt(get("month"), 10);
+  const da = parseInt(get("day"), 10);
+  const h = parseInt(get("hour"), 10);
+  const mi = parseInt(get("minute"), 10);
+
+  const beforeReset =
+    h < RESET_HOUR_PT || (h === RESET_HOUR_PT && mi < RESET_MIN_PT);
+  const dayShift = beforeReset ? -1 : 0;
+  return new Date(Date.UTC(y, mo - 1, da + dayShift))
+    .toISOString()
+    .slice(0, 10);
 }
 
 // FNV-1a 32-bit string hash. Deterministic, fast, well-distributed enough

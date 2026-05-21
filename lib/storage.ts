@@ -1,5 +1,5 @@
 // localStorage-backed game state per mode + day. A finished puzzle persists
-// across reloads but resets at UTC midnight when the day key changes.
+// across reloads but resets at 2:15am Pacific when the day key changes.
 
 export type ModeState = {
   day: string;

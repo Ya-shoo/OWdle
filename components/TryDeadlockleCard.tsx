@@ -40,7 +40,7 @@ export function TryDeadlockleCard() {
           </p>
           <p className="mt-3 max-w-lg text-sm text-ink-soft">
             Same daily puzzle format, different game. Heroes, abilities,
-            splash, items. Resets at midnight UTC.
+            splash, items. Resets at 2:15am Pacific.
           </p>
         </div>
 

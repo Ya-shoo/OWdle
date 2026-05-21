@@ -131,8 +131,8 @@ export function NextModeCTA({ current }: { current: ModeSlug }) {
 }
 
 // Shown inline when this is the last unfinished mode of the day. The
-// player gets a round-by-round score recap, a UTC reset countdown, and a
-// sister-site nudge as their next-action prompt.
+// player gets a round-by-round score recap, a 2:15am-Pacific reset
+// countdown, and a sister-site nudge as their next-action prompt.
 function DailyCompletePanel({
   modeCount,
   totalGuesses,
@@ -176,7 +176,7 @@ function DailyCompletePanel({
             />
           </div>
           <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">
-            Refreshes at midnight UTC
+            Refreshes at 2:15am Pacific
           </span>
         </div>
 

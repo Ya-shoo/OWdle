@@ -282,7 +282,7 @@ function DailyCompleteHero({
           You finished all <span className="text-ink">{count}</span> available
           modes today in{" "}
           <span className="text-ink">{totalGuesses}</span> total guesses. New
-          puzzles arrive at <span className="text-ink">midnight UTC</span>.
+          puzzles arrive at <span className="text-ink">2:15am Pacific</span>.
         </p>
       </div>
     </motion.div>

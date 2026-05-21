@@ -176,7 +176,7 @@ export default function HowToPlayPage() {
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-soft">
               OWdle is a daily Overwatch hero quiz. Five modes, each with its
-              own hero, midnight-UTC reset. Every mode is wordle-style: your
+              own hero, 2:15am-Pacific reset. Every mode is wordle-style: your
               guesses tell you how close you are, and you keep going until you
               land it.
             </p>
@@ -185,7 +185,7 @@ export default function HowToPlayPage() {
               <span className="h-px w-6 bg-line" aria-hidden />
               <span>different hero per mode</span>
               <span className="h-px w-6 bg-line" aria-hidden />
-              <span>resets 00:00 utc</span>
+              <span>resets 2:15am pacific</span>
             </div>
           </div>
         </section>
@@ -211,7 +211,7 @@ export default function HowToPlayPage() {
             <RuleCard
               num="iii"
               label="One reset, all modes"
-              body="At 00:00 UTC every mode rolls over together. There's no rush. Solve at your own pace within the day."
+              body="At 2:15am Pacific every mode rolls over together. There's no rush. Solve at your own pace within the day."
             />
           </ul>
         </section>
