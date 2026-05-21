@@ -297,20 +297,20 @@ export function RequestNextGame() {
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
               Request the next game
             </p>
-            <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
+            <h3 className="mt-1.5 font-soft text-lg font-bold text-ink sm:text-xl">
               Which game should I work on next?
             </h3>
-            <p className="mt-2 text-sm text-ink-soft">
+            <p className="mt-1.5 text-sm text-ink-soft">
               Search any game and vote. The most requested ones get built.
             </p>
             {refreshIn ? (
-              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
                 Vote again in{" "}
                 <span className="tabular-nums text-info">{refreshIn}</span>
               </p>
             ) : null}
 
-            <div className="relative mt-5">
+            <div className="relative mt-3.5">
               <div
                 className={clsx(
                   "flex items-stretch border transition-colors",
@@ -353,7 +353,7 @@ export function RequestNextGame() {
                       ? `${listboxId}-${results[activeIndex].id}`
                       : undefined
                   }
-                  className="flex-1 bg-transparent px-4 py-3 font-sans text-sm text-ink placeholder:text-ink-faint disabled:opacity-50"
+                  className="flex-1 bg-transparent px-4 py-2.5 font-sans text-sm text-ink placeholder:text-ink-faint disabled:opacity-50"
                 />
                 {selected ? (
                   <button
@@ -429,7 +429,7 @@ export function RequestNextGame() {
               ) : null}
             </div>
 
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-3.5 flex items-center gap-3">
               <button
                 type="button"
                 onClick={submit}
@@ -439,7 +439,7 @@ export function RequestNextGame() {
                   (selected && voted.includes(selected.id))
                 }
                 className={clsx(
-                  "inline-flex items-center gap-2 rounded-full px-6 py-2.5 font-soft text-sm font-bold transition-all duration-150",
+                  "inline-flex items-center gap-2 rounded-full px-5 py-2 font-soft text-sm font-bold transition-all duration-150",
                   selected && !voted.includes(selected.id)
                     ? "bg-accent text-on-accent shadow-lg shadow-accent/25 hover:bg-accent-soft hover:-translate-y-0.5"
                     : "cursor-not-allowed border border-line bg-canvas text-ink-faint",
@@ -472,7 +472,7 @@ export function RequestNextGame() {
 // enough to read the game's cover art at a glance.
 function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
   return (
-    <div className="mt-6 border-t border-line pt-5">
+    <div className="mt-5 border-t border-line pt-4">
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
         Current top picks
       </p>
@@ -520,7 +520,7 @@ function PickCard({
         hero && "col-span-2",
       )}
     >
-      <div className={clsx("relative", hero ? "aspect-[16/7]" : "aspect-video")}>
+      <div className={clsx("relative", hero ? "aspect-[2.4/1]" : "aspect-video")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={entry.game_image ?? PLACEHOLDER_IMG}
