@@ -25,7 +25,7 @@ export function SupportLinks() {
       <div className="mt-7 flex flex-col items-center gap-6">
         {/* Ko-fi profile-card preview — anchors the tip button so visitors
             see who they'd be supporting before they click. */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           {/* Avatar doubles as a quick hop to the creator's Instagram —
               same destination as the IG icon below, but a much bigger
               tap target on mobile. */}
@@ -40,16 +40,16 @@ export function SupportLinks() {
             <img
               src="/kofi-avatar.jpg"
               alt=""
-              width={80}
-              height={80}
-              className="h-20 w-20 rounded-full border border-line object-cover"
+              width={112}
+              height={112}
+              className="h-28 w-28 rounded-full border border-line object-cover"
             />
           </a>
           <div>
-            <p className="font-soft text-xl font-bold leading-none text-ink">
+            <p className="font-soft text-2xl font-bold leading-none text-ink">
               yush
             </p>
-            <p className="mt-2 text-sm text-ink-soft">ko-fi.com/yushoo</p>
+            <p className="mt-2 text-base text-ink-soft">ko-fi.com/yushoo</p>
             {/* Personal social icons — signal a real human behind the tip jar.
                 Universal HTTPS links so iOS/Android open the X & Instagram
                 apps automatically when installed, falling back to the web. */}
@@ -106,7 +106,7 @@ function ShareMark() {
 
 function XMark() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden>
       <path
         d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
         fill="currentColor"
@@ -117,7 +117,7 @@ function XMark() {
 
 function InstagramMark() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden fill="none">
+    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none">
       <defs>
         <linearGradient
           id="instagram-brand-gradient"
