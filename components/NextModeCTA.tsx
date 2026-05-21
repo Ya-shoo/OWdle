@@ -73,15 +73,18 @@ export function NextModeCTA({ current }: { current: ModeSlug }) {
     return () => window.cancelAnimationFrame(id);
   }, []);
 
-  // Notify the floating FeedbackButton that this is the player's last
-  // mode for the day so it can amplify its visual state. Same-tab writes
-  // don't fire the native `storage` event, so we dispatch an explicit
-  // signal alongside the panel render.
+  // Notify the FeedbackButton that a mode was just completed. On desktop
+  // it re-scans for all-done amplification; on mobile it surfaces its
+  // temporary sticky-footer popup. We dispatch on every NextModeCTA mount
+  // (i.e., every win screen) rather than gating on all-done, since the
+  // mobile popup is meant to fire after every completion. Same-tab
+  // localStorage writes don't trigger the native `storage` event, so
+  // this explicit signal is what drives both behaviours.
   useEffect(() => {
-    if (next === null && typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("feedback:refresh"));
     }
-  }, [next]);
+  }, []);
 
   if (next === null) {
     return (
