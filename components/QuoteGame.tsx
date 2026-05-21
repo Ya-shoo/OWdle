@@ -617,31 +617,45 @@ function LineAudioButton({
         toneClass,
       )}
     >
-      {playing ? <StopIcon /> : <PlayIcon />}
+      {playing ? <SpeakerActiveIcon /> : <SpeakerIcon />}
     </button>
   );
 }
 
-function PlayIcon() {
+function SpeakerIcon() {
   return (
     <svg
       viewBox="0 0 12 12"
       aria-hidden
       className="h-2.5 w-2.5 shrink-0 sm:h-3.5 sm:w-3.5"
     >
-      <path d="M3 2 L3 10 L10 6 Z" fill="currentColor" />
+      <path d="M1 4.5 H3.5 L7 1.5 V10.5 L3.5 7.5 H1 Z" fill="currentColor" />
     </svg>
   );
 }
 
-function StopIcon() {
+function SpeakerActiveIcon() {
   return (
     <svg
       viewBox="0 0 12 12"
       aria-hidden
       className="h-2.5 w-2.5 shrink-0 sm:h-3.5 sm:w-3.5"
     >
-      <rect x="3" y="3" width="6" height="6" fill="currentColor" />
+      <path d="M1 4.5 H3.5 L7 1.5 V10.5 L3.5 7.5 H1 Z" fill="currentColor" />
+      <path
+        d="M8 4.5 Q9.25 6 8 7.5"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M9.25 3 Q11 6 9.25 9"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+        fill="none"
+      />
     </svg>
   );
 }
