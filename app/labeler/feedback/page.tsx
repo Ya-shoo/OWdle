@@ -6,8 +6,10 @@ import { FeedbackAdminFrame } from "@/components/FeedbackAdminFrame";
 // server.mjs on :8790) so it lives inside the dev hub. The helper
 // server reads ADMIN_SECRET from .env.secrets and proxies to
 // playowdle.com/api/feedback-raw so the secret never leaves the dev
-// machine. `npm run dev` chains the helper server in via concurrently,
-// so this page works as soon as you've started the dev server.
+// machine. The helper is opt-in: start it explicitly with
+// `npm run feedback:admin` (separate terminal). It's not chained into
+// `npm run dev` because it requires .env.secrets to even start up, and
+// Yash doesn't routinely use this page.
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 

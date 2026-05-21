@@ -49,17 +49,23 @@ What the Mac side should NOT do without coordinating with Windows:
 
 Local-only tools live at `/labeler/*` (dev-only — production builds emit 404s for every page under it via `notFound()` in `app/labeler/layout.tsx`). Open them at `http://localhost:3000/labeler/` after `npm run dev`. The vision is one place where both OWdle and Deadlockle internal workflows live — test new features, edit/correct data, optimize before launching.
 
+The hub itself is at `app/labeler/page.tsx` — a server-rendered index of every tool, grouped into sections (Map mode, Sound mode, Site admin, Play) via the `TOOL_GROUPS` config. Adding a tool means appending a row there, not editing a separate nav component.
+
 Current tools:
 
-- `/labeler/` — audio labeler. Loads a capture video, lets you mark in/out ranges per ability, exports a ZIP of trimmed clips for `npm run sync-clips`.
+- `/labeler/sound/` — audio labeler. Loads a capture video, lets you mark in/out ranges per ability, exports a ZIP of trimmed clips for `npm run sync-clips`.
+- `/labeler/map/{calibrate,review,edit,admin}/` — map mode labeling pipeline (calibrate overhead, review screenshots, edit pins, aggregate spot feedback).
 - `/labeler/votes/` — embeds the votes admin dashboard (next-game vote tally across OWdle + Deadlockle).
+- `/labeler/feedback/` — embeds the free-form feedback admin dashboard.
 
-`npm run dev` is wired through `concurrently` to start three processes in parallel: `next dev`, `scripts/votes-admin-server.mjs` (votes proxy on `:8788`, reads `ADMIN_SECRET` from `.env.secrets`), and `scripts/sound-trims-server.mjs` (sound clip trim editor). Use `npm run dev:next` if you only want Next without the helpers.
+`npm run dev` is wired through `concurrently` to start two processes in parallel: `next dev` and `scripts/sound-trims-server.mjs` (sound clip trim editor on `:8789`). `npm run dev:next` runs Next alone.
+
+Votes admin (`:8788`) and feedback admin (`:8790`) are deliberately NOT in the unified dev script, because both require `ADMIN_SECRET` from `.env.secrets` to start and that file isn't present on either dev machine in the routine map-mode workflow. Start them on demand: `npm run votes:admin` / `npm run feedback:admin`.
 
 Adding a new tool:
 1. Create `app/labeler/<tool>/page.tsx` — call `notFound()` when `NODE_ENV === "production"`.
-2. Add an entry to the `TOOLS` array in `components/DevHubNav.tsx`.
-3. If it needs a helper server (proxying secrets, hitting D1, etc.), add a `scripts/<tool>-server.mjs` and append it to the `concurrently` chain in `dev` and the `--kill-others-on-fail` group.
+2. Append a row to the `TOOL_GROUPS` config in `app/labeler/page.tsx` (pick the right section, or add a new one).
+3. If it needs a helper server: add a `scripts/<tool>-server.mjs` and either chain it into `npm run dev` (if it has no secret requirement) or expose it as a standalone `npm run <tool>:server` script (if it does).
 
 # Tracked-state notes for future sessions
 

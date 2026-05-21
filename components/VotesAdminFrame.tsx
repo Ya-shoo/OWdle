@@ -8,10 +8,11 @@ import { useEffect, useState } from "react";
 // HTML + proxies the admin API back to the live site using
 // ADMIN_SECRET from .env.secrets.
 //
-// `npm run dev` starts the helper alongside next dev via concurrently,
-// so under the normal "spin up the dev server" flow this Just Works.
-// If the helper isn't reachable (port collision, secret missing, etc.)
-// the iframe shows a clear error state instead of an opaque blank box.
+// The helper is NOT auto-started by `npm run dev` — it's opt-in via
+// `npm run votes:admin` in a separate terminal, because it requires
+// `.env.secrets` and Yash doesn't routinely use it. If the helper
+// isn't reachable the iframe shows a clear error state instead of an
+// opaque blank box.
 
 const HELPER_URL = "http://localhost:8788";
 
@@ -50,16 +51,16 @@ export function VotesAdminFrame() {
           </h2>
           <p className="mt-3 text-sm text-ink-soft">
             The votes admin needs <code>scripts/votes-admin-server.mjs</code>{" "}
-            listening on <code>{HELPER_URL}</code>. The standard{" "}
-            <code>npm run dev</code> chains it in alongside Next, so the
-            most likely fixes are:
+            listening on <code>{HELPER_URL}</code>. It&apos;s not part
+            of <code>npm run dev</code> — start it explicitly:
           </p>
-          <ul className="mt-4 list-disc space-y-2 pl-6 text-sm text-ink-soft">
-            <li>
-              You ran <code>npm run dev:next</code> instead of{" "}
-              <code>npm run dev</code> — switch to the full one to start
-              the helpers.
-            </li>
+          <pre className="mt-3 rounded-(--radius-card) border border-line bg-bg/60 px-3 py-2 font-mono text-xs text-ink-soft">
+            npm run votes:admin
+          </pre>
+          <p className="mt-4 text-sm text-ink-soft">
+            If that command itself fails:
+          </p>
+          <ul className="mt-2 list-disc space-y-2 pl-6 text-sm text-ink-soft">
             <li>
               Port <code>8788</code> is busy. Override with{" "}
               <code>VOTES_ADMIN_PORT=…</code> on the helper and update
