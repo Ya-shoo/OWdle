@@ -583,7 +583,7 @@ function ConversationLineRow({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="font-display text-xl leading-snug text-ink-faint sm:text-2xl select-none"
+            className="font-display text-xl leading-snug text-ink-faint sm:text-2xl select-none break-all"
             aria-hidden
           >
             {redactedFor(text)}
@@ -613,12 +613,11 @@ function LineAudioButton({
       onClick={onToggle}
       aria-label={playing ? "Stop voice line" : "Play this voice line"}
       className={clsx(
-        "inline-flex items-center gap-1.5 rounded-(--radius-pill) border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.18em] transition-colors",
+        "inline-flex h-6 w-6 items-center justify-center rounded-(--radius-pill) border transition-colors",
         toneClass,
       )}
     >
       {playing ? <StopIcon /> : <PlayIcon />}
-      {playing ? "Playing" : "Play"}
     </button>
   );
 }
@@ -652,7 +651,7 @@ function StopIcon() {
 }
 
 function redactedFor(text: string): string {
-  const len = Math.min(60, Math.max(18, Math.round(text.length * 0.6)));
+  const len = Math.min(36, Math.max(18, Math.round(text.length * 0.6)));
   return "█".repeat(len);
 }
 
