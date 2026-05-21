@@ -33,6 +33,13 @@ const TOOLS: Tool[] = [
     description: "Live tally of next-game votes across OWdle + Deadlockle.",
     helper: "localhost:8788",
   },
+  {
+    href: "/labeler/feedback/",
+    label: "Feedback admin",
+    description:
+      "Free-form feedback submissions, filterable by site + keywords.",
+    helper: "localhost:8789",
+  },
 ];
 
 export function DevHubNav() {
