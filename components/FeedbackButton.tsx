@@ -19,6 +19,7 @@
 // popup.
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import { loadModeState } from "@/lib/storage";
@@ -44,6 +45,16 @@ function readAllDone(): boolean {
 }
 
 export function FeedbackButton() {
+  // Map mode owns the bottom-right corner (minimap + submit button live
+  // there during the guess phase). The floating pill moves to the
+  // top-right on every /map and /labeler/map route so it stops blocking
+  // the submit button. Other pages keep the default bottom-right anchor.
+  const pathname = usePathname();
+  const isMapRoute =
+    pathname === "/map" ||
+    pathname?.startsWith("/map/") === true ||
+    pathname?.startsWith("/labeler/map") === true;
+
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
   const [text, setText] = useState("");
@@ -168,7 +179,8 @@ export function FeedbackButton() {
         onClick={openDialog}
         aria-label={allDone ? "Send feedback. You finished every mode today" : "Send feedback"}
         className={clsx(
-          "fixed z-40 hidden items-center gap-2 backdrop-blur-sm transition-all md:inline-flex md:bottom-5 md:right-5",
+          "fixed z-40 hidden items-center gap-2 backdrop-blur-sm transition-all md:inline-flex md:right-5",
+          isMapRoute ? "md:top-5" : "md:bottom-5",
           allDone
             ? "border-2 border-correct bg-correct/15 px-5 py-3 font-mono text-xs uppercase tracking-[0.22em] text-correct shadow-[0_0_28px_-6px_var(--correct,#7fdc92)] hover:bg-correct/25"
             : "border border-edge bg-surface/95 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-ink shadow-[0_4px_12px_rgba(0,0,0,0.35)] hover:border-info hover:text-info",

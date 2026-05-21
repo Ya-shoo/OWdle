@@ -229,12 +229,7 @@ export function saveMapState(state: MapState): void {
 // flag is binary; the difficulty bucket is coarse. Both are enough
 // to flag spots for human review without per-user manual triage.
 
-export type SpotDifficulty =
-  | "very-easy"
-  | "easy"
-  | "normal"
-  | "hard"
-  | "very-hard";
+export type SpotDifficulty = "easy" | "normal" | "hard";
 
 export type SpotFeedback = {
   spotId: string;

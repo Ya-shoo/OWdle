@@ -421,6 +421,31 @@ export type MapSpot = {
 const MAP_SPOTS_BY_KEY = spotsData as Record<string, MapSpot[]>;
 const MAP_SPOTS: MapSpot[] = Object.values(MAP_SPOTS_BY_KEY).flat();
 
+/**
+ * Read-only view of every captured spot across every map. Used by the
+ * dev-only "randomize today's picks" button to shuffle outside the
+ * proximity-constrained daily selection, and by any future tool that
+ * needs to enumerate the full pool.
+ */
+export function getAllMapSpots(): ReadonlyArray<MapSpot> {
+  return MAP_SPOTS;
+}
+
+/**
+ * Resolve a list of spot IDs back to MapSpot records, preserving the
+ * caller's order. IDs that don't match a known spot are dropped. Used
+ * to rehydrate a dev "override" picked-spots list stored in localStorage.
+ */
+export function getMapSpotsByIds(ids: ReadonlyArray<string>): MapSpot[] {
+  const index = new Map(MAP_SPOTS.map((s) => [s.id, s]));
+  const out: MapSpot[] = [];
+  for (const id of ids) {
+    const s = index.get(id);
+    if (s) out.push(s);
+  }
+  return out;
+}
+
 // Minimum pixel distance between two picks on the same map. Computed
 // per-spot relative to that map's overhead long edge so it scales when
 // we add Push / smaller maps later. Default ~12% of long edge keeps

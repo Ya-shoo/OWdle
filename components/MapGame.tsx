@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { dayString, getMapRoundsForDay, type MapSpot } from "@/lib/daily";
+import {
+  dayString,
+  getAllMapSpots,
+  getMapRoundsForDay,
+  getMapSpotsByIds,
+  type MapSpot,
+} from "@/lib/daily";
 import { MAPS, type Gamemode } from "@/lib/maps";
 import {
   loadMapState,
@@ -134,7 +140,30 @@ export function MapGame() {
   useEffect(() => {
     const today = dayString();
     setDay(today);
-    const picks = getMapRoundsForDay(today, ROUNDS_PER_DAY);
+    // Dev randomize-picks override. When the DevRandomize button has
+    // written a list of spot IDs to `owdle.map.${day}.override`, use
+    // those instead of the deterministic daily picks so testers can
+    // cycle through fresh selections without waiting for a new day.
+    // Falls through to the daily picks if parsing fails, the override
+    // is empty, or the listed IDs no longer resolve to real spots.
+    let picks: MapSpot[] = [];
+    if (typeof window !== "undefined") {
+      const overrideRaw = window.localStorage.getItem(
+        `owdle.map.${today}.override`,
+      );
+      if (overrideRaw) {
+        try {
+          const ids = JSON.parse(overrideRaw);
+          if (Array.isArray(ids)) {
+            const resolved = getMapSpotsByIds(ids.filter((x): x is string => typeof x === "string"));
+            if (resolved.length === ROUNDS_PER_DAY) picks = resolved;
+          }
+        } catch {
+          /* fall through to daily picks */
+        }
+      }
+    }
+    if (picks.length === 0) picks = getMapRoundsForDay(today, ROUNDS_PER_DAY);
     setSpots(picks);
 
     let saved = loadMapState(today);
@@ -223,38 +252,23 @@ export function MapGame() {
     return () => ro.disconnect();
   }, [activeCal]);
 
-  // Wheel zoom — anchored at the cursor. We have to attach via
-  // addEventListener with `passive: false` because React's synthetic
-  // wheel handler is passive on most browsers and can't preventDefault
-  // the page scroll.
-  useEffect(() => {
-    const el = overheadRef.current;
-    if (!el || !activeCal) return;
-    const handler = (e: WheelEvent) => {
-      e.preventDefault();
+  // Anchored zoom helper. vx/vy are CSS-px inside the overhead element.
+  // Used by wheel, Safari gesture, and pinch-touch paths so all three
+  // input modalities feel identical.
+  const overheadZoomAt = useCallback(
+    (vx: number, vy: number, factor: number) => {
+      const el = overheadRef.current;
+      if (!el || !activeCal) return;
       const rect = el.getBoundingClientRect();
-      const vx = e.clientX - rect.left;
-      const vy = e.clientY - rect.top;
       const vpW = rect.width;
       const vpH = rect.height;
-      // deltaY-magnitude exponential factor — matches Google Maps /
-      // GeoGuessr feel. Trackpads (small deltaY per event, many
-      // events) get a gentle continuous zoom; mouse wheels (~100
-      // deltaY per discrete tick) get ~1.28× per click. Per the
-      // wheel-anchor math, a bigger factor also shifts the center
-      // more aggressively toward the cursor — so each tick visibly
-      // moves toward where the user is pointing.
-      const factor = Math.exp(-e.deltaY / 400);
       setZoom((curZoom) => {
         const newZoom = Math.max(1, Math.min(16, curZoom * factor));
         if (newZoom === curZoom) return curZoom;
         setPan((curPan) => {
           // The inner wrapper is uniformly scaled: width: 100%
           // (= vpW), height: vpW * overheadH/overheadW. So the
-          // CSS-px→image-px ratio is `overheadW/vpW` on BOTH axes —
-          // not `overheadH/vpW` on y. Using the wrong y-ratio
-          // anchored the wheel-zoom to an incorrect image point and
-          // drifted the view away from the cursor on non-square maps.
+          // CSS-px→image-px ratio is `overheadW/vpW` on BOTH axes.
           const cssToImage = activeCal.overheadW / vpW;
           const innerH = vpW * (activeCal.overheadH / activeCal.overheadW);
           // Image-pixel under cursor at the OLD zoom/pan.
@@ -264,16 +278,11 @@ export function MapGame() {
           const iy =
             activeCal.overheadH / 2 +
             ((vy - vpH / 2 - curPan.y) / curZoom) * cssToImage;
-          // Solve for newPan that keeps (ix, iy) under the cursor at
-          // the new zoom (inverse of the formulas above).
+          // Solve for newPan that keeps (ix, iy) under the cursor.
           const newPanX =
             vx - vpW / 2 - ((ix - activeCal.overheadW / 2) * newZoom) / cssToImage;
           const newPanY =
             vy - vpH / 2 - ((iy - activeCal.overheadH / 2) * newZoom) / cssToImage;
-          // Clamp so the image can't drift entirely off-screen. X
-          // span at zoom z = z*vpW; allowed pan = (z-1)*vpW/2. Y
-          // span at zoom z = z*innerH; if that's larger than vpH
-          // the slice can slide by (z*innerH - vpH)/2, else 0.
           const maxPanX = ((newZoom - 1) * vpW) / 2;
           const maxPanY = Math.max(0, (newZoom * innerH - vpH) / 2);
           return {
@@ -283,10 +292,187 @@ export function MapGame() {
         });
         return newZoom;
       });
+    },
+    [activeCal],
+  );
+
+  // Wheel zoom — anchored at the cursor. addEventListener with
+  // `passive: false` because React's synthetic wheel handler is
+  // passive and can't preventDefault the page scroll. Trackpad pinch
+  // on Chrome/Firefox/Edge fires wheel events with `ctrlKey: true`
+  // and small deltaY; a tighter divisor lets pinch feel responsive
+  // without overshooting in the regular-scroll path.
+  useEffect(() => {
+    const el = overheadRef.current;
+    if (!el || !activeCal) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = el.getBoundingClientRect();
+      const vx = e.clientX - rect.left;
+      const vy = e.clientY - rect.top;
+      const factor = e.ctrlKey
+        ? Math.exp(-e.deltaY / 100)
+        : Math.exp(-e.deltaY / 400);
+      overheadZoomAt(vx, vy, factor);
     };
     el.addEventListener("wheel", handler, { passive: false });
     return () => el.removeEventListener("wheel", handler);
-  }, [activeCal, activeMapKey]);
+  }, [activeCal, activeMapKey, overheadZoomAt]);
+
+  // Safari trackpad pinch — fires gesturestart / gesturechange /
+  // gestureend instead of ctrlKey-wheel. Route through the same
+  // anchored-zoom helper so the feel matches Chrome.
+  useEffect(() => {
+    const el = overheadRef.current;
+    if (!el || !activeCal) return;
+    let lastScale = 1;
+    let anchorX = 0;
+    let anchorY = 0;
+    type GestureEv = Event & { scale: number; clientX: number; clientY: number };
+    const onStart = (raw: Event) => {
+      const e = raw as GestureEv;
+      e.preventDefault();
+      lastScale = 1;
+      const rect = el.getBoundingClientRect();
+      anchorX = e.clientX - rect.left;
+      anchorY = e.clientY - rect.top;
+    };
+    const onChange = (raw: Event) => {
+      const e = raw as GestureEv;
+      e.preventDefault();
+      const factor = e.scale / lastScale;
+      lastScale = e.scale;
+      overheadZoomAt(anchorX, anchorY, factor);
+    };
+    const onEnd = (raw: Event) => raw.preventDefault();
+    el.addEventListener("gesturestart", onStart as EventListener);
+    el.addEventListener("gesturechange", onChange as EventListener);
+    el.addEventListener("gestureend", onEnd as EventListener);
+    return () => {
+      el.removeEventListener("gesturestart", onStart as EventListener);
+      el.removeEventListener("gesturechange", onChange as EventListener);
+      el.removeEventListener("gestureend", onEnd as EventListener);
+    };
+  }, [activeCal, activeMapKey, overheadZoomAt]);
+
+  // Touch gestures. One finger = pan (when zoomed) or tap-to-pin.
+  // Two fingers = pinch zoom anchored at the midpoint. Touch
+  // bookkeeping is separate from the mouse path so a touch device
+  // doesn't fire phantom mouse events that confuse the drag refs.
+  const overheadTouchRef = useRef<
+    | { mode: "pan"; startX: number; startY: number; startPanX: number; startPanY: number; moved: boolean }
+    | { mode: "pinch"; lastDist: number }
+    | { mode: "tap"; startX: number; startY: number }
+    | null
+  >(null);
+  useEffect(() => {
+    const el = overheadRef.current;
+    if (!el || !activeCal) return;
+
+    const onStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        const t = e.touches[0];
+        // At zoom > 1 a single finger pans. Otherwise it's a tap that
+        // ends in placing the pin (or moving the existing pin).
+        if (zoom > 1) {
+          overheadTouchRef.current = {
+            mode: "pan",
+            startX: t.clientX,
+            startY: t.clientY,
+            startPanX: pan.x,
+            startPanY: pan.y,
+            moved: false,
+          };
+        } else {
+          overheadTouchRef.current = {
+            mode: "tap",
+            startX: t.clientX,
+            startY: t.clientY,
+          };
+        }
+        e.preventDefault();
+      } else if (e.touches.length === 2) {
+        const [t1, t2] = [e.touches[0], e.touches[1]];
+        const d = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        overheadTouchRef.current = { mode: "pinch", lastDist: d };
+        e.preventDefault();
+      }
+    };
+
+    const onMove = (e: TouchEvent) => {
+      const st = overheadTouchRef.current;
+      if (!st) return;
+      if (st.mode === "pinch" && e.touches.length === 2) {
+        const [t1, t2] = [e.touches[0], e.touches[1]];
+        const rect = el.getBoundingClientRect();
+        const d = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        const factor = d / st.lastDist;
+        st.lastDist = d;
+        const midX = (t1.clientX + t2.clientX) / 2 - rect.left;
+        const midY = (t1.clientY + t2.clientY) / 2 - rect.top;
+        overheadZoomAt(midX, midY, factor);
+        e.preventDefault();
+      } else if (st.mode === "pan" && e.touches.length === 1) {
+        const t = e.touches[0];
+        const rect = el.getBoundingClientRect();
+        const innerH = rect.width * (activeCal.overheadH / activeCal.overheadW);
+        const dx = t.clientX - st.startX;
+        const dy = t.clientY - st.startY;
+        if (!st.moved && Math.hypot(dx, dy) > 4) st.moved = true;
+        if (!st.moved) return;
+        const maxPanX = ((zoom - 1) * rect.width) / 2;
+        const maxPanY = Math.max(0, (zoom * innerH - rect.height) / 2);
+        setPan({
+          x: Math.max(-maxPanX, Math.min(maxPanX, st.startPanX + dx)),
+          y: Math.max(-maxPanY, Math.min(maxPanY, st.startPanY + dy)),
+        });
+        e.preventDefault();
+      } else if (st.mode === "tap" && e.touches.length === 1) {
+        // If finger drifts too far, treat as cancelled tap.
+        const t = e.touches[0];
+        const dx = t.clientX - st.startX;
+        const dy = t.clientY - st.startY;
+        if (Math.hypot(dx, dy) > 8) overheadTouchRef.current = null;
+      }
+    };
+
+    const onEnd = (e: TouchEvent) => {
+      const st = overheadTouchRef.current;
+      if (!st) return;
+      if (e.touches.length === 0) {
+        // Tap → place pin at touch position, mirroring click-to-pin.
+        if (st.mode === "tap" && phase !== "result" && phase !== "done") {
+          const last = e.changedTouches[0];
+          if (last && activeCal) {
+            const rect = el.getBoundingClientRect();
+            const vx = last.clientX - rect.left;
+            const vy = last.clientY - rect.top;
+            const vpW = rect.width;
+            const vpH = rect.height;
+            const px =
+              activeCal.overheadW / 2 +
+              ((vx - vpW / 2 - pan.x) / zoom) * (activeCal.overheadW / vpW);
+            const py =
+              activeCal.overheadH / 2 +
+              ((vy - vpH / 2 - pan.y) / zoom) * (activeCal.overheadH / vpW);
+            setPin([px, py]);
+          }
+        }
+        overheadTouchRef.current = null;
+      }
+    };
+
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, [activeCal, activeMapKey, zoom, pan, phase, overheadZoomAt]);
 
   if (!state || !day) {
     return (
@@ -724,34 +910,35 @@ export function MapGame() {
         <div
           onMouseEnter={() => setMinimapHovered(true)}
           onMouseLeave={() => setMinimapHovered(false)}
-          className="absolute right-4 bottom-4 flex flex-col gap-1.5 rounded-(--radius-card) border border-line/30 backdrop-blur-sm shadow-[0_8px_28px_-12px_rgba(0,0,0,0.6)] transition-[width] duration-[420ms] [transition-timing-function:cubic-bezier(0.65,0,0.35,1)]"
+          className="absolute right-4 bottom-4 flex flex-col gap-2 transition-[width] duration-[420ms] [transition-timing-function:cubic-bezier(0.65,0,0.35,1)]"
           style={{
             // Width grows in three steps:
             //   collapsed (no hover)        — compact corner card
             //   hover, zoom 1x              — original hover-expand
             //   hover, zoom > 1x            — extra-wide so the
             //     overhead has room to "open up" sideways without
-            //     the map itself growing (the overhead inside is
-            //     max-width capped to its hover-1x size, leaving
-            //     the extra horizontal space as breathing room).
+            //     the map itself growing.
             //
-            // Zoom state survives the grow/shrink: a ResizeObserver
-            // on the overhead container scales pan proportionally
-            // with width, so the visible image area is preserved
-            // across hover transitions and the zoomed view doesn't
-            // vanish when the card collapses.
+            // Three separate chips (picker / overhead / submit) stack
+            // vertically inside this wrapper — OpenGuessr-style — so
+            // each reads as its own glass surface rather than one
+            // monolithic card. The wrapper owns the shared width
+            // and hover state; chips inherit through it.
             width: !minimapHovered
-              ? "340px"
+              ? "300px"
               : zoom > 1
                 ? "min(900px, 64vw)"
                 : "min(640px, 50vw)",
-            backgroundColor: "rgb(from var(--bg-surface) r g b / 0.9)",
           }}
         >
-          {/* Map picker — collapsed shows the selected map, click to
-              re-open. During wrong-map phase the player can't change
-              away from the correct map, so the picker is locked. */}
-          <div className="px-2.5 pt-2.5">
+          {/* Chip 1: Map picker. Collapsed shows the selected map,
+              click to re-open. During wrong-map phase the player
+              can't change away from the correct map, so the picker
+              is locked. */}
+          <div
+            className="rounded-(--radius-card) border border-line/30 px-2.5 py-2 backdrop-blur-sm shadow-[0_8px_28px_-12px_rgba(0,0,0,0.6)]"
+            style={{ backgroundColor: "rgb(from var(--bg-surface) r g b / 0.9)" }}
+          >
             <MapPickerHeader
               selectedMapKey={
                 phase === "wrong-map"
@@ -762,36 +949,40 @@ export function MapGame() {
               expanded={pickerOpen}
               onToggle={() => setPickerOpen((o) => !o)}
             />
+            {pickerOpen && phase !== "wrong-map" && (
+              <div className="mt-2">
+                <MapPickerList
+                  selectedMapKey={selectedMap}
+                  onPick={(key) => {
+                    // Switching maps invalidates everything tied to
+                    // the previous overhead — drop the pin, reset
+                    // zoom/pan so the new map opens in its natural
+                    // fit-view instead of inheriting a stale 6× crop
+                    // on a totally different image.
+                    const switching = selectedMap !== key;
+                    setSelectedMap(key);
+                    if (switching) {
+                      setPin(null);
+                      setZoom(1);
+                      setPan({ x: 0, y: 0 });
+                    }
+                    setPickerOpen(false);
+                  }}
+                />
+              </div>
+            )}
           </div>
-          {pickerOpen && phase !== "wrong-map" && (
-            <div className="px-2.5">
-              <MapPickerList
-                selectedMapKey={selectedMap}
-                onPick={(key) => {
-                  // Switching maps invalidates everything tied to the
-                  // previous overhead — drop the pin, reset zoom/pan
-                  // so the new map opens in its natural fit-view
-                  // instead of inheriting a stale 6× crop on a totally
-                  // different image.
-                  const switching = selectedMap !== key;
-                  setSelectedMap(key);
-                  if (switching) {
-                    setPin(null);
-                    setZoom(1);
-                    setPan({ x: 0, y: 0 });
-                  }
-                  setPickerOpen(false);
-                }}
-              />
-            </div>
-          )}
 
-          {/* Overhead area — fills the (possibly-widened) card. The
-              container holds its natural aspect ratio at every zoom
-              level (GeoGuessr-style); the player pans within it. All
-              the pin-positioning math (left:%, top:%) references the
-              inner wrapper, so pins stay locked to image pixels. */}
-          <div className="px-2.5">
+          {/* Chip 2: Overhead area. Pure map surface — no picker, no
+              submit, no inner padding. The container holds its natural
+              aspect ratio at every zoom level (GeoGuessr-style); the
+              player pans within it. All pin-positioning math (left:%,
+              top:%) references the inner wrapper, so pins stay locked
+              to image pixels. */}
+          <div
+            className="overflow-hidden rounded-(--radius-card) border border-line/30 backdrop-blur-sm shadow-[0_8px_28px_-12px_rgba(0,0,0,0.6)]"
+            style={{ backgroundColor: "rgb(from var(--bg-surface) r g b / 0.9)" }}
+          >
             {/* When the picker is open the player is in "selection
                 mode" — show the empty placeholder rather than the
                 previous map's overhead, which (with stale pin/zoom
@@ -805,7 +996,7 @@ export function MapGame() {
                 onMouseUp={handleOverheadMouseUp}
                 onMouseLeave={handleOverheadMouseLeave}
                 onContextMenu={(e) => e.preventDefault()}
-                className="relative w-full overflow-hidden rounded-sm border border-line/60 bg-bg/60 select-none"
+                className="relative w-full overflow-hidden bg-bg/60 select-none"
                 style={{
                   // Stable aspect ratio at all zoom levels. The
                   // earlier 3:2 swap at zoom>1 made vpH animate
@@ -913,7 +1104,7 @@ export function MapGame() {
                 </p>
               </div>
             ) : (
-              <div className="grid h-32 place-items-center rounded-sm border border-dashed border-line bg-inset/30 px-3 text-center">
+              <div className="grid h-32 place-items-center px-3 text-center">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
                   {selectedMap == null
                     ? "Pick a map above to drop a pin"
@@ -923,8 +1114,13 @@ export function MapGame() {
             )}
           </div>
 
-          {/* Submit */}
-          <div className="flex items-center justify-between gap-3 px-2.5 pb-2.5">
+          {/* Chip 3: Submit row. Pin coords on the left, Submit
+              button on the right. Lives in its own glass surface so
+              the action chip reads as the final step in the stack. */}
+          <div
+            className="flex items-center justify-between gap-3 rounded-(--radius-card) border border-line/30 px-2.5 py-2 backdrop-blur-sm shadow-[0_8px_28px_-12px_rgba(0,0,0,0.6)]"
+            style={{ backgroundColor: "rgb(from var(--bg-surface) r g b / 0.9)" }}
+          >
             <p className="font-mono text-[10px] tracking-[0.16em] text-ink-faint">
               {pin
                 ? `pin (${Math.round(pin[0])}, ${Math.round(pin[1])})`
@@ -1194,57 +1390,84 @@ function ResultOverlay(props: {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 4, scale: 0.99 }}
         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-        className="flex max-h-full w-full max-w-[1100px] flex-col gap-4 overflow-y-auto rounded-(--radius-card) border border-line p-6 text-center"
-        style={{ backgroundColor: "var(--bg-surface)" }}
+        // Map-dominant layout. The card takes ~75% of the viewport
+        // height (clamped to 900px on big screens) so the player has
+        // breathing room top and bottom while the map gets the
+        // dominant share. min-h-0 + overflow-y-auto kept as safety
+        // for very short viewports.
+        className="flex w-full max-w-[1200px] flex-col gap-3 overflow-y-auto rounded-(--radius-card) border border-line p-4 text-center"
+        style={{
+          backgroundColor: "var(--bg-surface)",
+          height: "min(900px, 75dvh)",
+          maxHeight: "100%",
+        }}
       >
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-info">
-            Round result
-          </p>
-          <h2 className="mt-1 font-display text-3xl text-ink">
-            <AnimatedScore
-              target={round.pointsTotal}
-              delay={REVEAL.scorePopcount}
-              duration={REVEAL.scorePopcountDuration}
-            />{" "}
-            <span className="text-ink-faint">
-              / {MAX_ROUND_SCORE.toLocaleString()}
-            </span>
-          </h2>
-          {/* Map-recognition verdict — big, color-coded badge so the
-              right/wrong-map signal reads at a glance instead of buried
-              in mono caption text. When wrong, surface BOTH "what they
-              picked" and "what it actually was" so the loss is
-              educational, not just punitive. */}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: REVEAL.verdict, duration: 0.3, ease: "easeOut" }}
-          >
-            <MapVerdictBadge
-              wrongMap={round.wrongMapFirst}
-              guessedMapKey={round.firstGuess?.guessedMap ?? null}
-              actualMapKey={spot.mapKey}
+        {/* Compact header — round-result label + score on one row,
+            verdict + tier pills inline on the next. Saves ~80px of
+            vertical space vs the original stacked layout, which is
+            real estate the map gets back. */}
+        <div className="flex shrink-0 flex-col items-center gap-1.5">
+          <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-info">
+              Round result
+            </p>
+            <h2 className="font-display text-2xl text-ink leading-none">
+              <AnimatedScore
+                target={round.pointsTotal}
+                delay={REVEAL.scorePopcount}
+                duration={REVEAL.scorePopcountDuration}
+              />{" "}
+              <span className="font-mono text-sm text-ink-faint tracking-[0.16em]">
+                / {MAX_ROUND_SCORE.toLocaleString()}
+              </span>
+            </h2>
+          </div>
+          {/* Verdict + tier — inline pills so they read as one
+              status row instead of two stacked statements. */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: REVEAL.verdict, duration: 0.3, ease: "easeOut" }}
+            >
+              <MapVerdictBadge
+                wrongMap={round.wrongMapFirst}
+                guessedMapKey={round.firstGuess?.guessedMap ?? null}
+                actualMapKey={spot.mapKey}
+              />
+            </motion.div>
+            <TierBadge
+              tierName={tierLabelForRound(round)}
+              pixelDistance={pixelDistance}
+              fractionOff={fractionOff}
+              hasPlayerPin={hasPlayerPin}
+              delay={REVEAL.tierBadge}
             />
-          </motion.div>
-          <TierBadge
-            tierName={tierLabelForRound(round)}
-            pixelDistance={pixelDistance}
-            fractionOff={fractionOff}
-            hasPlayerPin={hasPlayerPin}
-            delay={REVEAL.tierBadge}
-          />
+          </div>
         </div>
 
         {previewCal && (
+          // Outer flex slot grabs every spare pixel between the header
+          // and the footer (flex-1 + min-h-0). containerType: size lets
+          // the inner sizing fall back to container-query units (cqw/
+          // cqh), so the map renders as a true square fit to the
+          // smaller of available width/height. No more flex-squished
+          // wide rectangle.
           <div
-            // Stable wrapper sized to the overhead's aspect ratio so
-            // toggling between Overhead and POV doesn't reflow the
-            // page. Both inner panels fill it absolutely.
+            className="flex min-h-0 flex-1 items-center justify-center"
+            style={{ containerType: "size" }}
+          >
+          <div
+            // Map preview — a perfect square that fills the available
+            // slot. width/height pinned to min(cqw, cqh) so it shrinks
+            // proportionally on narrow viewports; aspectRatio kept as
+            // belt-and-suspenders.
             style={{
+              width: "min(100cqw, 100cqh)",
+              height: "min(100cqw, 100cqh)",
               aspectRatio: `${previewCal.overheadW} / ${previewCal.overheadH}`,
             }}
-            className="relative mx-auto w-full max-w-[820px] overflow-hidden rounded-(--radius-card) border border-line"
+            className="relative overflow-hidden rounded-(--radius-card) border border-line"
           >
             {/* Tab toggle — top-left of the panel. stopPropagation on
                 pointer events so clicks don't kick off pan-drag on
@@ -1285,178 +1508,185 @@ function ResultOverlay(props: {
                   touchAction: "none",
                 }}
               >
-            {/* All zoomable content lives inside this inner div so the
-                img, pins, and distance line stay in lockstep under the
-                transform. */}
-            <div
-              style={{
-                transform: resultZoom.transform,
-                transformOrigin: "center center",
-                // During cinematic flight we drive zoom/pan every
-                // frame via rAF, so no CSS transition is needed (or
-                // wanted — it'd add a 80ms lag that fights the
-                // animation). Once the lock is off, restore the
-                // brief easing for user wheel-zoom comfort.
-                transition:
-                  resultZoom.isPanning || resultZoom.locked
-                    ? "none"
-                    : "transform 80ms ease-out",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={media(previewCal.overheadFile)}
-                alt=""
-                className="pointer-events-none block w-full select-none"
-                draggable={false}
-              />
+                {/* All zoomable content lives inside this inner div so
+                    the img, pins, and distance line stay in lockstep
+                    under the transform. The inner is width-driven +
+                    aspect-locked so it fills the outer at zoom=1 and
+                    preserves the overhead's natural aspect ratio when
+                    the cinematic camera scales it up. */}
+                <div
+                  className="absolute left-0"
+                  style={{
+                    width: "100%",
+                    aspectRatio: `${previewCal.overheadW} / ${previewCal.overheadH}`,
+                    top: "50%",
+                    transform: `translateY(-50%) ${resultZoom.transform}`,
+                    transformOrigin: "center center",
+                    // During cinematic flight we drive zoom/pan every
+                    // frame via rAF, so no CSS transition is needed (or
+                    // wanted — it'd add a 80ms lag that fights the
+                    // animation). Once the lock is off, restore the
+                    // brief easing for user wheel-zoom comfort.
+                    transition:
+                      resultZoom.isPanning || resultZoom.locked
+                        ? "none"
+                        : "transform 80ms ease-out",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={media(previewCal.overheadFile)}
+                    alt=""
+                    className="pointer-events-none block h-full w-full select-none"
+                    draggable={false}
+                  />
 
-              {/* Two-layer pin: the outer span owns position +
-                  counter-scale (no animation, so style.transform is
-                  authoritative). The inner motion.span owns the
-                  entrance animation (scale 0→1 via motion props).
-                  Splitting them avoids Framer Motion replacing the
-                  outer's translate(-50%, -50%) when it composes its
-                  own animated transform — which would offset the
-                  pin by half its size. */}
-              {hasPlayerPin && (
-                <span
-                  className="pointer-events-none absolute block"
-                  style={{
-                    left: `${(playerPin[0] / previewCal.overheadW) * 100}%`,
-                    top: `${(playerPin[1] / previewCal.overheadH) * 100}%`,
-                    transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
-                  }}
-                  title="Your guess"
-                >
-                  <motion.span
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 600,
-                      damping: 22,
-                      delay: REVEAL.playerPin,
+                  {/* Two-layer pin: the outer span owns position +
+                      counter-scale (no animation, so style.transform is
+                      authoritative). The inner motion.span owns the
+                      entrance animation (scale 0→1 via motion props).
+                      Splitting them avoids Framer Motion replacing the
+                      outer's translate(-50%, -50%) when it composes its
+                      own animated transform — which would offset the
+                      pin by half its size. */}
+                  {hasPlayerPin && (
+                    <span
+                      className="pointer-events-none absolute block"
+                      style={{
+                        left: `${(playerPin[0] / previewCal.overheadW) * 100}%`,
+                        top: `${(playerPin[1] / previewCal.overheadH) * 100}%`,
+                        transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
+                      }}
+                      title="Your guess"
+                    >
+                      <motion.span
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 600,
+                          damping: 22,
+                          delay: REVEAL.playerPin,
+                        }}
+                        className="block"
+                      >
+                        <MapPin variant="guess-large" />
+                      </motion.span>
+                    </span>
+                  )}
+                  {/* Pulse ring on the answer pin — a quick expanding
+                      ring that emanates outward as the pin lands.
+                      Communicates "here's the answer" with motion, not
+                      just a static pin appearing. */}
+                  <span
+                    className="pointer-events-none absolute block"
+                    style={{
+                      left: `${(correctPin[0] / previewCal.overheadW) * 100}%`,
+                      top: `${(correctPin[1] / previewCal.overheadH) * 100}%`,
+                      transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
                     }}
-                    className="block"
                   >
-                    <MapPin variant="guess-large" />
-                  </motion.span>
-                </span>
-              )}
-              {/* Pulse ring on the answer pin — a quick expanding
-                  ring that emanates outward as the pin lands.
-                  Communicates "here's the answer" with motion, not
-                  just a static pin appearing. */}
-              <span
-                className="pointer-events-none absolute block"
-                style={{
-                  left: `${(correctPin[0] / previewCal.overheadW) * 100}%`,
-                  top: `${(correctPin[1] / previewCal.overheadH) * 100}%`,
-                  transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
-                }}
-              >
-                <motion.span
-                  initial={{ scale: 0.4, opacity: 0.85 }}
-                  animate={{ scale: 2.4, opacity: 0 }}
-                  transition={{
-                    delay: REVEAL.pulseRing,
-                    duration: 0.9,
-                    ease: "easeOut",
-                  }}
-                  className="block h-14 w-14 rounded-full"
-                  style={{
-                    border: "2px solid var(--tile-correct)",
-                    boxShadow: "0 0 14px 2px var(--tile-correct)",
-                  }}
-                />
-              </span>
-              <span
-                className="pointer-events-none absolute block"
-                style={{
-                  left: `${(correctPin[0] / previewCal.overheadW) * 100}%`,
-                  top: `${(correctPin[1] / previewCal.overheadH) * 100}%`,
-                  transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
-                }}
-                title={
-                  spot.facingDeg != null
-                    ? "Correct location · arrow shows camera-facing direction"
-                    : "Correct location"
-                }
-              >
-                <motion.span
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 600,
-                    damping: 22,
-                    delay: REVEAL.answerPin,
-                  }}
-                  className="block"
-                >
-                  <MapPin facingDeg={spot.facingDeg} variant="answer-large" />
-                </motion.span>
-              </span>
-              {hasPlayerPin && (() => {
-                // Trim the line back from each pin's center to its
-                // visible edge so the dashes don't get cut off
-                // mid-stroke under the pin. Pin radii are in CSS px
-                // (the SVG pins counter-scale to a fixed CSS size);
-                // convert via SVG-unit → CSS-px = (resultOuterW /
-                // overheadW) * zoom. We add a small visual gap on top
-                // of the pin's radius so the line breathes a bit
-                // before meeting the pin.
-                const PLAYER_PIN_R_CSS = 22;  // 44px guess-large / 2
-                const ANSWER_PIN_R_CSS = 26;  // 52px answer-large / 2
-                const VISUAL_GAP_CSS = 3;
-                const cssPerOverheadPx = resultOuterW > 0
-                  ? (resultOuterW / previewCal.overheadW) * resultZoom.zoom
-                  : 1;
-                const playerOffsetSvg =
-                  (PLAYER_PIN_R_CSS + VISUAL_GAP_CSS) / cssPerOverheadPx;
-                const answerOffsetSvg =
-                  (ANSWER_PIN_R_CSS + VISUAL_GAP_CSS) / cssPerOverheadPx;
-                const dx = correctPin[0] - playerPin[0];
-                const dy = correctPin[1] - playerPin[1];
-                const len = Math.sqrt(dx * dx + dy * dy);
-                // Bail out if pins overlap (Bullseye) — drawing a
-                // tiny stub line would be worse than no line.
-                if (len <= playerOffsetSvg + answerOffsetSvg) return null;
-                const ux = dx / len;
-                const uy = dy / len;
-                const x1 = playerPin[0] + ux * playerOffsetSvg;
-                const y1 = playerPin[1] + uy * playerOffsetSvg;
-                const x2 = correctPin[0] - ux * answerOffsetSvg;
-                const y2 = correctPin[1] - uy * answerOffsetSvg;
-                return (
-                  <svg
-                    className="pointer-events-none absolute inset-0 h-full w-full"
-                    viewBox={`0 0 ${previewCal.overheadW} ${previewCal.overheadH}`}
-                    preserveAspectRatio="none"
-                  >
-                    <motion.line
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: 0.7 }}
+                    <motion.span
+                      initial={{ scale: 0.4, opacity: 0.85 }}
+                      animate={{ scale: 2.4, opacity: 0 }}
                       transition={{
-                        duration: 0.5,
-                        delay: REVEAL.line,
+                        delay: REVEAL.pulseRing,
+                        duration: 0.9,
                         ease: "easeOut",
                       }}
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
-                      stroke="var(--accent)"
-                      strokeWidth={2}
-                      strokeDasharray="10 7"
-                      strokeLinecap="round"
-                      vectorEffect="non-scaling-stroke"
+                      className="block h-14 w-14 rounded-full"
+                      style={{
+                        border: "2px solid var(--tile-correct)",
+                        boxShadow: "0 0 14px 2px var(--tile-correct)",
+                      }}
                     />
-                  </svg>
-                );
-              })()}
-            </div>
+                  </span>
+                  <span
+                    className="pointer-events-none absolute block"
+                    style={{
+                      left: `${(correctPin[0] / previewCal.overheadW) * 100}%`,
+                      top: `${(correctPin[1] / previewCal.overheadH) * 100}%`,
+                      transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
+                    }}
+                    title={
+                      spot.facingDeg != null
+                        ? "Correct location · arrow shows camera-facing direction"
+                        : "Correct location"
+                    }
+                  >
+                    <motion.span
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 600,
+                        damping: 22,
+                        delay: REVEAL.answerPin,
+                      }}
+                      className="block"
+                    >
+                      <MapPin facingDeg={spot.facingDeg} variant="answer-large" />
+                    </motion.span>
+                  </span>
+                  {hasPlayerPin && (() => {
+                    // Trim the line back from each pin's center to its
+                    // visible edge so the dashes don't get cut off
+                    // mid-stroke under the pin. Pin radii are in CSS px
+                    // (the SVG pins counter-scale to a fixed CSS size);
+                    // convert via SVG-unit → CSS-px = (resultOuterW /
+                    // overheadW) * zoom. We add a small visual gap on
+                    // top of the pin's radius so the line breathes a
+                    // bit before meeting the pin.
+                    const PLAYER_PIN_R_CSS = 22;  // 44px guess-large / 2
+                    const ANSWER_PIN_R_CSS = 26;  // 52px answer-large / 2
+                    const VISUAL_GAP_CSS = 3;
+                    const cssPerOverheadPx = resultOuterW > 0
+                      ? (resultOuterW / previewCal.overheadW) * resultZoom.zoom
+                      : 1;
+                    const playerOffsetSvg =
+                      (PLAYER_PIN_R_CSS + VISUAL_GAP_CSS) / cssPerOverheadPx;
+                    const answerOffsetSvg =
+                      (ANSWER_PIN_R_CSS + VISUAL_GAP_CSS) / cssPerOverheadPx;
+                    const ldx = correctPin[0] - playerPin[0];
+                    const ldy = correctPin[1] - playerPin[1];
+                    const len = Math.sqrt(ldx * ldx + ldy * ldy);
+                    // Bail out if pins overlap (Bullseye) — drawing a
+                    // tiny stub line would be worse than no line.
+                    if (len <= playerOffsetSvg + answerOffsetSvg) return null;
+                    const ux = ldx / len;
+                    const uy = ldy / len;
+                    const x1 = playerPin[0] + ux * playerOffsetSvg;
+                    const y1 = playerPin[1] + uy * playerOffsetSvg;
+                    const x2 = correctPin[0] - ux * answerOffsetSvg;
+                    const y2 = correctPin[1] - uy * answerOffsetSvg;
+                    return (
+                      <svg
+                        className="pointer-events-none absolute inset-0 h-full w-full"
+                        viewBox={`0 0 ${previewCal.overheadW} ${previewCal.overheadH}`}
+                        preserveAspectRatio="none"
+                      >
+                        <motion.line
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ pathLength: 1, opacity: 0.7 }}
+                          transition={{
+                            duration: 0.5,
+                            delay: REVEAL.line,
+                            ease: "easeOut",
+                          }}
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke="var(--accent)"
+                          strokeWidth={2}
+                          strokeDasharray="10 7"
+                          strokeLinecap="round"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      </svg>
+                    );
+                  })()}
+                </div>
               </div>
             )}
 
@@ -1530,56 +1760,64 @@ function ResultOverlay(props: {
               scroll = zoom · drag = pan
             </p>
           </div>
+          </div>
         )}
 
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: REVEAL.breakdown, duration: 0.3, ease: "easeOut" }}
-          className="grid grid-cols-3 gap-4 font-mono text-[10px] uppercase tracking-[0.18em]"
-        >
-          <div>
-            <p className="text-ink-faint">Map bonus</p>
-            <p className="mt-0.5 text-lg text-ink">{round.pointsMap}</p>
-          </div>
-          <div>
-            <p className="text-ink-faint">Distance</p>
-            <p className="mt-0.5 text-lg text-ink">{round.pointsDistance}</p>
-          </div>
-          <div>
-            <p className="text-ink-faint">Round total</p>
-            <p className="mt-0.5 text-lg text-accent">{round.pointsTotal}</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: REVEAL.feedback, duration: 0.3 }}
-        >
-          <FeedbackStrip
-            difficulty={feedback?.difficulty}
-            pinAccurate={feedback?.pinAccurate}
-            onDifficulty={setDifficulty}
-            onAccuracy={setAccuracy}
-          />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: REVEAL.nextButton, duration: 0.3 }}
-          className="flex flex-wrap items-center justify-center gap-3 pt-1"
-        >
-          <button
-            type="button"
-            onClick={onNext}
-            className="rounded-(--radius-card) bg-accent px-6 py-3 font-mono text-xs uppercase tracking-[0.24em] text-on-accent transition-opacity hover:opacity-90"
+        {/* Compact footer block — pinned at the bottom of the card via
+            shrink-0. Breakdown becomes a single horizontal pill row,
+            then the FeedbackStrip (already compact), then the Next
+            button. Keeps non-map vertical footprint to ~180px so the
+            map can dominate. */}
+        <div className="flex shrink-0 flex-col gap-2">
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: REVEAL.breakdown, duration: 0.3, ease: "easeOut" }}
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-[0.18em]"
           >
-            {isLast ? "See final score" : "Next round"}
-          </button>
-          <DevSpotEdit spotId={spot.id} mapKey={spot.mapKey} />
-        </motion.div>
+            <span>
+              <span className="text-ink-faint">Map bonus</span>{" "}
+              <span className="text-ink">{round.pointsMap}</span>
+            </span>
+            <span>
+              <span className="text-ink-faint">Distance</span>{" "}
+              <span className="text-ink">{round.pointsDistance}</span>
+            </span>
+            <span>
+              <span className="text-ink-faint">Total</span>{" "}
+              <span className="text-accent">{round.pointsTotal}</span>
+            </span>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: REVEAL.feedback, duration: 0.3 }}
+          >
+            <FeedbackStrip
+              difficulty={feedback?.difficulty}
+              pinAccurate={feedback?.pinAccurate}
+              onDifficulty={setDifficulty}
+              onAccuracy={setAccuracy}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: REVEAL.nextButton, duration: 0.3 }}
+            className="flex flex-wrap items-center justify-center gap-3"
+          >
+            <button
+              type="button"
+              onClick={onNext}
+              className="rounded-(--radius-card) bg-accent px-6 py-2.5 font-mono text-xs uppercase tracking-[0.24em] text-on-accent transition-opacity hover:opacity-90"
+            >
+              {isLast ? "See final score" : "Next round"}
+            </button>
+            <DevSpotEdit spotId={spot.id} mapKey={spot.mapKey} />
+          </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   );
@@ -1658,7 +1896,7 @@ function TierBadge(props: {
         stiffness: 480,
         damping: 16,
       }}
-      className="mt-3 inline-flex items-baseline gap-2 rounded-(--radius-pill) px-3 py-1.5"
+      className="inline-flex items-baseline gap-2 rounded-(--radius-pill) px-3 py-1.5"
       style={{ backgroundColor: tone.bg, color: tone.fg }}
     >
       <span className="font-display text-sm tracking-[0.02em]">
@@ -1683,21 +1921,15 @@ function TierBadge(props: {
 const DIFFICULTY_OPTIONS: ReadonlyArray<{
   value: SpotDifficulty;
   label: string;
-  // Color cue per bucket — green/yellow/red gradient so the strip
-  // reads as a difficulty scale at a glance.
+  // Color cue per bucket — green / blue / red so the strip reads as a
+  // difficulty scale at a glance.
   selectedClass: string;
   hoverClass: string;
 }> = [
   {
-    value: "very-easy",
-    label: "Very easy",
-    selectedClass: "bg-correct text-tile-correct-fg",
-    hoverClass: "hover:border-correct/60 hover:text-correct",
-  },
-  {
     value: "easy",
     label: "Easy",
-    selectedClass: "bg-correct/70 text-tile-correct-fg",
+    selectedClass: "bg-correct text-tile-correct-fg",
     hoverClass: "hover:border-correct/60 hover:text-correct",
   },
   {
@@ -1709,16 +1941,38 @@ const DIFFICULTY_OPTIONS: ReadonlyArray<{
   {
     value: "hard",
     label: "Hard",
-    selectedClass: "bg-accent-soft text-tile-partial-fg",
-    hoverClass: "hover:border-accent-soft/60 hover:text-accent-soft",
-  },
-  {
-    value: "very-hard",
-    label: "Very hard",
     selectedClass: "bg-far text-tile-far-fg",
     hoverClass: "hover:border-far/60 hover:text-far",
   },
 ];
+
+function ThumbsUpIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M7 22V11l5-9 1.5 1L11.5 9H20a2 2 0 0 1 1.98 2.32l-1.7 9A2 2 0 0 1 18.3 22H7Zm-5 0V11h3v11H2Z" />
+    </svg>
+  );
+}
+
+function ThumbsDownIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M17 2v11l-5 9-1.5-1L12.5 15H4a2 2 0 0 1-1.98-2.32l1.7-9A2 2 0 0 1 5.7 2H17Zm5 0v11h-3V2h3Z" />
+    </svg>
+  );
+}
 
 function FeedbackStrip(props: {
   difficulty: SpotDifficulty | undefined;
@@ -1727,78 +1981,84 @@ function FeedbackStrip(props: {
   onAccuracy: (v: boolean) => void;
 }) {
   const { difficulty, pinAccurate, onDifficulty, onAccuracy } = props;
+  // Two visually-distinct groups so the player can tell at a glance
+  // what each chip cluster is asking. Difficulty group sits inside a
+  // blue-tinted container (info color), accuracy sits inside an
+  // accent-tinted one. Chips in each group also pick up their group's
+  // border color when idle so the relationship is unambiguous even
+  // before reading the inline label.
   return (
-    <div
-      className="mx-auto flex w-full max-w-[700px] flex-col items-center gap-3 rounded-(--radius-card) border border-line p-4"
-      style={{ backgroundColor: "var(--bg-inset)" }}
-    >
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-        Help us tune the daily mix
-      </p>
-
-      <div className="flex flex-col items-center gap-1.5">
-        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-faint">
-          How hard was this one?
+    <div className="mx-auto flex w-full max-w-[820px] flex-wrap items-center justify-center gap-2">
+      {/* Difficulty group — info/blue tint */}
+      <div
+        className="flex flex-wrap items-center gap-1.5 rounded-(--radius-pill) border border-info/40 px-3 py-1.5"
+        style={{ backgroundColor: "rgb(from var(--info) r g b / 0.08)" }}
+      >
+        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-info">
+          Difficulty
         </span>
-        <div className="flex flex-wrap items-center justify-center gap-1.5">
-          {DIFFICULTY_OPTIONS.map((opt) => {
-            const selected = difficulty === opt.value;
-            return (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => onDifficulty(opt.value)}
-                aria-pressed={selected}
-                className={
-                  "rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors " +
-                  (selected
-                    ? `${opt.selectedClass} border-transparent`
-                    : `border-line text-ink-faint ${opt.hoverClass}`)
-                }
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
+        {DIFFICULTY_OPTIONS.map((opt) => {
+          const selected = difficulty === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onDifficulty(opt.value)}
+              aria-pressed={selected}
+              className={
+                "rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors " +
+                (selected
+                  ? `${opt.selectedClass} border-transparent`
+                  : `border-info/30 text-ink-faint ${opt.hoverClass}`)
+              }
+            >
+              {opt.label}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="flex flex-col items-center gap-1.5">
-        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-faint">
-          Was the answer pin accurate?
+      {/* Accuracy group — accent/orange tint, thumbs icons */}
+      <div
+        className="flex flex-wrap items-center gap-1.5 rounded-(--radius-pill) border border-accent/40 px-3 py-1.5"
+        style={{ backgroundColor: "rgb(from var(--accent) r g b / 0.08)" }}
+      >
+        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-accent">
+          Pin
         </span>
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => onAccuracy(true)}
-            aria-pressed={pinAccurate === true}
-            className={
-              "rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors " +
-              (pinAccurate === true
-                ? "bg-correct text-tile-correct-fg border-transparent"
-                : "border-line text-ink-faint hover:border-correct/60 hover:text-correct")
-            }
-          >
-            ✓ Looks right
-          </button>
-          <button
-            type="button"
-            onClick={() => onAccuracy(false)}
-            aria-pressed={pinAccurate === false}
-            className={
-              "rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors " +
-              (pinAccurate === false
-                ? "bg-far text-tile-far-fg border-transparent"
-                : "border-line text-ink-faint hover:border-far/60 hover:text-far")
-            }
-          >
-            ✗ Pin's off
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onAccuracy(true)}
+          aria-pressed={pinAccurate === true}
+          aria-label="Pin looks accurate"
+          className={
+            "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors " +
+            (pinAccurate === true
+              ? "bg-correct text-tile-correct-fg border-transparent"
+              : "border-accent/30 text-ink-faint hover:border-correct/60 hover:text-correct")
+          }
+        >
+          <ThumbsUpIcon />
+        </button>
+        <button
+          type="button"
+          onClick={() => onAccuracy(false)}
+          aria-pressed={pinAccurate === false}
+          aria-label="Pin is off"
+          className={
+            "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors " +
+            (pinAccurate === false
+              ? "bg-far text-tile-far-fg border-transparent"
+              : "border-accent/30 text-ink-faint hover:border-far/60 hover:text-far")
+          }
+        >
+          <ThumbsDownIcon />
+        </button>
       </div>
     </div>
   );
 }
+
 
 // ───────────────────────────────────────────────────────────────────────────
 // Daily completion screen.
@@ -2168,7 +2428,7 @@ function MapVerdictBadge(props: {
   if (wrongMap) {
     return (
       <div
-        className="mt-3 inline-flex items-center gap-2 rounded-(--radius-pill) px-3 py-1.5"
+        className="inline-flex items-center gap-2 rounded-(--radius-pill) px-3 py-1.5"
         style={{
           backgroundColor: "var(--tile-far)",
           color: "var(--tile-far-fg)",
@@ -2194,7 +2454,7 @@ function MapVerdictBadge(props: {
   }
   return (
     <div
-      className="mt-3 inline-flex items-center gap-2 rounded-(--radius-pill) px-3 py-1.5"
+      className="inline-flex items-center gap-2 rounded-(--radius-pill) px-3 py-1.5"
       style={{
         backgroundColor: "var(--tile-correct)",
         color: "var(--tile-correct-fg)",
@@ -2211,13 +2471,15 @@ function MapVerdictBadge(props: {
 }
 
 // ───────────────────────────────────────────────────────────────────────────
-// DevDayReset — small floating button shown only in `next dev` that
-// wipes today's map-mode state from localStorage and reloads, so we
-// can play the same daily over and over while testing UI changes.
-// Compiled out in production builds (Next.js inlines the
-// NODE_ENV check; the dead branch tree-shakes).
+// DevDayReset / DevRandomize — small floating buttons shown only in
+// `next dev` (or on localhost). DevDayReset wipes today's persisted
+// round state so we can replay the same daily; DevRandomize picks a
+// fresh random set of N spots from the full pool and stores them as
+// an override so testers can sample different visuals without waiting
+// for a new day. Compiled out in production builds (Next.js inlines
+// the NODE_ENV check; the dead branch tree-shakes).
 // ───────────────────────────────────────────────────────────────────────────
-function DevDayReset({ day }: { day: string }) {
+function useShowDevControls(): boolean {
   // Render null on SSR + initial hydration to avoid React hydration
   // warnings, then flip to true on first effect. We check BOTH
   // NODE_ENV (replaced by Next.js at build time) and the hostname
@@ -2232,22 +2494,61 @@ function DevDayReset({ day }: { day: string }) {
     );
     setShow(isDev || isLocal);
   }, []);
+  return show;
+}
+
+function DevDayReset({ day }: { day: string }) {
+  const show = useShowDevControls();
   if (!show) return null;
-  const onClick = () => {
+  const onReset = () => {
     if (typeof window === "undefined") return;
+    window.localStorage.removeItem(`owdle.map.${day}`);
+    window.localStorage.removeItem(`owdle.map.${day}.override`);
+    window.location.reload();
+  };
+  const onRandomize = () => {
+    if (typeof window === "undefined") return;
+    const pool = getAllMapSpots();
+    if (pool.length === 0) return;
+    // Fisher–Yates over a copy; pick the first ROUNDS_PER_DAY ids.
+    const idx = pool.map((_, i) => i);
+    for (let i = idx.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [idx[i], idx[j]] = [idx[j], idx[i]];
+    }
+    const pickedIds = idx
+      .slice(0, ROUNDS_PER_DAY)
+      .map((i) => pool[i].id);
+    window.localStorage.setItem(
+      `owdle.map.${day}.override`,
+      JSON.stringify(pickedIds),
+    );
+    // Wipe the persisted run so the freshly-picked spots are played
+    // from round 1 rather than colliding with the prior shape.
     window.localStorage.removeItem(`owdle.map.${day}`);
     window.location.reload();
   };
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      title="Wipe today's map-mode localStorage and reload (dev only)"
-      className="fixed bottom-3 left-3 z-50 rounded-(--radius-card) border border-accent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent shadow-lg transition-opacity hover:opacity-100"
-      style={{ backgroundColor: "var(--bg-surface)" }}
-    >
-      dev · reset day
-    </button>
+    <div className="fixed bottom-3 left-3 z-50 flex flex-col gap-1.5">
+      <button
+        type="button"
+        onClick={onRandomize}
+        title="Pick a fresh random set of spots for today (dev only). Reloads."
+        className="rounded-(--radius-card) border border-accent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent shadow-lg transition-opacity hover:opacity-100"
+        style={{ backgroundColor: "var(--bg-surface)" }}
+      >
+        dev · randomize spots
+      </button>
+      <button
+        type="button"
+        onClick={onReset}
+        title="Wipe today's map-mode localStorage and reload (dev only)"
+        className="rounded-(--radius-card) border border-accent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-accent shadow-lg transition-opacity hover:opacity-100"
+        style={{ backgroundColor: "var(--bg-surface)" }}
+      >
+        dev · reset day
+      </button>
+    </div>
   );
 }
 
@@ -2259,15 +2560,7 @@ function DevDayReset({ day }: { day: string }) {
 // Same dev/localhost visibility check as DevDayReset.
 // ───────────────────────────────────────────────────────────────────────────
 function DevSpotEdit({ spotId, mapKey }: { spotId: string; mapKey: string }) {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const isDev = process.env.NODE_ENV === "development";
-    const isLocal = ["localhost", "127.0.0.1"].includes(
-      window.location.hostname,
-    );
-    setShow(isDev || isLocal);
-  }, []);
+  const show = useShowDevControls();
   if (!show) return null;
   // Hash params instead of search params so it works with the static
   // export build (`output: "export"`) — no server-side parsing needed
@@ -2340,11 +2633,45 @@ function useImageZoomPan(opts?: {
     setPan({ x: 0, y: 0 });
   }, []);
 
+  // Shared cursor-anchored zoom helper. cx/cy are CSS-px coords inside
+  // the outer element. `factor` is the multiplicative zoom step. Used
+  // by wheel, Safari gesture, and pinch-touch paths so they all feel
+  // identical (and so a bug fix lands once).
+  const applyZoomAt = useCallback(
+    (cx: number, cy: number, factor: number) => {
+      const el = outerEl;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const W = rect.width;
+      const H = rect.height;
+      setZoom((curZoom) => {
+        const newZoom = Math.max(1, Math.min(MAX, curZoom * factor));
+        if (newZoom === curZoom) return curZoom;
+        const ratio = newZoom / curZoom;
+        setPan((curPan) => {
+          if (newZoom === 1) return { x: 0, y: 0 };
+          const newPanX = (cx - W / 2) * (1 - ratio) + ratio * curPan.x;
+          const newPanY = (cy - H / 2) * (1 - ratio) + ratio * curPan.y;
+          const limX = (W * (newZoom - 1)) / 2;
+          const limY = (H * (newZoom - 1)) / 2;
+          return {
+            x: Math.max(-limX, Math.min(limX, newPanX)),
+            y: Math.max(-limY, Math.min(limY, newPanY)),
+          };
+        });
+        return newZoom;
+      });
+    },
+    [outerEl, MAX],
+  );
+
   // Non-passive wheel listener — synthetic `onWheel` is passive in
   // React, so preventDefault inside it is a no-op and the page would
-  // scroll under us. Re-attach when zoom/pan change so the handler
-  // closure has fresh values, and when outerEl changes so the listener
-  // tracks DOM remounts (POV/Overhead toggle).
+  // scroll under us. Trackpad pinch on Chrome/Firefox/Edge fires wheel
+  // events with `ctrlKey: true` and small deltaY; we use a gentler
+  // factor in that case so a pinch doesn't fly to max zoom in one
+  // motion. Re-attach when outerEl changes so the listener tracks DOM
+  // remounts (POV/Overhead toggle).
   useEffect(() => {
     const el = outerEl;
     if (!el) return;
@@ -2352,31 +2679,147 @@ function useImageZoomPan(opts?: {
       e.preventDefault();
       if (locked) return;
       const rect = el.getBoundingClientRect();
-      const W = rect.width;
-      const H = rect.height;
       const cx = e.clientX - rect.left;
       const cy = e.clientY - rect.top;
-      const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
-      const newZoom = Math.max(1, Math.min(MAX, zoom * factor));
-      if (newZoom === zoom) return;
-      const ratio = newZoom / zoom;
-      const newPanX = (cx - W / 2) * (1 - ratio) + ratio * pan.x;
-      const newPanY = (cy - H / 2) * (1 - ratio) + ratio * pan.y;
-      const limX = (W * (newZoom - 1)) / 2;
-      const limY = (H * (newZoom - 1)) / 2;
-      setZoom(newZoom);
-      setPan(
-        newZoom === 1
-          ? { x: 0, y: 0 }
-          : {
-              x: Math.max(-limX, Math.min(limX, newPanX)),
-              y: Math.max(-limY, Math.min(limY, newPanY)),
-            },
-      );
+      // Trackpad pinch (ctrlKey-wheel) lands many small-deltaY events
+      // in quick succession; a continuous exp() factor feels much
+      // closer to native map apps than a discrete step. Divisor
+      // tuned so a single wheel tick / pinch motion nudges the zoom
+      // rather than slamming it — result-page reviewers complained
+      // the previous 1.15×/exp(-y/100) was too aggressive.
+      const factor = e.ctrlKey
+        ? Math.exp(-e.deltaY / 220)
+        : e.deltaY < 0
+          ? 1.08
+          : 1 / 1.08;
+      applyZoomAt(cx, cy, factor);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [outerEl, zoom, pan, MAX, locked]);
+  }, [outerEl, locked, applyZoomAt]);
+
+  // Safari trackpad pinch fires `gesturestart` / `gesturechange` /
+  // `gestureend` instead of ctrlKey-wheel. Listen for them and route
+  // through the same zoom helper so the feel matches Chrome.
+  useEffect(() => {
+    const el = outerEl;
+    if (!el) return;
+    let lastScale = 1;
+    let anchorX = 0;
+    let anchorY = 0;
+    type GestureEv = Event & { scale: number; clientX: number; clientY: number };
+    const onStart = (raw: Event) => {
+      const e = raw as GestureEv;
+      e.preventDefault();
+      if (locked) return;
+      lastScale = 1;
+      const rect = el.getBoundingClientRect();
+      anchorX = e.clientX - rect.left;
+      anchorY = e.clientY - rect.top;
+    };
+    const onChange = (raw: Event) => {
+      const e = raw as GestureEv;
+      e.preventDefault();
+      if (locked) return;
+      const factor = e.scale / lastScale;
+      lastScale = e.scale;
+      applyZoomAt(anchorX, anchorY, factor);
+    };
+    const onEnd = (raw: Event) => raw.preventDefault();
+    el.addEventListener("gesturestart", onStart as EventListener);
+    el.addEventListener("gesturechange", onChange as EventListener);
+    el.addEventListener("gestureend", onEnd as EventListener);
+    return () => {
+      el.removeEventListener("gesturestart", onStart as EventListener);
+      el.removeEventListener("gesturechange", onChange as EventListener);
+      el.removeEventListener("gestureend", onEnd as EventListener);
+    };
+  }, [outerEl, locked, applyZoomAt]);
+
+  // Touch gestures: single-finger drag = pan, two-finger pinch = zoom
+  // anchored at the midpoint. Mirrors the mouse + wheel paths so the
+  // app feels native on iPad / phone.
+  const touchRef = useRef<
+    | { mode: "pan"; startX: number; startY: number; startPanX: number; startPanY: number }
+    | { mode: "pinch"; startDist: number; lastDist: number }
+    | null
+  >(null);
+  useEffect(() => {
+    const el = outerEl;
+    if (!el) return;
+
+    const onStart = (e: TouchEvent) => {
+      if (locked) return;
+      if (e.touches.length === 1) {
+        if (zoom <= 1) return; // nothing to pan at native scale
+        const t = e.touches[0];
+        touchRef.current = {
+          mode: "pan",
+          startX: t.clientX,
+          startY: t.clientY,
+          startPanX: pan.x,
+          startPanY: pan.y,
+        };
+        setIsPanning(true);
+        e.preventDefault();
+      } else if (e.touches.length === 2) {
+        const [t1, t2] = [e.touches[0], e.touches[1]];
+        const d = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        touchRef.current = { mode: "pinch", startDist: d, lastDist: d };
+        e.preventDefault();
+      }
+    };
+
+    const onMove = (e: TouchEvent) => {
+      const st = touchRef.current;
+      if (!st || locked) return;
+      if (st.mode === "pan" && e.touches.length === 1) {
+        const t = e.touches[0];
+        const rect = el.getBoundingClientRect();
+        const dx = t.clientX - st.startX;
+        const dy = t.clientY - st.startY;
+        const limX = (rect.width * (zoom - 1)) / 2;
+        const limY = (rect.height * (zoom - 1)) / 2;
+        setPan({
+          x: Math.max(-limX, Math.min(limX, st.startPanX + dx)),
+          y: Math.max(-limY, Math.min(limY, st.startPanY + dy)),
+        });
+        e.preventDefault();
+      } else if (st.mode === "pinch" && e.touches.length === 2) {
+        const [t1, t2] = [e.touches[0], e.touches[1]];
+        const rect = el.getBoundingClientRect();
+        const d = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        const factor = d / st.lastDist;
+        st.lastDist = d;
+        const midX = (t1.clientX + t2.clientX) / 2 - rect.left;
+        const midY = (t1.clientY + t2.clientY) / 2 - rect.top;
+        applyZoomAt(midX, midY, factor);
+        e.preventDefault();
+      }
+    };
+
+    const onEnd = (e: TouchEvent) => {
+      if (e.touches.length === 0) {
+        touchRef.current = null;
+        setIsPanning(false);
+      } else if (e.touches.length === 1 && touchRef.current?.mode === "pinch") {
+        // pinch downgraded to single-finger after one finger lifted —
+        // close out the pinch session; user can lift fully then redo.
+        touchRef.current = null;
+      }
+    };
+
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, [outerEl, locked, zoom, pan, applyZoomAt]);
 
   useEffect(() => {
     const onUp = () => {

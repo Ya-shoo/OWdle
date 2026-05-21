@@ -28,35 +28,27 @@ const ALL_SPOTS: Spot[] = Object.values(
 ).flat();
 
 const DIFFICULTY_LABELS: Record<SpotDifficulty, string> = {
-  "very-easy": "Very easy",
   easy: "Easy",
   normal: "Normal",
   hard: "Hard",
-  "very-hard": "Very hard",
 };
 
 // Visual cues per difficulty bucket. text- / bg- pairs derived from
 // the project's CSS-variable theme tokens.
 const DIFFICULTY_TEXT: Record<SpotDifficulty, string> = {
-  "very-easy": "text-correct",
   easy: "text-correct",
   normal: "text-info",
-  hard: "text-accent-soft",
-  "very-hard": "text-far",
+  hard: "text-far",
 };
 const DIFFICULTY_BG: Record<SpotDifficulty, string> = {
-  "very-easy": "bg-correct",
-  easy: "bg-correct/70",
+  easy: "bg-correct",
   normal: "bg-info",
-  hard: "bg-accent-soft",
-  "very-hard": "bg-far",
+  hard: "bg-far",
 };
 const DIFFICULTY_ORDER: ReadonlyArray<SpotDifficulty> = [
-  "very-easy",
   "easy",
   "normal",
   "hard",
-  "very-hard",
 ];
 
 type ShowFilter = "all" | "rated" | "unrated" | "flagged-off" | "flagged-ok";
@@ -130,11 +122,9 @@ export function MapAdmin() {
     const flaggedOff = allFb.filter((f) => f.pinAccurate === false).length;
     const flaggedOk = allFb.filter((f) => f.pinAccurate === true).length;
     const buckets: Record<SpotDifficulty, number> = {
-      "very-easy": 0,
       easy: 0,
       normal: 0,
       hard: 0,
-      "very-hard": 0,
     };
     for (const f of allFb) {
       if (f.difficulty) buckets[f.difficulty]++;
