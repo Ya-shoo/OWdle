@@ -12,7 +12,12 @@ export default function robots(): MetadataRoute.Robots {
       // assets are NOT disallowed here because Google Images is a real
       // discovery channel; _headers blocks cross-origin embedding but
       // leaves indexing open.
-      disallow: ["/labeler/"],
+      //
+      // /map is unlisted while map mode is under construction — the
+      // route works (so Yash can test cross-device) but isn't linked
+      // from the home page (lib/modes.ts: built: false) and shouldn't
+      // be crawled.
+      disallow: ["/labeler/", "/map/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

@@ -1,0 +1,222 @@
+[
+  {
+    "key": "kings-row",
+    "label": "King's Row",
+    "location": "United Kingdom",
+    "gamemode": "hybrid",
+    "overheadFile": "/maps/overhead/kings-row.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=10If1ecmAW3c0CUpDaefyMwwgYWmsOp7d",
+    "fetchedAt": "2026-05-13T22:59:57.672Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "hanamura",
+    "label": "Hanamura",
+    "location": "Japan",
+    "gamemode": "assault",
+    "overheadFile": "/maps/overhead/hanamura.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1zJIoWE6tqyuOXEwAfqQK4O23sCYBlz9s",
+    "fetchedAt": "2026-05-13T23:00:13.107Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "dorado",
+    "label": "Dorado",
+    "location": "Mexico",
+    "gamemode": "escort",
+    "overheadFile": "/maps/overhead/dorado.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1flxWL0plP_-2jy0-UrM9sEeBDGOWToxF",
+    "fetchedAt": "2026-05-13T23:00:26.694Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "ilios",
+    "label": "Ilios",
+    "location": "Greece",
+    "gamemode": "control",
+    "overheadFile": "/maps/overhead/ilios.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1BBLG8y0GGxCLEW0FK0nopZ2ISXpPIHmk",
+    "fetchedAt": "2026-05-13T23:00:51.195Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "watchpoint-gibraltar",
+    "label": "Watchpoint: Gibraltar",
+    "location": "Gibraltar",
+    "gamemode": "escort",
+    "overheadFile": "/maps/overhead/watchpoint-gibraltar.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1jo6V3YjmLjF32wEmtx9V00IuOuqnm1zA",
+    "fetchedAt": "2026-05-13T23:01:03.141Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "eichenwalde",
+    "label": "Eichenwalde",
+    "location": "Germany",
+    "gamemode": "hybrid",
+    "overheadFile": "/maps/overhead/eichenwalde.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1d7FuLNZ-SOnTfsWcYsQQTK0oGuX5xiHf",
+    "fetchedAt": "2026-05-13T23:01:16.293Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "hollywood",
+    "label": "Hollywood",
+    "location": "United States",
+    "gamemode": "hybrid",
+    "overheadFile": "/maps/overhead/hollywood.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1nGxoje9NBkVIfTQanHNVG22sOnbPxhpE",
+    "fetchedAt": "2026-05-13T23:01:28.832Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "numbani",
+    "label": "Numbani",
+    "location": "Nigeria",
+    "gamemode": "hybrid",
+    "overheadFile": "/maps/overhead/numbani.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1iJYEVKqr1HwEXzfenplLIcHsedDpkGPV",
+    "fetchedAt": "2026-05-13T23:01:41.011Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "lijiang-tower",
+    "label": "Lijiang Tower",
+    "location": "China",
+    "gamemode": "control",
+    "overheadFile": "/maps/overhead/lijiang-tower.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1fRXx6WFYdIieW8Ymfqbbj0MjhZwrFaOB",
+    "fetchedAt": "2026-05-13T23:02:05.063Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "junkertown",
+    "label": "Junkertown",
+    "location": "Australia",
+    "gamemode": "escort",
+    "overheadFile": "/maps/overhead/junkertown.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1tECichGmNZqEq7qNhZ2Wz21fCajRbUEo",
+    "fetchedAt": "2026-05-13T23:02:18.603Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "oasis",
+    "label": "Oasis",
+    "location": "Iraq",
+    "gamemode": "control",
+    "overheadFile": "/maps/overhead/oasis.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1si5G9Xtt-hfMG_QZpMMXBcnmUa4VBVXz",
+    "fetchedAt": "2026-05-13T23:02:46.797Z",
+    "attribution": "Statbanana (overwatch.statbanana.com)"
+  },
+  {
+    "key": "blizzard-world",
+    "label": "Blizzard World",
+    "location": "United States",
+    "gamemode": "hybrid",
+    "overheadFile": "/maps/overhead/blizzard-world.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=12LfcRpyjUS7NV3KNQcxbluYTtX7GPMk-",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:03:00.494Z"
+  },
+  {
+    "key": "horizon-lunar-colony",
+    "label": "Horizon Lunar Colony",
+    "location": "Moon",
+    "gamemode": "assault",
+    "overheadFile": "/maps/overhead/horizon-lunar-colony.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1kqsn1XgrvwIla5R0ejQ_S53z1jJ-yUd1",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:03:12.549Z"
+  },
+  {
+    "key": "paris",
+    "label": "Paris",
+    "location": "France",
+    "gamemode": "assault",
+    "overheadFile": "/maps/overhead/paris.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1DWQcIHTv_6NgSs-xnm7m3dqRgiZIUE-g",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:03:24.558Z"
+  },
+  {
+    "key": "temple-of-anubis",
+    "label": "Temple of Anubis",
+    "location": "Egypt",
+    "gamemode": "assault",
+    "overheadFile": "/maps/overhead/temple-of-anubis.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=10LJ9GJRBbQePyCm46hr45jYl3iXcLaTx",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:03:36.918Z"
+  },
+  {
+    "key": "volskaya-industries",
+    "label": "Volskaya Industries",
+    "location": "Russia",
+    "gamemode": "assault",
+    "overheadFile": "/maps/overhead/volskaya-industries.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1ivL5PpWZUXksd1UPTNdMFeyhGq5Rae_o",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:03:51.036Z"
+  },
+  {
+    "key": "rialto",
+    "label": "Rialto",
+    "location": "Italy",
+    "gamemode": "escort",
+    "overheadFile": "/maps/overhead/rialto.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1jrEJXl70oDUNqS1UGhlDJ4RfEVCq1dJ9",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:04:04.615Z"
+  },
+  {
+    "key": "route-66",
+    "label": "Route 66",
+    "location": "United States",
+    "gamemode": "escort",
+    "overheadFile": "/maps/overhead/route-66.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=15HPRFGowqsQm_eJ_uEqPz-GW-OWvNuWo",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:04:19.689Z"
+  },
+  {
+    "key": "busan",
+    "label": "Busan",
+    "location": "South Korea",
+    "gamemode": "control",
+    "overheadFile": "/maps/overhead/busan.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=18BIEqEC5KtXscBPpm_XakGXzENJiClnZ",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:04:48.054Z"
+  },
+  {
+    "key": "nepal",
+    "label": "Nepal",
+    "location": "Nepal",
+    "gamemode": "control",
+    "overheadFile": "/maps/overhead/nepal.webp",
+    "source": "statbanana",
+    "sourceUrl": "https://drive.google.com/uc?export=download&id=1DFXQmC1CAu-s-6SkpRqPY23P-x-Vj4Tg",
+    "attribution": "Statbanana (overwatch.statbanana.com)",
+    "fetchedAt": "2026-05-13T23:05:10.944Z"
+  }
+]

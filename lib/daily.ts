@@ -10,6 +10,7 @@ import sfxData from "@/data/sfx.json";
 import soundClipsData from "@/data/sound-clips.json";
 import iconOverridesData from "@/data/sound-clip-icons.json";
 import soundClipTrimsData from "@/data/sound-clip-trims.json";
+import spotsData from "@/data/spots.json";
 
 type SfxEntry = {
   url: string;
@@ -370,6 +371,109 @@ export function getConversationForDay(day: string): {
       HEROES_BY_KEY[conv.speakers[1]]!,
     ],
   };
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Map mode — pick N spots for a given day's daily run.
+//
+// Constraints:
+//   - At most one spot per (mapKey, broad-region cluster) — we don't want
+//     two near-duplicate POVs in the same day. Implemented as a min-pixel-
+//     distance check between any two picks on the same map.
+//   - Same seed → same picks. Day-keyed via the canonical `owdle:map:{day}`
+//     namespace in the existing FNV/LCG pattern.
+//   - When the answer pool is small (e.g. only one map calibrated at
+//     launch), the proximity constraint is relaxed automatically — better
+//     to ship 5 rounds with some clustering than to under-deliver.
+// ─────────────────────────────────────────────────────────────────────────
+
+export type MapSpot = {
+  id: string;
+  mapKey: string;
+  worldX: number;
+  worldY: number;
+  worldZ: number;
+  pixelX: number;
+  pixelY: number;
+  screenshot: string;
+  capturedAt?: string;
+  sourceFilename?: string;
+  // Camera-facing direction at capture time. worldRot* are the raw
+  // forward-vector components OCR'd from the workshop free-cam HUD's
+  // "ROT (rx, ry, rz)" line. facingDeg is the precomputed pixel-space
+  // angle (0° = up on the overhead, 90° = right) — what the pin's CSS
+  // rotation uses. Stored both so we can recompute facingDeg if
+  // calibration ever changes.
+  worldRotX?: number;
+  worldRotY?: number;
+  worldRotZ?: number;
+  facingDeg?: number;
+  // ISO timestamp set whenever this spot is manually edited in MapEdit
+  // (any drag of the pin, or any change to world coords / facing). Acts
+  // as both an audit trail and a marker for the calibration-feedback
+  // pipeline: when the calibrate page's mode is set to a feedback
+  // variant, edited spots are pulled in as additional fit constraints
+  // (full weight in "unconditional", reduced weight in "tier-two").
+  // Absent on spots that came straight from MapReview's OCR pipeline.
+  editedAt?: string;
+};
+
+const MAP_SPOTS_BY_KEY = spotsData as Record<string, MapSpot[]>;
+const MAP_SPOTS: MapSpot[] = Object.values(MAP_SPOTS_BY_KEY).flat();
+
+// Minimum pixel distance between two picks on the same map. Computed
+// per-spot relative to that map's overhead long edge so it scales when
+// we add Push / smaller maps later. Default ~12% of long edge keeps
+// rounds visually distinct (different streets / capture zones).
+const MIN_SAME_MAP_FRACTION = 0.12;
+
+export function getMapRoundsForDay(
+  day: string,
+  n: number = 5,
+): MapSpot[] {
+  const pool = MAP_SPOTS;
+  if (pool.length === 0) return [];
+
+  const order = shuffleOrder(`owdle:map:${day}`, pool.length);
+  const picks: MapSpot[] = [];
+
+  // First pass: enforce the proximity constraint to spread coverage.
+  for (const idx of order) {
+    if (picks.length >= n) break;
+    const cand = pool[idx];
+    const tooClose = picks.some((p) => {
+      if (p.mapKey !== cand.mapKey) return false;
+      const longEdge = Math.max(
+        // Overheads are 5000 long edge by current convention; if we
+        // ever vary, this falls back to an inferred-from-pixel-coord
+        // estimate that's correct for any reasonable square overhead.
+        Math.max(p.pixelX, p.pixelY, cand.pixelX, cand.pixelY),
+        2500,
+      );
+      const dx = p.pixelX - cand.pixelX;
+      const dy = p.pixelY - cand.pixelY;
+      return Math.sqrt(dx * dx + dy * dy) < longEdge * MIN_SAME_MAP_FRACTION;
+    });
+    if (tooClose) continue;
+    picks.push(cand);
+  }
+
+  // Second pass: if the constraint left us short (small launch pool,
+  // single-map case), backfill from the same shuffled order ignoring
+  // proximity. Avoids returning <n rounds.
+  if (picks.length < n) {
+    const have = new Set(picks.map((p) => p.id));
+    for (const idx of order) {
+      if (picks.length >= n) break;
+      const cand = pool[idx];
+      if (!have.has(cand.id)) {
+        picks.push(cand);
+        have.add(cand.id);
+      }
+    }
+  }
+
+  return picks;
 }
 
 // Deterministic permutation of [0, total). Same `seed` always produces

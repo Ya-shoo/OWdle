@@ -26,9 +26,33 @@ export function loadModeState(mode: string, day: string): ModeState {
   try {
     const raw = window.localStorage.getItem(key(mode, day));
     if (!raw) return { day, guesses: [], won: false };
-    const parsed = JSON.parse(raw) as ModeState;
+    const parsed = JSON.parse(raw) as Partial<ModeState> & { day?: string };
     if (parsed.day !== day) return { day, guesses: [], won: false };
-    return parsed;
+    // Newer modes (map) store a different schema (rounds[] instead of
+    // guesses[]). Coerce so legacy home-screen consumers reading
+    // st.guesses.length / st.won don't throw or report stale data.
+    const asMap = parsed as Partial<MapState>;
+    const isMapShape =
+      Array.isArray(asMap.spotIds) && Array.isArray(asMap.rounds);
+    const derivedGuesses = isMapShape
+      ? // Each completed round counts as one guess for dashboard
+        // purposes; the home-page progress UI just needs a count.
+        (asMap.rounds ?? []).map((_, i) => String(i))
+      : Array.isArray(parsed.guesses)
+        ? parsed.guesses
+        : [];
+    const derivedWon =
+      parsed.won === true ||
+      (isMapShape &&
+        (asMap.spotIds?.length ?? 0) > 0 &&
+        (asMap.currentRound ?? 0) >= (asMap.spotIds?.length ?? 0));
+    return {
+      day: parsed.day,
+      guesses: derivedGuesses,
+      won: derivedWon,
+      gaveUp: parsed.gaveUp,
+      bonus: parsed.bonus,
+    };
   } catch {
     return { day, guesses: [], won: false };
   }
@@ -104,4 +128,174 @@ export function saveConversationState(state: ConversationState): void {
   } catch {
     // ignore
   }
+}
+
+// --- Map mode: 5 rounds of GeoGuessr-style guessing per day ---
+// Each round records the first guess (which map, where on it) plus an
+// optional second guess that fires automatically when the player picked
+// the wrong map. Stored separately from ModeState because the legacy
+// "guesses: string[]" shape doesn't accommodate per-round state.
+
+export type MapRoundGuess = {
+  // The map key the player picked from the dropdown.
+  guessedMap: string;
+  // Pixel position they pinned on that map's overhead. Stored relative
+  // to the overhead's natural dimensions, so it's resolution-stable.
+  guessedPx: [number, number];
+};
+
+export type MapRoundResult = {
+  spotId: string;
+  mapKey: string;
+  // First guess. If guessedMap matches the spot's mapKey, scoring uses
+  // this directly. If not, the player gets a forced second guess on the
+  // correct map (see secondGuess below).
+  firstGuess: MapRoundGuess | null;
+  // Only present when the first guess was on the wrong map. The map is
+  // auto-set to the correct one; only the pin position is the player's
+  // choice. Distance points are halved and the map bonus is forfeited.
+  secondGuess: MapRoundGuess | null;
+  // Final scored breakdown, computed when the round resolves.
+  pointsMap: number; // 0 or 1000
+  pointsDistance: number; // 0–4000
+  pointsTotal: number;
+  // Convenience flags for the UI / share card.
+  wrongMapFirst: boolean;
+  skipped: boolean;
+};
+
+export type MapState = {
+  day: string;
+  // Spot IDs in play order — we lock the picks at first load so a mid-
+  // day reload doesn't reshuffle if the spots.json grew.
+  spotIds: string[];
+  rounds: MapRoundResult[];
+  // 0..rounds.length, where rounds.length == picks.length means done.
+  currentRound: number;
+};
+
+const EMPTY_MAP_STATE = (day: string): MapState => ({
+  day,
+  spotIds: [],
+  rounds: [],
+  currentRound: 0,
+});
+
+export function loadMapState(day: string): MapState {
+  if (typeof window === "undefined") return EMPTY_MAP_STATE(day);
+  try {
+    const raw = window.localStorage.getItem(key("map", day));
+    if (!raw) return EMPTY_MAP_STATE(day);
+    const parsed = JSON.parse(raw) as MapState;
+    if (parsed.day !== day) return EMPTY_MAP_STATE(day);
+    if (!Array.isArray(parsed.spotIds) || !Array.isArray(parsed.rounds)) {
+      return EMPTY_MAP_STATE(day);
+    }
+    return parsed;
+  } catch {
+    return EMPTY_MAP_STATE(day);
+  }
+}
+
+export function saveMapState(state: MapState): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(
+      key("map", state.day),
+      JSON.stringify(state),
+    );
+  } catch {
+    // ignore
+  }
+}
+
+// --- Map mode: player-submitted spot corrections ---
+// Quick-tap feedback per spot. Two signals collected at the round-
+// result reveal:
+//   - difficulty: how hard the player found this POV. Aggregated
+//     across users to bucket spots into easy/normal/hard later and
+//     tune the daily mix.
+//   - pinAccurate: does the stored answer pin actually match where
+//     the screenshot was taken? Spots that many users flag as off get
+//     surfaced for review.
+//
+// Stored keyed by spotId so the latest rating wins per spot (player
+// can change their mind). When we ship a backend, every click here
+// also gets POSTed; the local store is currently the only source.
+//
+// Replaces the older free-form "report wrong location" flow — we
+// gain coverage (more users will tap one of seven buttons than fill
+// out a free-form form) at the cost of granularity. The accuracy
+// flag is binary; the difficulty bucket is coarse. Both are enough
+// to flag spots for human review without per-user manual triage.
+
+export type SpotDifficulty =
+  | "very-easy"
+  | "easy"
+  | "normal"
+  | "hard"
+  | "very-hard";
+
+export type SpotFeedback = {
+  spotId: string;
+  spotMapKey: string;
+  difficulty?: SpotDifficulty;
+  pinAccurate?: boolean;
+  // Last touch time. Bumped on every patch so we can prune stale
+  // entries if the store grows unwieldy.
+  updatedAt: string;
+};
+
+const FEEDBACK_KEY = "owdle.map.feedback.v1";
+
+type FeedbackStore = Record<string, SpotFeedback>;
+
+export function loadMapFeedback(): FeedbackStore {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(FEEDBACK_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    return parsed as FeedbackStore;
+  } catch {
+    return {};
+  }
+}
+
+export function getSpotFeedback(spotId: string): SpotFeedback | null {
+  return loadMapFeedback()[spotId] ?? null;
+}
+
+/**
+ * Merge a patch into the spot's stored feedback. Pass `undefined`
+ * for a field to clear it (e.g. "I clicked the wrong difficulty,
+ * unset it"). Returns the new merged record.
+ */
+export function updateSpotFeedback(
+  spotId: string,
+  spotMapKey: string,
+  patch: { difficulty?: SpotDifficulty; pinAccurate?: boolean },
+): SpotFeedback {
+  const store = loadMapFeedback();
+  const existing: SpotFeedback = store[spotId] ?? {
+    spotId,
+    spotMapKey,
+    updatedAt: new Date().toISOString(),
+  };
+  const next: SpotFeedback = {
+    ...existing,
+    spotMapKey, // keep in sync if the spot's map changed since
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  };
+  store[spotId] = next;
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(FEEDBACK_KEY, JSON.stringify(store));
+    } catch {
+      // ignore quota / serialization
+    }
+  }
+  return next;
 }

@@ -1,0 +1,58 @@
+[
+  {
+    "key": "assault",
+    "label": "Assault",
+    "file": "/gamemodes/assault.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Assault.png",
+    "fetchedAt": "2026-05-19T22:56:32.809Z"
+  },
+  {
+    "key": "hybrid",
+    "label": "Hybrid",
+    "file": "/gamemodes/hybrid.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Hybrid.png",
+    "fetchedAt": "2026-05-19T22:56:33.133Z"
+  },
+  {
+    "key": "escort",
+    "label": "Escort",
+    "file": "/gamemodes/escort.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Escort.png",
+    "fetchedAt": "2026-05-19T22:56:33.348Z"
+  },
+  {
+    "key": "control",
+    "label": "Control",
+    "file": "/gamemodes/control.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Control.png",
+    "fetchedAt": "2026-05-19T22:56:33.704Z"
+  },
+  {
+    "key": "push",
+    "label": "Push",
+    "file": "/gamemodes/push.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Push.png",
+    "fetchedAt": "2026-05-19T22:56:33.976Z"
+  },
+  {
+    "key": "flashpoint",
+    "label": "Flashpoint",
+    "file": "/gamemodes/flashpoint.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Flashpoint.png",
+    "fetchedAt": "2026-05-19T22:56:34.235Z"
+  },
+  {
+    "key": "clash",
+    "label": "Clash",
+    "file": "/gamemodes/clash.png",
+    "source": "Overwatch Fandom",
+    "sourceUrl": "https://overwatch.fandom.com/wiki/Clash.png",
+    "fetchedAt": "2026-05-19T22:56:34.573Z"
+  }
+]

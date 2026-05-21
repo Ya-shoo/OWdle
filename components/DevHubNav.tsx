@@ -40,6 +40,30 @@ const TOOLS: Tool[] = [
       "Free-form feedback submissions, filterable by site + keywords.",
     helper: "localhost:8789",
   },
+  {
+    href: "/labeler/map/calibrate/",
+    label: "Map calibrate",
+    description:
+      "Solve a per-map (worldX, worldZ) → (pixelX, pixelY) homography. One-time per map.",
+  },
+  {
+    href: "/labeler/map/review/",
+    label: "Map review",
+    description:
+      "Drop screenshots → OCR coords → auto-detect map → mask HUD → export ZIP.",
+  },
+  {
+    href: "/labeler/map/edit/",
+    label: "Map edit",
+    description:
+      "Drag pins + rotate facing on every committed spot. Saves back to data/spots.json.",
+    helper: "localhost:3030",
+  },
+  {
+    href: "/labeler/map/admin/",
+    label: "Map feedback admin",
+    description: "Aggregated per-spot difficulty + pin-accuracy ratings.",
+  },
 ];
 
 export function DevHubNav() {
