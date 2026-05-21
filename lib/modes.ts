@@ -50,7 +50,7 @@ export const MODES: ModeDef[] = [
   {
     slug: "map",
     label: "Map",
-    blurb: "A screenshot. Pin where it was taken.",
+    blurb: "GeoGuessr for Overwatch.",
     built: false,
   },
 ];
