@@ -33,10 +33,12 @@ export function TryDeadlockleCard() {
             Play{" "}
             <span style={{ color: "#d6a05c" }}>
               Deadlock<span style={{ color: "#e9c694" }}>le</span>
-            </span>{" "}
-            <span className="text-ink-soft">— the daily Deadlock quiz</span>
+            </span>
           </h3>
-          <p className="mt-2 max-w-lg text-sm text-ink-soft">
+          <p className="utility-label mt-1 text-xs text-ink-soft">
+            The daily Deadlock quiz
+          </p>
+          <p className="mt-3 max-w-lg text-sm text-ink-soft">
             Same daily puzzle format, different game. Heroes, abilities,
             splash, items. Resets at midnight UTC.
           </p>

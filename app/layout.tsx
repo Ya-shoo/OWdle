@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_KEYWORDS,
@@ -99,6 +100,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Header />
         {children}
+        <FeedbackButton />
       </body>
     </html>
   );
