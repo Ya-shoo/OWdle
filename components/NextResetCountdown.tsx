@@ -102,7 +102,7 @@ export function NextResetCountdown({
   return (
     <span suppressHydrationWarning className={className}>
       <span className="text-ink-faint">{label}</span>
-      <span className="font-semibold tabular-nums text-accent-soft">
+      <span className="tabular-nums text-accent-soft">
         {ms == null ? "—" : formatHMS(ms)}
       </span>
     </span>

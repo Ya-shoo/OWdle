@@ -172,7 +172,7 @@ function DailyCompletePanel({
             <LiveDot />
             <NextResetCountdown
               label=""
-              className="font-display text-4xl tabular-nums leading-none text-accent-soft sm:text-5xl"
+              className="font-display text-4xl font-semibold tabular-nums leading-none text-accent-soft sm:text-5xl"
             />
           </div>
           <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">
