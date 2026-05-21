@@ -24,14 +24,24 @@ type Props = {
   startOffset?: number | null;
   endOffset?: number | null;
   // Fires once per audio load with metadata the dev trim UI needs: the
-  // raw file duration and the auto silence-skip the player would have used
-  // if no manual override were set. Lets the editor show both values for
-  // reference. No-op when not provided (production sound game path).
+  // raw file duration, the auto silence-skip the player would have used
+  // if no manual override were set, and a pre-bucketed full-file peaks
+  // array (untrimmed) that the dev trim editor renders as the backdrop
+  // for its draggable start/end handles. Bucketing is done once here so
+  // the editor doesn't have to re-decode or re-walk the samples on every
+  // render. No-op when not provided (production sound game path).
   onAudioMetadata?: (info: {
     fileDuration: number;
     autoStartOffset: number;
+    fullPeaks: number[];
   }) => void;
 };
+
+// Resolution of the full-file peaks delivered to the dev trim editor.
+// Higher than the playable waveform's BAR_COUNT (96) so the editor has
+// a touch more detail to drag against — the user is doing pixel-level
+// targeting in that view, not glancing at it during gameplay.
+const FULL_PEAKS_RESOLUTION = 120;
 
 const BAR_COUNT = 96;
 const BAR_WIDTH = 3;
@@ -174,6 +184,35 @@ export function WaveformPlayer({
         if (autoStartSeconds > MAX_SKIP_SECONDS)
           autoStartSeconds = MAX_SKIP_SECONDS;
 
+        // Bucket the full file once for the dev trim editor. The playable
+        // waveform's peaks state is bucketed over only the audible window
+        // and re-derived on every trim change; this one represents the
+        // entire file so handles dragged outside the current window still
+        // have backdrop to align against.
+        const fullPeaks: number[] = [];
+        if (onAudioMetadataRef.current) {
+          const bucketSize = Math.max(
+            1,
+            Math.floor(data.length / FULL_PEAKS_RESOLUTION),
+          );
+          let bucketPeak = 0;
+          for (let i = 0; i < FULL_PEAKS_RESOLUTION; i++) {
+            let max = 0;
+            const s = i * bucketSize;
+            const e = Math.min(s + bucketSize, data.length);
+            for (let j = s; j < e; j++) {
+              const v = Math.abs(data[j]);
+              if (v > max) max = v;
+            }
+            fullPeaks.push(max);
+            if (max > bucketPeak) bucketPeak = max;
+          }
+          const norm = bucketPeak > 0 ? bucketPeak : 1;
+          for (let i = 0; i < fullPeaks.length; i++) {
+            fullPeaks[i] = fullPeaks[i] / norm;
+          }
+        }
+
         // Construct the playback element. Re-fetching the same URL is
         // cheap — the browser cache short-circuits the second hit — and
         // setting src + load() is the documented path that keeps iOS's
@@ -206,6 +245,7 @@ export function WaveformPlayer({
         onAudioMetadataRef.current?.({
           fileDuration: audio.duration,
           autoStartOffset: autoStartSeconds,
+          fullPeaks,
         });
       } catch (e) {
         if (!cancelled) {

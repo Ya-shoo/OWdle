@@ -94,6 +94,7 @@ export function SoundGame() {
     audioUrl: string;
     fileDuration: number;
     autoStartOffset: number;
+    fullPeaks: number[];
   } | null>(null);
 
   useEffect(() => {
@@ -287,6 +288,7 @@ export function SoundGame() {
   const handleAudioMetadata = (info: {
     fileDuration: number;
     autoStartOffset: number;
+    fullPeaks: number[];
   }) => {
     setAudioMeta({ audioUrl, ...info });
   };
@@ -346,6 +348,7 @@ export function SoundGame() {
                 autoStartOffset={
                   audioMetaForCurrent?.autoStartOffset ?? null
                 }
+                fullPeaks={audioMetaForCurrent?.fullPeaks ?? null}
                 persistedStart={persistedStart}
                 persistedEnd={persistedEnd}
                 draftStart={activeStart}
