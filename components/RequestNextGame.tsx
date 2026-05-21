@@ -465,10 +465,11 @@ export function RequestNextGame() {
   );
 }
 
-// Top voted games. The order IS the data — we don't show counts so the
+// Top voted games. The order IS the data: we don't show counts so the
 // rank can't be reverse-engineered into "X has 1 vote", which would
-// cheapen the signal early on. Vertical list keeps it legible inside a
-// narrow column; rank-1 gets a tinted thumb, top-3 ranks tinted accent.
+// cheapen the signal early on. Card grid where the leader gets a hero
+// tile and ranks 2-5 sit in a 2-col grid below. Each tile is large
+// enough to read the game's cover art at a glance.
 function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
   return (
     <div className="mt-6 border-t border-line pt-5">
@@ -484,35 +485,79 @@ function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
           No votes yet. Be the first to weigh in.
         </p>
       ) : (
-        <ol className="mt-3 space-y-2">
+        <div className="mt-3 grid grid-cols-2 gap-2">
           {data.map((g, i) => (
-            <li key={g.game_id} className="flex items-center gap-3">
-              <span
-                className={clsx(
-                  "w-6 shrink-0 font-mono text-[11px] tabular-nums",
-                  i === 0
-                    ? "text-accent"
-                    : i < 3
-                      ? "text-accent-soft"
-                      : "text-ink-faint",
-                )}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={g.game_image ?? PLACEHOLDER_IMG}
-                alt=""
-                className="h-14 w-24 shrink-0 border border-line bg-inset object-cover"
-                loading="lazy"
-              />
-              <span className="min-w-0 flex-1 truncate text-sm text-ink">
-                {g.game_name}
-              </span>
-            </li>
+            <PickCard
+              key={g.game_id}
+              rank={i + 1}
+              entry={g}
+              hero={i === 0}
+            />
           ))}
-        </ol>
+        </div>
       )}
+    </div>
+  );
+}
+
+// Single tile inside the Leaderboard grid. The hero variant spans both
+// columns and uses a taller crop so the leader reads as the headline pick.
+// All variants share the same overlay scheme: rank chip top-left, name
+// band on a dark gradient at the bottom, image filling the rest.
+function PickCard({
+  rank,
+  entry,
+  hero,
+}: {
+  rank: number;
+  entry: LeaderEntry;
+  hero: boolean;
+}) {
+  return (
+    <div
+      className={clsx(
+        "relative overflow-hidden border border-line bg-inset",
+        hero && "col-span-2",
+      )}
+    >
+      <div className={clsx("relative", hero ? "aspect-[16/7]" : "aspect-video")}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={entry.game_image ?? PLACEHOLDER_IMG}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
+
+        {/* Bottom gradient gives the name band legibility regardless of
+            how light or busy the underlying cover art happens to be. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
+        />
+
+        <span
+          className={clsx(
+            "absolute left-2 top-2 inline-flex items-center border bg-canvas/85 px-1.5 py-0.5 font-mono text-[10px] tabular-nums backdrop-blur-sm",
+            rank === 1
+              ? "border-accent text-accent"
+              : rank <= 3
+                ? "border-accent-soft text-accent-soft"
+                : "border-line text-ink-faint",
+          )}
+        >
+          {String(rank).padStart(2, "0")}
+        </span>
+
+        <p
+          className={clsx(
+            "absolute inset-x-0 bottom-0 truncate px-3 py-2 font-display text-ink",
+            hero ? "text-lg sm:text-xl" : "text-sm",
+          )}
+        >
+          {entry.game_name}
+        </p>
+      </div>
     </div>
   );
 }
