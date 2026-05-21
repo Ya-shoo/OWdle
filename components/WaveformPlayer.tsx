@@ -182,7 +182,13 @@ export function WaveformPlayer({
         // destination, which reports of iOS's silent-switch handling are
         // mixed on. Plain HTMLAudio is the bulletproof route.
         const el = new Audio();
-        el.src = audioUrl;
+        // Must match the URL used by the fetch above (line 147) so the
+        // browser cache short-circuits the second hit, and — more
+        // importantly — so the relative path is resolved against R2 in
+        // production. Using the raw audioUrl pointed at the Pages origin,
+        // which 404'd since /sounds is R2-only, surfacing as
+        // MEDIA_ERR_SRC_NOT_SUPPORTED on the play() promise.
+        el.src = media(audioUrl);
         el.preload = "auto";
         el.load();
         audioRef.current = el;
