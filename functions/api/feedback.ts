@@ -13,10 +13,15 @@ import { voterHash } from "../_lib/types";
 type Body = { body?: unknown };
 
 const PROJECT = "owdle";
+const SITE_URL = "https://playowdle.com";
+// OWdle brand orange. Used as the embed accent in Discord so the
+// notification reads as "this came from OWdle" at a glance even when
+// the channel is shared with Deadlockle alerts.
+const EMBED_COLOR = 0xff8847;
 const MAX_FEEDBACK_PER_SUBMITTER_PER_DAY = 5;
 const MAX_BODY_LEN = 150;
 
-export const onRequestPost: Handler = async ({ request, env }) => {
+export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
   let payload: Body;
   try {
     payload = (await request.json()) as Body;
@@ -58,6 +63,36 @@ export const onRequestPost: Handler = async ({ request, env }) => {
   const meta = result.meta as { changes?: number } | undefined;
   if (!meta?.changes) {
     return json({ error: "rate_limited" }, 429);
+  }
+
+  // Fire-and-forget Discord notification. waitUntil lets the response
+  // return to the user immediately while the webhook POST drains in the
+  // background; if Discord is slow or down, the submission still
+  // succeeds. Errors are swallowed deliberately — the D1 row is the
+  // source of truth, the notification is a courtesy.
+  if (env.FEEDBACK_WEBHOOK_URL) {
+    const payload = {
+      embeds: [
+        {
+          title: `New feedback · OWdle`,
+          description: body,
+          color: EMBED_COLOR,
+          url: SITE_URL,
+          timestamp: new Date().toISOString(),
+          footer: { text: `submitter ${hash.slice(0, 8)}` },
+        },
+      ],
+    };
+    waitUntil(
+      fetch(env.FEEDBACK_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      }).then(
+        () => {},
+        () => {},
+      ),
+    );
   }
 
   return json({ ok: true });
