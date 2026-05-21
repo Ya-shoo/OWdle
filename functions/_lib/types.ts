@@ -17,6 +17,10 @@ export type Env = {
   DB: D1;
   RAWG_API_KEY: string;
   ADMIN_SECRET?: string;
+  // Discord webhook URL the feedback endpoint pings after a successful
+  // insert. Optional: when unset the endpoint just writes to D1 and
+  // returns, so dev/local deploys keep working without leaking secrets.
+  FEEDBACK_WEBHOOK_URL?: string;
 };
 
 export type Context = {
