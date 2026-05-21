@@ -13,7 +13,7 @@ export function Header() {
         <div className="flex items-center gap-5 sm:gap-7">
           <NextResetCountdown
             label="next "
-            className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-info sm:inline"
+            className="font-mono text-[10px] uppercase tracking-[0.2em] text-info sm:text-xs"
           />
           <HeaderProgress />
         </div>
