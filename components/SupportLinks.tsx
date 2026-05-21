@@ -11,7 +11,7 @@ const TWITTER_INTENT = `https://twitter.com/intent/tweet?text=${encodeURICompone
 
 export function SupportLinks() {
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col justify-center">
       <h3 className="font-soft text-2xl font-bold text-ink sm:text-3xl">
         Support me :D
       </h3>
