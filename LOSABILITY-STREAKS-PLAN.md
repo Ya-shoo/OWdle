@@ -559,6 +559,9 @@ re-rooted on the user identity rather than localStorage.
 - `functions/api/stats/today.ts` — Pages Function that queries
   PostHog HogQL server-side and returns merged mode + daily buckets;
   gated on `POSTHOG_PERSONAL_API_KEY` + `POSTHOG_PROJECT_ID`
+- `lib/tier.ts` — daily composite scoring and Overwatch tier mapping
+  for `DailyTierBadge`; `CAPS` here MUST stay in lockstep with each
+  game component's `MAX_GUESSES` constant
 
 ### Build + run
 
