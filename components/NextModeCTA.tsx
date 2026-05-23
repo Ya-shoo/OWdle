@@ -15,6 +15,7 @@ import { NextResetCountdown } from "./NextResetCountdown";
 import { StreakBadge } from "./StreakBadge";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { DailyStatsBand } from "./DailyStatsBand";
+import { DailyTierBadge } from "./DailyTierBadge";
 
 // Primary CTA shown after a mode is solved. Big, filled, with an animated
 // arrow and entrance — the goal is for the player to immediately see that
@@ -180,10 +181,18 @@ function DailyCompletePanel({
             band's stat blocks. */}
         <DailyStatsBand />
 
+        {/* Overwatch rank badge — shown when ≥ 10 finishers exist
+            today (server omits tierCutoffs below that). Headlines the
+            player's daily performance with the official OW rank icon
+            for the percentile band their composite landed in. */}
+        <div className="mt-3">
+          <DailyTierBadge />
+        </div>
+
         {/* Streak band — only renders when current > 0 (StreakBadge
             hides itself at 0). Sits between the score band and the
             "Next puzzle in" countdown so the cadence reads stats →
-            streak → time-to-next. */}
+            rank → streak → time-to-next. */}
         <div className="mt-3">
           <StreakBadge variant="band" />
         </div>

@@ -262,9 +262,8 @@ export function QuoteGame() {
             Quote
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
-            A pre-match exchange between two heroes. Pick which speaker
-            you&apos;re guessing, then enter a hero. More dialogue reveals as
-            you go.
+            Try to guess which two heroes are having a conversation :D
+            More dialogue is revealed as you go.
           </p>
         </div>
         <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">

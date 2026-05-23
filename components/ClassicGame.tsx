@@ -21,6 +21,7 @@ import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
+import { HintConfirmModal } from "./HintConfirmModal";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -53,6 +54,12 @@ export function ClassicGame() {
   const [devView, setDevView] = useDevViewState("classic");
   const [overrideHero, setOverrideHero] = useState<Hero | null>(null);
   const isOverride = overrideHero !== null;
+  // Pending hint pick — held in state while the confirmation modal is
+  // open. The picker runs once when the modal opens so the modal's
+  // confirm path uses the same attribute the user agreed to reveal,
+  // even if the picker would have returned a different value by the
+  // time they clicked Confirm (e.g., guess state mutated in between).
+  const [pendingHint, setPendingHint] = useState<AttrKey | null>(null);
 
   useEffect(() => {
     const d = dayString();
@@ -204,18 +211,20 @@ export function ClassicGame() {
     persist({ ...state, guesses: newGuesses, won, lost });
   };
 
+  // The hint button opens the custom confirmation modal. We pick the
+  // attribute now and stash it as `pendingHint` so the modal's confirm
+  // handler operates on a stable choice.
   const handleHint = () => {
     if (ended) return;
     const picked = pickHintAttr(guessedHeroes, answer, hintsUsed);
     if (!picked) return;
-    if (
-      typeof window !== "undefined" &&
-      !window.confirm(
-        "Using a hint costs one of your remaining guesses. Reveal an attribute?",
-      )
-    ) {
-      return;
-    }
+    setPendingHint(picked);
+  };
+
+  const confirmHint = () => {
+    const picked = pendingHint;
+    setPendingHint(null);
+    if (!picked || ended) return;
     const newHints = [...hintsUsed, picked];
     const newOrder = [...(state.hintOrder ?? []), state.guesses.length];
     const newEffective = state.guesses.length + newHints.length;
@@ -231,6 +240,8 @@ export function ClassicGame() {
     }
     persist({ ...state, hintsUsed: newHints, hintOrder: newOrder, lost });
   };
+
+  const cancelHint = () => setPendingHint(null);
 
   // Hint availability resolves through three gates:
   //   (1) hints remain (under MAX_HINTS)
@@ -437,6 +448,14 @@ export function ClassicGame() {
           </div>
         </div>
       )}
+
+      <HintConfirmModal
+        open={pendingHint !== null}
+        effectiveRemaining={MAX_GUESSES - effectiveUsed}
+        hintsLeftAfter={Math.max(0, hintsRemaining - 1)}
+        onConfirm={confirmHint}
+        onCancel={cancelHint}
+      />
     </main>
   );
 }

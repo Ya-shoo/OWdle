@@ -1,9 +1,12 @@
 // GET /api/stats/today?day=YYYY-MM-DD
 //
 // Returns aggregated player counts per (mode, outcome) for the requested
-// Pacific puzzle day, plus daily-completion counts and a "starters"
-// count (distinct_ids who fired mode_started for ≥ 2 distinct modes
-// that day — denominator for the finish-rate stat in DailyStatsBand).
+// Pacific puzzle day, plus daily-completion counts, a "starters" count
+// (distinct_ids who fired mode_started for ≥ 2 distinct modes that day
+// — denominator for the finish-rate stat in DailyStatsBand), and a set
+// of composite cutoffs derived from today's all-5-modes finishers
+// (used by DailyTierBadge to map a player's daily composite to an
+// Overwatch rank tier).
 // Source of truth is PostHog HogQL on the shared "DailyDles" project —
 // filtered to `properties.site = 'owdle'` so Deadlockle's events don't
 // leak into our numbers. Players are deduped by `distinct_id`, so a
@@ -23,6 +26,14 @@ type Mode = "classic" | "quote" | "ability" | "splash" | "sound";
 const MODES: Mode[] = ["classic", "quote", "ability", "splash", "sound"];
 
 type ModeBucket = { won: number; lost: number; gaveUp: number; total: number };
+type TierCutoffs = {
+  top500: number;
+  grandmaster: number;
+  diamond: number;
+  platinum: number;
+  gold: number;
+  silver: number;
+};
 type DailyBucket = {
   finishers: number;
   sweepers: number;
@@ -32,7 +43,16 @@ type DailyBucket = {
   // ratio reads "of players who committed to the daily set, what %
   // finished it" rather than including drive-by sampling.
   starters_ge2: number;
+  // Composite-score quantiles across today's all-5-modes finishers.
+  // Omitted when fewer than MIN_TIER_FINISHERS so the client hides
+  // the tier badge under the noise threshold.
+  tierCutoffs?: TierCutoffs;
 };
+
+// Minimum all-5-modes finishers before the tier cutoffs become
+// meaningful enough to surface. Below this we omit tierCutoffs so the
+// client hides the badge. 10 = one occupant per tier at the floor.
+const MIN_TIER_FINISHERS = 10;
 
 type StatsResponse = {
   day: string;
@@ -130,12 +150,50 @@ async function fetchFromPostHog(
     ")",
   ].join("\n");
 
-  // Fire all three queries in parallel — HogQL latency dominates total
+  // Per-finisher composite score = sum across mode_completed events of
+  // (won ? (cap - total_guesses) / cap : 0). Only counts players who
+  // finished all 5 built modes. Outer SELECT pulls the count and the
+  // six quantile cutoffs the client uses to map its own composite to a
+  // tier badge. Quantile bands track Yash's spec:
+  //   top500 = top 1%, grandmaster = top 10%, diamond = top 30%,
+  //   platinum = top 50%, gold = top 70%, silver = top 90%.
+  // Below silver → Bronze (no cutoff needed for the catch-all).
+  const tierQuery = [
+    "WITH composites AS (",
+    "  SELECT",
+    "    distinct_id,",
+    "    sum(",
+    "      if(",
+    "        properties.outcome = 'won',",
+    "        (toFloat(properties.cap) - toFloat(properties.total_guesses)) / toFloat(properties.cap),",
+    "        0",
+    "      )",
+    "    ) AS composite",
+    "  FROM events",
+    "  WHERE event = 'mode_completed'",
+    `    AND properties.daily_id = '${day}'`,
+    "    AND properties.site = 'owdle'",
+    "  GROUP BY distinct_id",
+    "  HAVING count(DISTINCT properties.mode) = 5",
+    ")",
+    "SELECT",
+    "  count() AS n,",
+    "  quantile(0.99)(composite) AS top500,",
+    "  quantile(0.90)(composite) AS grandmaster,",
+    "  quantile(0.70)(composite) AS diamond,",
+    "  quantile(0.50)(composite) AS platinum,",
+    "  quantile(0.30)(composite) AS gold,",
+    "  quantile(0.10)(composite) AS silver",
+    "FROM composites",
+  ].join("\n");
+
+  // Fire all four queries in parallel — HogQL latency dominates total
   // time, and they're independent.
-  const [modeRes, dailyRes, startersRes] = await Promise.all([
+  const [modeRes, dailyRes, startersRes, tierRes] = await Promise.all([
     hogql(endpoint, key, modeQuery),
     hogql(endpoint, key, dailyQuery),
     hogql(endpoint, key, startersQuery),
+    hogql(endpoint, key, tierQuery),
   ]);
 
   const modes = emptyModes();
@@ -158,6 +216,23 @@ async function fetchFromPostHog(
     sweepers: Number(dailyRow[1]) || 0,
     starters_ge2: Number(startersRow[0]) || 0,
   };
+
+  // tierRow is [n, top500, gm, diamond, platinum, gold, silver]. Below
+  // the floor we drop tierCutoffs entirely so the client hides the badge.
+  const tierRow = (tierRes.results ?? [])[0];
+  if (tierRow) {
+    const n = Number(tierRow[0]) || 0;
+    if (n >= MIN_TIER_FINISHERS) {
+      daily.tierCutoffs = {
+        top500: Number(tierRow[1]) || 0,
+        grandmaster: Number(tierRow[2]) || 0,
+        diamond: Number(tierRow[3]) || 0,
+        platinum: Number(tierRow[4]) || 0,
+        gold: Number(tierRow[5]) || 0,
+        silver: Number(tierRow[6]) || 0,
+      };
+    }
+  }
 
   return { day, modes, daily };
 }

@@ -14,6 +14,7 @@
 
 import { useEffect, useState } from "react";
 import { dayString } from "./daily";
+import type { TierCutoffs } from "./tier";
 
 export type StatsMode = "classic" | "quote" | "ability" | "splash" | "sound";
 
@@ -30,6 +31,10 @@ export type DailyBucket = {
   // Distinct_ids who started ≥ 2 modes today (denominator for
   // finish-rate). Server-supplied; see functions/api/stats/today.ts.
   starters_ge2: number;
+  // Composite-score quantile cutoffs across today's all-5-modes
+  // finishers. Server omits this when fewer than 10 finishers exist
+  // (see MIN_TIER_FINISHERS on the server) so DailyTierBadge hides.
+  tierCutoffs?: TierCutoffs;
 };
 
 export type StatsResponse = {

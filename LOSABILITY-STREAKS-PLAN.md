@@ -2,8 +2,9 @@
 
 End-to-end design + implementation plan for adding real lose states, a
 daily streak system, global player-stat infrastructure, and an
-Overwatch-tier daily score badge to OWdle. Phases 1–3 are implemented
-(uncommitted on `map-mode`); Phase 3.5 (tier system) is the open work.
+Overwatch-tier daily score badge to OWdle. Phases 1–3.5 are implemented;
+Phase 4 (cap tuning, deferred until data) and Phase 5 (cross-device
+sync, parked until auth) remain.
 
 This document is intentionally self-contained so a fresh Claude Code
 conversation can pick up the open work without re-deriving context.
@@ -394,64 +395,80 @@ ceiling is ~5 min.
 
 ---
 
-## Phase 3.5 — Daily tier system [TODO]
+## Phase 3.5 — Daily tier system [IMPLEMENTED]
 
-Overwatch-tier badge on `DailyCompletePanel` summarizing the player's
-day. Replaces the rejected 4-band copy variation idea with a richer
-9-tier ranking that doubles as the share-worthy headline result.
+Overwatch-tier rank badge on `DailyCompletePanel` summarizing the
+player's day. The headline finishing screen now reads:
+**score band → finish/sweep stats → OW rank badge → streak → countdown**.
 
-### 3.5a — Tier basis
+### 3.5a — Tier mechanics
 
-- **What's ranked**: the player's individual daily performance
-  composite (formula deferred to taxonomy pass).
-- **Comparison group**: today's finishers only (live, per-day —
-  NOT rolling 30-day).
-- **Tiers**: T500, Champion, Grandmaster, Master, Diamond,
-  Platinum, Gold, Silver, Bronze (9 tiers, matching Overwatch
-  competitive).
-- **Display threshold**: only render the badge when today's
-  finishers > 9.
-- **Update behavior**: promote-only ratchet. Cache the player's
-  highest-seen tier for the day in localStorage; refresh upward as
-  more finishers reveal a better percentile, never downward.
+- **7 tiers** (Yash spec): Top 500, Grandmaster, Diamond, Platinum,
+  Gold, Silver, Bronze. Master and Champion are intentionally omitted.
+- **Composite per mode**: `won ? (cap - guesses) / cap : 0`. Losses
+  contribute 0 (no extra penalty). Hints in Classic already cost a
+  guess slot, so they're penalized via `guesses`.
+- **Daily composite**: sum of the 5 per-mode scores (range 0 → ~4.34).
+- **Comparison group**: today's all-5-modes finishers only — pulled
+  via HogQL `quantile()` over the per-finisher composite distribution.
+- **Cutoffs**: top500 ≥ p99, grandmaster ≥ p90, diamond ≥ p70,
+  platinum ≥ p50, gold ≥ p30, silver ≥ p10, otherwise bronze.
+- **Display threshold**: server omits `tierCutoffs` when today's
+  all-5-modes finishers < 10 (`MIN_TIER_FINISHERS` in the endpoint).
+  Below that, the badge renders nothing.
+- **Promote-only ratchet**: client caches the day's highest-seen tier
+  in `owdle.tier.<YYYY-MM-DD>` and never overwrites with a lower
+  tier. Early finishers don't see their rank decay as faster players
+  arrive later.
 
-### 3.5b — Rendering
+### 3.5b — Files
 
-- Where: inside `DailyCompletePanel`
-  (`components/NextModeCTA.tsx:DailyCompletePanel`), near the
-  existing score band. Exact placement TBD during visual pass.
-- Scope: per-day overall only — NOT on per-mode result cards.
-- Per-mode cards keep `ModeStatsLine` as the muted "X% solved
-  today's Mode" line. No tier badge there.
+- `lib/tier.ts` — types (`Tier`, `TierCutoffs`), `CAPS` mirror of
+  per-mode `MAX_GUESSES`, `modeScore`, `dailyComposite`,
+  `tierForComposite`, `tierRank`, `TIER_LABEL`.
+- `functions/api/stats/today.ts` — 4th HogQL query computes the
+  composite quantiles; results exposed under `daily.tierCutoffs`
+  (omitted below the floor). Pages Function returns 6 cutoffs
+  alongside the existing mode/daily buckets.
+- `lib/stats.ts` — `DailyBucket` gains optional `tierCutoffs?`.
+- `components/DailyTierBadge.tsx` — reads local mode states, computes
+  composite, fetches cutoffs, maps to tier, ratchets, renders the
+  badge (rank PNG + tier label + "Daily Rank" eyebrow) in a band
+  matching `StreakBadge`'s "band" variant rhythm.
+- `components/NextModeCTA.tsx` — wires `<DailyTierBadge />` between
+  `<DailyStatsBand />` and `<StreakBadge variant="band" />`.
 
-### 3.5c — Open taxonomy (deferred)
+### 3.5c — Assets
 
-- **Composite score formula** (combines 5 mode results into one
-  number). Tentative shape:
-  - Per-mode score: `won ? (cap - guesses) / cap : 0`.
-  - Daily composite: sum or weighted average of the per-mode scores.
-- **Loss handling** in the composite (penalty vs zero contribution).
-- **Exact percentile cutoffs** for each tier. Initial sketch:
-  T500 top 1%, Champion top 5%, GM top 10%, Master top 25%,
-  Diamond top 40%, Plat top 60%, Gold top 80%, Silver top 95%,
-  Bronze remainder.
-- **Visual treatment**: icon vs text-only vs colored pill.
-  Overwatch rank icons have unclear usage rights; safer to build
-  text/color badges in the OWdle palette.
-- **Backend shape**: needs a new HogQL query returning today's
-  finisher composite distribution. The client locates its own
-  composite within that distribution to derive the tier.
+Eight Overwatch rank PNGs (OW2 Season 9+ style, transparent
+background) live in `public/ranks/` and ship via Cloudflare Pages
+(not R2, per the AGENTS.md split for small/rarely-changing assets):
 
-### 3.5d — Implementation order
+- `public/ranks/bronze.png` (126×126)
+- `public/ranks/silver.png` (146×146)
+- `public/ranks/gold.png` (144×144)
+- `public/ranks/platinum.png` (146×146)
+- `public/ranks/diamond.png` (152×152)
+- `public/ranks/master.png` (165×165) — unused in current 7-tier UI;
+  kept for future "8-tier with Master" iteration if desired
+- `public/ranks/grandmaster.png` (204×204)
+- `public/ranks/top500.png` (788×788)
 
-1. Lock composite formula on paper (taxonomy pass).
-2. Build the percentile-fetch endpoint (extend
-   `/api/stats/today` or add `/api/stats/today-distribution`).
-3. Build `DailyTierBadge` component with promote-only
-   localStorage cache (key suggestion: `owdle.tier.<YYYY-MM-DD>`,
-   value = highest tier seen).
-4. Wire into `DailyCompletePanel`.
-5. Iterate tier cutoffs after 1–2 weeks of data.
+Sourced from the Overwatch Fandom wiki via the MediaWiki API
+(`api.php?action=query&prop=imageinfo` with `?format=original`
+appended to force PNG over the CDN's default WebP).
+
+### 3.5d — Known caveats
+
+- **Tier shift across devices**: the ratchet is per-device localStorage,
+  so a player who finishes on phone then opens laptop sees a fresh
+  computation against the laptop's local states (which won't have
+  this day's modes). This is the same Phase 5 cross-device limitation
+  noted below.
+- **CAPS drift risk**: `lib/tier.ts` hardcodes per-mode caps. If a
+  cap changes in a game component, update `lib/tier.ts` too. The
+  server uses `properties.cap` from each `mode_completed` event so
+  it's drift-free on the distribution side.
 
 ---
 
