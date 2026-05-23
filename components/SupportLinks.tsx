@@ -38,7 +38,7 @@ export function SupportLinks() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/kofi-avatar.jpg"
+              src="/kofi-avatar.jpg?v=2"
               alt=""
               width={112}
               height={112}

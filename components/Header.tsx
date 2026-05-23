@@ -19,9 +19,14 @@ export function Header() {
           <DevHubHeader />
         </div>
         <div className="flex items-center gap-5 sm:gap-7">
+          {/* Single-line at ≥380px (covers iPhone 14 / SE / Pixel and up,
+              where the shorter OWdle wordmark leaves plenty of room).
+              Stacks "next" above the timer as a flush-right column on
+              the very narrowest screens (iPhone 12 mini and smaller),
+              so the timer never smushes against the brand. */}
           <NextResetCountdown
-            label="next "
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-info sm:text-xs"
+            label="next"
+            className="flex flex-col items-end leading-tight font-mono text-[10px] uppercase tracking-[0.2em] text-info min-[380px]:flex-row min-[380px]:items-baseline min-[380px]:gap-1 min-[380px]:leading-none sm:text-xs"
           />
           <HeaderProgress />
         </div>
