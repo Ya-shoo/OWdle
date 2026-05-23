@@ -42,7 +42,7 @@ const INITIAL_REVEALS = 1;
 
 // Hard cap on guesses. Player loses on the cap-th wrong attempt and
 // the icon snaps fully revealed (no rotation) inside the LossReveal.
-const MAX_GUESSES = 12;
+const MAX_GUESSES = 14;
 
 // Hard mode rotates the icon by a per-day amount so it's harder to recognize
 // even with most cells revealed. Defaults on; the player can toggle off any

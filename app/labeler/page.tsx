@@ -83,6 +83,18 @@ const TOOL_GROUPS: ReadonlyArray<{
     ],
   },
   {
+    title: "Daily flow",
+    blurb: "Visual previews of post-completion UI.",
+    tools: [
+      {
+        href: "/labeler/tier-preview/",
+        label: "Tier preview",
+        description:
+          "All 7 Overwatch rank badges + an editable 4/5 composite calculator that renders the resulting tier. Synthetic cutoffs; no /api/stats/today dependency.",
+      },
+    ],
+  },
+  {
     title: "Site admin",
     blurb: "Live read-outs of submissions from the prod site.",
     tools: [
