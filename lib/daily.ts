@@ -353,6 +353,12 @@ export function getSoundBonusOptions(
   });
 }
 
+// Dev-only enumeration for the conversation picker. Returns the same
+// filtered pool used to seed today's daily.
+export function getAllConversations(): ReadonlyArray<Conversation> {
+  return CONVERSATION_POOL;
+}
+
 export function getConversationForDay(day: string): {
   conversation: Conversation;
   speakers: [Hero, Hero];

@@ -26,7 +26,15 @@ export function GuessRow({
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       className={clsx(
         "flex flex-col gap-3 md:flex-row md:items-stretch md:gap-2",
-        matchAll && "outline outline-2 outline-correct/50 rounded-(--radius-card) p-1 -m-1",
+        // Winning row chrome — outline-offset pushes the outline 2px
+        // OUTSIDE the row's box without negative margins pulling the
+        // layout into its neighbors. Previous `p-1 -m-1` shrunk the
+        // space-y-4 gap to ~12px and made the green outline visually
+        // crowd the green win card above. With outline-offset the gap
+        // stays a clean ~14px (16px - 2px outline) and the outline
+        // never overlaps adjacent rows.
+        matchAll &&
+          "rounded-(--radius-card) outline outline-2 outline-correct/50 outline-offset-2",
       )}
     >
       {/* Hero portrait + name */}

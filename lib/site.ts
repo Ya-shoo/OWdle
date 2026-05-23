@@ -30,7 +30,6 @@ export const SITE_KEYWORDS = [
   "Overwatch ability quiz",
   "Overwatch splash art quiz",
   "Overwatch voice line quiz",
-  "Loldle for Overwatch",
 ];
 
 type ModeMetaInput = {
@@ -39,14 +38,11 @@ type ModeMetaInput = {
   description: string;
 };
 
-const OG_IMAGE = {
-  url: "/opengraph-image",
-  width: 1200,
-  height: 630,
-  alt: "OWdle — the daily Overwatch hero quiz",
-  type: "image/png",
-} as const;
-
+// Per-mode OG images come from each route's own opengraph-image.tsx via
+// Next 16's file convention. We deliberately don't set openGraph.images
+// here — that would shadow the file-based image with this single shared
+// fallback. The root /opengraph-image.tsx still covers any segment that
+// doesn't define its own.
 export function modeMetadata({
   slug,
   title,
@@ -66,13 +62,11 @@ export function modeMetadata({
       title: ogTitle,
       description,
       locale: "en_US",
-      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
       description,
-      images: [OG_IMAGE.url],
     },
   };
 }

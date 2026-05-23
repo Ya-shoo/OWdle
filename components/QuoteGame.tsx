@@ -7,11 +7,13 @@
 // history at the bottom, each tagged with which speaker they were
 // targeting and showing attribute tiles vs that speaker.
 //
-// Audio hint cadence: line 1's voice clip unlocks after FIRST_HINT_AT
-// wrong guesses; each subsequent line's clip unlocks every HINT_INTERVAL
-// guesses (5 → line 1, 7 → line 2, 9 → line 3, …). Each button plays the
-// per-line audio file pulled directly from the wiki via
-// scripts/build-quote-audio.mjs — what you hear is exactly the line shown.
+// Audio hint cadence: line 1's voice clip unlocks AT guess 5; line 2's
+// clip unlocks AT guess 7. No further unlocks after that — even for
+// 3+ line conversations, only the first two lines ever get audio. Past
+// guess 8 the round ends as a loss.
+//
+// Hard cap on combined guesses (across both speakers). Player loses on
+// the cap-th wrong move; both speakers reveal in a muted LossReveal.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -29,23 +31,39 @@ import { HeroCombobox } from "./HeroCombobox";
 import { AttributeTile } from "./AttributeTile";
 import { Brand } from "./Brand";
 import { media } from "@/lib/media";
+import {
+  trackGuessSubmitted,
+  trackModeCompleted,
+  trackModeStarted,
+} from "@/lib/tracking";
 import { NextModeCTA } from "./NextModeCTA";
+import { LossReveal } from "./LossReveal";
+import { GuessRemaining } from "./GuessRemaining";
+import { ModeStatsLine } from "./ModeStatsLine";
+import { DevViewToggle, useDevViewState } from "./DevViewToggle";
+import { DevQuotePicker } from "./DevQuotePicker";
 import clsx from "clsx";
 
-const FIRST_HINT_AT = 5;
-const HINT_INTERVAL = 2;
+const IS_DEV = process.env.NODE_ENV !== "production";
 
+const MAX_GUESSES = 8;
+
+// Discrete audio unlocks. Line 1 at guess 5, line 2 at guess 7. Capped
+// at totalLines so 2-line conversations don't pretend to have a line-3
+// to unlock.
 function audioUnlockedCount(guessCount: number, totalLines: number): number {
-  if (guessCount < FIRST_HINT_AT) return 0;
-  return Math.min(
-    1 + Math.floor((guessCount - FIRST_HINT_AT) / HINT_INTERVAL),
-    totalLines,
-  );
+  if (guessCount >= 7) return Math.min(2, totalLines);
+  if (guessCount >= 5) return Math.min(1, totalLines);
+  return 0;
 }
 
-function nextAudioAtGuess(currentUnlocked: number): number {
-  if (currentUnlocked === 0) return FIRST_HINT_AT;
-  return FIRST_HINT_AT + currentUnlocked * HINT_INTERVAL;
+function nextAudioAt(
+  unlocked: number,
+  totalLines: number,
+): number | null {
+  if (unlocked === 0 && totalLines >= 1) return 5;
+  if (unlocked === 1 && totalLines >= 2) return 7;
+  return null;
 }
 
 export function QuoteGame() {
@@ -54,6 +72,30 @@ export function QuoteGame() {
   // Which speaker the toggle is pointed at when *both* are still unsolved.
   // Once one is solved, `activeTarget` is forced to the unsolved one.
   const [chosenTarget, setChosenTarget] = useState<0 | 1>(0);
+  // Dev-only view + conversation override.
+  const [devView, setDevView] = useDevViewState("quote");
+  const [overrideConv, setOverrideConv] = useState<Conversation | null>(null);
+  const isOverride = overrideConv !== null;
+
+  const applyOverride = (conv: Conversation | null) => {
+    setOverrideConv(conv);
+    if (!conv) {
+      // Back to daily; rehydrate today's saved state so paused
+      // progress isn't lost.
+      if (day) {
+        const loaded = loadConversationState(day);
+        setState(loaded);
+      }
+      return;
+    }
+    setState({
+      day: day ?? "",
+      speakers: [conv.speakers[0], conv.speakers[1]],
+      guesses: [],
+      won: false,
+    });
+    setChosenTarget(0);
+  };
 
   useEffect(() => {
     const d = dayString();
@@ -80,6 +122,33 @@ export function QuoteGame() {
     }
   }, []);
 
+  // mode_started — once per day, skip dev overrides.
+  useEffect(() => {
+    if (!day || isOverride) return;
+    const { speakers: sp } = getConversationForDay(day);
+    const answerId = `${sp[0].key}_${sp[1].key}`;
+    trackModeStarted({ mode: "quote", dailyId: day, answerId });
+  }, [day, isOverride]);
+
+  // mode_completed — fires on terminal transition.
+  const stateWon = state?.won === true;
+  const stateLost = state?.lost === true;
+  useEffect(() => {
+    if (!day || isOverride) return;
+    if (!stateWon && !stateLost) return;
+    const { speakers: sp } = getConversationForDay(day);
+    const answerId = `${sp[0].key}_${sp[1].key}`;
+    trackModeCompleted({
+      mode: "quote",
+      dailyId: day,
+      outcome: stateWon ? "won" : "lost",
+      totalGuesses: state?.guesses.length ?? 0,
+      cap: MAX_GUESSES,
+      answerId,
+      conversationId: answerId,
+    });
+  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+
   if (!day || !state) {
     return (
       <main className="mx-auto max-w-6xl px-6 py-16">
@@ -90,8 +159,15 @@ export function QuoteGame() {
     );
   }
 
-  const { conversation, speakers } = getConversationForDay(day);
-  const [speakerA, speakerB] = speakers;
+  // Override path serves the picker's conversation; daily uses the
+  // seeded one.
+  const conversation: Conversation = overrideConv ?? getConversationForDay(day).conversation;
+  const speakerA = HEROES_BY_KEY[conversation.speakers[0]];
+  const speakerB = HEROES_BY_KEY[conversation.speakers[1]];
+  if (!speakerA || !speakerB) {
+    return null;
+  }
+  const speakers: [Hero, Hero] = [speakerA, speakerB];
 
   const aRevealed = state.guesses.some(
     (g) => g.target === 0 && g.heroKey === speakerA.key,
@@ -100,6 +176,8 @@ export function QuoteGame() {
     (g) => g.target === 1 && g.heroKey === speakerB.key,
   );
   const won = aRevealed && bRevealed;
+  const lost = state.lost === true;
+  const ended = won || lost;
 
   // Per-target exclusion: a hero already tried as Speaker A can still be
   // tried as Speaker B (the player may correctly suspect them in the other
@@ -116,28 +194,31 @@ export function QuoteGame() {
   // Two-stage reveal: `textLines` is how many lines are shown as actual text
   // (grows by one per guess), `renderedLines` includes a couple of blurred
   // placeholders past the text frontier so the player can see more dialogue
-  // is coming. Lines past `renderedLines` aren't rendered at all yet — they
-  // appear (still blurred) once the player guesses further.
+  // is coming. On end (win or loss) we show everything.
   const BLURRED_AHEAD = 2;
-  const textLines = won
+  const textLines = ended
     ? conversation.lines.length
     : Math.min(1 + state.guesses.length, conversation.lines.length);
-  const renderedLines = won
+  const renderedLines = ended
     ? conversation.lines.length
     : Math.min(textLines + BLURRED_AHEAD, conversation.lines.length);
 
-  // Per-line audio unlocks. Once won, every line's button is playable so
-  // the player can replay any voice line.
-  const unlockedAudio = won
+  // Per-line audio unlocks. After a win OR loss, every line's button is
+  // playable so the player can replay any voice line.
+  const unlockedAudio = ended
     ? conversation.lines.length
     : audioUnlockedCount(state.guesses.length, conversation.lines.length);
-  const allAudioUnlocked = unlockedAudio >= conversation.lines.length;
-  const guessesUntilNextAudio = allAudioUnlocked
-    ? null
-    : nextAudioAtGuess(unlockedAudio) - state.guesses.length;
+  const nextUnlockGuess = nextAudioAt(
+    unlockedAudio,
+    conversation.lines.length,
+  );
+  const guessesUntilNextAudio =
+    nextUnlockGuess !== null && !ended
+      ? Math.max(0, nextUnlockGuess - state.guesses.length)
+      : null;
 
   const handleGuess = (hero: Hero, target: 0 | 1) => {
-    if (won) return;
+    if (ended) return;
     const newGuess: ConversationGuess = { heroKey: hero.key, target };
     const newGuesses = [...state.guesses, newGuess];
     const newARevealed = newGuesses.some(
@@ -146,14 +227,28 @@ export function QuoteGame() {
     const newBRevealed = newGuesses.some(
       (g) => g.target === 1 && g.heroKey === speakerB.key,
     );
+    const nextWon = newARevealed && newBRevealed;
+    const nextLost = !nextWon && newGuesses.length >= MAX_GUESSES;
+    const targetSpeaker = target === 0 ? speakerA : speakerB;
+    if (!isOverride) {
+      trackGuessSubmitted({
+        mode: "quote",
+        dailyId: day,
+        guessNumber: newGuesses.length,
+        isCorrect: hero.key === targetSpeaker.key,
+        guessId: `${hero.key}@${target}`,
+        answerId: `${speakerA.key}_${speakerB.key}`,
+      });
+    }
     const next: ConversationState = {
       day,
       speakers: [speakerA.key, speakerB.key],
       guesses: newGuesses,
-      won: newARevealed && newBRevealed,
+      won: nextWon,
+      lost: nextLost,
     };
     setState(next);
-    saveConversationState(next);
+    if (!isOverride) saveConversationState(next);
   };
 
   return (
@@ -178,20 +273,52 @@ export function QuoteGame() {
         </div>
       </header>
 
+      {IS_DEV && (
+        <div className="mb-4 flex justify-center">
+          <DevViewToggle
+            mode="quote"
+            active={devView}
+            onChange={setDevView}
+          />
+        </div>
+      )}
+      {IS_DEV && devView && (
+        <DevQuotePicker
+          currentSpeakers={[speakerA.key, speakerB.key]}
+          overrideActive={isOverride}
+          onApply={applyOverride}
+        />
+      )}
+
       <div className="mb-8 flex flex-col items-center">
         <ConversationCard
           conversation={conversation}
           speakers={[speakerA, speakerB]}
-          aRevealed={aRevealed}
-          bRevealed={bRevealed}
+          aRevealed={aRevealed || lost}
+          bRevealed={bRevealed || lost}
           textLines={textLines}
           renderedLines={renderedLines}
           unlockedAudio={unlockedAudio}
         />
       </div>
 
-      {!won && (
+      {!ended && (
         <div className="mb-6 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <GuessRemaining used={state.guesses.length} cap={MAX_GUESSES} />
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+              {(aRevealed ? 1 : 0) + (bRevealed ? 1 : 0)} / 2 found
+              {guessesUntilNextAudio !== null && (
+                <>
+                  {" · "}
+                  <span className="text-accent-soft">
+                    audio in {guessesUntilNextAudio}{" "}
+                    {guessesUntilNextAudio === 1 ? "guess" : "guesses"}
+                  </span>
+                </>
+              )}
+            </span>
+          </div>
           <SpeakerToggle
             activeTarget={activeTarget}
             aRevealed={aRevealed}
@@ -213,27 +340,6 @@ export function QuoteGame() {
         </div>
       )}
 
-      {!won && (
-        <p className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.18em] text-info">
-          <span>
-            {state.guesses.length}{" "}
-            {state.guesses.length === 1 ? "guess" : "guesses"}
-          </span>
-          <span className="text-ink-faint">
-            · {(aRevealed ? 1 : 0) + (bRevealed ? 1 : 0)} / 2 found
-          </span>
-          {!allAudioUnlocked && guessesUntilNextAudio != null && (
-            <span className="text-accent-soft">
-              · audio hint in {guessesUntilNextAudio}{" "}
-              {guessesUntilNextAudio === 1 ? "guess" : "guesses"}
-            </span>
-          )}
-          {allAudioUnlocked && unlockedAudio > 0 && (
-            <span className="text-accent-soft">· all audio unlocked</span>
-          )}
-        </p>
-      )}
-
       <AnimatePresence>
         {won && (
           <motion.div
@@ -241,8 +347,48 @@ export function QuoteGame() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8 rounded-(--radius-card) border border-correct/40 bg-correct/10 p-5 sm:p-6"
+            className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
           >
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                <div className="flex shrink-0 -space-x-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={speakerA.portrait}
+                    alt=""
+                    className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-20 sm:w-20"
+                  />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={speakerB.portrait}
+                    alt=""
+                    className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-20 sm:w-20"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                    Solved
+                  </div>
+                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                    {speakerA.name} & {speakerB.name}{" "}
+                    <span className="text-ink-soft">
+                      in {state.guesses.length}
+                    </span>
+                  </div>
+                  <ModeStatsLine mode="quote" />
+                </div>
+              </div>
+              <div className="flex justify-center sm:justify-start">
+                <NextModeCTA current="quote" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lost && !won && (
+          <LossReveal current="quote">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="flex shrink-0 -space-x-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -259,21 +405,22 @@ export function QuoteGame() {
                 />
               </div>
               <div className="flex-1">
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                  Solved
+                <div className="font-display text-2xl text-ink sm:text-3xl">
+                  {speakerA.name} & {speakerB.name}
                 </div>
-                <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
-                  {speakerA.name} & {speakerB.name}{" "}
-                  <span className="text-ink-soft">
-                    in {state.guesses.length}
-                  </span>
+                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                  {aRevealed && !bRevealed && (
+                    <>caught Speaker A · missed Speaker B</>
+                  )}
+                  {bRevealed && !aRevealed && (
+                    <>caught Speaker B · missed Speaker A</>
+                  )}
+                  {!aRevealed && !bRevealed && <>missed both speakers</>}
                 </div>
-                <div className="mt-3">
-                  <NextModeCTA current="quote" />
-                </div>
+                <ModeStatsLine mode="quote" />
               </div>
             </div>
-          </motion.div>
+          </LossReveal>
         )}
       </AnimatePresence>
 
@@ -300,13 +447,12 @@ export function QuoteGame() {
         </AnimatePresence>
       </div>
 
-      {state.guesses.length === 0 && (
+      {state.guesses.length === 0 && !ended && (
         <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
             Pick which speaker you&apos;re guessing, then enter a hero. Each
-            guess reveals more dialogue. After {FIRST_HINT_AT} wrong guesses,
-            the first line&apos;s voice clip unlocks, then one more every{" "}
-            {HINT_INTERVAL} guesses.
+            guess reveals more dialogue. Audio hints unlock at guess 5 and
+            guess 7. You have {MAX_GUESSES} guesses total.
           </p>
         </div>
       )}
@@ -719,4 +865,3 @@ function ConversationGuessRow({
     </motion.div>
   );
 }
-

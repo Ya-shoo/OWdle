@@ -23,6 +23,7 @@ import {
 import { scoreClick, MAX_ROUND_SCORE } from "@/lib/scoring";
 import { media } from "@/lib/media";
 import { MapPin } from "@/components/MapPin";
+import { DevViewToggle, useDevViewState } from "@/components/DevViewToggle";
 import calibrationsData from "@/data/map-calibrations.json";
 import bannersData from "@/data/banners.json";
 import gamemodeIconsData from "@/data/gamemodes.json";
@@ -86,6 +87,10 @@ export function MapGame() {
   // stable signal that's available here.
   const povZoom = useImageZoomPan({ resetKey: state?.currentRound });
 
+  // Dev-only "view" toggle. Hides every dev panel when set to User so
+  // we can preview the shipping game without ceremony.
+  const [devView, setDevView] = useDevViewState("map");
+
   // Active round transient state. Reset on round transition.
   const [phase, setPhase] = useState<Phase>("guessing");
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
@@ -112,6 +117,11 @@ export function MapGame() {
   // the same neutral state.
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
+  // Show the "scroll = zoom · drag = pan" hint briefly on the first
+  // round, then never again for this session. activeMapKey is the
+  // reset trigger — when the player first switches to a real map, the
+  // hint gets its one chance to surface.
+  const showZoomHint = useZoomHint(zoom, "gameplay-overhead");
   const overheadRef = useRef<HTMLDivElement | null>(null);
   // Drag tracking — distinguishes a drag-to-pan from a click-to-pin.
   // We commit the pin on mouseup only when the cursor barely moved.
@@ -167,9 +177,19 @@ export function MapGame() {
     setSpots(picks);
 
     let saved = loadMapState(today);
+    // Validity check: the persisted state has to (a) match today's
+    // shape — same number of spotIds in the same order — AND (b) have
+    // no more rounds than there are spots, and a sane currentRound.
+    // The rounds-and-currentRound bound is defensive: if any earlier
+    // bug, dev-tool poke, or hand-edited localStorage left a state
+    // with 13 rounds and currentRound=13, we'd otherwise restore it
+    // and the DoneScreen would happily display 13× King's Row.
     const sameDayAndShape =
       saved.spotIds.length === picks.length &&
-      saved.spotIds.every((id, i) => picks[i] && id === picks[i].id);
+      saved.spotIds.every((id, i) => picks[i] && id === picks[i].id) &&
+      saved.rounds.length <= picks.length &&
+      saved.currentRound <= picks.length &&
+      saved.currentRound >= saved.rounds.length - 1;
     if (!sameDayAndShape) {
       saved = {
         day: today,
@@ -195,7 +215,12 @@ export function MapGame() {
     saveMapState(state);
   }, [state]);
 
-  // Clear active-round state when the round index advances.
+  // Clear active-round state when the round index advances. Also
+  // collapse the minimap back to its unhovered chip size: the result
+  // overlay sat over the cursor while the player clicked Next, so
+  // the hover flag carried into the new round and made the picker
+  // appear pre-expanded. Re-fire on phase change too so a guessing →
+  // wrong-map flip also re-collapses.
   useEffect(() => {
     setSelectedMap(null);
     setPin(null);
@@ -203,6 +228,7 @@ export function MapGame() {
     setCommittedRound(null);
     setZoom(1);
     setPan({ x: 0, y: 0 });
+    setMinimapHovered(false);
   }, [state?.currentRound]);
 
   // Derived references used by the hooks below. Computed with null
@@ -310,9 +336,12 @@ export function MapGame() {
       const rect = el.getBoundingClientRect();
       const vx = e.clientX - rect.left;
       const vy = e.clientY - rect.top;
+      // Gentler divisors than the original 100/400 — Mac trackpad
+      // pinch was rocketing zoom to the cap in a fraction of a
+      // second on slow gestures.
       const factor = e.ctrlKey
-        ? Math.exp(-e.deltaY / 100)
-        : Math.exp(-e.deltaY / 400);
+        ? Math.exp(-e.deltaY / 500)
+        : Math.exp(-e.deltaY / 600);
       overheadZoomAt(vx, vy, factor);
     };
     el.addEventListener("wheel", handler, { passive: false });
@@ -497,9 +526,14 @@ export function MapGame() {
     );
   }
 
-  const totalScoreSoFar = state.rounds.reduce(
-    (sum, r) => sum + r.pointsTotal,
-    0,
+  // Slice + cap defensively: even if persisted state somehow holds
+  // more than ROUNDS_PER_DAY rounds (older corrupt save, dev-tool
+  // poke), the HUD must never display a score above the daily cap.
+  const totalScoreSoFar = Math.min(
+    state.rounds
+      .slice(0, spots.length)
+      .reduce((sum, r) => sum + r.pointsTotal, 0),
+    MAX_ROUND_SCORE * spots.length,
   );
 
   // ── Submit a guess ─────────────────────────────────────────────────────
@@ -583,6 +617,12 @@ export function MapGame() {
     setPhase("result");
     setState((prev) => {
       if (!prev) return prev;
+      // Hard cap: never append past the daily quota. A fast double-
+      // submit, dev-tool poke, or any other unforeseen path that
+      // re-enters submitGuess after the round is already committed
+      // would otherwise grow state.rounds unbounded and inflate the
+      // final score beyond 25,000.
+      if (prev.rounds.length >= ROUNDS_PER_DAY) return prev;
       return {
         ...prev,
         rounds: [...prev.rounds, round],
@@ -759,7 +799,7 @@ export function MapGame() {
           totalScore={totalScoreSoFar}
           day={day}
         />
-        <DevDayReset day={day} />
+        {devView && <DevDayReset day={day} />}
       </>
     );
   }
@@ -785,6 +825,11 @@ export function MapGame() {
       }}
     >
       <div className="relative mx-auto flex h-full w-full max-w-[1920px] flex-col overflow-hidden rounded-(--radius-card) border border-line bg-bg shadow-[0_20px_60px_-20px_rgba(0,0,0,0.75)]">
+        {/* Dev view toggle — top-center, dev-only. Hidden in prod. */}
+        <div className="absolute top-2 left-1/2 z-50 -translate-x-1/2">
+          <DevViewToggle mode="map" active={devView} onChange={setDevView} />
+        </div>
+
         {/* POV image — inset from the frame's edges so it reads as a
             card with breathing room rather than a screen-filler. Wheel
             zooms (anchored at the cursor); drag at zoom>1 pans. The
@@ -837,7 +882,7 @@ export function MapGame() {
               className="absolute top-2 left-2 z-10 rounded-(--radius-card) border border-line px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink"
               style={{ backgroundColor: "var(--bg-surface)" }}
             >
-              reset · {povZoom.zoom.toFixed(1)}×
+              Reset zoom
             </button>
           )}
         </div>
@@ -869,19 +914,22 @@ export function MapGame() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
-            className="absolute top-4 left-1/2 -translate-x-1/2 rounded-(--radius-card) border border-far px-4 py-3"
+            className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5 rounded-(--radius-card) border border-far px-5 py-2.5"
             style={{
               backgroundColor: "var(--tile-far)",
               color: "var(--tile-far-fg)",
             }}
           >
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em]">
-              Wrong map. It was{" "}
+            <p className="font-mono text-[9px] uppercase tracking-[0.24em] opacity-80">
+              Wrong map
+            </p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em]">
+              Now pin{" "}
               <span className="font-bold">
                 {MAPS.find((m) => m.key === currentSpot.mapKey)?.label ??
                   currentSpot.mapKey}
-              </span>
-              . Drop a pin for half points.
+              </span>{" "}
+              <span className="opacity-75">· half points</span>
             </p>
           </motion.div>
         )}
@@ -895,6 +943,7 @@ export function MapGame() {
             round={committedRound}
             spot={currentSpot}
             cal={currentCal}
+            devView={devView}
             onNext={goToNextRound}
             isLast={state.currentRound + 1 >= spots.length}
           />
@@ -904,31 +953,39 @@ export function MapGame() {
       {/* Minimap — bottom-right, hover-expand. Lightweight chrome:
           dimmer border + tighter padding so the POV reads as the
           primary surface and the minimap as a tool docked over it. */}
-      <DevDayReset day={day} />
+      {devView && <DevDayReset day={day} />}
 
       {phase !== "result" && (
         <div
           onMouseEnter={() => setMinimapHovered(true)}
           onMouseLeave={() => setMinimapHovered(false)}
-          className="absolute right-4 bottom-4 flex flex-col gap-2 transition-[width] duration-[420ms] [transition-timing-function:cubic-bezier(0.65,0,0.35,1)]"
+          className="absolute right-4 bottom-4 flex flex-col gap-2 transition-[width] duration-[360ms] [transition-timing-function:cubic-bezier(0.65,0,0.35,1)]"
           style={{
-            // Width grows in three steps:
-            //   collapsed (no hover)        — compact corner card
-            //   hover, zoom 1x              — original hover-expand
-            //   hover, zoom > 1x            — extra-wide so the
-            //     overhead has room to "open up" sideways without
-            //     the map itself growing.
+            // Two states only — collapsed corner chip when idle, one
+            // generous expanded width when the player is interacting.
+            //
+            // The expanded width is capped by the active map's aspect
+            // ratio × available vertical space (calc below). Without
+            // that cap, square-ish maps like King's Row make the
+            // overhead chip tall enough that the column overflows the
+            // parent's overflow:hidden frame and the picker chip gets
+            // clipped off the top.
+            //
+            // ~240px accounts for header + paddings + picker chip +
+            // submit chip + gaps + a small safety buffer, leaving the
+            // remainder for the overhead. The width then can't drive
+            // the height past that remainder.
             //
             // Three separate chips (picker / overhead / submit) stack
-            // vertically inside this wrapper — OpenGuessr-style — so
-            // each reads as its own glass surface rather than one
-            // monolithic card. The wrapper owns the shared width
-            // and hover state; chips inherit through it.
+            // vertically inside this wrapper so each reads as its own
+            // glass surface rather than one monolithic card.
             width: !minimapHovered
               ? "300px"
-              : zoom > 1
-                ? "min(900px, 64vw)"
-                : "min(640px, 50vw)",
+              : activeCal
+                ? `min(720px, 56vw, calc((100dvh - 240px) * ${(
+                    activeCal.overheadW / activeCal.overheadH
+                  ).toFixed(3)}))`
+                : "min(720px, 56vw)",
           }}
         >
           {/* Chip 1: Map picker. Collapsed shows the selected map,
@@ -1008,38 +1065,28 @@ export function MapGame() {
                   touchAction: "none",
                 }}
               >
-                {/* Width-driven, aspect-locked inner. At zoom = 1
-                    the container is its natural square aspect so the
-                    inner fills it perfectly. At zoom > 1 the
-                    container becomes 3:2 (wider, shorter): the inner
-                    still fills the container's width, but its
-                    aspect-ratio constraint makes it TALLER than the
-                    container — overflowing top and bottom, which
-                    `overflow:hidden` on the container clips. Effect:
-                    the image grows with the wider card (filling
-                    horizontally) and the player sees the middle
-                    landscape slice of the now-bigger image. Vertical
-                    centering via `top:50% + translateY(-50%)` keeps
-                    the un-panned default centered. */}
+                {/* Direct-sizing zoom container. Instead of transform:
+                    scale(), the inner grows its own width/height to
+                    (zoom × parent) on both axes. The browser then
+                    rasterizes the IMG at its actual displayed pixel
+                    size — which downsamples cleanly from the 5000-px
+                    source — instead of caching a low-res layer and
+                    bilinearly upscaling, which is what made deep
+                    zooms read as blurry no matter how many GPU layer
+                    hints we sprinkled on. Pan stays in outer CSS px
+                    so the wheel-anchor + cursor-to-image math need no
+                    changes — both formulas only reference vpW/vpH/zoom
+                    and pan, all of which carry the same meaning. */}
                 <div
-                  className="absolute left-0"
+                  className="pointer-events-none absolute"
                   style={{
-                    width: "100%",
-                    aspectRatio: `${activeCal.overheadW} / ${activeCal.overheadH}`,
+                    width: `${zoom * 100}%`,
+                    height: `${zoom * 100}%`,
+                    left: "50%",
                     top: "50%",
-                    transform: `translateY(-50%) translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-                    transformOrigin: "center center",
-                    // During a pan-drag the transition is off so the
-                    // image follows the cursor 1:1. Outside of drag,
-                    // a short transition smooths wheel-zoom without
-                    // lagging behind rapid scrolls — 420ms was long
-                    // enough that the third or fourth wheel tick was
-                    // still catching up to the first, which read as
-                    // "the zoom isn't following my cursor."
-                    transition: dragRef.current
-                      ? "none"
-                      : "transform 140ms ease-out",
-                    pointerEvents: "none",
+                    transform: `translate(calc(-50% + ${pan.x}px), calc(-50% + ${pan.y}px))`,
+                    willChange: "transform",
+                    transition: "none",
                   }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1049,6 +1096,10 @@ export function MapGame() {
                     className="block h-full w-full select-none"
                     draggable={false}
                     onDragStart={(e) => e.preventDefault()}
+                    style={{
+                      imageRendering:
+                        "high-quality" as React.CSSProperties["imageRendering"],
+                    }}
                   />
                   {pin && (
                     <span
@@ -1058,13 +1109,15 @@ export function MapGame() {
                       style={{
                         left: `${(pin[0] / activeCal.overheadW) * 100}%`,
                         top: `${(pin[1] / activeCal.overheadH) * 100}%`,
-                        // Counter-scale so the pin stays a constant
-                        // visual size regardless of overhead zoom.
-                        transform: `translate(-50%, -50%) scale(${1 / zoom})`,
-                        // Override the parent transform-container's
-                        // pointer-events:none so the pin captures its
-                        // own mousedown. Empty space and the img stay
-                        // transparent to the outer overhead handlers.
+                        // Pin keeps its natural CSS size automatically —
+                        // the parent isn't transform-scaled, so no
+                        // counter-scaling needed (and dragging stays
+                        // anchored to image pixels).
+                        transform: "translate(-50%, -50%)",
+                        // Override the parent's pointer-events:none so
+                        // the pin captures its own mousedown. Empty
+                        // space stays transparent to the outer overhead
+                        // handlers.
                         pointerEvents: "auto",
                         cursor: pinDragRef.current ? "grabbing" : "grab",
                       }}
@@ -1096,10 +1149,14 @@ export function MapGame() {
                     className="absolute top-1.5 right-1.5 z-10 rounded-(--radius-card) border border-line px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink"
                     style={{ backgroundColor: "var(--bg-surface)" }}
                   >
-                    reset · {zoom.toFixed(1)}×
+                    Reset zoom
                   </button>
                 )}
-                <p className="pointer-events-none absolute bottom-1 left-2 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint/80">
+                <p
+                  aria-hidden={!showZoomHint}
+                  className="pointer-events-none absolute bottom-1 left-2 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint/80 transition-opacity duration-500"
+                  style={{ opacity: showZoomHint ? 1 : 0 }}
+                >
                   scroll = zoom · drag = pan
                 </p>
               </div>
@@ -1121,10 +1178,16 @@ export function MapGame() {
             className="flex items-center justify-between gap-3 rounded-(--radius-card) border border-line/30 px-2.5 py-2 backdrop-blur-sm shadow-[0_8px_28px_-12px_rgba(0,0,0,0.6)]"
             style={{ backgroundColor: "rgb(from var(--bg-surface) r g b / 0.9)" }}
           >
-            <p className="font-mono text-[10px] tracking-[0.16em] text-ink-faint">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
               {pin
-                ? `pin (${Math.round(pin[0])}, ${Math.round(pin[1])})`
-                : "no pin yet"}
+                ? phase === "wrong-map"
+                  ? "Second pin placed"
+                  : "Pin placed"
+                : phase === "wrong-map"
+                  ? "Drop a pin on the correct map"
+                  : selectedMap
+                    ? "Drop a pin on the map"
+                    : "Pick a map first"}
             </p>
             <button
               type="button"
@@ -1132,7 +1195,7 @@ export function MapGame() {
               disabled={!canSubmit}
               className="rounded-(--radius-card) bg-accent px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-on-accent transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {phase === "wrong-map" ? "Submit (½ pts)" : "Submit"}
+              Submit
             </button>
           </div>
         </div>
@@ -1170,10 +1233,11 @@ function ResultOverlay(props: {
   round: MapRoundResult;
   spot: MapSpot;
   cal: Calibration | undefined;
+  devView: boolean;
   onNext: () => void;
   isLast: boolean;
 }) {
-  const { round, spot, cal, onNext, isLast } = props;
+  const { round, spot, cal, devView, onNext, isLast } = props;
 
   // On wrong-map rounds, the first-guess pixels live in a DIFFERENT
   // map's coordinate space — plotting them on the correct overhead
@@ -1390,15 +1454,14 @@ function ResultOverlay(props: {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 4, scale: 0.99 }}
         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-        // Map-dominant layout. The card takes ~75% of the viewport
-        // height (clamped to 900px on big screens) so the player has
-        // breathing room top and bottom while the map gets the
-        // dominant share. min-h-0 + overflow-y-auto kept as safety
-        // for very short viewports.
-        className="flex w-full max-w-[1200px] flex-col gap-3 overflow-y-auto rounded-(--radius-card) border border-line p-4 text-center"
+        // Map-dominant layout. The card takes ~85% of the viewport
+        // on both axes so the map reveal has serious breathing room
+        // against the dimmed surrounding. min-h-0 + overflow-y-auto
+        // kept as safety for very short viewports.
+        className="flex w-[85vw] max-w-[1600px] flex-col gap-3 overflow-y-auto rounded-(--radius-card) border border-line p-4 text-center"
         style={{
           backgroundColor: "var(--bg-surface)",
-          height: "min(900px, 75dvh)",
+          height: "85dvh",
           maxHeight: "100%",
         }}
       >
@@ -1438,8 +1501,12 @@ function ResultOverlay(props: {
             </motion.div>
             <TierBadge
               tierName={tierLabelForRound(round)}
-              pixelDistance={pixelDistance}
-              fractionOff={fractionOff}
+              // Accuracy = % of max distance points earned. Matches the
+              // 8-tier scoring ladder in lib/scoring.ts directly, so a
+              // Bullseye reads 100%, Excellent 75%, Good 50%, OK 30%,
+              // etc. — what the game actually rewards lines up with
+              // what the badge tells the player.
+              accuracyPct={(round.pointsDistance / 4000) * 100}
               hasPlayerPin={hasPlayerPin}
               delay={REVEAL.tierBadge}
             />
@@ -1457,24 +1524,40 @@ function ResultOverlay(props: {
             className="flex min-h-0 flex-1 items-center justify-center"
             style={{ containerType: "size" }}
           >
+          {(() => {
+            // Panel aspect ratio follows the active view: overhead uses
+            // the map's own ratio, POV is 16:9 (standard Overwatch
+            // capture). Without this swap, the POV screenshot ends up
+            // letterboxed inside a square container — most of the panel
+            // wasted on black bars. With the swap, POV expands to fill
+            // the slot. The width/height formula picks the largest
+            // rectangle of the chosen aspect ratio that fits within
+            // the parent's container-query box (cqw × cqh).
+            const panelW =
+              panelView === "overhead" ? previewCal.overheadW : 16;
+            const panelH =
+              panelView === "overhead" ? previewCal.overheadH : 9;
+            return (
           <div
-            // Map preview — a perfect square that fills the available
-            // slot. width/height pinned to min(cqw, cqh) so it shrinks
-            // proportionally on narrow viewports; aspectRatio kept as
-            // belt-and-suspenders.
             style={{
-              width: "min(100cqw, 100cqh)",
-              height: "min(100cqw, 100cqh)",
-              aspectRatio: `${previewCal.overheadW} / ${previewCal.overheadH}`,
+              width: `min(100cqw, calc(100cqh * ${panelW} / ${panelH}))`,
+              height: `min(100cqh, calc(100cqw * ${panelH} / ${panelW}))`,
+              aspectRatio: `${panelW} / ${panelH}`,
+              transition:
+                "width 220ms cubic-bezier(0.32, 0.72, 0, 1), height 220ms cubic-bezier(0.32, 0.72, 0, 1)",
             }}
             className="relative overflow-hidden rounded-(--radius-card) border border-line"
           >
-            {/* Tab toggle — top-left of the panel. stopPropagation on
-                pointer events so clicks don't kick off pan-drag on
-                the zoom hook beneath. */}
+            {/* Tab toggle — top-left of the panel. Bumped up in size
+                and contrast (z-50 over everything, larger text, soft
+                shadow) so players don't miss the option to flip
+                between the overhead and the original POV screenshot
+                — the comparison is the whole point of the result
+                reveal. stopPropagation on pointer events so clicks
+                don't kick off pan-drag on the zoom hook beneath. */}
             <div
-              className="absolute top-2 left-2 z-30 flex gap-0.5 rounded-(--radius-card) border border-line p-0.5"
-              style={{ backgroundColor: "var(--bg-surface)" }}
+              className="absolute top-2.5 left-2.5 z-50 flex gap-1 rounded-(--radius-card) border border-line p-1 shadow-[0_4px_18px_-6px_rgba(0,0,0,0.7)] backdrop-blur-sm"
+              style={{ backgroundColor: "rgb(from var(--bg-surface) r g b / 0.92)" }}
             >
               {(["overhead", "pov"] as const).map((view) => (
                 <button
@@ -1485,10 +1568,10 @@ function ResultOverlay(props: {
                     setPanelView(view);
                   }}
                   onMouseDown={(e) => e.stopPropagation()}
-                  className={`rounded-sm px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.18em] transition-colors ${
+                  className={`rounded-(--radius-tile) px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors ${
                     panelView === view
                       ? "bg-accent text-on-accent"
-                      : "text-ink-soft hover:text-ink"
+                      : "text-ink-soft hover:bg-inset/60 hover:text-ink"
                   }`}
                 >
                   {view === "overhead" ? "Overhead" : "POV"}
@@ -1496,41 +1579,50 @@ function ResultOverlay(props: {
               ))}
             </div>
 
-            {panelView === "overhead" && (
-              <div
-                ref={resultZoom.outerRef}
-                onMouseDown={resultZoom.onMouseDown}
-                onMouseMove={resultZoom.onMouseMove}
-                className="absolute inset-0"
-                style={{
-                  backgroundColor: "var(--bg-inset)",
-                  cursor: resultZoom.cursor,
-                  touchAction: "none",
+            {/* Both views are ALWAYS mounted; only their visibility +
+                pointer-events flip on toggle. Conditionally rendering
+                the overhead used to remount its motion.span pins on
+                every POV→Overhead flip, replaying the spring scale-in
+                each time — looked like the pins were "loading" mid-
+                review. With both mounted, the entrance animations run
+                exactly once per round (on first mount), and toggling
+                is an instant visibility swap. */}
+            <div
+              aria-hidden={panelView !== "overhead"}
+              ref={resultZoom.outerRef}
+              onMouseDown={resultZoom.onMouseDown}
+              onMouseMove={resultZoom.onMouseMove}
+              className="absolute inset-0"
+              style={{
+                backgroundColor: "var(--bg-inset)",
+                cursor: resultZoom.cursor,
+                touchAction: "none",
+                visibility: panelView === "overhead" ? "visible" : "hidden",
+                pointerEvents: panelView === "overhead" ? "auto" : "none",
                 }}
               >
-                {/* All zoomable content lives inside this inner div so
-                    the img, pins, and distance line stay in lockstep
-                    under the transform. The inner is width-driven +
-                    aspect-locked so it fills the outer at zoom=1 and
-                    preserves the overhead's natural aspect ratio when
-                    the cinematic camera scales it up. */}
+                {/* Direct-sizing zoom container. Instead of
+                    transform: scale(), the inner grows its own width/
+                    height to (zoom × parent). The browser then
+                    rasterizes the IMG at its actual displayed pixel
+                    size — which downsamples cleanly from the 5000-px
+                    source — instead of caching a low-res layer and
+                    bilinearly upscaling, which is what made the
+                    cinematic landing look blurry no matter how many
+                    GPU-layer hints we sprinkled on. Pan stays in
+                    outer CSS pixels (same definition as before), so
+                    the cinematic camera + wheel-anchor math need no
+                    adjustment. */}
                 <div
-                  className="absolute left-0"
+                  className="pointer-events-none absolute"
                   style={{
-                    width: "100%",
-                    aspectRatio: `${previewCal.overheadW} / ${previewCal.overheadH}`,
+                    width: `${resultZoom.zoom * 100}%`,
+                    height: `${resultZoom.zoom * 100}%`,
+                    left: "50%",
                     top: "50%",
-                    transform: `translateY(-50%) ${resultZoom.transform}`,
-                    transformOrigin: "center center",
-                    // During cinematic flight we drive zoom/pan every
-                    // frame via rAF, so no CSS transition is needed (or
-                    // wanted — it'd add a 80ms lag that fights the
-                    // animation). Once the lock is off, restore the
-                    // brief easing for user wheel-zoom comfort.
-                    transition:
-                      resultZoom.isPanning || resultZoom.locked
-                        ? "none"
-                        : "transform 80ms ease-out",
+                    transform: `translate(calc(-50% + ${resultZoom.pan.x}px), calc(-50% + ${resultZoom.pan.y}px))`,
+                    willChange: "transform",
+                    transition: "none",
                   }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1539,23 +1631,24 @@ function ResultOverlay(props: {
                     alt=""
                     className="pointer-events-none block h-full w-full select-none"
                     draggable={false}
+                    style={{
+                      imageRendering: "high-quality" as React.CSSProperties["imageRendering"],
+                    }}
                   />
 
-                  {/* Two-layer pin: the outer span owns position +
-                      counter-scale (no animation, so style.transform is
-                      authoritative). The inner motion.span owns the
-                      entrance animation (scale 0→1 via motion props).
-                      Splitting them avoids Framer Motion replacing the
-                      outer's translate(-50%, -50%) when it composes its
-                      own animated transform — which would offset the
-                      pin by half its size. */}
+
+                  {/* Pins keep their natural CSS size automatically:
+                      the parent isn't scale-transformed anymore, so
+                      counter-scaling is dead weight. Position uses
+                      percentages of overhead pixels, which is relative
+                      to the inner (now correctly sized). */}
                   {hasPlayerPin && (
                     <span
                       className="pointer-events-none absolute block"
                       style={{
                         left: `${(playerPin[0] / previewCal.overheadW) * 100}%`,
                         top: `${(playerPin[1] / previewCal.overheadH) * 100}%`,
-                        transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
+                        transform: "translate(-50%, -50%)",
                       }}
                       title="Your guess"
                     >
@@ -1583,7 +1676,7 @@ function ResultOverlay(props: {
                     style={{
                       left: `${(correctPin[0] / previewCal.overheadW) * 100}%`,
                       top: `${(correctPin[1] / previewCal.overheadH) * 100}%`,
-                      transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
+                      transform: "translate(-50%, -50%)",
                     }}
                   >
                     <motion.span
@@ -1606,7 +1699,7 @@ function ResultOverlay(props: {
                     style={{
                       left: `${(correctPin[0] / previewCal.overheadW) * 100}%`,
                       top: `${(correctPin[1] / previewCal.overheadH) * 100}%`,
-                      transform: `translate(-50%, -50%) scale(${1 / resultZoom.zoom})`,
+                      transform: "translate(-50%, -50%)",
                     }}
                     title={
                       spot.facingDeg != null
@@ -1688,20 +1781,21 @@ function ResultOverlay(props: {
                   })()}
                 </div>
               </div>
-            )}
 
-            {panelView === "pov" && (
-              <div
-                ref={povZoom.outerRef}
-                onMouseDown={povZoom.onMouseDown}
-                onMouseMove={povZoom.onMouseMove}
-                className="absolute inset-0"
-                style={{
-                  backgroundColor: "var(--bg-inset)",
-                  cursor: povZoom.cursor,
-                  touchAction: "none",
-                }}
-              >
+            <div
+              aria-hidden={panelView !== "pov"}
+              ref={povZoom.outerRef}
+              onMouseDown={povZoom.onMouseDown}
+              onMouseMove={povZoom.onMouseMove}
+              className="absolute inset-0"
+              style={{
+                backgroundColor: "var(--bg-inset)",
+                cursor: povZoom.cursor,
+                touchAction: "none",
+                visibility: panelView === "pov" ? "visible" : "hidden",
+                pointerEvents: panelView === "pov" ? "auto" : "none",
+              }}
+            >
                 <div
                   className="absolute inset-0"
                   style={{
@@ -1721,7 +1815,6 @@ function ResultOverlay(props: {
                   />
                 </div>
               </div>
-            )}
 
             {/* Reset button — tracks whichever zoom hook is currently
                 visible. Only shown when zoomed in past 1× and not
@@ -1739,7 +1832,7 @@ function ResultOverlay(props: {
                   className="absolute top-2 right-2 z-20 rounded-(--radius-card) border border-line px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink"
                   style={{ backgroundColor: "var(--bg-surface)" }}
                 >
-                  reset · {resultZoom.zoom.toFixed(1)}×
+                  Reset zoom
                 </button>
               )}
             {panelView === "pov" && povZoom.zoom > 1 && (
@@ -1753,13 +1846,12 @@ function ResultOverlay(props: {
                 className="absolute top-2 right-2 z-20 rounded-(--radius-card) border border-line px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink"
                 style={{ backgroundColor: "var(--bg-surface)" }}
               >
-                reset · {povZoom.zoom.toFixed(1)}×
+                Reset zoom
               </button>
             )}
-            <p className="pointer-events-none absolute bottom-1 left-2 z-20 font-mono text-[9px] uppercase tracking-[0.16em] text-ink-faint/80">
-              scroll = zoom · drag = pan
-            </p>
           </div>
+            );
+          })()}
           </div>
         )}
 
@@ -1808,14 +1900,30 @@ function ResultOverlay(props: {
             transition={{ delay: REVEAL.nextButton, duration: 0.3 }}
             className="flex flex-wrap items-center justify-center gap-3"
           >
+            {/* Hover treatment: lift + scale + soft glow + sliding
+                arrow. Anchored to a "group" so the chevron can react
+                to hover state on the parent. The arrow translates on
+                hover so the button reads as "go", not just a tap target. */}
             <button
               type="button"
               onClick={onNext}
-              className="rounded-(--radius-card) bg-accent px-6 py-2.5 font-mono text-xs uppercase tracking-[0.24em] text-on-accent transition-opacity hover:opacity-90"
+              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-(--radius-card) bg-accent px-7 py-3 font-mono text-xs uppercase tracking-[0.24em] text-on-accent shadow-[0_6px_18px_-6px_rgba(0,0,0,0.5)] transition-[transform,box-shadow,opacity] duration-200 ease-out hover:-translate-y-[2px] hover:scale-[1.03] hover:shadow-[0_10px_26px_-8px_var(--accent)] active:translate-y-0 active:scale-[0.99] active:duration-75"
             >
-              {isLast ? "See final score" : "Next round"}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full"
+              />
+              <span className="relative">
+                {isLast ? "See final score" : "Next round"}
+              </span>
+              <span
+                aria-hidden
+                className="relative inline-block font-mono text-base leading-none transition-transform duration-200 ease-out group-hover:translate-x-1"
+              >
+                →
+              </span>
             </button>
-            <DevSpotEdit spotId={spot.id} mapKey={spot.mapKey} />
+            {devView && <DevSpotEdit spotId={spot.id} mapKey={spot.mapKey} />}
           </motion.div>
         </div>
       </motion.div>
@@ -1867,25 +1975,21 @@ const TIER_TONE: Record<string, { bg: string; fg: string }> = {
   Excellent: { bg: "var(--tile-correct)", fg: "var(--tile-correct-fg)" },
   Good: { bg: "var(--accent-soft)", fg: "var(--accent-fg)" },
   OK: { bg: "var(--accent-soft)", fg: "var(--accent-fg)" },
-  Far: { bg: "var(--accent)", fg: "var(--accent-fg)" },
-  "Wrong area": { bg: "var(--tile-far)", fg: "var(--tile-far-fg)" },
+  "Wrong area": { bg: "var(--accent)", fg: "var(--accent-fg)" },
   "Way off": { bg: "var(--tile-far)", fg: "var(--tile-far-fg)" },
-  "Off map": { bg: "var(--tile-far)", fg: "var(--tile-far-fg)" },
   "Wrong map": { bg: "var(--tile-far)", fg: "var(--tile-far-fg)" },
   Skipped: { bg: "var(--bg-inset)", fg: "var(--ink-soft)" },
 };
 
 function TierBadge(props: {
   tierName: string;
-  pixelDistance: number;
-  fractionOff: number;
+  accuracyPct: number;
   hasPlayerPin: boolean;
   delay: number;
 }) {
-  const { tierName, pixelDistance, fractionOff, hasPlayerPin, delay } = props;
-  const tone = TIER_TONE[tierName] ?? TIER_TONE["Off map"];
-  const showDistance =
-    hasPlayerPin && Number.isFinite(pixelDistance) && tierName !== "Wrong map";
+  const { tierName, accuracyPct, hasPlayerPin, delay } = props;
+  const tone = TIER_TONE[tierName] ?? TIER_TONE["Wrong map"];
+  const showAccuracy = hasPlayerPin && tierName !== "Wrong map";
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.6 }}
@@ -1902,10 +2006,9 @@ function TierBadge(props: {
       <span className="font-display text-sm tracking-[0.02em]">
         {tierName}
       </span>
-      {showDistance && (
+      {showAccuracy && (
         <span className="font-mono text-[10px] uppercase tracking-[0.16em] opacity-75">
-          {Math.round(pixelDistance)}px · {(fractionOff * 100).toFixed(1)}%
-          of map
+          {accuracyPct.toFixed(1)}% accuracy
         </span>
       )}
     </motion.div>
@@ -2070,9 +2173,17 @@ function DoneScreen(props: {
   totalScore: number;
   day: string;
 }) {
-  const { rounds, spots, totalScore, day } = props;
+  const { rounds: rawRounds, spots, totalScore: rawTotal, day } = props;
+  // Defensive: even if the caller passed bloated rounds (more than
+  // spots.length), only display the first ROUNDS_PER_DAY and cap the
+  // total to the daily max. Protects against any persisted-state bug
+  // — the user should never see "66,470 / 25,000".
+  const rounds = rawRounds.slice(0, spots.length);
   const maxPossible = MAX_ROUND_SCORE * spots.length;
-  const pct = Math.round((totalScore / maxPossible) * 100);
+  const totalScore = Math.min(rawTotal, maxPossible);
+  const pct = maxPossible > 0
+    ? Math.min(100, Math.round((totalScore / maxPossible) * 100))
+    : 0;
 
   const shareText = useMemo(() => {
     const tiles = rounds
@@ -2098,15 +2209,39 @@ function DoneScreen(props: {
       }}
     >
       <div className="mx-4 flex max-w-[640px] flex-col items-center gap-6 rounded-(--radius-card) border border-line bg-inset/40 p-8 text-center shadow-[0_20px_60px_-20px_rgba(0,0,0,0.7)]">
-        <div>
+        <div className="flex w-full flex-col items-center gap-3">
           <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-info">
             Map mode complete · {day}
           </p>
-          <h1 className="mt-2 font-display text-5xl text-ink">
-            {totalScore.toLocaleString()}
-          </h1>
-          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
-            of {maxPossible.toLocaleString()} ({pct}%)
+          {/* Big "X / 25,000" treatment. The denominator stays half the
+              size of the score itself, but is rendered in the SAME
+              display face so the eye reads it as one unit and the
+              "how close to perfect" lens is unmissable. */}
+          <div className="flex items-baseline justify-center gap-3">
+            <span className="font-display text-6xl leading-none text-ink sm:text-7xl">
+              {totalScore.toLocaleString()}
+            </span>
+            <span className="font-display text-3xl leading-none text-ink-faint sm:text-4xl">
+              / {maxPossible.toLocaleString()}
+            </span>
+          </div>
+          {/* Progress bar — visual reinforcement of "how close to a
+              perfect run". Filled to pct%, capped at 100. Accent
+              tinted so it matches the brand. */}
+          <div
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+            className="h-2 w-full max-w-[420px] overflow-hidden rounded-(--radius-pill) border border-line/60 bg-bg/60"
+          >
+            <div
+              className="h-full rounded-(--radius-pill) bg-accent transition-[width] duration-700 ease-out"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent">
+            {pct}% of a perfect run
           </p>
         </div>
 
@@ -2201,10 +2336,14 @@ function GamemodeIcon({
 }) {
   const src = GAMEMODE_ICON_BY_KEY[mode];
   if (!src) return null;
+  // Note: gamemode icons live in /public/gamemodes/ and ship via the
+  // Cloudflare Pages bundle, NOT via the R2 media domain. Routing this
+  // through media() would resolve to media.playowdle.com/gamemodes/X.png
+  // which 404s; load directly from the same-origin static path.
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={media(src)}
+      src={src}
       alt=""
       aria-hidden
       width={size}
@@ -2268,7 +2407,7 @@ function MapPickerHeader(props: {
               </span>
             </>
           ) : (
-            "tap to browse"
+            <span className="truncate">Open map list</span>
           )}
         </span>
       </span>
@@ -2396,15 +2535,29 @@ function MapPickerList(props: {
 function tierLabelForRound(round: MapRoundResult): string {
   if (round.skipped) return "Skipped";
   if (round.wrongMapFirst) return "Wrong map";
+  // Boundaries align with each tier's minAccuracy in lib/scoring.ts
+  // (pts = round(accuracy × 40)). A deliberate gap sits between OK
+  // (≥ 2000 pts) and Wrong area (max 760 pts) — points in [800, 2000)
+  // are never produced by the scoring formula, so the >= 2000 check
+  // exclusively catches OK and the >= 40 check exclusively catches
+  // Wrong area + Way off. Halved second-guess scores can land in the
+  // gap; those still bucket into Wrong area, which is fine — the
+  // halving itself is the penalty for picking the wrong map first.
+  //   Bullseye   ≥ 95% accuracy → 3800 pts
+  //   Excellent  ≥ 80%          → 3200 pts
+  //   Good       ≥ 65%          → 2600 pts
+  //   OK         ≥ 50%          → 2000 pts
+  //   Wrong area ≥  5%          →  200 pts
+  //   Way off    ≥  1%          →   40 pts
+  //   Wrong map  < 1%           →    0 pts
   const dp = round.pointsDistance;
-  if (dp >= 4000) return "Bullseye";
-  if (dp >= 3000) return "Excellent";
-  if (dp >= 2000) return "Good";
-  if (dp >= 1200) return "OK";
-  if (dp >= 600) return "Far";
-  if (dp >= 250) return "Wrong area";
-  if (dp >= 100) return "Way off";
-  return "Off map";
+  if (dp >= 3800) return "Bullseye";
+  if (dp >= 3200) return "Excellent";
+  if (dp >= 2600) return "Good";
+  if (dp >= 2000) return "OK";
+  if (dp >= 200) return "Wrong area";
+  if (dp >= 40) return "Way off";
+  return "Wrong map";
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -2562,10 +2715,14 @@ function DevDayReset({ day }: { day: string }) {
 function DevSpotEdit({ spotId, mapKey }: { spotId: string; mapKey: string }) {
   const show = useShowDevControls();
   if (!show) return null;
-  // Hash params instead of search params so it works with the static
-  // export build (`output: "export"`) — no server-side parsing needed
-  // and the new tab survives a hard reload.
-  const href = `/labeler/map/edit#map=${encodeURIComponent(mapKey)}&spot=${encodeURIComponent(spotId)}`;
+  // Trailing slash is intentional: next.config has `trailingSlash:
+  // true`, so /labeler/map/edit would 301 to /labeler/map/edit/ — and
+  // some browsers drop the #hash on that redirect, leaving the labeler
+  // showing its first spot instead of the requested one.
+  // Hash params (not search) so the static export build serves the
+  // route without server-side parsing and the new tab survives a
+  // hard reload.
+  const href = `/labeler/map/edit/#map=${encodeURIComponent(mapKey)}&spot=${encodeURIComponent(spotId)}`;
   return (
     <a
       href={href}
@@ -2578,6 +2735,34 @@ function DevSpotEdit({ spotId, mapKey }: { spotId: string; mapKey: string }) {
       dev · fix spot
     </a>
   );
+}
+
+// ───────────────────────────────────────────────────────────────────────────
+// useZoomHint — controls visibility of the "scroll = zoom · drag = pan"
+// hint label. Shows on each round transition, then auto-fades after a
+// few seconds OR the moment the player has actually zoomed (zoom !== 1),
+// whichever lands first. Once the hint has been dismissed for a session
+// it doesn't reappear — players learn the controls once, not five times.
+// ───────────────────────────────────────────────────────────────────────────
+function useZoomHint(zoom: number, resetKey: unknown): boolean {
+  const [visible, setVisible] = useState(false);
+  const dismissedRef = useRef(false);
+  useEffect(() => {
+    if (dismissedRef.current) return;
+    setVisible(true);
+    const t = setTimeout(() => {
+      dismissedRef.current = true;
+      setVisible(false);
+    }, 3500);
+    return () => clearTimeout(t);
+  }, [resetKey]);
+  useEffect(() => {
+    if (zoom !== 1) {
+      dismissedRef.current = true;
+      setVisible(false);
+    }
+  }, [zoom]);
+  return visible;
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -2683,15 +2868,15 @@ function useImageZoomPan(opts?: {
       const cy = e.clientY - rect.top;
       // Trackpad pinch (ctrlKey-wheel) lands many small-deltaY events
       // in quick succession; a continuous exp() factor feels much
-      // closer to native map apps than a discrete step. Divisor
-      // tuned so a single wheel tick / pinch motion nudges the zoom
-      // rather than slamming it — result-page reviewers complained
-      // the previous 1.15×/exp(-y/100) was too aggressive.
+      // closer to native map apps than a discrete step. The 1500
+      // divisor and the 1.012 per-tick step are tuned to be roughly
+      // half the speed of the earlier values — the result-screen
+      // review wants a calm, controllable zoom, not a fly-through.
       const factor = e.ctrlKey
-        ? Math.exp(-e.deltaY / 220)
+        ? Math.exp(-e.deltaY / 1500)
         : e.deltaY < 0
-          ? 1.08
-          : 1 / 1.08;
+          ? 1.012
+          : 1 / 1.012;
       applyZoomAt(cx, cy, factor);
     };
     el.addEventListener("wheel", onWheel, { passive: false });

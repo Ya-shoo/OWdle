@@ -3,9 +3,10 @@
 // applies the dev-only gate so the prod static export emits a 404 for
 // every /labeler/* route.
 //
-// Why no top nav: the hub-index page IS the directory. Sub-tool pages
-// can be opened in their own browser tabs from the hub, so an
-// additional top nav would be redundant.
+// The "← Dev hub" pill that returns you to the hub-index lives in the
+// global Header (components/Header.tsx) next to the OWdle brand — it
+// only renders on /labeler/* sub-routes via usePathname, so no extra
+// wiring is needed here.
 
 import { notFound } from "next/navigation";
 

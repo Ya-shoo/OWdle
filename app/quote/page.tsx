@@ -1,4 +1,6 @@
 import { QuoteGame } from "@/components/QuoteGame";
+import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
+import { ModeFooterNav } from "@/components/ModeFooterNav";
 import { modeJsonLd, modeMetadata } from "@/lib/site";
 
 const META = {
@@ -21,7 +23,9 @@ export default function QuotePage() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <ModeBreadcrumbs label={META.title} />
       <QuoteGame />
+      <ModeFooterNav current="quote" />
     </>
   );
 }

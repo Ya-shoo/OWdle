@@ -36,6 +36,25 @@ const TRIMMED_BASE = MEDIA_BASE.endsWith("/")
   ? MEDIA_BASE.slice(0, -1)
   : MEDIA_BASE;
 
+// Only paths inside these directories live in R2 and need to be
+// rewritten to MEDIA_BASE. Everything else under public/ (splash,
+// portraits, abilities, sfx, kofi-avatar.jpg, etc.) ships with the
+// Cloudflare Pages deploy and is served from the same origin as the
+// site. Keep this list in lockstep with scripts/sync-to-r2.mjs's
+// SYNC_DIRS — they're the canonical source of "what's in R2."
+//
+// Without this gate, paths like /splash/tracer.jpg get rewritten to
+// https://media.playowdle.com/splash/tracer.jpg and 404 in production,
+// silently breaking Spotlight mode (and any other Pages-served asset
+// that happened to be wrapped in media()).
+const R2_PREFIXES = [
+  "/sounds/",
+  "/maps/",
+  "/skins/",
+  "/voicelines/",
+  "/banners/",
+] as const;
+
 export function media(path: string | null | undefined): string {
   if (!path) return "";
   // Pass through anything that already has a scheme. http(s) for
@@ -50,6 +69,11 @@ export function media(path: string | null | undefined): string {
   }
   // No base configured — serve from same origin (local dev / pre-R2).
   if (!TRIMMED_BASE) return path;
+  // Pages-served paths bypass the R2 rewrite. Anything else (i.e.
+  // /sounds/, /maps/, /skins/, /voicelines/, /banners/) gets the
+  // MEDIA_BASE prefix so it resolves to R2.
+  const isR2 = R2_PREFIXES.some((p) => path.startsWith(p));
+  if (!isR2) return path;
   const sep = path.startsWith("/") ? "" : "/";
   return TRIMMED_BASE + sep + path;
 }

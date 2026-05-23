@@ -1,38 +1,17 @@
 import Link from "next/link";
+import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { SITE_NAME, SITE_URL, modeMetadata } from "@/lib/site";
+
+const PAGE_DESCRIPTION =
+  "How to play OWdle, the daily Overwatch hero quiz. Rules, tile colors, and a breakdown of all five wordle-style game modes: Classic, Quote, Ability, Spotlight, and Sound.";
 
 export const metadata = modeMetadata({
   slug: "how-to-play",
   title: "How to play",
-  description:
-    "How to play OWdle, the daily Overwatch hero quiz. Rules, tile colors, and a breakdown of all five wordle-style game modes: Classic, Quote, Ability, Spotlight, and Sound.",
+  description: PAGE_DESCRIPTION,
 });
 
 const PAGE_URL = `${SITE_URL}/how-to-play/`;
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "BreadcrumbList",
-      "@id": `${PAGE_URL}#breadcrumbs`,
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: SITE_NAME,
-          item: SITE_URL,
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: "How to play",
-          item: PAGE_URL,
-        },
-      ],
-    },
-  ],
-};
 
 const MODE_SECTIONS: {
   slug: string;
@@ -156,6 +135,45 @@ const MODE_SECTIONS: {
   },
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${PAGE_URL}#breadcrumbs`,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: SITE_NAME,
+          item: SITE_URL,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "How to play",
+          item: PAGE_URL,
+        },
+      ],
+    },
+    {
+      "@type": "HowTo",
+      "@id": `${PAGE_URL}#howto`,
+      name: "How to play OWdle",
+      description: PAGE_DESCRIPTION,
+      totalTime: "PT10M",
+      supply: [{ "@type": "HowToSupply", name: "A web browser" }],
+      step: MODE_SECTIONS.map((mode, i) => ({
+        "@type": "HowToStep",
+        position: i + 1,
+        name: mode.label,
+        text: mode.lede,
+        url: `${SITE_URL}/${mode.slug}/`,
+      })),
+    },
+  ],
+};
+
 export default function HowToPlayPage() {
   return (
     <>
@@ -165,6 +183,7 @@ export default function HowToPlayPage() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <ModeBreadcrumbs label="How to play" />
       <main className="flex-1">
         <section className="border-b border-line">
           <div className="mx-auto max-w-4xl px-6 pb-14 pt-16 sm:pt-20">

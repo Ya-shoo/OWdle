@@ -15,10 +15,16 @@ import { Brand } from "./Brand";
 import { HomeBanner } from "./HomeBanner";
 import { NextResetCountdown } from "./NextResetCountdown";
 import { RequestNextGame } from "./RequestNextGame";
+import { StreakBadge } from "./StreakBadge";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 
-type Status = { won: boolean; gaveUp: boolean; guesses: number };
+type Status = {
+  won: boolean;
+  lost: boolean;
+  gaveUp: boolean;
+  guesses: number;
+};
 type StatusMap = Partial<Record<ModeSlug, Status>>;
 
 export function HomeContent() {
@@ -33,6 +39,7 @@ export function HomeContent() {
       const st = loadModeState(slug, d);
       map[slug] = {
         won: st.won,
+        lost: st.lost === true,
         gaveUp: st.gaveUp === true,
         guesses: st.guesses.length,
       };
@@ -40,13 +47,20 @@ export function HomeContent() {
     setStatuses(map);
   }, []);
 
-  // Celebratory state only — solely tied to wins, not "Show answer." The
-  // mode grid below distinguishes won vs gave-up per card, but the hero
-  // copy below assumes every mode was actually solved.
-  const allDone =
-    day != null && BUILT_MODE_SLUGS.every((s) => statuses[s]?.won);
-  const completedCount = BUILT_MODE_SLUGS.filter((s) => statuses[s]?.won)
-    .length;
+  // "Daily complete" now means every mode has been finished — won or
+  // lost. The hero copy below shows a score band (Yw / Zl) so losses
+  // are reflected honestly. Streak progression follows the same "all
+  // finished" rule.
+  const isFinished = (s: ModeSlug) => {
+    const st = statuses[s];
+    return st != null && (st.won || st.lost || st.gaveUp);
+  };
+  const allDone = day != null && BUILT_MODE_SLUGS.every(isFinished);
+  const wonCount = BUILT_MODE_SLUGS.filter((s) => statuses[s]?.won).length;
+  const lostCount = BUILT_MODE_SLUGS.filter(
+    (s) => statuses[s]?.lost || statuses[s]?.gaveUp,
+  ).length;
+  const completedCount = wonCount + lostCount;
   const totalGuesses = BUILT_MODE_SLUGS.reduce(
     (sum, s) => sum + (statuses[s]?.guesses ?? 0),
     0,
@@ -61,6 +75,8 @@ export function HomeContent() {
             <DailyCompleteHero
               day={day}
               count={BUILT_MODE_SLUGS.length}
+              wonCount={wonCount}
+              lostCount={lostCount}
               totalGuesses={totalGuesses}
             />
           ) : (
@@ -252,12 +268,17 @@ function BeginButton() {
 function DailyCompleteHero({
   day,
   count,
+  wonCount,
+  lostCount,
   totalGuesses,
 }: {
   day: string;
   count: number;
+  wonCount: number;
+  lostCount: number;
   totalGuesses: number;
 }) {
+  const sweep = wonCount === count;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -279,11 +300,28 @@ function DailyCompleteHero({
         </p>
         <Brand as="h1" size="2xl" className="mt-4 leading-[0.95]" />
         <p className="mt-6 max-w-md text-lg text-ink-soft">
-          You finished all <span className="text-ink">{count}</span> available
-          modes today in{" "}
-          <span className="text-ink">{totalGuesses}</span> total guesses. New
-          puzzles arrive at <span className="text-ink">2:15am Pacific</span>.
+          {sweep ? (
+            <>
+              You swept all <span className="text-ink">{count}</span> modes
+              today in{" "}
+              <span className="text-ink">{totalGuesses}</span> total guesses.
+              New puzzles arrive at{" "}
+              <span className="text-ink">2:15am Pacific</span>.
+            </>
+          ) : (
+            <>
+              You finished today's set —{" "}
+              <span className="text-correct">{wonCount} won</span>,{" "}
+              <span className="text-wrong">{lostCount} missed</span>,{" "}
+              <span className="text-ink">{totalGuesses}</span> guesses total.
+              New puzzles arrive at{" "}
+              <span className="text-ink">2:15am Pacific</span>.
+            </>
+          )}
         </p>
+        <div className="flex justify-center sm:justify-start">
+          <StreakBadge variant="hero" />
+        </div>
       </div>
     </motion.div>
   );
@@ -438,10 +476,17 @@ function ModeCard({
         <span aria-hidden>✓</span> in {status.guesses}
       </span>
     );
+  } else if (status?.lost) {
+    // Cap-hit loss — answer was revealed, no recovery.
+    tag = (
+      <span className="utility-label text-xs text-wrong">
+        <span aria-hidden>✕</span> Missed
+      </span>
+    );
   } else if (status?.gaveUp) {
-    // Distinct from "won" — the player tapped Show Answer rather than
-    // solving. Same "finished" vibe so they don't loop back in, but the
-    // muted color + word "revealed" communicates it's an unsolved finish.
+    // Legacy Sound mode "Show answer" path. Same finished vibe as lost
+    // for routing; kept distinct in copy so old saves still render
+    // sensibly.
     tag = (
       <span className="utility-label text-xs text-ink-faint">
         Revealed

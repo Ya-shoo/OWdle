@@ -5,29 +5,95 @@ import { AnimatePresence, motion } from "motion/react";
 import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
 import { dayString, getSplashForDay, prettyDay } from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
+import {
+  trackGuessSubmitted,
+  trackModeCompleted,
+  trackModeStarted,
+} from "@/lib/tracking";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
 import { media } from "@/lib/media";
 import { NextModeCTA } from "./NextModeCTA";
+import { LossReveal } from "./LossReveal";
+import { GuessRemaining } from "./GuessRemaining";
+import { ModeStatsLine } from "./ModeStatsLine";
+import { DevViewToggle, useDevViewState } from "./DevViewToggle";
+import { DevHeroPicker } from "./DevHeroPicker";
+
+const IS_DEV = process.env.NODE_ENV !== "production";
 
 const MODE = "splash";
 
-// Crop window zoom level by guess count. Higher = more zoomed in (less visible).
-// Image is a square crop centered on the character (smartcrop), so transformOrigin
-// is always 50%/50% and high initial zoom lands tightly on the face/torso.
-// Index 0 = before any guess. Each wrong guess advances the index until full.
-const ZOOM_BY_GUESS = [20, 14, 10, 7, 5, 3.5, 2.5, 1.7, 1.2, 1];
+// Hard cap on guesses. Player only ever sees indices 0..MAX_GUESSES of
+// the zoom curve — the curve's tail (positions 5..8) is intentionally
+// out of reach. The cap is meant to bite: at the lose-line the crop is
+// still tight enough to be challenging, especially on legendary skins.
+const MAX_GUESSES = 5;
+
+// Crop window zoom level by guess count. Higher = more zoomed in (less
+// visible). Image is a square crop centered on the character (smartcrop),
+// so transformOrigin is always 50%/50% and high initial zoom lands
+// tightly on the face/torso.
+//
+// The curve is calibrated for a "full reveal" at position 8 even though
+// the player never reaches that during normal play (cap at 5). This
+// keeps the per-step deltas the same shape they'd have in an 8-guess
+// mode while compressing the player's visible journey into the harder
+// first half: 20× → 12× → 7× → 4× → 2.5× → LOSS. Past the cap, the
+// LossReveal forces zoom to 1× regardless.
+const ZOOM_BY_GUESS = [20, 12, 7, 4, 2.5, 1.8, 1.4, 1.15, 1];
 
 export function SplashGame() {
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ModeState | null>(null);
+  // Dev-only view + override hero. When set, we serve that hero's
+  // default splash image (no skin variant) and freeze localStorage so
+  // test playthroughs don't overwrite the daily progress.
+  const [devView, setDevView] = useDevViewState("splash");
+  const [overrideHero, setOverrideHero] = useState<Hero | null>(null);
+  const isOverride = overrideHero !== null;
 
   useEffect(() => {
     const d = dayString();
     setDay(d);
     setState(loadModeState(MODE, d));
   }, []);
+
+  // mode_started — once per day, skip dev overrides.
+  useEffect(() => {
+    if (!day || isOverride) return;
+    const pick = getSplashForDay(day);
+    trackModeStarted({
+      mode: "splash",
+      dailyId: day,
+      answerId: pick.hero.key,
+    });
+  }, [day, isOverride]);
+
+  // mode_completed — fires on terminal transition.
+  const stateWon = state?.won === true;
+  const stateLost = state?.lost === true;
+  useEffect(() => {
+    if (!day || isOverride) return;
+    if (!stateWon && !stateLost) return;
+    const pick = getSplashForDay(day);
+    trackModeCompleted({
+      mode: "splash",
+      dailyId: day,
+      outcome: stateWon ? "won" : "lost",
+      totalGuesses: state?.guesses.length ?? 0,
+      cap: MAX_GUESSES,
+      answerId: pick.hero.key,
+      skinKey: pick.skin?.key ?? null,
+    });
+  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+
+  const applyOverride = (hero: Hero | null) => {
+    setOverrideHero(hero);
+    // Restart the in-memory round when the picker changes target.
+    setState({ day: day ?? "", guesses: [], won: false });
+  };
 
   if (!day || !state) {
     return (
@@ -39,28 +105,48 @@ export function SplashGame() {
     );
   }
 
-  const { hero: answer, imageUrl, skin } = getSplashForDay(day);
+  // Override path serves the hero's default splash with no skin variant.
+  // Daily path uses the full seeded picker (which may pick a skin).
+  const splash = overrideHero
+    ? { hero: overrideHero, imageUrl: overrideHero.splash_url ?? "", skin: null }
+    : getSplashForDay(day);
+  const { hero: answer, imageUrl, skin } = splash;
   const guessedHeroes = state.guesses
     .map((k) => HEROES_BY_KEY[k])
     .filter(Boolean);
   const excludeKeys = new Set(state.guesses);
 
-  // Wrong guesses zoom out the crop. A win locks the full image.
-  const wrongCount = state.won
-    ? ZOOM_BY_GUESS.length - 1
-    : state.guesses.length;
-  const zoomIdx = Math.min(wrongCount, ZOOM_BY_GUESS.length - 1);
-  const zoom = state.won ? 1 : ZOOM_BY_GUESS[zoomIdx];
+  const lost = state.lost === true;
+  const ended = state.won || lost;
+
+  // Wrong guesses zoom out the crop. On win or loss the image snaps to
+  // full reveal regardless of where the curve was.
+  const zoomIdx = Math.min(state.guesses.length, ZOOM_BY_GUESS.length - 1);
+  const zoom = ended ? 1 : ZOOM_BY_GUESS[zoomIdx];
 
   const handleGuess = (hero: Hero) => {
-    if (state.won) return;
+    if (ended) return;
+    const newGuesses = [...state.guesses, hero.key];
+    const won = hero.key === answer.key;
+    const nextLost = !won && newGuesses.length >= MAX_GUESSES;
+    if (!isOverride) {
+      trackGuessSubmitted({
+        mode: "splash",
+        dailyId: day,
+        guessNumber: newGuesses.length,
+        isCorrect: won,
+        guessId: hero.key,
+        answerId: answer.key,
+      });
+    }
     const next: ModeState = {
       ...state,
-      guesses: [...state.guesses, hero.key],
-      won: hero.key === answer.key,
+      guesses: newGuesses,
+      won,
+      lost: nextLost,
     };
     setState(next);
-    saveModeState(MODE, next);
+    if (!isOverride) saveModeState(MODE, next);
   };
 
   return (
@@ -84,29 +170,46 @@ export function SplashGame() {
         </div>
       </header>
 
+      {IS_DEV && (
+        <div className="mb-4 flex justify-center">
+          <DevViewToggle
+            mode="splash"
+            active={devView}
+            onChange={setDevView}
+          />
+        </div>
+      )}
+      {IS_DEV && devView && (
+        <DevHeroPicker
+          label="Spotlight"
+          currentHeroKey={answer.key}
+          overrideActive={isOverride}
+          onApply={applyOverride}
+        />
+      )}
+
       <div className="mb-8 flex flex-col items-center">
         <SplashFrame
           imageUrl={imageUrl}
           zoom={zoom}
-          revealed={state.won}
+          revealed={ended}
           heroName={answer.name}
         />
       </div>
 
-      {!state.won && (
-        <div className="mb-6">
+      {!ended && (
+        <div className="mb-6 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <GuessRemaining used={state.guesses.length} cap={MAX_GUESSES} />
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+              zoom {zoom.toFixed(zoom < 2 ? 2 : 1)}×
+            </span>
+          </div>
           <HeroCombobox
             heroes={HEROES}
             excludeKeys={excludeKeys}
             onSelect={handleGuess}
           />
-          <p className="mt-3 font-mono text-xs uppercase tracking-[0.18em] text-info">
-            {state.guesses.length}{" "}
-            {state.guesses.length === 1 ? "guess" : "guesses"}
-            <span className="ml-2 text-ink-faint">
-              · zoom {zoom.toFixed(zoom < 2 ? 2 : 1)}×
-            </span>
-          </p>
         </div>
       )}
 
@@ -117,8 +220,55 @@ export function SplashGame() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8 rounded-(--radius-card) border border-correct/40 bg-correct/10 p-5 sm:p-6"
+            className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
           >
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={answer.portrait}
+                  alt=""
+                  className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
+                />
+                <div className="flex-1">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                    Solved
+                  </div>
+                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                    {answer.name}{" "}
+                    <span className="text-ink-soft">
+                      in {state.guesses.length}
+                    </span>
+                  </div>
+                  {skin && (
+                    <div className="mt-2 flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] sm:justify-start">
+                      <span
+                        className={
+                          skin.rarity === "legendary"
+                            ? "text-accent-soft"
+                            : "text-info"
+                        }
+                      >
+                        {skin.rarity}
+                      </span>
+                      <span className="text-ink-soft">·</span>
+                      <span className="text-ink">{skin.name}</span>
+                    </div>
+                  )}
+                  <ModeStatsLine mode="splash" />
+                </div>
+              </div>
+              <div className="flex justify-center sm:justify-start">
+                <NextModeCTA current="splash" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lost && !state.won && (
+          <LossReveal current="splash">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -127,14 +277,8 @@ export function SplashGame() {
                 className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
               />
               <div className="flex-1">
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                  Solved
-                </div>
-                <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
-                  {answer.name}{" "}
-                  <span className="text-ink-soft">
-                    in {state.guesses.length}
-                  </span>
+                <div className="font-display text-2xl text-ink sm:text-3xl">
+                  {answer.name}
                 </div>
                 {skin && (
                   <div className="mt-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em]">
@@ -151,12 +295,14 @@ export function SplashGame() {
                     <span className="text-ink">{skin.name}</span>
                   </div>
                 )}
-                <div className="mt-3">
-                  <NextModeCTA current="splash" />
+                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                  after {state.guesses.length} wrong{" "}
+                  {state.guesses.length === 1 ? "guess" : "guesses"}
                 </div>
+                <ModeStatsLine mode="splash" />
               </div>
             </div>
-          </motion.div>
+          </LossReveal>
         )}
       </AnimatePresence>
 
@@ -177,10 +323,10 @@ export function SplashGame() {
         </AnimatePresence>
       </div>
 
-      {state.guesses.length === 0 && (
+      {state.guesses.length === 0 && !ended && (
         <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-            Look closely. Then start guessing above.
+            Look closely. You only get {MAX_GUESSES} guesses.
           </p>
         </div>
       )}

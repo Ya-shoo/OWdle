@@ -5,10 +5,28 @@ export type ModeState = {
   day: string;
   guesses: string[]; // hero keys, in order
   won: boolean;
-  // Sound mode only: player tapped "Show answer" after running out of
-  // ideas. Treated like winning for reveal/UI purposes but doesn't count
-  // as a solve in shares.
+  // Player ran out of guesses without solving. Triggered automatically
+  // when guesses.length (+ hintsUsed.length for Classic) hits the
+  // per-mode cap. Mutually exclusive with `won`; both render reveal
+  // states but the lose state uses the muted "Better luck tomorrow"
+  // card. Counted toward streak/daily-complete as engagement.
+  lost?: boolean;
+  // Legacy Sound mode: player tapped "Show answer" after running out
+  // of ideas. As of the hard-cap rollout this code path is unused —
+  // Sound auto-loses at the cap instead — but the field stays for
+  // backward compatibility with players who gave up under the old
+  // build. Reveal UI treats `gaveUp` identically to `lost`.
   gaveUp?: boolean;
+  // Classic mode only: attribute keys revealed via the hint system.
+  // Each entry consumes one guess slot (so effective guess count is
+  // guesses.length + hintsUsed.length against the cap).
+  hintsUsed?: string[];
+  // Parallel to hintsUsed[]: the wrong-guess count at the moment each
+  // hint was revealed. Lets the guess history interleave hint rows
+  // between real guesses so the timeline reads chronologically after a
+  // reload. Pre-Phase-3 saves omit this; the renderer falls back to
+  // appending hints at the end of the timeline.
+  hintOrder?: number[];
   // Sound mode bonus round: which ability did the player pick after winning?
   // Optional; only Sound mode reads/writes this.
   bonus?: {
@@ -19,6 +37,39 @@ export type ModeState = {
 
 function key(mode: string, day: string): string {
   return `owdle.${mode}.${day}`;
+}
+
+// Reconcile a loaded `hintOrder` against its `hintsUsed`. Two failure
+// modes to fix:
+//   1. Legacy state has hintsUsed without hintOrder — synthesize a 0
+//      for each entry so the timeline can still place them (bottom of
+//      the reversed display, the safest fallback when we don't know
+//      their original chronological position).
+//   2. Mixed legacy + new (hintsUsed grew while hintOrder was undefined
+//      between writes) — pad leading positions with 0 so the new
+//      entries land in their *correct* slots and the legacy ones
+//      cluster at the bottom.
+// Returns undefined when there are no hints at all so we don't write
+// an empty array back to storage on the next persist.
+function normalizeHintOrder(
+  rawHintsUsed: unknown,
+  rawHintOrder: unknown,
+): number[] | undefined {
+  const hintCount = Array.isArray(rawHintsUsed) ? rawHintsUsed.length : 0;
+  if (hintCount === 0) return undefined;
+  const validOrder =
+    Array.isArray(rawHintOrder) &&
+    rawHintOrder.every((n: unknown) => typeof n === "number")
+      ? (rawHintOrder as number[])
+      : [];
+  if (validOrder.length === hintCount) return validOrder;
+  if (validOrder.length > hintCount) return validOrder.slice(0, hintCount);
+  // Pad with leading 0s — legacy entries come *first* in chronology
+  // (they were saved earlier), and 0 places them at the start.
+  return [
+    ...new Array(hintCount - validOrder.length).fill(0),
+    ...validOrder,
+  ];
 }
 
 export function loadModeState(mode: string, day: string): ModeState {
@@ -50,7 +101,10 @@ export function loadModeState(mode: string, day: string): ModeState {
       day: parsed.day,
       guesses: derivedGuesses,
       won: derivedWon,
+      lost: parsed.lost,
       gaveUp: parsed.gaveUp,
+      hintsUsed: Array.isArray(parsed.hintsUsed) ? parsed.hintsUsed : undefined,
+      hintOrder: normalizeHintOrder(parsed.hintsUsed, parsed.hintOrder),
       bonus: parsed.bonus,
     };
   } catch {
@@ -89,6 +143,9 @@ export type ConversationState = {
   speakers?: [string, string];
   guesses: ConversationGuess[];
   won: boolean;
+  // Same semantics as ModeState.lost — cap hit without solving both
+  // speakers. Reveal uses the muted "Better luck tomorrow" card.
+  lost?: boolean;
 };
 
 function isValidConversationGuess(g: unknown): g is ConversationGuess {
@@ -112,7 +169,10 @@ export function loadConversationState(day: string): ConversationState {
       return { day, guesses: [], won: false };
     if (!parsed.guesses.every(isValidConversationGuess))
       return { day, guesses: [], won: false };
-    return parsed as ConversationState;
+    return {
+      ...(parsed as ConversationState),
+      lost: parsed.lost === true ? true : undefined,
+    };
   } catch {
     return { day, guesses: [], won: false };
   }

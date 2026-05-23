@@ -1,4 +1,6 @@
 import { SoundGame } from "@/components/SoundGame";
+import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
+import { ModeFooterNav } from "@/components/ModeFooterNav";
 import { modeJsonLd, modeMetadata } from "@/lib/site";
 
 const META = {
@@ -21,7 +23,9 @@ export default function SoundPage() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <ModeBreadcrumbs label={META.title} />
       <SoundGame />
+      <ModeFooterNav current="sound" />
     </>
   );
 }

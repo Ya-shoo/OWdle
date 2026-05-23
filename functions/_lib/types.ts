@@ -21,6 +21,14 @@ export type Env = {
   // insert. Optional: when unset the endpoint just writes to D1 and
   // returns, so dev/local deploys keep working without leaking secrets.
   FEEDBACK_WEBHOOK_URL?: string;
+  // PostHog personal API key + project id for the `stats/today` endpoint.
+  // Optional: when unset the stats endpoint serves an empty payload so
+  // local Pages dev (and unconfigured preview deploys) keep working.
+  POSTHOG_PERSONAL_API_KEY?: string;
+  POSTHOG_PROJECT_ID?: string;
+  // Optional override; defaults to https://us.posthog.com. EU instances
+  // would set this to https://eu.posthog.com.
+  POSTHOG_API_HOST?: string;
 };
 
 export type Context = {

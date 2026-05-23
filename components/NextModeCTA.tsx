@@ -12,7 +12,9 @@ import {
 import { dayString } from "@/lib/daily";
 import { loadModeState } from "@/lib/storage";
 import { NextResetCountdown } from "./NextResetCountdown";
+import { StreakBadge } from "./StreakBadge";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { DailyStatsBand } from "./DailyStatsBand";
 
 // Primary CTA shown after a mode is solved. Big, filled, with an animated
 // arrow and entrance — the goal is for the player to immediately see that
@@ -36,12 +38,13 @@ export function NextModeCTA({ current }: { current: ModeSlug }) {
     const done = new Set<ModeSlug>();
     let totalGuesses = 0;
     let roundGuesses = 0;
-    // Treat both wins and "Show answer" as finished for routing: once
-    // the player has bailed on a mode, looping them back into it isn't
-    // helpful. They can still revisit via the home grid if they want.
+    // Treat wins, losses, and legacy "Show answer" gives-up as finished
+    // for routing: once the player is done with a mode (any outcome),
+    // looping them back into it isn't helpful. They can still revisit
+    // via the home grid if they want.
     for (const slug of BUILT_MODE_SLUGS) {
       const st = loadModeState(slug, day);
-      if (st.won || st.gaveUp) done.add(slug);
+      if (st.won || st.lost || st.gaveUp) done.add(slug);
       // ConversationState (Quote) shares the same on-disk shape; .length
       // gives a usable per-mode count for both guess-array variants.
       const count = Array.isArray(st.guesses) ? st.guesses.length : 0;
@@ -145,16 +148,20 @@ function DailyCompletePanel({
   totalGuesses: number;
   roundGuesses: number;
 }) {
+  // This panel always renders nested inside a green win card (or red
+  // LossReveal), so it doesn't need its own border/background — that
+  // would double up the green-on-green nesting. Padding stays minimal;
+  // we lean on the parent card's p-4/p-5 for breathing room.
   return (
-    <div className="flex w-full flex-col gap-5">
-      <div className="relative flex flex-col border-2 border-correct bg-correct/10 p-5 shadow-lg shadow-black/40 sm:p-6">
+    <div className="flex w-full flex-col gap-4">
+      <div className="relative flex flex-col">
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
           <span aria-hidden>✓</span>
           Daily Complete
         </div>
 
         {/* Score band: round vs total, tabular nums so digits don't jitter. */}
-        <div className="mt-4 grid grid-cols-2 gap-4 border-y border-correct/25 py-5">
+        <div className="mt-3 grid grid-cols-2 gap-3 border-y border-correct/25 py-3">
           <Stat
             label="This round"
             value={roundGuesses}
@@ -167,15 +174,29 @@ function DailyCompletePanel({
           />
         </div>
 
-        <div className="mt-5 flex flex-col items-center gap-2 border-y border-correct/25 py-5">
+        {/* Daily sweep stats — pulled from /api/stats/today, hides
+            cleanly when the sample is too small. Renders as a single
+            muted line so it doesn't compete visually with the score
+            band's stat blocks. */}
+        <DailyStatsBand />
+
+        {/* Streak band — only renders when current > 0 (StreakBadge
+            hides itself at 0). Sits between the score band and the
+            "Next puzzle in" countdown so the cadence reads stats →
+            streak → time-to-next. */}
+        <div className="mt-3">
+          <StreakBadge variant="band" />
+        </div>
+
+        <div className="mt-3 flex flex-col items-center gap-1.5 border-b border-correct/25 pb-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
             Next puzzle in
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <LiveDot />
             <NextResetCountdown
               label=""
-              className="font-display text-4xl font-semibold tabular-nums leading-none text-accent-soft sm:text-5xl"
+              className="font-display text-3xl font-semibold tabular-nums leading-none text-accent-soft sm:text-4xl"
             />
           </div>
           <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">
@@ -183,7 +204,7 @@ function DailyCompletePanel({
           </span>
         </div>
 
-        <div className="mt-4 flex justify-center">
+        <div className="mt-3 flex justify-center">
           <Link
             href="/"
             className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-info underline-offset-4 hover:underline"
@@ -194,8 +215,9 @@ function DailyCompletePanel({
       </div>
 
       {/* The player just cleared every mode for the day, so surfacing the
-          sister site is the natural next-action prompt. */}
-      <TryDeadlockleCard />
+          sister site is the natural next-action prompt. Compact variant
+          since this lives inside the max-w-md win card. */}
+      <TryDeadlockleCard compact />
     </div>
   );
 }
@@ -214,10 +236,10 @@ function Stat({
       <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
         {label}
       </span>
-      <span className="mt-1 font-display text-3xl tabular-nums leading-none text-accent-soft sm:text-4xl">
+      <span className="mt-0.5 font-display text-2xl tabular-nums leading-none text-accent-soft sm:text-3xl">
         {value}
       </span>
-      <span className="mt-1 font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
+      <span className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
         {unit}
       </span>
     </div>

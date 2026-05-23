@@ -61,32 +61,39 @@ export function MapEdit({ initialSpots }: { initialSpots: SpotsByMap }) {
     [spotsByMap],
   );
 
-  const [selectedMapKey, setSelectedMapKey] = useState<string | null>(
-    mapsWithSpots[0] ?? null,
-  );
-  const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
-
   // Honor a deep-link hash like `#map=<key>&spot=<id>` from the game's
-  // dev "fix spot" shortcut so the requested spot is pre-selected when
-  // the labeler mounts. Pure client-side parse — fits the static export
-  // build, no router involvement needed.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+  // dev "fix spot" shortcut so the requested spot is pre-selected on
+  // mount. Computed during render (NOT in an effect) so the initial
+  // state is correct before the auto-pick effect below runs — without
+  // this the auto-pick effect would race ahead and overwrite the
+  // requested spot with list[0] of whatever map happened to be the
+  // initial selection. Pure client-side; SSR path falls through to
+  // the default first map and no preselected spot.
+  const initialFromHash = useMemo(() => {
+    if (typeof window === "undefined") {
+      return { map: mapsWithSpots[0] ?? null, spot: null as string | null };
+    }
     const raw = window.location.hash.replace(/^#/, "");
-    if (!raw) return;
-    const params = new URLSearchParams(raw);
-    const wantMap = params.get("map");
-    const wantSpot = params.get("spot");
-    if (wantMap && spotsByMap[wantMap]) {
-      setSelectedMapKey(wantMap);
+    if (raw) {
+      const params = new URLSearchParams(raw);
+      const wantMap = params.get("map");
+      const wantSpot = params.get("spot");
+      if (wantMap && spotsByMap[wantMap]?.length) {
+        return { map: wantMap, spot: wantSpot };
+      }
     }
-    if (wantSpot) {
-      setSelectedSpotId(wantSpot);
-    }
+    return { map: mapsWithSpots[0] ?? null, spot: null as string | null };
     // Only on mount — subsequent in-page map switches shouldn't be
     // overridden by a stale hash from the deep-link.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const [selectedMapKey, setSelectedMapKey] = useState<string | null>(
+    initialFromHash.map,
+  );
+  const [selectedSpotId, setSelectedSpotId] = useState<string | null>(
+    initialFromHash.spot,
+  );
 
   // Calibration mode — controls whether edits (this very page's output)
   // feed back into the projection used to render answer pins. Shared
