@@ -6,6 +6,14 @@ import {
   type Skin,
 } from "./heroes";
 import { CONVERSATIONS, type Conversation } from "./conversations";
+import {
+  usesBag,
+  bagClassicHero,
+  bagAbilityPick,
+  bagSplashPick,
+  bagSoundPick,
+  bagQuoteConversation,
+} from "./dailyBag";
 import sfxData from "@/data/sfx.json";
 import soundClipsData from "@/data/sound-clips.json";
 import iconOverridesData from "@/data/sound-clip-icons.json";
@@ -110,6 +118,7 @@ export function getHeroForDay(day: string): Hero {
   if (ANSWER_POOL.length === 0) {
     throw new Error("ANSWER_POOL is empty — check data/heroes.json");
   }
+  if (usesBag(day)) return bagClassicHero(day);
   const idx = fnv1a(`owdle:classic:${day}`) % ANSWER_POOL.length;
   return ANSWER_POOL[idx];
 }
@@ -151,6 +160,10 @@ export function getAbilityForDay(day: string): {
   if (ABILITY_POOL.length === 0) {
     throw new Error("ABILITY_POOL is empty");
   }
+  if (usesBag(day)) {
+    const { hero, abilityIndex } = bagAbilityPick(day);
+    return { hero, ability: hero.abilities[abilityIndex], abilityIndex };
+  }
   const heroIdx = fnv1a(`owdle:ability:${day}`) % ABILITY_POOL.length;
   const hero = ABILITY_POOL[heroIdx];
   const abIdx = fnv1a(`owdle:ability:${day}:idx`) % hero.abilities.length;
@@ -168,6 +181,14 @@ export function getSplashForDay(day: string): {
 } {
   if (SPLASH_POOL.length === 0) {
     throw new Error("SPLASH_POOL is empty");
+  }
+  if (usesBag(day)) {
+    const { hero, skinIndex } = bagSplashPick(day);
+    if (skinIndex == null) {
+      return { hero, imageUrl: hero.splash_url!, skin: null };
+    }
+    const skin = hero.skins[skinIndex];
+    return { hero, imageUrl: skin.file, skin };
   }
   const heroIdx = fnv1a(`owdle:splash:${day}`) % SPLASH_POOL.length;
   const hero = SPLASH_POOL[heroIdx];
@@ -199,6 +220,13 @@ export type ResolvedSoundClip = {
 };
 
 export function getSoundForDay(day: string): ResolvedSoundClip {
+  if (usesBag(day)) {
+    const { heroKey, clipSlug } = bagSoundPick(day);
+    const resolved = resolveLabeledSoundClip(heroKey, clipSlug);
+    if (resolved) return resolved;
+    // Fall through to legacy logic if the labeled-clip data has shifted
+    // out from under the bag pool since boot (extremely rare).
+  }
   // Prefer labeled clips when available — known label, paired MP4 reveal,
   // accurate duration. Fall back to the unlabeled item-tracker SFX dump
   // for heroes we haven't recorded yet, so the daily quiz keeps rotating
@@ -365,6 +393,16 @@ export function getConversationForDay(day: string): {
 } {
   if (CONVERSATION_POOL.length === 0) {
     throw new Error("CONVERSATION_POOL is empty");
+  }
+  if (usesBag(day)) {
+    const conv = bagQuoteConversation(day);
+    return {
+      conversation: conv,
+      speakers: [
+        HEROES_BY_KEY[conv.speakers[0]]!,
+        HEROES_BY_KEY[conv.speakers[1]]!,
+      ],
+    };
   }
   // Seed namespace bumped after expanding the conversation pool so today's
   // pick rotates to a fresh entry from the larger set.
