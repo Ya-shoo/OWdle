@@ -96,6 +96,7 @@ export function ClassicGame() {
       totalGuesses: guessesLen,
       cap: MAX_GUESSES,
       hintsUsed: hintsLen,
+      bonusCorrect: state?.bonus?.correct ?? null,
       answerId: ans.key,
     });
   }, [

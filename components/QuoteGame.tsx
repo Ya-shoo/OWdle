@@ -32,6 +32,9 @@ import { AttributeTile } from "./AttributeTile";
 import { Brand } from "./Brand";
 import { media } from "@/lib/media";
 import {
+  trackBonusOffered,
+  trackBonusOutcome,
+  trackBonusUsed,
   trackGuessSubmitted,
   trackModeCompleted,
   trackModeStarted,
@@ -228,8 +231,22 @@ export function QuoteGame() {
       (g) => g.target === 1 && g.heroKey === speakerB.key,
     );
     const nextWon = newARevealed && newBRevealed;
-    const nextLost = !nextWon && newGuesses.length >= MAX_GUESSES;
     const targetSpeaker = target === 0 ? speakerA : speakerB;
+    const guessWasCorrect = hero.key === targetSpeaker.key;
+    // Last-life bonus, strict-clutch interpretation: only the cap-th
+    // guess itself, *and that guess was a correct landing of one
+    // speaker*, earns the bonus. Solving a speaker much earlier and
+    // grinding 7 wrong doesn't qualify.
+    const bonusJustEarned =
+      !state.bonusEarned &&
+      newGuesses.length === MAX_GUESSES &&
+      guessWasCorrect &&
+      !nextWon;
+    const bonusActiveAfter =
+      (state.bonusEarned ?? false) || bonusJustEarned;
+    const usedBonus = newGuesses.length === MAX_GUESSES + 1;
+    const nextLost =
+      !nextWon && newGuesses.length >= MAX_GUESSES && !bonusActiveAfter;
     if (!isOverride) {
       trackGuessSubmitted({
         mode: "quote",
@@ -239,6 +256,25 @@ export function QuoteGame() {
         guessId: `${hero.key}@${target}`,
         answerId: `${speakerA.key}_${speakerB.key}`,
       });
+      if (bonusJustEarned) {
+        trackBonusOffered({
+          mode: "quote",
+          dailyId: day,
+          missingTarget: newARevealed ? 1 : 0,
+        });
+      }
+      if (usedBonus) {
+        trackBonusUsed({
+          mode: "quote",
+          dailyId: day,
+          missingTarget: target,
+        });
+        trackBonusOutcome({
+          mode: "quote",
+          dailyId: day,
+          outcome: nextWon ? "won" : "lost",
+        });
+      }
     }
     const next: ConversationState = {
       day,
@@ -246,10 +282,23 @@ export function QuoteGame() {
       guesses: newGuesses,
       won: nextWon,
       lost: nextLost,
+      bonusEarned: bonusActiveAfter,
     };
     setState(next);
     if (!isOverride) saveConversationState(next);
   };
+
+  // Bonus is on offer when the persisted earned flag is set and the
+  // player hasn't yet taken the shot (guesses still at the cap, not
+  // past it). Reading the persisted flag (rather than re-deriving from
+  // guesses) is what enforces strict-clutch semantics across reloads.
+  const bonusActive =
+    !ended &&
+    state.bonusEarned === true &&
+    state.guesses.length === MAX_GUESSES;
+  const bonusMissingSpeaker = bonusActive
+    ? aRevealed ? speakerB : speakerA
+    : null;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
@@ -303,8 +352,19 @@ export function QuoteGame() {
 
       {!ended && (
         <div className="mb-6 space-y-3">
+          {bonusActive && bonusMissingSpeaker && (
+            <div className="flex items-center justify-between gap-3 border border-accent/60 bg-accent/10 px-3 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+              <span>
+                Last-life bonus · one more shot at {bonusMissingSpeaker.name}
+              </span>
+              <span className="text-accent/80">earned by clutch</span>
+            </div>
+          )}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <GuessRemaining used={state.guesses.length} cap={MAX_GUESSES} />
+            <GuessRemaining
+              used={bonusActive ? MAX_GUESSES : state.guesses.length}
+              cap={bonusActive ? MAX_GUESSES + 1 : MAX_GUESSES}
+            />
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
               {(aRevealed ? 1 : 0) + (bRevealed ? 1 : 0)} / 2 found
               {guessesUntilNextAudio !== null && (

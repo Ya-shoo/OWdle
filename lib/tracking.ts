@@ -69,6 +69,10 @@ export function trackModeCompleted(opts: {
   cap: number;
   hintsUsed?: number;
   answerId: string;
+  // Classic-only: whether the player answered the bonus question
+  // correctly. true / false / null (unanswered). Surfaces in the daily
+  // tier-badge composite as a small sub-point credit.
+  bonusCorrect?: boolean | null;
   // Mode-specific extras. Null when not applicable to this mode.
   abilityIndex?: number | null;
   skinKey?: string | null;
@@ -83,6 +87,7 @@ export function trackModeCompleted(opts: {
     cap: opts.cap,
     hints_used: opts.hintsUsed ?? 0,
     answer_id: opts.answerId,
+    bonus_correct: opts.bonusCorrect ?? null,
     ability_index: opts.abilityIndex ?? null,
     skin_key: opts.skinKey ?? null,
     conversation_id: opts.conversationId ?? null,
@@ -102,6 +107,54 @@ export function trackHintUsed(opts: {
     hint_index: opts.hintIndex,
     at_guess_number: opts.atGuessNumber,
     attribute_revealed: opts.attributeRevealed,
+  });
+}
+
+// Quote mode's last-life bonus: when the cap-th guess lands one speaker
+// but the other is still unsolved, the player gets exactly one extra
+// guess to nail the missing speaker. Three discrete events let us
+// measure the rescue funnel — offered (eligible cap-th finish), used
+// (took the shot), outcome (won/lost on that shot). All three are
+// per-dailyId idempotent so a re-mount within a day doesn't double-fire.
+// Distinct from Classic's `bonus_correct` field on mode_completed,
+// which tracks a post-win sub-question, not a save attempt.
+
+export function trackBonusOffered(opts: {
+  mode: Mode;
+  dailyId: string;
+  missingTarget: 0 | 1;
+}): void {
+  if (alreadyFired(`bonus_offered.${opts.mode}.${opts.dailyId}`)) return;
+  posthog.capture("bonus_offered", {
+    mode: opts.mode,
+    daily_id: opts.dailyId,
+    missing_target: opts.missingTarget,
+  });
+}
+
+export function trackBonusUsed(opts: {
+  mode: Mode;
+  dailyId: string;
+  missingTarget: 0 | 1;
+}): void {
+  if (alreadyFired(`bonus_used.${opts.mode}.${opts.dailyId}`)) return;
+  posthog.capture("bonus_used", {
+    mode: opts.mode,
+    daily_id: opts.dailyId,
+    missing_target: opts.missingTarget,
+  });
+}
+
+export function trackBonusOutcome(opts: {
+  mode: Mode;
+  dailyId: string;
+  outcome: "won" | "lost";
+}): void {
+  if (alreadyFired(`bonus_outcome.${opts.mode}.${opts.dailyId}`)) return;
+  posthog.capture("bonus_outcome", {
+    mode: opts.mode,
+    daily_id: opts.dailyId,
+    outcome: opts.outcome,
   });
 }
 

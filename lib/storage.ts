@@ -146,6 +146,12 @@ export type ConversationState = {
   // Same semantics as ModeState.lost — cap hit without solving both
   // speakers. Reveal uses the muted "Better luck tomorrow" card.
   lost?: boolean;
+  // Last-life bonus: set when the player's cap-th guess was itself a
+  // correct guess on one speaker while the other was still unsolved.
+  // Earns exactly one bonus guess for the missing speaker. Persisting
+  // it (rather than re-deriving) keeps strict-clutch semantics — a
+  // speaker solved way earlier doesn't backdoor into a bonus.
+  bonusEarned?: boolean;
 };
 
 function isValidConversationGuess(g: unknown): g is ConversationGuess {

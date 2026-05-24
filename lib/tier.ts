@@ -1,19 +1,22 @@
 // Daily performance → Overwatch competitive rank tier mapping. Used by
 // DailyTierBadge on the DailyCompletePanel.
 //
-// Composite formula: per mode, won ? (cap - guesses) / cap : 0. Summed
-// across the 5 built modes. Range: 0 (lost everything) → ~4.34 (won
-// every mode in 1 guess).
+// Scoring is intentionally simple: each finisher's score is the total
+// number of guesses + Classic hints they used across all 5 modes, with
+// two small decimal sub-points layered on for tie-breaks:
+//   • +0.5 for each lost mode  (so a win-at-cap cleanly beats a
+//     loss-at-cap that would otherwise tie on slot count)
+//   • −0.5 if Classic bonus question answered correctly  (the only
+//     win-quality signal we expose beyond raw guess count)
 //
-// Tier assignment: server returns 6 quantile cutoffs against today's
-// finisher distribution; the client checks its own composite from top
-// to bottom. T500/GM/Diamond cutoffs come from Yash's spec; the rest
-// fill out the distribution.
+// Lower total = better. Tier is purely a percentile of this score
+// among today's finishers; no composite formula, no precision bonus,
+// no hint tax. A player who used fewer slots ranks higher.
 //
 // CAPS must mirror each game component's MAX_GUESSES. The server-side
 // HogQL uses properties.cap from the mode_completed event, so per-event
-// drift is handled — but the client-side composite uses these constants,
-// so they need to stay in lockstep with the games.
+// drift is handled — but the client-side total uses these constants to
+// validate inputs, so they need to stay in lockstep with the games.
 
 import type { ModeSlug } from "./modes";
 
@@ -35,7 +38,8 @@ export const CAPS: Record<ModeSlug, number> = {
 };
 
 // 7-tier ladder, top → bottom. Order matters: tier assignment walks this
-// list and returns the first tier whose cutoff the composite clears.
+// list and returns the first tier whose percentile threshold the player's
+// rank clears.
 export const TIERS = [
   "top500",
   "grandmaster",
@@ -48,70 +52,109 @@ export const TIERS = [
 
 export type Tier = (typeof TIERS)[number];
 
-// Server-supplied composite cutoffs. A composite ≥ cutoff lands the
-// player in that tier (or higher, depending on order). Server only
-// emits this when today's finishers > 9; client treats undefined as
-// "below display threshold, hide badge".
-export type TierCutoffs = {
-  top500: number;       // top 1%   — composite ≥ this
-  grandmaster: number;  // top 10%
-  diamond: number;      // top 30%
-  platinum: number;     // top 50%
-  gold: number;         // top 70%
-  silver: number;       // top 90%
-  // Below silver cutoff → Bronze. No explicit Bronze cutoff needed.
+// Tier percentile bands (Yash spec for T500/GM/Diamond + sensible
+// defaults below). Inclusive upper bound — a player with topPercent
+// exactly equal to the threshold gets that tier.
+export const TIER_PERCENTILE_MAX: Record<Tier, number> = {
+  top500: 1,
+  grandmaster: 10,
+  diamond: 30,
+  platinum: 50,
+  gold: 70,
+  silver: 90,
+  bronze: 100,
 };
 
-// Per-mode score: efficient win > inefficient win > loss.
-// Loss contributes 0 (no penalty beyond opportunity cost — they tried).
-export function modeScore(
-  mode: ModeSlug,
-  won: boolean,
-  guesses: number,
-): number {
-  if (!won) return 0;
-  const cap = CAPS[mode];
-  if (cap <= 0 || guesses <= 0) return 0;
-  return Math.max(0, (cap - guesses) / cap);
-}
+// Sub-point penalties + credits. Kept on this module so the server-side
+// HogQL formula can mirror them exactly via constants near
+// functions/api/stats/today.ts.
+export const LOSS_PENALTY = 0.5;
+export const BONUS_QUESTION_CREDIT = 0.5;
 
-// Per-mode state shape sufficient for composite. We accept a duck-typed
-// object because Quote uses ConversationState (different shape) but the
-// only fields we need are `won` (boolean) and `guesses` (array).
+// Per-mode state shape sufficient for the daily total. Duck-typed
+// because Quote uses ConversationState (different shape) but the only
+// fields we need are `won`/`guesses`/`hintsUsed`/`bonus`.
+//   • `guesses` (array — its .length matters)
+//   • `hintsUsed` (Classic-only — separate array from `guesses[]`, so
+//     the total has to look at both to match the in-game counter)
+//   • `bonus` (Classic-only — { correct: boolean | null } per the
+//     ModeState shape in lib/storage; only `correct === true` triggers
+//     the credit)
 export type ModeProgress = {
   won?: boolean;
   guesses?: unknown[];
+  hintsUsed?: unknown[];
+  bonus?: { correct?: boolean | null } | null;
 };
 
-// Sum of per-mode scores across the 5 built modes.
-export function dailyComposite(
+// Sum of guesses + Classic hints across the 5 built modes, plus the
+// loss penalty and bonus-question credit decimals. Lower is better.
+// Lost modes contribute their full guess count (which is the cap when
+// the player exhausted all attempts) PLUS LOSS_PENALTY so they sort
+// strictly worse than a win at the same slot count. Classic bonus
+// correct subtracts BONUS_QUESTION_CREDIT (the only win-quality
+// signal in the daily total).
+export function dailyTotal(
   modes: Partial<Record<ModeSlug, ModeProgress>>,
 ): number {
   let total = 0;
   for (const slug of Object.keys(CAPS) as ModeSlug[]) {
     if (slug === "map") continue; // not in BUILT_MODE_SLUGS
     const st = modes[slug];
-    const won = st?.won === true;
-    const count = Array.isArray(st?.guesses) ? st.guesses.length : 0;
-    total += modeScore(slug, won, count);
+    const guesses = Array.isArray(st?.guesses) ? st.guesses.length : 0;
+    const hints = Array.isArray(st?.hintsUsed) ? st.hintsUsed.length : 0;
+    total += guesses + hints;
+    if (st && st.won !== true) total += LOSS_PENALTY;
+    if (st?.bonus?.correct === true) total -= BONUS_QUESTION_CREDIT;
   }
   return total;
 }
 
-// Map a composite to a tier label using server-supplied cutoffs. Walks
-// top → bottom and returns the first tier whose cutoff is cleared.
-// Falls through to "bronze" when nothing else matches.
-export function tierForComposite(
-  composite: number,
-  cutoffs: TierCutoffs,
-): Tier {
-  if (composite >= cutoffs.top500) return "top500";
-  if (composite >= cutoffs.grandmaster) return "grandmaster";
-  if (composite >= cutoffs.diamond) return "diamond";
-  if (composite >= cutoffs.platinum) return "platinum";
-  if (composite >= cutoffs.gold) return "gold";
-  if (composite >= cutoffs.silver) return "silver";
+// "Top X%" given a player's daily total and today's full sorted-ascending
+// distribution. Definition: rank = 1 + (number of finishers strictly
+// better, i.e. strictly *lower* total). Ties get the generous
+// shared-top reading. topPercent = ceil(rank / N × 100), clamped to
+// [1, 100] so we never display "Top 0%". Returns 100 when the
+// distribution is empty.
+//
+// totals MUST be sorted ascending. lowerBound finds the index of the
+// first total ≥ mine; everything before it is strictly less (better).
+export function topPercent(
+  total: number,
+  totals: readonly number[],
+): number {
+  const n = totals.length;
+  if (n === 0) return 100;
+  const strictlyBetter = lowerBound(totals, total);
+  const rank = strictlyBetter + 1;
+  const pct = (rank / n) * 100;
+  return Math.max(1, Math.min(100, Math.ceil(pct)));
+}
+
+// Map a "Top X%" reading to a tier band. T500 = top 1%, GM = top 10%,
+// etc. The mapping is monotonic: a better (lower) percentile always
+// yields a same-or-better tier.
+export function tierForTopPercent(percent: number): Tier {
+  if (percent <= TIER_PERCENTILE_MAX.top500) return "top500";
+  if (percent <= TIER_PERCENTILE_MAX.grandmaster) return "grandmaster";
+  if (percent <= TIER_PERCENTILE_MAX.diamond) return "diamond";
+  if (percent <= TIER_PERCENTILE_MAX.platinum) return "platinum";
+  if (percent <= TIER_PERCENTILE_MAX.gold) return "gold";
+  if (percent <= TIER_PERCENTILE_MAX.silver) return "silver";
   return "bronze";
+}
+
+// Index of the first element ≥ target in a sorted-ascending array.
+// Equivalent to "how many elements are strictly less than target".
+function lowerBound(arr: readonly number[], target: number): number {
+  let lo = 0;
+  let hi = arr.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (arr[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
 }
 
 // Index in TIERS array. Lower index = higher rank. Used for the

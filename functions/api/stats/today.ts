@@ -26,14 +26,6 @@ type Mode = "classic" | "quote" | "ability" | "splash" | "sound";
 const MODES: Mode[] = ["classic", "quote", "ability", "splash", "sound"];
 
 type ModeBucket = { won: number; lost: number; gaveUp: number; total: number };
-type TierCutoffs = {
-  top500: number;
-  grandmaster: number;
-  diamond: number;
-  platinum: number;
-  gold: number;
-  silver: number;
-};
 type DailyBucket = {
   finishers: number;
   sweepers: number;
@@ -43,15 +35,19 @@ type DailyBucket = {
   // ratio reads "of players who committed to the daily set, what %
   // finished it" rather than including drive-by sampling.
   starters_ge2: number;
-  // Composite-score quantiles across today's all-5-modes finishers.
-  // Omitted when fewer than MIN_TIER_FINISHERS so the client hides
-  // the tier badge under the noise threshold.
-  tierCutoffs?: TierCutoffs;
+  // Sorted-ascending list of every all-5-modes finisher's daily total:
+  // sum(total_guesses + hints_used) across their 5 mode_completed
+  // events. Lower = better. The client binary-searches its own total
+  // into this list to derive a "Top X%" reading + tier band. Omitted
+  // when fewer than MIN_TIER_FINISHERS so the badge stays hidden under
+  // the noise floor.
+  totals?: number[];
 };
 
-// Minimum all-5-modes finishers before the tier cutoffs become
-// meaningful enough to surface. Below this we omit tierCutoffs so the
-// client hides the badge. 10 = one occupant per tier at the floor.
+// Minimum all-5-modes finishers before the tier distribution becomes
+// meaningful enough to surface. Below this we omit composites so the
+// client hides the badge. 10 = one occupant per 10-percent band at
+// the floor.
 const MIN_TIER_FINISHERS = 10;
 
 type StatsResponse = {
@@ -150,25 +146,27 @@ async function fetchFromPostHog(
     ")",
   ].join("\n");
 
-  // Per-finisher composite score = sum across mode_completed events of
-  // (won ? (cap - total_guesses) / cap : 0). Only counts players who
-  // finished all 5 built modes. Outer SELECT pulls the count and the
-  // six quantile cutoffs the client uses to map its own composite to a
-  // tier badge. Quantile bands track Yash's spec:
-  //   top500 = top 1%, grandmaster = top 10%, diamond = top 30%,
-  //   platinum = top 50%, gold = top 70%, silver = top 90%.
-  // Below silver → Bronze (no cutoff needed for the catch-all).
+  // Per-finisher daily total. Per mode_completed event:
+  //   base       = total_guesses + hints_used
+  //   loss_bump  = +0.5 if outcome != 'won'   (tie-break wins above losses
+  //                                            at the same slot count)
+  //   bonus_credit = -0.5 if bonus_correct = true  (Classic-only signal)
+  // Summed across the player's 5 modes. Lower = better. Only counts
+  // players who finished all 5 built modes today. Outer SELECT pulls
+  // the count and the full sorted-ascending list of every finisher's
+  // total so the client can binary-search to derive its Top X% reading.
+  // The 0.5 magnitudes mirror LOSS_PENALTY / BONUS_QUESTION_CREDIT in
+  // lib/tier.ts — keep them in lockstep.
   const tierQuery = [
-    "WITH composites AS (",
+    "WITH totals AS (",
     "  SELECT",
     "    distinct_id,",
     "    sum(",
-    "      if(",
-    "        properties.outcome = 'won',",
-    "        (toFloat(properties.cap) - toFloat(properties.total_guesses)) / toFloat(properties.cap),",
-    "        0",
-    "      )",
-    "    ) AS composite",
+    "      toFloat(properties.total_guesses)",
+    "      + toFloat(properties.hints_used)",
+    "      + if(properties.outcome = 'won', 0, 0.5)",
+    "      - if(properties.bonus_correct = true, 0.5, 0)",
+    "    ) AS total",
     "  FROM events",
     "  WHERE event = 'mode_completed'",
     `    AND properties.daily_id = '${day}'`,
@@ -178,13 +176,8 @@ async function fetchFromPostHog(
     ")",
     "SELECT",
     "  count() AS n,",
-    "  quantile(0.99)(composite) AS top500,",
-    "  quantile(0.90)(composite) AS grandmaster,",
-    "  quantile(0.70)(composite) AS diamond,",
-    "  quantile(0.50)(composite) AS platinum,",
-    "  quantile(0.30)(composite) AS gold,",
-    "  quantile(0.10)(composite) AS silver",
-    "FROM composites",
+    "  arraySort(groupArray(total)) AS totals",
+    "FROM totals",
   ].join("\n");
 
   // Fire all four queries in parallel — HogQL latency dominates total
@@ -217,20 +210,16 @@ async function fetchFromPostHog(
     starters_ge2: Number(startersRow[0]) || 0,
   };
 
-  // tierRow is [n, top500, gm, diamond, platinum, gold, silver]. Below
-  // the floor we drop tierCutoffs entirely so the client hides the badge.
+  // tierRow is [n, [total, total, …]] sorted ascending. Below the floor
+  // we drop totals entirely so the client hides the badge.
   const tierRow = (tierRes.results ?? [])[0];
   if (tierRow) {
     const n = Number(tierRow[0]) || 0;
     if (n >= MIN_TIER_FINISHERS) {
-      daily.tierCutoffs = {
-        top500: Number(tierRow[1]) || 0,
-        grandmaster: Number(tierRow[2]) || 0,
-        diamond: Number(tierRow[3]) || 0,
-        platinum: Number(tierRow[4]) || 0,
-        gold: Number(tierRow[5]) || 0,
-        silver: Number(tierRow[6]) || 0,
-      };
+      const raw = tierRow[1];
+      if (Array.isArray(raw)) {
+        daily.totals = raw.map((v) => Number(v) || 0);
+      }
     }
   }
 

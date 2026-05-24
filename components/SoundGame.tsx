@@ -280,8 +280,13 @@ export function SoundGame() {
     finishGuess([...state.guesses, hero.key], hero);
   };
 
+  // Skip is locked when only one attempt remains — burning it would end
+  // the round with no chance to guess the hero. Mirrors ClassicGame's
+  // hint lockout at effectiveRemaining <= 1.
+  const skipLocked = MAX_GUESSES - turnsUsed <= 1;
+
   const handleSkip = () => {
-    if (ended) return;
+    if (ended || skipLocked) return;
     if (!isOverride) {
       trackGuessSubmitted({
         mode: "sound",
@@ -420,13 +425,24 @@ export function SoundGame() {
                 onSave={handleTrimSave}
               />
             )}
-            {!ended && (
+            {!ended && !skipLocked && (
               <button
                 type="button"
                 onClick={handleSkip}
                 className="rounded-(--radius-card) border border-line bg-inset/60 px-5 py-3 font-mono text-xs uppercase tracking-[0.2em] text-ink-soft transition-colors hover:border-accent/60 hover:bg-accent/10 hover:text-accent active:scale-[0.98] sm:py-2.5 sm:text-[11px]"
               >
                 Skip turn · reveal more →
+              </button>
+            )}
+            {!ended && skipLocked && (
+              <button
+                type="button"
+                disabled
+                title="Skip locked on your last guess."
+                aria-disabled="true"
+                className="cursor-not-allowed rounded-(--radius-card) border border-line/60 bg-inset/30 px-5 py-3 font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:py-2.5 sm:text-[11px]"
+              >
+                Skip locked · last guess
               </button>
             )}
           </>
@@ -438,7 +454,8 @@ export function SoundGame() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <GuessRemaining used={turnsUsed} cap={MAX_GUESSES} />
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-              {snippetDuration.toFixed(1)}s clip · skip costs a guess
+              {snippetDuration.toFixed(1)}s clip ·{" "}
+              {skipLocked ? "make it count" : "skip costs a guess"}
             </span>
           </div>
           <HeroCombobox
@@ -483,7 +500,7 @@ export function SoundGame() {
                   </div>
                   <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
                     {answer.name}
-                    {label && (
+                    {label && !bonusPending && (
                       <span className="ml-2 text-ink-soft">· {label}</span>
                     )}
                   </div>
