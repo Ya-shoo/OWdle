@@ -4,6 +4,12 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 import type { Hero } from "@/lib/heroes";
 
+// Lowercase + strip diacritics so "lu" matches "Lúcio" and "torb" matches
+// "Torbjörn". NFD splits accented chars into base + combining mark; the
+// regex drops the combining marks (U+0300–U+036F).
+const fold = (s: string) =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 type Props = {
   heroes: Hero[];
   excludeKeys: Set<string>;
@@ -27,7 +33,7 @@ export function HeroCombobox({
   const activeRef = useRef<HTMLLIElement>(null);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = fold(query.trim());
     const available = heroes
       .filter((h) => !excludeKeys.has(h.key))
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -35,7 +41,7 @@ export function HeroCombobox({
     const starts: Hero[] = [];
     const contains: Hero[] = [];
     for (const h of available) {
-      const name = h.name.toLowerCase();
+      const name = fold(h.name);
       if (name.startsWith(q)) starts.push(h);
       else if (name.includes(q)) contains.push(h);
     }
