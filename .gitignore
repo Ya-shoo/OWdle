@@ -54,3 +54,8 @@ next-env.d.ts
 /public/banners/
 # staging dir used by scripts/build-for-deploy.mjs to keep media out of out/
 /.staged-media/
+
+# scripts/sync-to-r2.mjs cache of confirmed-present keys; lets repeated
+# deploys skip the HEAD check on already-uploaded files (R2 rate-limits
+# the HEAD-via-GET endpoint after ~1500 requests).
+/.r2-sync-cache.json

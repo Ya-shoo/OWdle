@@ -21,6 +21,7 @@ import {
   type SpotFeedback,
 } from "@/lib/storage";
 import { scoreClick, MAX_ROUND_SCORE } from "@/lib/scoring";
+import { trackShareClicked } from "@/lib/tracking";
 import { media } from "@/lib/media";
 import { MapPin } from "@/components/MapPin";
 import { DevViewToggle, useDevViewState } from "@/components/DevViewToggle";
@@ -2291,6 +2292,11 @@ function DoneScreen(props: {
           type="button"
           onClick={() => {
             navigator.clipboard?.writeText(shareText).catch(() => {});
+            trackShareClicked({
+              surface: "map_result",
+              method: "clipboard",
+              dailyId: day,
+            });
           }}
           className="rounded-(--radius-card) bg-accent px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.24em] text-on-accent transition-opacity hover:opacity-90"
         >

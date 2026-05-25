@@ -1,8 +1,11 @@
+"use client";
+
 // Tip-jar panel that pairs with RequestNextGame in the engagement strip.
 // Stacks vertically inside its column: heading + copy on top, Ko-fi
 // profile preview + tip button + share link below. The Ko-fi action opens
 // an in-page modal containing Ko-fi's official panel iframe — see KofiModal.
 import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL } from "@/lib/site";
+import { trackShareClicked } from "@/lib/tracking";
 import { KofiModal } from "./KofiModal";
 
 const TWITTER_INTENT = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
@@ -83,6 +86,12 @@ export function SupportLinks() {
           href={TWITTER_INTENT}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => {
+            trackShareClicked({
+              surface: "support_panel",
+              method: "twitter_intent",
+            });
+          }}
           className="-mt-1 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:text-info"
         >
           <ShareMark />

@@ -18,12 +18,17 @@
 //   - HEAD each key; skip if R2 has it at the same size
 //   - PUT new/changed files at 8× concurrency
 //   - Sets Cache-Control for CDN-friendly serving
+//   - Caches confirmed-present keys to .r2-sync-cache.json so subsequent
+//     runs skip the HEAD entirely when local size+mtime match. R2 rate
+//     limits the HEAD-via-GET endpoint after ~1500 requests; the cache
+//     lets us re-sync large libraries from the same machine without
+//     burning through the quota.
 //
 // Run from repo root:
 //   node scripts/sync-to-r2.mjs
-//   node scripts/sync-to-r2.mjs --force      (skip the HEAD check)
+//   node scripts/sync-to-r2.mjs --force      (skip the cache + HEAD check)
 
-import { readdir, readFile, stat } from "node:fs/promises";
+import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, relative, resolve, dirname, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
@@ -46,8 +51,23 @@ const SYNC_DIRS = [
 const CONCURRENCY = 8;
 const CACHE_CONTROL = "public, max-age=86400, s-maxage=31536000, immutable";
 const FORCE = process.argv.includes("--force");
+const CACHE_PATH = join(REPO_ROOT, ".r2-sync-cache.json");
 
 const BUCKET = process.env.CLOUDFLARE_R2_BUCKET ?? "dailydles";
+
+async function loadCache() {
+  try {
+    const text = await readFile(CACHE_PATH, "utf-8");
+    const parsed = JSON.parse(text);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+async function saveCache(cache) {
+  await writeFile(CACHE_PATH, JSON.stringify(cache));
+}
 
 // Locate the wrangler config across the platforms it ships configs to.
 // Order: explicit env var → standard XDG path → Windows AppData path.
@@ -129,7 +149,7 @@ function apiBase(accountId) {
   return `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${BUCKET}/objects`;
 }
 
-async function headObject(accountId, token, key) {
+async function headObject(accountId, token, key, retried = false) {
   // The R2 REST API doesn't support HEAD on objects — use GET with
   // Range: bytes=0-0 to get headers cheaply (only 1 byte of body).
   const res = await fetch(`${apiBase(accountId)}/${encodeURI(key)}`, {
@@ -140,6 +160,14 @@ async function headObject(accountId, token, key) {
     },
   });
   if (res.status === 404) return null;
+  if (res.status === 429 && !retried) {
+    // R2 throttles us after roughly 1500 HEAD-via-GET requests. Back
+    // off with jitter and try once more — usually enough to clear the
+    // burst-window quota when only a tail of files is uncached.
+    const wait = 2000 + Math.random() * 2000;
+    await new Promise((r) => setTimeout(r, wait));
+    return headObject(accountId, token, key, true);
+  }
   if (!res.ok) {
     throw new Error(`HEAD-via-GET ${key}: HTTP ${res.status}`);
   }
@@ -223,7 +251,13 @@ async function main() {
   const accountId = await detectAccountId(token);
   console.log(`account: ${accountId}`);
   console.log(`bucket:  ${BUCKET}`);
-  if (FORCE) console.log("mode:    --force (skip HEAD, re-upload everything)");
+  if (FORCE) console.log("mode:    --force (skip cache+HEAD, re-upload everything)");
+
+  const cache = FORCE ? {} : await loadCache();
+  const cacheSizeBefore = Object.keys(cache).length;
+  if (!FORCE && cacheSizeBefore > 0) {
+    console.log(`cache:   ${cacheSizeBefore} confirmed-present keys`);
+  }
 
   const allFiles = [];
   for (const d of SYNC_DIRS) {
@@ -231,7 +265,12 @@ async function main() {
     for await (const f of walk(abs)) {
       const rel = relative(REPO_ROOT, f).replace(/^public[\\/]/, "");
       const s = await stat(f);
-      allFiles.push({ localPath: f, relPath: rel, size: s.size });
+      allFiles.push({
+        localPath: f,
+        relPath: rel,
+        size: s.size,
+        mtimeMs: s.mtimeMs,
+      });
     }
   }
   const totalBytes = allFiles.reduce((n, f) => n + f.size, 0);
@@ -239,12 +278,17 @@ async function main() {
     `scanned ${allFiles.length} files (${formatBytes(totalBytes)} total)`,
   );
 
-  const jobs = allFiles.map(({ localPath, relPath, size }) => {
+  const jobs = allFiles.map(({ localPath, relPath, size, mtimeMs }) => {
     const key = relPath.split(sep).join("/");
     const fn = async () => {
       if (!FORCE) {
+        const cached = cache[key];
+        if (cached && cached.size === size && cached.mtimeMs === mtimeMs) {
+          return { skipped: true };
+        }
         const existing = await headObject(accountId, token, key);
         if (existing && existing.size === size) {
+          cache[key] = { size, mtimeMs };
           return { skipped: true };
         }
       }
@@ -252,6 +296,7 @@ async function main() {
       const contentType =
         mime.getType(localPath) ?? "application/octet-stream";
       await putObject(accountId, token, key, data, contentType);
+      cache[key] = { size, mtimeMs };
       return { skipped: false, size };
     };
     fn.label = relPath;
@@ -269,6 +314,17 @@ async function main() {
     }
   });
   process.stdout.write("\n");
+
+  // Persist the cache even on partial-failure runs — successful HEADs
+  // are still useful for the next attempt. Drop entries for files that
+  // disappeared locally so the cache doesn't grow forever.
+  const liveKeys = new Set(
+    allFiles.map(({ relPath }) => relPath.split(sep).join("/")),
+  );
+  for (const k of Object.keys(cache)) {
+    if (!liveKeys.has(k)) delete cache[k];
+  }
+  await saveCache(cache);
 
   console.log("");
   console.log(

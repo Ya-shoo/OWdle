@@ -158,6 +158,38 @@ export function trackBonusOutcome(opts: {
   });
 }
 
+// Fired when the feedback dialog opens. Doubles as a PostHog session-
+// recording trigger (configured in project settings): the moment this
+// event fires, the recorder is force-started for that session so the
+// reviewer can see what the user does inside the dialog even if they
+// hadn't started a mode. Also returns the current session_id so the
+// caller can ship it along with the feedback POST.
+export function trackFeedbackOpened(): string | null {
+  posthog.capture("feedback_opened");
+  try {
+    return posthog.get_session_id() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// Fired when a user clicks a share affordance — the Twitter/X intent on
+// the homepage support panel, or the "Copy share text" button on Map
+// mode's result screen. Not idempotent: every click counts, since the
+// same person may re-share or copy-then-tweet. `surface` is where they
+// clicked from; `method` is how the share happens.
+export function trackShareClicked(opts: {
+  surface: "support_panel" | "map_result";
+  method: "twitter_intent" | "clipboard";
+  dailyId?: string;
+}): void {
+  posthog.capture("share_clicked", {
+    surface: opts.surface,
+    method: opts.method,
+    daily_id: opts.dailyId ?? null,
+  });
+}
+
 export function trackDailyCompleted(opts: {
   dailyId: string;
   wonCount: number;
