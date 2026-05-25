@@ -3,7 +3,6 @@
 import { motion } from "motion/react";
 import clsx from "clsx";
 import type { AttrResult } from "@/lib/compare";
-import { getFlagSrc } from "@/lib/flags";
 
 const STATUS_BG: Record<AttrResult["status"], string> = {
   correct: "bg-correct text-on-correct",
@@ -26,12 +25,6 @@ export function AttributeTile({
   // get the reveal on the first render.
   animate?: boolean;
 }) {
-  // Origin shows the country's flag instead of spelled-out text so the
-  // player has to recognize the flag. Lunar Colony has no canonical flag
-  // → getFlagSrc returns null and we fall back to text.
-  const flagSrc =
-    result.attr === "country" ? getFlagSrc(result.display) : null;
-
   return (
     <motion.div
       initial={animate ? { rotateX: -90, opacity: 0 } : false}
@@ -55,16 +48,7 @@ export function AttributeTile({
         {result.label}
       </div>
       <div className="mt-1 flex items-center gap-1 font-display text-sm leading-tight sm:text-base">
-        {flagSrc ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={flagSrc}
-            alt={result.display}
-            className="h-6 w-auto rounded-[2px] shadow-sm ring-1 ring-black/10 sm:h-7"
-          />
-        ) : (
-          <span className="font-medium">{result.display}</span>
-        )}
+        <span className="font-medium">{result.display}</span>
         {result.hint === "higher" && (
           <span aria-label="answer is higher" className="text-base">
             ↑

@@ -22,7 +22,6 @@ import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
 import { HintConfirmModal } from "./HintConfirmModal";
-import { getFlagSrc } from "@/lib/flags";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -574,9 +573,6 @@ function HintGuessRow({
 }) {
   const display = formatHintValue(attr, answer);
   const meta = ATTRIBUTES.find((a) => a.key === attr);
-  // Country hints reveal a flag instead of the country name so the hint
-  // tile matches the visual treatment used in guess rows.
-  const hintFlagSrc = attr === "country" ? getFlagSrc(display) : null;
   return (
     <motion.div
       layout
@@ -629,16 +625,7 @@ function HintGuessRow({
                   {a.label}
                 </div>
                 <div className="mt-1 flex items-center gap-1 font-display text-sm leading-tight sm:text-base">
-                  {hintFlagSrc ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={hintFlagSrc}
-                      alt={display}
-                      className="h-6 w-auto rounded-[2px] shadow-sm ring-1 ring-black/10 sm:h-7"
-                    />
-                  ) : (
-                    <span className="font-medium">{display}</span>
-                  )}
+                  <span className="font-medium">{display}</span>
                 </div>
               </motion.div>
             );
