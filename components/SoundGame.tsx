@@ -532,7 +532,7 @@ export function SoundGame() {
               <div className="flex-1">
                 <div className="font-display text-2xl text-ink sm:text-3xl">
                   {answer.name}
-                  {label && (
+                  {label && !bonusPending && (
                     <span className="ml-2 text-ink-soft">· {label}</span>
                   )}
                 </div>

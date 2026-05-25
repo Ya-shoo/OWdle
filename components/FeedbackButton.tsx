@@ -275,7 +275,7 @@ export function FeedbackButton() {
               rows={4}
               disabled={status === "sending" || status === "sent"}
               placeholder="Type your feedback…"
-              className="w-full resize-none border border-line bg-inset/60 p-3 font-sans text-sm text-ink placeholder:text-ink-faint focus:border-info focus:outline-none disabled:opacity-60"
+              className="w-full resize-none border border-line bg-inset/60 p-3 font-sans text-base text-ink placeholder:text-ink-faint focus:border-info focus:outline-none disabled:opacity-60"
             />
 
             <div className="flex items-center justify-between gap-3">

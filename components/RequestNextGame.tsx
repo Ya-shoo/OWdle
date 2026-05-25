@@ -353,7 +353,7 @@ export function RequestNextGame() {
                       ? `${listboxId}-${results[activeIndex].id}`
                       : undefined
                   }
-                  className="flex-1 bg-transparent px-4 py-2.5 font-sans text-sm text-ink placeholder:text-ink-faint disabled:opacity-50"
+                  className="flex-1 bg-transparent px-4 py-2.5 font-sans text-base text-ink placeholder:text-ink-faint disabled:opacity-50"
                 />
                 {selected ? (
                   <button
