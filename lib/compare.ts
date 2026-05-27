@@ -1,9 +1,10 @@
 import type { Hero } from "./heroes";
+import { sameAlliance } from "./affiliations";
 
 export type AttrKey =
   | "role"
   | "country"
-  | "continent"
+  | "affiliation"
   | "species"
   | "gender"
   | "age"
@@ -24,7 +25,7 @@ export type AttrResult = {
 export const ATTRIBUTES: { key: AttrKey; label: string }[] = [
   { key: "role", label: "Role" },
   { key: "country", label: "Origin" },
-  { key: "continent", label: "Continent" },
+  { key: "affiliation", label: "Affiliation" },
   { key: "species", label: "Species" },
   { key: "gender", label: "Gender" },
   { key: "age", label: "Age" },
@@ -108,11 +109,23 @@ export function compareHero(guess: Hero, answer: Hero): AttrResult[] {
     hint: null,
   });
 
+  let affiliationStatus: TileStatus = categorical(
+    guess.affiliation,
+    answer.affiliation,
+  );
+  if (
+    affiliationStatus === "wrong" &&
+    guess.affiliation &&
+    answer.affiliation &&
+    sameAlliance(guess.affiliation, answer.affiliation)
+  ) {
+    affiliationStatus = "partial";
+  }
   out.push({
-    attr: "continent",
-    label: "Continent",
-    display: fmtCategorical(guess.continent),
-    status: categorical(guess.continent, answer.continent),
+    attr: "affiliation",
+    label: "Affiliation",
+    display: fmtCategorical(guess.affiliation),
+    status: affiliationStatus,
     hint: null,
   });
 

@@ -38,6 +38,8 @@ export type Hero = {
   location: string | null;
   country: string | null;
   continent: string | null;
+  affiliation: string | null;
+  affiliation_explanation: string | null;
   age: number | null;
   hp: number | null;
   birthday: string | null;
@@ -74,6 +76,7 @@ export const ANSWER_POOL: Hero[] = HEROES.filter(
     h.release_year != null &&
     h.country != null &&
     h.continent != null &&
+    h.affiliation != null &&
     h.age != null &&
     h.hp != null,
 );

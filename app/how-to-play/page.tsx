@@ -38,11 +38,11 @@ const MODE_SECTIONS: {
           <strong className="text-ink">subrole</strong>,{" "}
           <strong className="text-ink">gender</strong>,{" "}
           <strong className="text-ink">species</strong>,{" "}
-          <strong className="text-ink">continent</strong>,{" "}
+          <strong className="text-ink">affiliation</strong>,{" "}
           <strong className="text-ink">age</strong>,{" "}
           <strong className="text-ink">HP</strong>, and{" "}
           <strong className="text-ink">release year</strong>. Green is an exact
-          match. Yellow is partial: same role family, neighboring continent,
+          match. Yellow is partial: same role family, allied affiliation,
           or a numeric value within a window. Red is wrong, with arrows on
           numeric tiles pointing toward the answer.
         </p>

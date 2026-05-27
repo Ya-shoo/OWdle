@@ -54,7 +54,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt97ec60cf959e81f3/631a8babe337fa0dc7263beb/1600_Ana.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt76ab9c7b4d291756/631a8bab636d390da7825df5/2600_Ana.jpg"
     ],
-    "splash_url": "/splash/ana.jpg"
+    "splash_url": "/splash/ana.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Returned to Overwatch in the Undivided webtoon and was seen arriving at Gibraltar in the Together holiday comic."
   },
   {
     "key": "anran",
@@ -126,7 +128,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltad4c1a0ddfe03d0f/69d6e1078d465d09974c5e98/1600_Anran.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt9b7863b08388e81f/69d6e0fa369d00815f7d8ccc/2600_Anran.png"
     ],
-    "splash_url": "/splash/anran.jpg"
+    "splash_url": "/splash/anran.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Formally invited to join Overwatch after defending Chengdu from an attack that caught the organization's attention."
   },
   {
     "key": "ashe",
@@ -183,7 +187,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt83273c22d0b94966/631a8ba0636d390da7825df1/1600_Ashe.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt3fc10a3baca12db5/631a8ba0a633280e74dc25cd/2600_Ashe.jpg"
     ],
-    "splash_url": "/splash/ashe.jpg"
+    "splash_url": "/splash/ashe.jpg",
+    "affiliation": "Deadlock Rebels",
+    "affiliation_explanation": "Leader of the Deadlock Rebels, whose gang has allied with Talon to provide cover operations for the organization."
   },
   {
     "key": "baptiste",
@@ -246,7 +252,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7409943072f0d44c/631a8b99f581050de0035dfa/1600_Baptiste.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5ef4dacade9780da/631a8b99e337fa0dc7263be7/2600_Baptiste.jpg"
     ],
-    "splash_url": "/splash/baptiste.jpg"
+    "splash_url": "/splash/baptiste.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Former Talon medic who defected and was recruited into the reformed Overwatch, seeking to atone for his past."
   },
   {
     "key": "bastion",
@@ -309,7 +317,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltcd0d5eb4b44d35f1/631a8b92e7bdcf0dd996c8e5/1600_Bastion.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltac77c0e793cedb9d/631a8b923ab6f40dd2a906b1/2600_Bastion.jpg"
     ],
-    "splash_url": "/splash/bastion.jpg"
+    "splash_url": "/splash/bastion.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Reactivated and now travels with the reformed Overwatch as a rehabilitated combat unit."
   },
   {
     "key": "brigitte",
@@ -386,7 +396,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf362dee5d41929be/631a8b7feef3ae0e03c743b6/1600_Brigitte.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt985b7156ca9b6e62/631a8b7f5f39a30d9cedbacc/2600_Brigitte.jpg"
     ],
-    "splash_url": "/splash/brigitte.jpg"
+    "splash_url": "/splash/brigitte.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Joined the reformed Overwatch after answering the recall, serving as a key frontline support member."
   },
   {
     "key": "cassidy",
@@ -436,7 +448,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt242e79efb1e27251/631a8b791566e20e82f30288/1600_Cassidy.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt4bb4c31f6849c25b/631a8b781613910e6926bfd4/2600_Cassidy.jpg"
     ],
-    "splash_url": "/splash/cassidy.jpg"
+    "splash_url": "/splash/cassidy.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Key Overwatch operative who actively recruited new members to bolster the reformed team."
   },
   {
     "key": "domina",
@@ -494,7 +508,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd95bdd9d3b5bf26f/6981752219662433bbaefd7d/1600_Domina.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5522a118520166f8/6981752246798a3f5135fce2/2600_Domina.png"
     ],
-    "splash_url": "/splash/domina.jpg"
+    "splash_url": "/splash/domina.jpg",
+    "affiliation": "Vishkar Corporation",
+    "affiliation_explanation": "Vishkar VP and heiress who forged a partnership with Talon’s leadership, aligning the corporation’s resources with their interests."
   },
   {
     "key": "doomfist",
@@ -558,7 +574,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt3f24de1ac73c318b/631a8b6ba633280e74dc25c9/1600_Doomfist.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blteaa58e824d1fc399/631a8b6b0e1b4f0e7b89a538/2600_Doomfist.jpg"
     ],
-    "splash_url": "/splash/doomfist.jpg"
+    "splash_url": "/splash/doomfist.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Overthrown as Talon’s leader and left for dead after having his gauntlet arm severed; current status and plans are completely unknown."
   },
   {
     "key": "dva",
@@ -643,7 +661,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf8e9415141b0ec36/631a8b65e7bdcf0dd996c8e1/1600_Dva.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltcd4bcf30a5794639/631a8b65f581050de0035df6/2600_Dva.jpg"
     ],
-    "splash_url": "/splash/dva.jpg"
+    "splash_url": "/splash/dva.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Ordered by her MEKA commander to join Overwatch to assess the Null Sector threat; maintains ties to MEKA."
   },
   {
     "key": "echo",
@@ -713,7 +733,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5f4efcfb6dd8d23a/631a98f5f581050de0035e00/1600_Echo.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt6a6dc9da49d17b95/631a8b5feef3ae0e03c743ae/2600_Echo.jpg"
     ],
-    "splash_url": "/splash/echo.jpg"
+    "splash_url": "/splash/echo.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Advanced AI agent activated and deployed as part of the reformed Overwatch."
   },
   {
     "key": "emre",
@@ -769,7 +791,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt6a5edb14ffdf9a6c/698cfe6d30e8580fb0cc4dc9/1600_Emre.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb3519446b8ce60de/698cfe5dfa5dc9748c88fc81/2600_Emre.png"
     ],
-    "splash_url": "/splash/emre.jpg"
+    "splash_url": "/splash/emre.jpg",
+    "affiliation": "Talon",
+    "affiliation_explanation": "Former Overwatch tactical prodigy described as a “killing machine” being controlled against his will by an unknown external power, forced to serve Talon."
   },
   {
     "key": "freja",
@@ -822,7 +846,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8793fc472f3e5896/67ec5f24d23f4982e2d031cc/1600_Freja.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltfd88f7e9b2d383ab/67ec5f176a1a262c61c31bf7/2600_Freja.jpg"
     ],
-    "splash_url": "/splash/freja.jpg"
+    "splash_url": "/splash/freja.jpg",
+    "affiliation": "Bounty Hunters",
+    "affiliation_explanation": "Former Overwatch Search and Rescue operative turned bounty hunter, now working for Talon and participating in covert operations."
   },
   {
     "key": "genji",
@@ -886,7 +912,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt22836a6cfd1c3335/631a8b576d5f7a0df8d92798/1600_Genji.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb6d5cb702c3e2476/631a8b57e7bdcf0dd996c8dd/2600_Genji.jpg"
     ],
-    "splash_url": "/splash/genji.jpg"
+    "splash_url": "/splash/genji.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Answered the recall and returned to active Overwatch duty, fighting in missions like the defense of Paris."
   },
   {
     "key": "hanzo",
@@ -956,7 +984,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt94cbaa8364b60dc7/631a8b50eef3ae0e03c743aa/1600_Hanzo.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt6ea101bee04bc99e/631a8b505f39a30d9cedbac8/2600_Hanzo.jpg"
     ],
-    "splash_url": "/splash/hanzo.jpg"
+    "splash_url": "/splash/hanzo.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Previously associated with allies in Kanezaka but now operates as a lone wanderer with no formal allegiance."
   },
   {
     "key": "hazard",
@@ -1027,7 +1057,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt858312851ab13877/671ac1914210e8458b19bd67/1600_Hazard.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd748c1f5f124ef06/671ac189ef1216fa37bf67e3/2600_Hazard.jpg"
     ],
-    "splash_url": "/splash/hazard.jpg"
+    "splash_url": "/splash/hazard.jpg",
+    "affiliation": "Phreaks",
+    "affiliation_explanation": "Member of the Phreaks, an anti-establishment group of body modders, hackers, and anarchists operating outside the law."
   },
   {
     "key": "illari",
@@ -1079,7 +1111,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt37638ea14bd0c85f/64c03bd64d4d9e27e4296283/1600_Illari.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt9562c18014520536/64c03bd68365f5881905c8b4/2600_Illari.jpg"
     ],
-    "splash_url": "/splash/illari.jpg"
+    "splash_url": "/splash/illari.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Last surviving Inti Warrior investigating the suspicious destruction of her people’s temple, working with other operatives to uncover the truth."
   },
   {
     "key": "jetpack-cat",
@@ -1142,7 +1176,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt034eb85ea8ae467d/6998f14663c7d6868014bc4b/1600_Jetpack_Cat.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt10ffe80a3102f50a/6998f13b163d10141b723b9d/2600_Jetpack_Cat.png"
     ],
-    "splash_url": "/splash/jetpack-cat.jpg"
+    "splash_url": "/splash/jetpack-cat.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "A stray cat named Fika outfitted with a jetpack at Watchpoint: Gibraltar and adopted into the Overwatch family."
   },
   {
     "key": "junker-queen",
@@ -1206,7 +1242,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7621ddcf8e25d478/631a8b49be2fcf0db5eea4c4/1600_Junker_Queen.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt3a1be33596e910c4/631a8b49a0ff920e11e791bc/2600_Junker_Queen.jpg"
     ],
-    "splash_url": "/splash/junker-queen.jpg"
+    "splash_url": "/splash/junker-queen.jpg",
+    "affiliation": "Junkers",
+    "affiliation_explanation": "Ruler of Junkertown and undisputed leader of the Junkers, currently being courted by Talon for an alliance."
   },
   {
     "key": "junkrat",
@@ -1270,7 +1308,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf1d3568684bc383f/631a8b430e1b4f0e7b89a530/1600_Junkrat.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt413418f41eeb64fd/631a8b4385af980dae7a2ef2/2600_Junkrat.jpg"
     ],
-    "splash_url": "/splash/junkrat.jpg"
+    "splash_url": "/splash/junkrat.jpg",
+    "affiliation": "Junkers",
+    "affiliation_explanation": "Officially exiled from Junkertown but still culturally a Junker; recent stories show he remains useful to the faction despite not being formally reinstated."
   },
   {
     "key": "juno",
@@ -1335,7 +1375,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blte81ec81f23dbb109/668daea468915426bc7774a7/1600_Juno.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltbc59ec946d1bfeaa/668dae9d839db28999d3657d/2600_Juno.jpg"
     ],
-    "splash_url": "/splash/juno.jpg"
+    "splash_url": "/splash/juno.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Mars-based scientist from Lucheng Interstellar who joined Overwatch, bringing advanced technology to the team."
   },
   {
     "key": "kiriko",
@@ -1399,7 +1441,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt74033e83230dc856/631a8b34f581050de0035df2/1600_Kiriko.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt09d0b0474ed8053b/631a8b345f39a30d9cedbac4/2600_Kiriko.jpg"
     ],
-    "splash_url": "/splash/kiriko.jpg"
+    "splash_url": "/splash/kiriko.jpg",
+    "affiliation": "Yokai",
+    "affiliation_explanation": "Leader of the Yokai, protecting the streets of Kanezaka from the Hashimoto clan; recent events show her fighting alongside Overwatch."
   },
   {
     "key": "lifeweaver",
@@ -1463,7 +1507,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt94961e7349cf1d7c/641243e4b624bd69a0f705ae/1600_Lifeweaver.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltec463c7444135f68/641243e41839f965bff26773/2600_Lifeweaver.jpg"
     ],
-    "splash_url": "/splash/lifeweaver.jpg"
+    "splash_url": "/splash/lifeweaver.jpg",
+    "affiliation": "The Collective",
+    "affiliation_explanation": "Fled the Vishkar Corporation with stolen biolight technology and now operates independently from the Atlantic Arcology."
   },
   {
     "key": "lucio",
@@ -1534,7 +1580,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt77c5cddf632a67d7/631a8b2bf581050de0035dee/1600_Lucio.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt1193d24377ff3b38/631a8b2b1613910e6926bfd0/2600_Lucio.jpg"
     ],
-    "splash_url": "/splash/lucio.jpg"
+    "splash_url": "/splash/lucio.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Joined Overwatch after Null Sector attacked Rio de Janeiro, lending his sonic abilities to the cause."
   },
   {
     "key": "mauga",
@@ -1586,7 +1634,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt52d14924e3880c39/654d7d2d02f5a2701444f840/1600_Mauga.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5449cd196343e5cc/654d7d436864f761cb9116fc/2600_Mauga.jpg"
     ],
-    "splash_url": "/splash/mauga.jpg"
+    "splash_url": "/splash/mauga.jpg",
+    "affiliation": "Talon",
+    "affiliation_explanation": "Active Talon operative serving as a diplomat, tasked with forging alliances with other factions for the organization."
   },
   {
     "key": "mei",
@@ -1643,7 +1693,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd0eb5529be69efbc/633773a6f87c00687e8ef21a/1600_Mei_02.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt1040e5bd61b0ba3a/633773a61ccd046877c0e4db/2600_Mei_02.jpg"
     ],
-    "splash_url": "/splash/mei.jpg"
+    "splash_url": "/splash/mei.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Woke from cryostasis to find Overwatch disbanded, then answered the recall as one of the first responders."
   },
   {
     "key": "mercy",
@@ -1714,7 +1766,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blta556d4020266a6db/631a8b1eeef3ae0e03c743a2/1600_Mercy.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltc7021b63955d7b54/631a8b1e3ab6f40dd2a906a5/2600_Mercy.jpg"
     ],
-    "splash_url": "/splash/mercy.jpg"
+    "splash_url": "/splash/mercy.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Rejoined the reformed Overwatch and deployed to frontline missions including the defense of Paris."
   },
   {
     "key": "mizuki",
@@ -1784,7 +1838,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt238ff23dff0963b7/698e2db73bdb1652a583ca89/1600_Mizuki.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5950c03caf5c3ee8/698e2da530e8581778cc4fba/2600_Mizuki.png"
     ],
-    "splash_url": "/splash/mizuki.jpg"
+    "splash_url": "/splash/mizuki.jpg",
+    "affiliation": "Yokai",
+    "affiliation_explanation": "Raised by the Talon-aligned Hashimoto clan but infiltrated the Yokai; his loyalties are torn and recent events show him fighting alongside Overwatch."
   },
   {
     "key": "moira",
@@ -1841,7 +1897,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8188c6691a334d73/631a8b17be2fcf0db5eea4bc/1600_Moira.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt0556ab9582933672/631a8b176d5f7a0df8d92794/2600_Moira.jpg"
     ],
-    "splash_url": "/splash/moira.jpg"
+    "splash_url": "/splash/moira.jpg",
+    "affiliation": "Talon",
+    "affiliation_explanation": "Remained with Talon under its new leadership, retaining her seat at the council table."
   },
   {
     "key": "orisa",
@@ -1905,7 +1963,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt24fd76394a4111f7/631a8b0ba633280e74dc25c5/1600_Orisa.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2a3558a604095f57/631a8b0b0e1b4f0e7b89a52c/2600_Orisa.jpg"
     ],
-    "splash_url": "/splash/orisa.jpg"
+    "splash_url": "/splash/orisa.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Created by Efi Oladele to protect Numbani; joined Overwatch after helping repel Talon from the city."
   },
   {
     "key": "pharah",
@@ -1975,7 +2035,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blte7cef1a9a6df49eb/631a8af2a0ff920e11e791b8/1600_Pharah.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltae2251cef8936b19/631a8af2636d390da7825dd7/2600_Pharah.jpg"
     ],
-    "splash_url": "/splash/pharah.jpg"
+    "splash_url": "/splash/pharah.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Recruited into Overwatch while on special dispensation from Helix Security International."
   },
   {
     "key": "ramattra",
@@ -2033,7 +2095,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7cedd97f624c058d/637da2d146a48b0e063e4aad/1600_Ramattra.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt3ea4802af2023c58/637da2d1d44c1b0e1f0e8bc0/2600_Ramattra.jpg"
     ],
-    "splash_url": "/splash/ramattra.jpg"
+    "splash_url": "/splash/ramattra.jpg",
+    "affiliation": "Null Sector",
+    "affiliation_explanation": "Founder and leader of the omnic liberation group Null Sector, though the faction has retreated and gone dormant in the current storyline."
   },
   {
     "key": "reaper",
@@ -2097,7 +2161,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2c301b09e7e28f15/631a8af9e7bdcf0dd996c8d1/1600_Reaper.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt205f5d2e64729af4/631a8af90e1b4f0e7b89a528/2600_Reaper.jpg"
     ],
-    "splash_url": "/splash/reaper.jpg"
+    "splash_url": "/splash/reaper.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Left Talon after a violent leadership change made his position untenable; currently has no known affiliation or agenda."
   },
   {
     "key": "reinhardt",
@@ -2161,7 +2227,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8215ad99f856a606/631a8b03636d390da7825ddb/1600_Reinhardt.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltbbe906442602f70b/631a8b03a633280e74dc25c1/2600_Reinhardt.jpg"
     ],
-    "splash_url": "/splash/reinhardt.jpg"
+    "splash_url": "/splash/reinhardt.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Came out of retirement to answer the recall and rejoin the fight with the reformed Overwatch."
   },
   {
     "key": "roadhog",
@@ -2214,7 +2282,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt39930f17f179a7bd/631a8ae5eef3ae0e03c7439e/1600_Roadhog.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt53bec63947a5bd1f/631a8ae585af980dae7a2eee/2600_Roadhog.jpg"
     ],
-    "splash_url": "/splash/roadhog.jpg"
+    "splash_url": "/splash/roadhog.jpg",
+    "affiliation": "Junkers",
+    "affiliation_explanation": "Exiled from Junkertown but still tied to it by origin; in a gray zone where he’s useful to the faction but not officially pardoned."
   },
   {
     "key": "sierra",
@@ -2272,7 +2342,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf61dc39ad92dec50/69d6dabdc843ea442ebf069a/1600_Sierra.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltbfeb25b49ede0408/69d6dab0ffc7dd7d06813993/2600_Sierra.png"
     ],
-    "splash_url": "/splash/sierra.jpg"
+    "splash_url": "/splash/sierra.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Former head of security at Watchpoint: Grand Mesa under Helix; a recent cinematic confirmed she joined Overwatch."
   },
   {
     "key": "sigma",
@@ -2336,7 +2408,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt429c1784d8b446a4/631a8adbf581050de0035de6/1600_Sigma.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltcd6803238893c4ee/631a8adb6d5f7a0df8d92790/2600_Sigma.jpg"
     ],
-    "splash_url": "/splash/sigma.jpg"
+    "splash_url": "/splash/sigma.jpg",
+    "affiliation": "Talon",
+    "affiliation_explanation": "Held by Talon as a living weapon against his will; voicelines confirm he seeks freedom but is threatened with death if he resists."
   },
   {
     "key": "sojourn",
@@ -2393,7 +2467,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt4e7eea062ae71ec8/631a8ad36d5f7a0df8d9278c/1600_Sojourn.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt074d60a0c1b22e57/631a8ad3a633280e74dc25b9/2600_Sojourn.jpg"
     ],
-    "splash_url": "/splash/sojourn.jpg"
+    "splash_url": "/splash/sojourn.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Former Overwatch commander who returned to active duty with the reformed organization."
   },
   {
     "key": "soldier-76",
@@ -2457,7 +2533,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltaa73ebe257f75710/631a8ac985af980dae7a2eea/1600_Soldier_76.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt1fdfbf1c51e0c05d/631a8ac9a0ff920e11e791b4/2600_Soldier_76.jpg"
     ],
-    "splash_url": "/splash/soldier-76.jpg"
+    "splash_url": "/splash/soldier-76.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Fully invested in investigating a conspiracy, operating independently and unaffiliated with the reformed Overwatch."
   },
   {
     "key": "sombra",
@@ -2519,7 +2597,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt73c08ba684761b8a/631a8ac1f581050de0035de2/1600_Sombra.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt668912e757ec1b56/631a8ac11566e20e82f30280/2600_Sombra.jpg"
     ],
-    "splash_url": "/splash/sombra.jpg"
+    "splash_url": "/splash/sombra.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Left Talon to pursue her own agenda, investigating a shadowy conspiracy connected to Overwatch’s original downfall."
   },
   {
     "key": "symmetra",
@@ -2575,7 +2655,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8bcd4a477c648ec3/631a8ab9a0ff920e11e791b0/1600_Symmetra.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt98ba3e34b8d7c3c7/631a8ab9636d390da7825dd3/2600_Symmetra.jpg"
     ],
-    "splash_url": "/splash/symmetra.jpg"
+    "splash_url": "/splash/symmetra.jpg",
+    "affiliation": "Vishkar Corporation",
+    "affiliation_explanation": "Still working for Vishkar despite growing disillusionment with the corporation’s direction, which has aligned with Talon."
   },
   {
     "key": "torbjorn",
@@ -2639,7 +2721,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8af1bdb781ba7048/631a8ab1eef3ae0e03c7439a/1600_Torbjorn.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt6704d0e1812cb068/631a8ab1a0ff920e11e791ac/2600_Torbjorn.jpg"
     ],
-    "splash_url": "/splash/torbjorn.jpg"
+    "splash_url": "/splash/torbjorn.jpg",
+    "affiliation": "Ironclad Guild",
+    "affiliation_explanation": "Fully retired from active duty but still aids Overwatch in their struggles; operates under his own Ironclad Guild rather than as an active agent."
   },
   {
     "key": "tracer",
@@ -2696,7 +2780,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb9e273d8483050b8/631a8aab3ab6f40dd2a90699/1600_Tracer.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt9a87fc6f2249d9c8/631a8aaba633280e74dc25b5/2600_Tracer.jpg"
     ],
-    "splash_url": "/splash/tracer.jpg"
+    "splash_url": "/splash/tracer.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "The first to answer the recall, serving as one of the core members of the reformed Overwatch."
   },
   {
     "key": "vendetta",
@@ -2767,7 +2853,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blte69be4a8be101414/692f5b152575e140c24161e5/1600_Vendetta.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt22bd880e78e94c03/692f5b1c6da5309b6107b257/2600_Vendetta.png"
     ],
-    "splash_url": "/splash/vendetta.jpg"
+    "splash_url": "/splash/vendetta.jpg",
+    "affiliation": "Talon",
+    "affiliation_explanation": "Overthrew the previous Talon leader and seized control of the organization, now commanding from the council seat."
   },
   {
     "key": "venture",
@@ -2819,7 +2907,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltdf3ffc4ee1a1d6b1/65e7a113e38ce3428689fade/1600_Venture.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blte622280f74e18bd7/65e7a10b31e2488e2e63ae8e/2600_Venture.jpg"
     ],
-    "splash_url": "/splash/venture.jpg"
+    "splash_url": "/splash/venture.jpg",
+    "affiliation": "Wayfinder Society",
+    "affiliation_explanation": "Full member of the Wayfinder Society, an archaeological research organization dedicated to exploring ruins and uncovering ancient secrets."
   },
   {
     "key": "widowmaker",
@@ -2875,7 +2965,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf1291f31fd38e28b/631a8a981613910e6926bfc8/1600_Widowmaker.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt86d1bcba4c0d4730/631a8a98eef3ae0e03c74392/2600_Widowmaker.jpg"
     ],
-    "splash_url": "/splash/widowmaker.jpg"
+    "splash_url": "/splash/widowmaker.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Seized the chance to break free of Talon after the leadership upheaval; now a free agent assassin with no known allegiances."
   },
   {
     "key": "winston",
@@ -2932,7 +3024,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf9557fb8c51d1c43/631a8aa4eef3ae0e03c74396/1600_Winston.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltf6c81bc8f3db2ce9/631a8aa4636d390da7825dcb/2600_Winston.jpg"
     ],
-    "splash_url": "/splash/winston.jpg"
+    "splash_url": "/splash/winston.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Leader of the reformed Overwatch who issued the recall to bring the team back together."
   },
   {
     "key": "wrecking-ball",
@@ -3002,7 +3096,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt55cca804cba3d52e/631a8a691566e20e82f30278/1600_Wrecking_Ball.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt3ca77f61db745988/631a8a691613910e6926bfc4/2600_Wrecking_Ball.jpg"
     ],
-    "splash_url": "/splash/wrecking-ball.jpg"
+    "splash_url": "/splash/wrecking-ball.jpg",
+    "affiliation": "Junkers",
+    "affiliation_explanation": "Junkertown’s arena champion and loyal protector, serving in the faction’s inner circle."
   },
   {
     "key": "wuyang",
@@ -3061,7 +3157,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt4e9a801cc106755c/689bc8e2acf3ac2a464b9ef0/1600_Aqua.png",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltcdc9b5b3bfdd9e2c/689bc8d6a9c1ad3fc9bcb61e/2600_Aqua.png"
     ],
-    "splash_url": "/splash/wuyang.jpg"
+    "splash_url": "/splash/wuyang.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Received a mysterious invitation to join Overwatch while studying at Wuxing University’s Water College."
   },
   {
     "key": "zarya",
@@ -3125,7 +3223,9 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltde66354cc09d1bb6/631a8a60be2fcf0db5eea4b4/1600_Zarya.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltb73df6ce7e29a4f4/631a8a606d5f7a0df8d92784/2600_Zarya.jpg"
     ],
-    "splash_url": "/splash/zarya.jpg"
+    "splash_url": "/splash/zarya.jpg",
+    "affiliation": "Overwatch",
+    "affiliation_explanation": "Russian soldier recruited into Overwatch to help combat escalating global threats."
   },
   {
     "key": "zenyatta",
@@ -3189,6 +3289,8 @@
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt31b9997e4476de74/631a8a57eef3ae0e03c7438a/1600_Zenyatta.jpg",
       "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltaed6928bd9793d05/631a8a573ab6f40dd2a90691/2600_Zenyatta.jpg"
     ],
-    "splash_url": "/splash/zenyatta.jpg"
+    "splash_url": "/splash/zenyatta.jpg",
+    "affiliation": "Independent",
+    "affiliation_explanation": "Left the Shambali monastery long ago after finding their teachings too dogmatic; wanders the world independently, healing through personal connection."
   }
 ]

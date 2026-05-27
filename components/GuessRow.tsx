@@ -4,7 +4,9 @@ import { motion } from "motion/react";
 import clsx from "clsx";
 import { compareHero } from "@/lib/compare";
 import type { Hero } from "@/lib/heroes";
+import { AFFILIATION_REDDIT_URL } from "@/lib/affiliations";
 import { AttributeTile } from "./AttributeTile";
+import type { TileTooltip } from "./AttributeTile";
 
 export function GuessRow({
   guess,
@@ -17,6 +19,15 @@ export function GuessRow({
 }) {
   const results = compareHero(guess, answer);
   const matchAll = results.every((r) => r.status === "correct");
+
+  const affiliationTooltip: TileTooltip | null =
+    guess.affiliation_explanation
+      ? {
+          text: guess.affiliation_explanation,
+          linkUrl: AFFILIATION_REDDIT_URL,
+          linkText: "As of May 11, 2026",
+        }
+      : null;
 
   return (
     <motion.div
@@ -66,6 +77,7 @@ export function GuessRow({
             result={result}
             index={idx}
             animate={isLatest}
+            tooltip={result.attr === "affiliation" ? affiliationTooltip : null}
           />
         ))}
       </div>

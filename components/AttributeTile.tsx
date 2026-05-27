@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import clsx from "clsx";
 import type { AttrResult } from "@/lib/compare";
@@ -11,21 +12,56 @@ const STATUS_BG: Record<AttrResult["status"], string> = {
   wrong: "bg-wrong text-on-wrong",
 };
 
+export type TileTooltip = {
+  text: string;
+  linkUrl: string;
+  linkText: string;
+};
+
 export function AttributeTile({
   result,
   index,
   animate = true,
+  tooltip,
 }: {
   result: AttrResult;
   index: number;
-  // When false, the row renders in its final state without the flip
-  // cascade. Used for guess history rows older than the most-recent one
-  // so a player on guess 5 isn't watching the same 8-tile animation five
-  // times. Defaults to animating so call sites that don't care still
-  // get the reveal on the first render.
   animate?: boolean;
+  tooltip?: TileTooltip | null;
 }) {
-  return (
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>(null);
+  const lastPointerType = useRef("mouse");
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  }, []);
+
+  const scheduleClose = useCallback(() => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => setOpen(false), 80);
+  }, [cancelClose]);
+
+  useEffect(() => {
+    return () => cancelClose();
+  }, [cancelClose]);
+
+  useEffect(() => {
+    if (!open) return;
+    function onClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [open]);
+
+  const tile = (
     <motion.div
       initial={animate ? { rotateX: -90, opacity: 0 } : false}
       animate={{ rotateX: 0, opacity: 1 }}
@@ -42,6 +78,7 @@ export function AttributeTile({
       className={clsx(
         "tile-shape relative flex min-h-[72px] flex-col items-center justify-center px-2 py-2 text-center sm:min-h-[80px]",
         STATUS_BG[result.status],
+        tooltip && "cursor-pointer",
       )}
     >
       <div className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-70">
@@ -61,5 +98,58 @@ export function AttributeTile({
         )}
       </div>
     </motion.div>
+  );
+
+  if (!tooltip) return tile;
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="relative"
+      onPointerDown={(e) => {
+        lastPointerType.current = e.pointerType;
+      }}
+      onPointerEnter={(e) => {
+        if (e.pointerType !== "mouse") return;
+        cancelClose();
+        setOpen(true);
+      }}
+      onPointerLeave={(e) => {
+        if (e.pointerType !== "mouse") return;
+        scheduleClose();
+      }}
+      onClick={() => {
+        if (lastPointerType.current === "touch") {
+          setOpen((v) => !v);
+        }
+      }}
+    >
+      {tile}
+      {open && (
+        <div
+          className="absolute left-full top-1/2 z-50 ml-2 w-64 -translate-y-1/2 rounded-lg bg-canvas/95 p-3 text-left shadow-xl ring-1 ring-line backdrop-blur-sm"
+          onClick={(e) => e.stopPropagation()}
+          onPointerEnter={(e) => {
+            if (e.pointerType === "mouse") cancelClose();
+          }}
+          onPointerLeave={(e) => {
+            if (e.pointerType === "mouse") scheduleClose();
+          }}
+        >
+          <p className="text-xs leading-relaxed text-ink-soft">
+            {tooltip.text}
+          </p>
+          <a
+            href={tooltip.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block text-[10px] font-medium text-info hover:underline"
+          >
+            {tooltip.linkText} ↗
+          </a>
+          <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-line" />
+        </div>
+      )}
+    </div>
   );
 }

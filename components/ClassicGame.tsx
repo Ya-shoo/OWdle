@@ -651,8 +651,8 @@ function formatHintValue(attr: AttrKey, answer: Hero): string {
       ? answer.role
       : attr === "country"
         ? answer.country
-        : attr === "continent"
-          ? answer.continent
+        : attr === "affiliation"
+          ? answer.affiliation
           : attr === "species"
             ? answer.species
             : attr === "gender"
