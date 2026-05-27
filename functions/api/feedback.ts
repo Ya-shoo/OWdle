@@ -124,12 +124,16 @@ function json(body: unknown, status = 200): Response {
 }
 
 // Returns a deep link to the PostHog replay for this session, or null
-// when either the session id is missing or the project id env binding
-// isn't configured (local dev, fresh preview deploys). The Discord
-// embed conditionally skips the replay field in that case so it never
-// surfaces a broken link.
+// when the session id is missing (PostHog blocked / not initialized).
+// PostHog's UI routes use the project API token (the phc_… client key)
+// in the URL path, NOT the numeric project ID. This matches the URL
+// that posthog-js's get_session_replay_url() generates internally.
+// The token is a public client key (already in the frontend JS bundle).
+const POSTHOG_PROJECT_TOKEN_DEFAULT = "phc_AE5pvD5WozNPsftsUMBMKwaCWcjHhLjTVfdyRowmP7A5";
+
 function buildReplayUrl(env: Env, sessionId: string | null): string | null {
-  if (!sessionId || !env.POSTHOG_PROJECT_ID) return null;
+  if (!sessionId) return null;
+  const token = env.POSTHOG_PROJECT_TOKEN || POSTHOG_PROJECT_TOKEN_DEFAULT;
   const host = (env.POSTHOG_API_HOST ?? "https://us.posthog.com").replace(/\/$/, "");
-  return `${host}/project/${encodeURIComponent(env.POSTHOG_PROJECT_ID)}/replay/${encodeURIComponent(sessionId)}`;
+  return `${host}/project/${encodeURIComponent(token)}/replay/${encodeURIComponent(sessionId)}`;
 }

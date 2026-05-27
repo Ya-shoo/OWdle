@@ -26,6 +26,10 @@ export type Env = {
   // local Pages dev (and unconfigured preview deploys) keep working.
   POSTHOG_PERSONAL_API_KEY?: string;
   POSTHOG_PROJECT_ID?: string;
+  // Public project API token (phc_…) used in PostHog UI URLs. The
+  // numeric project ID works for the API but PostHog's frontend routes
+  // by token. Defaults to the DailyDles project token in feedback.ts.
+  POSTHOG_PROJECT_TOKEN?: string;
   // Optional override; defaults to https://us.posthog.com. EU instances
   // would set this to https://eu.posthog.com.
   POSTHOG_API_HOST?: string;
