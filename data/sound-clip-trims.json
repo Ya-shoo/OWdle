@@ -3,5 +3,10 @@
     "captive-sun": {
       "startOffset": 0.8088
     }
+  },
+  "torbjorn": {
+    "molten-core": {
+      "startOffset": 4.2542
+    }
   }
 }

@@ -69,8 +69,41 @@ async function saveCache(cache) {
   await writeFile(CACHE_PATH, JSON.stringify(cache));
 }
 
+const WRANGLER_CLIENT_ID = "54d11594-84e4-41aa-b438-e81b8fa78ee7";
+const TOKEN_ENDPOINT = "https://dash.cloudflare.com/oauth2/token";
+const EXPIRY_BUFFER_MS = 5 * 60 * 1000;
+
+async function refreshOAuthToken(refreshToken) {
+  const res = await fetch(TOKEN_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+      client_id: WRANGLER_CLIENT_ID,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`token refresh failed (HTTP ${res.status}): ${body.slice(0, 200)}`);
+  }
+  return res.json();
+}
+
+async function updateWranglerConfig(path, newToken, newRefresh, expiresIn) {
+  const text = await readFile(path, "utf-8");
+  const expiry = new Date(Date.now() + expiresIn * 1000).toISOString();
+  let updated = text
+    .replace(/(oauth_token\s*=\s*)"[^"]+"/, `$1"${newToken}"`)
+    .replace(/(expiration_time\s*=\s*)"[^"]+"/, `$1"${expiry}"`)
+    .replace(/(refresh_token\s*=\s*)"[^"]+"/, `$1"${newRefresh}"`);
+  await writeFile(path, updated);
+}
+
 // Locate the wrangler config across the platforms it ships configs to.
 // Order: explicit env var → standard XDG path → Windows AppData path.
+// If the access token is expired, auto-refreshes using the stored
+// refresh token so `sync-to-r2` doesn't require a manual re-login.
 async function findWranglerToken() {
   const candidates = [
     process.env.WRANGLER_CONFIG && resolve(process.env.WRANGLER_CONFIG),
@@ -99,7 +132,34 @@ async function findWranglerToken() {
     try {
       const text = await readFile(path, "utf-8");
       const m = text.match(/oauth_token\s*=\s*"([^"]+)"/);
-      if (m) return { token: m[1], path };
+      if (!m) continue;
+
+      let token = m[1];
+      const expiryMatch = text.match(/expiration_time\s*=\s*"([^"]+)"/);
+      const refreshMatch = text.match(/refresh_token\s*=\s*"([^"]+)"/);
+
+      if (expiryMatch && refreshMatch) {
+        const expiry = new Date(expiryMatch[1]);
+        if (expiry.getTime() - Date.now() < EXPIRY_BUFFER_MS) {
+          console.log("auth: access token expired, refreshing…");
+          try {
+            const res = await refreshOAuthToken(refreshMatch[1]);
+            token = res.access_token;
+            await updateWranglerConfig(
+              path,
+              res.access_token,
+              res.refresh_token,
+              res.expires_in,
+            );
+            console.log("auth: token refreshed ✓");
+          } catch (e) {
+            console.error(`auth: refresh failed (${e.message}). Run \`npx wrangler login\`.`);
+            return null;
+          }
+        }
+      }
+
+      return { token, path };
     } catch {
       // try next
     }
