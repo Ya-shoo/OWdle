@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
 import {
@@ -21,6 +21,7 @@ import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
 import { media } from "@/lib/media";
 import { NextModeCTA } from "./NextModeCTA";
+import { ScrollIntoViewOnMount } from "./ScrollIntoViewOnMount";
 import { BonusRound } from "./BonusRound";
 import { WaveformPlayer } from "./WaveformPlayer";
 import { DevSoundPicker } from "./DevSoundPicker";
@@ -85,6 +86,15 @@ export function SoundGame() {
     null,
   );
   const isOverride = overrideClip !== null;
+
+  // Scroll anchors for "center on what matters" after the main guess, each
+  // replacing NextModeCTA's center-on-CTA scroll. While the bonus round is
+  // pending we frame the bonus question + score, letting the waveform / play
+  // button scroll above the fold. Once the bonus is answered — or on a
+  // no-bonus win / loss — we frame the media column, which by then holds the
+  // reveal video, + score. Guesses sit below the fold either way.
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const bonusRef = useRef<HTMLDivElement>(null);
 
   // Dev-only trim state.
   //
@@ -395,7 +405,10 @@ export function SoundGame() {
         />
       )}
 
-      <div className="mb-6 flex flex-col items-center gap-3">
+      <div
+        ref={mediaRef}
+        className="mb-6 flex scroll-mt-6 flex-col items-center gap-3 sm:scroll-mt-8"
+      >
         {reveal && videoUrl ? (
           <RevealPlayer videoUrl={videoUrl} />
         ) : (
@@ -449,6 +462,18 @@ export function SoundGame() {
         )}
       </div>
 
+      {/* On completion, frame what matters next: the bonus question + score
+          while the bonus is pending (the waveform scrolls above the fold),
+          then the media column — by then the reveal video — + score once it's
+          answered (or immediately on a no-bonus win / loss). The stage key
+          remounts the trigger across that transition so the scroll re-fires. */}
+      {(state.won || lost) && (
+        <ScrollIntoViewOnMount
+          key={reveal ? "reveal" : "bonus"}
+          targetRef={reveal ? mediaRef : bonusRef}
+        />
+      )}
+
       {!ended && (
         <div className="mb-6 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -467,7 +492,7 @@ export function SoundGame() {
       )}
 
       {state.won && bonusEligible && (
-        <div className="mb-8 space-y-4">
+        <div ref={bonusRef} className="mb-8 space-y-4 scroll-mt-6 sm:scroll-mt-8">
           <BonusRound
             heroName={answer.name}
             options={bonusOptions}
@@ -484,7 +509,7 @@ export function SoundGame() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
           >
             <div className="flex flex-col gap-5">
               <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -512,7 +537,7 @@ export function SoundGame() {
                 </div>
               </div>
               <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="sound" />
+                <NextModeCTA current="sound" scrollIntoViewOnMount={false} />
               </div>
             </div>
           </motion.div>
@@ -521,7 +546,7 @@ export function SoundGame() {
 
       <AnimatePresence>
         {lost && !state.won && (
-          <LossReveal current="sound">
+          <LossReveal current="sound" scrollIntoViewOnMount={false}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -576,20 +601,61 @@ export function SoundGame() {
   );
 }
 
-// Plays the full source MP4 once the puzzle is over (won or lost).
-// Autoplay is allowed because the user has already interacted with the
-// page (they made guesses); browsers permit unmuted autoplay after a
-// gesture chain like that.
+// Plays the full source MP4 once the puzzle is over (won or lost). The
+// native controls are dropped so the clip shows chrome-free at full
+// brightness while it plays. We attempt autoplay WITH sound on mount:
+// desktop (and Android, after the player's in-game interaction) honors it;
+// iOS blocks unmuted autoplay outside a direct gesture, so play() rejects
+// and we surface a tap-to-play glyph instead. The glyph appears only while
+// paused (including after the clip ends, to invite a replay), so nothing
+// overlays the video during playback. Tapping it is a user gesture, so the
+// retry starts with sound. It's a real <button>, so it stays keyboard- and
+// screen-reader-accessible despite the missing native controls.
 function RevealPlayer({ videoUrl }: { videoUrl: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  // Optimistic: assume autoplay will take so desktop never flashes the
+  // glyph. The mount attempt flips this to false if the browser blocks it.
+  const [playing, setPlaying] = useState(true);
+
+  useEffect(() => {
+    videoRef.current
+      ?.play()
+      .then(() => setPlaying(true))
+      .catch(() => setPlaying(false));
+  }, []);
+
   return (
     <div className="w-full max-w-2xl">
-      <video
-        src={media(videoUrl)}
-        controls
-        autoPlay
-        playsInline
-        className="w-full rounded-(--radius-card) bg-black"
-      />
+      <div className="relative">
+        <video
+          ref={videoRef}
+          src={media(videoUrl)}
+          playsInline
+          preload="auto"
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onEnded={() => setPlaying(false)}
+          className="block w-full rounded-(--radius-card) bg-black"
+        />
+        {!playing && (
+          <button
+            type="button"
+            onClick={() => videoRef.current?.play().catch(() => {})}
+            aria-label="Play clip with sound"
+            className="group absolute inset-0 flex items-center justify-center"
+          >
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/40 ring-1 ring-white/30 backdrop-blur-sm transition-transform group-hover:scale-105 group-active:scale-95">
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden
+                className="h-7 w-7 translate-x-[1px] fill-white"
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </button>
+        )}
+      </div>
       <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-info">
         Source clip · full audio + video
       </p>

@@ -427,6 +427,42 @@ select {
   }
 }
 
+/* ---------- Quote replay cue ----------
+   After a Quote round ends, every voice-line button stays playable. This
+   breathing halo nudges the eye toward them without shouting: a low-opacity
+   outer glow that swells and settles on a slow loop, never fully off so the
+   button keeps a faint "alive" presence. `currentColor` inherits each
+   speaker's tone (info blue / soft orange), so the cue matches its line.
+   The faint resting box-shadow is set on the class itself so that under
+   reduced-motion (where the global rule freezes the animation) a quiet
+   static glow remains. */
+
+@keyframes audio-cue-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 3px -1px color-mix(in srgb, currentColor 18%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 9px 0 color-mix(in srgb, currentColor 38%, transparent);
+  }
+}
+
+.audio-cue-pulse {
+  box-shadow: 0 0 4px -1px color-mix(in srgb, currentColor 20%, transparent);
+  animation: audio-cue-pulse 2s ease-in-out infinite;
+}
+
+/* ---------- final-day result card ----------
+   The all-done summary NextModeCTA renders on the last solved/lost mode
+   (score band + reset timer + Deadlockle nudge) is denser than the normal
+   result card, so the surrounding card widens a touch to give it room. Keyed
+   off :has() so no game mode needs to know whether it was the final one — the
+   marker class sits on every win card + the shared LossReveal, and only the
+   all-done panel carries [data-daily-complete]. */
+.result-card:has([data-daily-complete]) {
+  max-width: 32rem;
+}
+
 /* ---------- view transitions ---------- */
 
 @view-transition {

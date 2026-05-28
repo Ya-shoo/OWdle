@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
 import {
@@ -24,6 +24,7 @@ import {
 import { HeroCombobox } from "./HeroCombobox";
 import { Brand } from "./Brand";
 import { NextModeCTA } from "./NextModeCTA";
+import { ScrollIntoViewOnMount } from "./ScrollIntoViewOnMount";
 import { LossReveal } from "./LossReveal";
 import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
@@ -70,6 +71,10 @@ export function AbilityGame() {
     abilityIndex: number;
   } | null>(null);
   const isOverride = override !== null;
+  // Scroll anchor for the ability icon. On completion we bring it to the top
+  // of the viewport so the icon (with its revealed name) + score frame
+  // together, rather than NextModeCTA's default center-on-CTA scroll.
+  const artRef = useRef<HTMLDivElement>(null);
 
   const applyOverride = (hero: Hero | null, abilityIndex?: number) => {
     if (hero == null) {
@@ -234,7 +239,10 @@ export function AbilityGame() {
         />
       )}
 
-      <div className="mb-8 flex flex-col items-center gap-4">
+      <div
+        ref={artRef}
+        className="mb-8 flex scroll-mt-6 flex-col items-center gap-4 sm:scroll-mt-8"
+      >
         <AbilityArtCard
           ability={ability}
           revealedHero={ended ? answer : null}
@@ -244,6 +252,7 @@ export function AbilityGame() {
         />
         {!ended && <HardModeToggle on={hardMode} onToggle={toggleHardMode} />}
       </div>
+      {ended && <ScrollIntoViewOnMount targetRef={artRef} />}
 
       {!ended && (
         <div className="mb-6 space-y-3">
@@ -268,7 +277,7 @@ export function AbilityGame() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
           >
             <div className="flex flex-col gap-5">
               <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -293,7 +302,7 @@ export function AbilityGame() {
                 </div>
               </div>
               <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="ability" />
+                <NextModeCTA current="ability" scrollIntoViewOnMount={false} />
               </div>
             </div>
           </motion.div>
@@ -302,7 +311,7 @@ export function AbilityGame() {
 
       <AnimatePresence>
         {lost && !state.won && (
-          <LossReveal current="ability">
+          <LossReveal current="ability" scrollIntoViewOnMount={false}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

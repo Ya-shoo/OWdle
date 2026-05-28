@@ -8,5 +8,20 @@
     "molten-core": {
       "startOffset": 4.2542
     }
+  },
+  "jetpack-cat": {
+    "catnapper": {
+      "startOffset": 1.8442
+    }
+  },
+  "venture": {
+    "drill-dash": {
+      "startOffset": 0.1925
+    }
+  },
+  "zenyatta": {
+    "primary-fire": {
+      "startOffset": 0.1247
+    }
   }
 }

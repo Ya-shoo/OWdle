@@ -29,7 +29,13 @@ import { DailyTierBadge } from "./DailyTierBadge";
 // safe because the parent only mounts NextModeCTA after its own effect
 // has hydrated localStorage state, so we are guaranteed to be client-side
 // here — the SSR/static prerender omits this component entirely.
-export function NextModeCTA({ current }: { current: ModeSlug }) {
+export function NextModeCTA({
+  current,
+  scrollIntoViewOnMount = true,
+}: {
+  current: ModeSlug;
+  scrollIntoViewOnMount?: boolean;
+}) {
   const [data] = useState<{
     next: ModeDef | null;
     totalGuesses: number;
@@ -69,13 +75,16 @@ export function NextModeCTA({ current }: { current: ModeSlug }) {
   // game" affordance discoverable without forcing a sticky bar layout.
   // We delay one frame so the parent's win animation has a chance to
   // lock in its final layout height before we measure scroll position.
+  // Quote opts out (scrollIntoViewOnMount=false): it scrolls the dialogue
+  // to the top instead, so the replayable voice-line buttons stay in view.
   const wrapRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (!scrollIntoViewOnMount) return;
     const id = window.requestAnimationFrame(() => {
       wrapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
     return () => window.cancelAnimationFrame(id);
-  }, []);
+  }, [scrollIntoViewOnMount]);
 
   // Notify the FeedbackButton that a mode was just completed. On desktop
   // it re-scans for all-done amplification; on mobile it surfaces its
@@ -154,7 +163,7 @@ function DailyCompletePanel({
   // would double up the green-on-green nesting. Padding stays minimal;
   // we lean on the parent card's p-4/p-5 for breathing room.
   return (
-    <div className="flex w-full flex-col gap-4">
+    <div data-daily-complete className="flex w-full flex-col gap-4">
       <div className="relative flex flex-col">
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
           <span aria-hidden>✓</span>

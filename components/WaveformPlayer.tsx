@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { DEFAULT_VOLUME, loadVolume, saveVolume } from "@/lib/audio";
 import { media } from "@/lib/media";
 import { VolumeSlider } from "./VolumeSlider";
@@ -104,6 +104,15 @@ export function WaveformPlayer({
   // reads them synchronously inside the click handler.
   const startOffsetRef = useRef<number>(0);
   const endOffsetRef = useRef<number>(Infinity);
+  // Latest reveal-window length, mirrored into a ref so the background
+  // safety-stop timer (scheduled asynchronously from play()'s promise)
+  // always measures against the CURRENT window — not the value captured
+  // when the click happened, which goes stale the moment a win expands
+  // the snippet to the full clip mid-playback.
+  const revealDurationRef = useRef<number>(revealDuration);
+  useEffect(() => {
+    revealDurationRef.current = revealDuration;
+  }, [revealDuration]);
 
   // Decoded sample data retained across trim adjustments so the user can
   // nudge start/end without paying for a re-fetch + re-decode on each
@@ -231,6 +240,11 @@ export function WaveformPlayer({
         el.preload = "auto";
         el.load();
         audioRef.current = el;
+        // Native events are the source of truth for `playing`, so a missed
+        // rAF stop (e.g. the tab backgrounds mid-snippet) can't strand the
+        // flag at true — which froze the cursor and hid the play control.
+        el.onended = () => setPlaying(false);
+        el.onpause = () => setPlaying(false);
 
         // Float32Array is backed by a transferable ArrayBuffer; copy it
         // so the AudioBuffer can be GC'd while we keep just the channel
@@ -412,21 +426,48 @@ export function WaveformPlayer({
     // promise. Older browsers may return undefined from play() — fall
     // back to assuming success in that branch.
     //
-    // The setTimeout below is a safety net for backgrounded tabs (where
-    // the rAF tick in the progress effect doesn't fire). It's padded by
-    // 750ms beyond the nominal revealDuration so that, in a foreground
-    // tab, the playhead-anchored stop inside the tick always wins the
-    // race against this fallback. Without the padding, this timer would
-    // cut audio short by the iOS play()-vs-actual-start latency.
+    // Background-tab fallback stop. The rAF tick in the progress effect is
+    // the primary, frame-precise stop, but it doesn't fire while the tab is
+    // backgrounded — this covers that case. Two guards keep it from
+    // misfiring:
+    //   1. Clear any pending timer before scheduling. A fast double-tap can
+    //      fire two play() calls before either promise resolves; without
+    //      this, the second .then() would overwrite stopTimerRef and leak
+    //      the first timer, which then fires ~revealDuration+750ms later and
+    //      pauses whatever is playing by then. That orphaned-timer pile-up
+    //      is what made the button "work, then not" after a couple clicks.
+    //   2. On fire, re-check the LIVE playhead against the CURRENT reveal
+    //      window (via refs) and pause only if genuinely overrun, else
+    //      reschedule. So it never cuts short when a win expands
+    //      revealDuration mid-play, nor stops a snippet just replayed.
     const scheduleSafetyStop = () => {
-      stopTimerRef.current = window.setTimeout(() => {
+      if (stopTimerRef.current != null) {
+        window.clearTimeout(stopTimerRef.current);
         stopTimerRef.current = null;
+      }
+      const check = () => {
         const cur = audioRef.current;
-        if (!cur) return;
-        cur.pause();
-        setPlaying(false);
-        setProgress(1);
-      }, revealDuration * 1000 + 750);
+        if (!cur) {
+          stopTimerRef.current = null;
+          return;
+        }
+        const elapsed = cur.currentTime - startOffsetRef.current;
+        if (
+          elapsed >= revealDurationRef.current ||
+          cur.currentTime >= endOffsetRef.current
+        ) {
+          stopTimerRef.current = null;
+          cur.pause();
+          setPlaying(false);
+          setProgress(1);
+          return;
+        }
+        stopTimerRef.current = window.setTimeout(check, 250);
+      };
+      stopTimerRef.current = window.setTimeout(
+        check,
+        revealDurationRef.current * 1000 + 750,
+      );
     };
 
     const result = el.play();
@@ -437,6 +478,9 @@ export function WaveformPlayer({
           scheduleSafetyStop();
         })
         .catch((e) => {
+          // A fast re-tap interrupts the prior play() promise with an
+          // AbortError — not a real failure, so don't surface it.
+          if (e instanceof DOMException && e.name === "AbortError") return;
           setError(e instanceof Error ? e.message : "Audio play failed");
         });
     } else {
@@ -536,23 +580,24 @@ export function WaveformPlayer({
               )}
             </svg>
 
-            <AnimatePresence>
-              {!playing && (
-                <motion.div
-                  key="hint"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                  aria-hidden
-                >
-                  <span className="rounded-full bg-bg/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-                    ▶ Play
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Play affordance sits on top of the waveform, centered, and
+                stays visible at all times (not hover-only) so it can't get
+                lost — especially after a win, when every bar lights up.
+                pointer-events-none lets clicks fall through to the button. */}
+            <div
+              className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              aria-hidden
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className={`ml-0.5 h-9 w-9 fill-ink drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)] transition-all duration-200 group-hover:scale-110 ${
+                  playing ? "opacity-0" : "opacity-60 group-hover:opacity-100"
+                }`}
+                aria-hidden
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
           </>
         ) : (
           <div className="flex h-24 items-center justify-center">

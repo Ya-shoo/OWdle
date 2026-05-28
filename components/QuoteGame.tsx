@@ -21,6 +21,7 @@ import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
 import { dayString, getConversationForDay, prettyDay } from "@/lib/daily";
 import type { Conversation } from "@/lib/conversations";
 import { compareHero } from "@/lib/compare";
+import { AFFILIATION_REDDIT_URL } from "@/lib/affiliations";
 import {
   loadConversationState,
   saveConversationState,
@@ -28,7 +29,7 @@ import {
   type ConversationState,
 } from "@/lib/storage";
 import { HeroCombobox } from "./HeroCombobox";
-import { AttributeTile } from "./AttributeTile";
+import { AttributeTile, type TileTooltip } from "./AttributeTile";
 import { Brand } from "./Brand";
 import { media } from "@/lib/media";
 import {
@@ -41,6 +42,7 @@ import {
 } from "@/lib/tracking";
 import { NextModeCTA } from "./NextModeCTA";
 import { LossReveal } from "./LossReveal";
+import { ScrollIntoViewOnMount } from "./ScrollIntoViewOnMount";
 import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
@@ -79,6 +81,10 @@ export function QuoteGame() {
   const [devView, setDevView] = useDevViewState("quote");
   const [overrideConv, setOverrideConv] = useState<Conversation | null>(null);
   const isOverride = overrideConv !== null;
+  // Scroll anchor for the dialogue card. On a completed round we bring this
+  // to the top of the viewport so the replayable voice-line buttons (and the
+  // result card directly below) are framed together.
+  const dialogueRef = useRef<HTMLDivElement>(null);
 
   const applyOverride = (conv: Conversation | null) => {
     setOverrideConv(conv);
@@ -338,7 +344,10 @@ export function QuoteGame() {
         />
       )}
 
-      <div className="mb-8 flex flex-col items-center">
+      <div
+        ref={dialogueRef}
+        className="mb-8 flex scroll-mt-6 flex-col items-center sm:scroll-mt-8"
+      >
         <ConversationCard
           conversation={conversation}
           speakers={[speakerA, speakerB]}
@@ -347,8 +356,10 @@ export function QuoteGame() {
           textLines={textLines}
           renderedLines={renderedLines}
           unlockedAudio={unlockedAudio}
+          emphasizeAudio={ended}
         />
       </div>
+      {ended && <ScrollIntoViewOnMount targetRef={dialogueRef} />}
 
       {!ended && (
         <div className="mb-6 space-y-3">
@@ -406,7 +417,7 @@ export function QuoteGame() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
           >
             <div className="flex flex-col gap-5">
               <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -438,7 +449,7 @@ export function QuoteGame() {
                 </div>
               </div>
               <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="quote" />
+                <NextModeCTA current="quote" scrollIntoViewOnMount={false} />
               </div>
             </div>
           </motion.div>
@@ -447,7 +458,7 @@ export function QuoteGame() {
 
       <AnimatePresence>
         {lost && !won && (
-          <LossReveal current="quote">
+          <LossReveal current="quote" scrollIntoViewOnMount={false}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="flex shrink-0 -space-x-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -630,6 +641,7 @@ function ConversationCard({
   textLines,
   renderedLines,
   unlockedAudio,
+  emphasizeAudio,
 }: {
   conversation: Conversation;
   speakers: [Hero, Hero];
@@ -638,6 +650,7 @@ function ConversationCard({
   textLines: number;
   renderedLines: number;
   unlockedAudio: number;
+  emphasizeAudio: boolean;
 }) {
   // One Audio element per line — each line has its own file, no shared
   // seeking required. We track which line is playing to swap icon/label
@@ -718,6 +731,8 @@ function ConversationCard({
               audioUnlocked={audioReady}
               audioPlaying={playingLine === i}
               onToggleAudio={() => line.audio && toggleLine(i, line.audio)}
+              emphasizeAudio={emphasizeAudio}
+              lineIndex={i}
             />
           );
         })}
@@ -736,6 +751,8 @@ function ConversationLineRow({
   audioUnlocked,
   audioPlaying,
   onToggleAudio,
+  emphasizeAudio,
+  lineIndex,
 }: {
   isA: boolean;
   speakerHero: Hero;
@@ -746,6 +763,8 @@ function ConversationLineRow({
   audioUnlocked: boolean;
   audioPlaying: boolean;
   onToggleAudio: () => void;
+  emphasizeAudio: boolean;
+  lineIndex: number;
 }) {
   return (
     <motion.div
@@ -767,6 +786,8 @@ function ConversationLineRow({
             playing={audioPlaying}
             tone={isA ? "info" : "accent-soft"}
             onToggle={onToggleAudio}
+            emphasize={emphasizeAudio}
+            pulseDelayMs={lineIndex * 360}
           />
         )}
       </div>
@@ -803,15 +824,25 @@ function LineAudioButton({
   playing,
   tone,
   onToggle,
+  emphasize = false,
+  pulseDelayMs = 0,
 }: {
   playing: boolean;
   tone: "info" | "accent-soft";
   onToggle: () => void;
+  emphasize?: boolean;
+  pulseDelayMs?: number;
 }) {
   const toneClass =
     tone === "info"
       ? "border-info/40 bg-info/10 text-info hover:bg-info/15"
       : "border-accent-soft/50 bg-accent-soft/10 text-accent-soft hover:bg-accent-soft/15";
+  // A faint breathing halo once the round is over, hinting the line is
+  // replayable. Suppressed while this line is actively playing (the active
+  // icon already signals state) and offset per line so they don't strobe
+  // in unison. The glow inherits `currentColor`, so it picks up the
+  // speaker's tone. See `.audio-cue-pulse` in globals.css.
+  const pulsing = emphasize && !playing;
   return (
     <button
       type="button"
@@ -820,7 +851,9 @@ function LineAudioButton({
       className={clsx(
         "inline-flex h-6 w-6 items-center justify-center rounded-(--radius-pill) border transition-colors sm:h-9 sm:w-9",
         toneClass,
+        pulsing && "audio-cue-pulse",
       )}
+      style={pulsing ? { animationDelay: `${pulseDelayMs}ms` } : undefined}
     >
       {playing ? <SpeakerActiveIcon /> : <SpeakerIcon />}
     </button>
@@ -887,6 +920,14 @@ function ConversationGuessRow({
   const targetColor = target === 0 ? "text-info" : "text-accent-soft";
   const results = compareHero(guess, speaker);
 
+  const affiliationTooltip: TileTooltip | null = guess.affiliation_explanation
+    ? {
+        text: guess.affiliation_explanation,
+        linkUrl: AFFILIATION_REDDIT_URL,
+        linkText: "As of May 11, 2026",
+      }
+    : null;
+
   return (
     <motion.div
       layout
@@ -932,6 +973,7 @@ function ConversationGuessRow({
             result={r}
             index={i}
             animate={isLatest}
+            tooltip={r.attr === "affiliation" ? affiliationTooltip : null}
           />
         ))}
       </div>

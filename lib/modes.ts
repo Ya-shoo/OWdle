@@ -30,12 +30,6 @@ export const MODES: ModeDef[] = [
     built: true,
   },
   {
-    slug: "ability",
-    label: "Ability",
-    blurb: "An ability icon, gradually revealed. Which hero?",
-    built: true,
-  },
-  {
     slug: "splash",
     label: "Spotlight",
     blurb: "A cropped sliver of hero or skin art. It zooms out as you guess.",
@@ -45,6 +39,12 @@ export const MODES: ModeDef[] = [
     slug: "sound",
     label: "Sound",
     blurb: "A short voice line, lengthening with each miss.",
+    built: true,
+  },
+  {
+    slug: "ability",
+    label: "Ability",
+    blurb: "An ability icon, gradually revealed. Which hero?",
     built: true,
   },
   {

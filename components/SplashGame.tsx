@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
 import { dayString, getSplashForDay, prettyDay } from "@/lib/daily";
@@ -16,6 +16,7 @@ import { Brand } from "./Brand";
 import { media } from "@/lib/media";
 import { NextModeCTA } from "./NextModeCTA";
 import { LossReveal } from "./LossReveal";
+import { ScrollIntoViewOnMount } from "./ScrollIntoViewOnMount";
 import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
@@ -53,6 +54,10 @@ export function SplashGame() {
   const [devView, setDevView] = useDevViewState("splash");
   const [overrideHero, setOverrideHero] = useState<Hero | null>(null);
   const isOverride = overrideHero !== null;
+  // Scroll anchor for the splash art. On a completed round we bring this to
+  // the top of the viewport so the now fully zoomed-out art (and the result
+  // card directly below) are framed together.
+  const artRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const d = dayString();
@@ -188,7 +193,10 @@ export function SplashGame() {
         />
       )}
 
-      <div className="mb-8 flex flex-col items-center">
+      <div
+        ref={artRef}
+        className="mb-8 flex scroll-mt-6 flex-col items-center sm:scroll-mt-8"
+      >
         <SplashFrame
           imageUrl={imageUrl}
           zoom={zoom}
@@ -196,6 +204,7 @@ export function SplashGame() {
           heroName={answer.name}
         />
       </div>
+      {ended && <ScrollIntoViewOnMount targetRef={artRef} />}
 
       {!ended && (
         <div className="mb-6 space-y-3">
@@ -220,7 +229,7 @@ export function SplashGame() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
           >
             <div className="flex flex-col gap-5">
               <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -259,7 +268,7 @@ export function SplashGame() {
                 </div>
               </div>
               <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="splash" />
+                <NextModeCTA current="splash" scrollIntoViewOnMount={false} />
               </div>
             </div>
           </motion.div>
@@ -268,7 +277,7 @@ export function SplashGame() {
 
       <AnimatePresence>
         {lost && !state.won && (
-          <LossReveal current="splash">
+          <LossReveal current="splash" scrollIntoViewOnMount={false}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

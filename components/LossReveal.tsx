@@ -18,9 +18,11 @@ import { NextModeCTA } from "./NextModeCTA";
 export function LossReveal({
   current,
   children,
+  scrollIntoViewOnMount = true,
 }: {
   current: ModeSlug;
   children: ReactNode;
+  scrollIntoViewOnMount?: boolean;
 }) {
   return (
     <motion.div
@@ -28,7 +30,7 @@ export function LossReveal({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-wrong/35 bg-wrong/10 p-4 sm:p-5"
+      className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-wrong/35 bg-wrong/10 p-4 sm:p-5"
     >
       <div className="flex flex-col gap-5">
         <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-wrong">
@@ -36,7 +38,10 @@ export function LossReveal({
         </div>
         {children}
         <div className="flex justify-center sm:justify-start">
-          <NextModeCTA current={current} />
+          <NextModeCTA
+            current={current}
+            scrollIntoViewOnMount={scrollIntoViewOnMount}
+          />
         </div>
       </div>
     </motion.div>
