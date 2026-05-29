@@ -31,6 +31,10 @@ CREATE TABLE IF NOT EXISTS pending_replay_links (
   created_at  INTEGER NOT NULL,
   attempts    INTEGER NOT NULL DEFAULT 0,
   status      TEXT    NOT NULL DEFAULT 'pending',
+  -- The exact Discord webhook URL that posted the message. The verifier
+  -- Worker edits via the same webhook (Discord only lets a webhook edit its
+  -- own messages), so it never depends on a separately-configured secret.
+  webhook_url TEXT,
   PRIMARY KEY (session_id, message_id)
 );
 

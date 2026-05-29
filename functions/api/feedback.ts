@@ -117,12 +117,16 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
           // INSERT OR IGNORE so a retry can't duplicate. The surrounding
           // try/catch means a missing table (e.g. before the migration
           // runs) never breaks the submission; the feedback row is saved.
+          // Store the exact webhook URL used so the verifier Worker edits
+          // this message via the same webhook (Discord only lets a webhook
+          // edit its own messages) — no separate worker secret to keep in
+          // sync, and no way to mismatch.
           await env.DB.prepare(
             `INSERT OR IGNORE INTO pending_replay_links
-               (session_id, message_id, source, created_at, attempts, status)
-             VALUES (?, ?, ?, ?, 0, 'pending')`,
+               (session_id, message_id, source, created_at, attempts, status, webhook_url)
+             VALUES (?, ?, ?, ?, 0, 'pending', ?)`,
           )
-            .bind(sessionId, msg.id, PROJECT, now)
+            .bind(sessionId, msg.id, PROJECT, now, webhookUrl)
             .run();
         } catch {
           // Swallow: the Discord notification and replay link are courtesies.

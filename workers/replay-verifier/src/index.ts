@@ -4,7 +4,9 @@
 // messages once PostHog has actually processed the recording.
 //
 // /api/feedback (Pages) posts the Discord message immediately without a link
-// and inserts a `pending_replay_links` row. At submit time the replay doesn't
+// and inserts a `pending_replay_links` row, storing the EXACT webhook URL it
+// used so this Worker edits the message via the same webhook (Discord only
+// lets a webhook edit its own messages). At submit time the replay doesn't
 // exist yet (PostHog needs a few minutes), and for some sessions it never
 // will: the visitor blocked tracking, or the session fell under the 30s
 // replay floor. So this Worker polls — for each pending row it asks PostHog
@@ -32,8 +34,10 @@ interface Env {
   POSTHOG_API_HOST?: string;
   // Secrets (wrangler secret put):
   POSTHOG_PERSONAL_API_KEY: string; // needs the session_recording:read scope
-  FEEDBACK_WEBHOOK_URL: string; // OWdle Discord webhook
-  FEEDBACK_WEBHOOK_URL_DEADLOCKLE?: string; // reserved for the sister site
+  // Fallback webhooks for rows written before webhook_url was stored on the
+  // row. New rows carry their own webhook_url, so these are optional.
+  FEEDBACK_WEBHOOK_URL?: string;
+  FEEDBACK_WEBHOOK_URL_DEADLOCKLE?: string;
 }
 
 interface PendingRow {
@@ -42,6 +46,7 @@ interface PendingRow {
   source: string;
   created_at: number;
   attempts: number;
+  webhook_url?: string | null;
 }
 
 // Give the recording time to process before the first check, and stop
@@ -56,7 +61,7 @@ export default {
     const readyBefore = nowSec - READY_AFTER_SEC;
 
     const res = await env.DB.prepare(
-      `SELECT session_id, message_id, source, created_at, attempts
+      `SELECT session_id, message_id, source, created_at, attempts, webhook_url
          FROM pending_replay_links
         WHERE status = 'pending' AND created_at <= ?
         ORDER BY created_at ASC
@@ -72,6 +77,62 @@ export default {
         console.error(`replay-verifier: row ${row.session_id} failed`, err);
       }
     }
+  },
+
+  // TEMPORARY debug endpoint — remove once the link backfill is confirmed.
+  //   GET /?debug=owdle-rv         -> per-row diagnosis (exists, webhook, GET status)
+  //   GET /?debug=owdle-rv&run=1   -> actually process pending rows now, then
+  //                                   report the resulting row statuses
+  async fetch(req: Request, env: Env): Promise<Response> {
+    const url = new URL(req.url);
+    if (url.searchParams.get("debug") !== "owdle-rv") {
+      return new Response("forbidden", { status: 403 });
+    }
+    const doRun = url.searchParams.get("run") === "1";
+    const nowSec = Math.floor(Date.now() / 1000);
+    const res = await env.DB.prepare(
+      `SELECT session_id, message_id, source, created_at, attempts, webhook_url
+         FROM pending_replay_links WHERE status = 'pending'
+        ORDER BY created_at ASC LIMIT 25`,
+    ).all<PendingRow>();
+
+    if (doRun) {
+      for (const row of res.results ?? []) {
+        try {
+          await handleRow(env, row, nowSec);
+        } catch (err) {
+          console.error(`debug run: row ${row.session_id} failed`, err);
+        }
+      }
+      const after = await env.DB.prepare(
+        `SELECT session_id, status, attempts FROM pending_replay_links
+          ORDER BY created_at DESC LIMIT 25`,
+      ).all();
+      return json({ processed: (res.results ?? []).length, rows: after.results });
+    }
+
+    const out: Record<string, unknown>[] = [];
+    for (const row of res.results ?? []) {
+      const d: Record<string, unknown> = {
+        session_id: row.session_id,
+        message_id: row.message_id,
+        source: row.source,
+        attempts: row.attempts,
+      };
+      const exists = await recordingExists(env, row.session_id);
+      d.exists = exists;
+      const webhookUrl = row.webhook_url || webhookFor(env, row.source);
+      d.webhookSource = row.webhook_url ? "row" : webhookFor(env, row.source) ? "env" : "none";
+      if (exists === true && webhookUrl) {
+        d.webhookId = webhookUrl.split("/webhooks/")[1]?.split("/")[0] ?? "?";
+        const messageUrl = `${webhookUrl}/messages/${encodeURIComponent(row.message_id)}`;
+        const g = await fetch(messageUrl);
+        d.getStatus = g.status;
+        if (!g.ok) d.getBody = (await g.text()).slice(0, 200);
+      }
+      out.push(d);
+    }
+    return json(out);
   },
 };
 
@@ -111,8 +172,14 @@ async function recordingExists(env: Env, sessionId: string): Promise<boolean | n
 }
 
 async function addReplayLink(env: Env, row: PendingRow): Promise<boolean> {
-  const webhookUrl = webhookFor(env, row.source);
-  if (!webhookUrl) return false;
+  // Prefer the exact webhook that posted the message (stored on the row by
+  // /api/feedback) so the edit always targets the right webhook. Fall back
+  // to the Worker's own secret for any legacy rows written without it.
+  const webhookUrl = row.webhook_url || webhookFor(env, row.source);
+  if (!webhookUrl) {
+    console.error(`replay-verifier: no webhook for ${row.session_id} (source ${row.source})`);
+    return false;
+  }
 
   const host = (env.POSTHOG_API_HOST ?? "https://us.posthog.com").replace(/\/$/, "");
   const replayUrl = `${host}/project/${env.POSTHOG_PROJECT_ID}/replay/${encodeURIComponent(row.session_id)}`;
@@ -122,7 +189,10 @@ async function addReplayLink(env: Env, row: PendingRow): Promise<boolean> {
   // rather than reconstructing it — the embed template lives only in
   // /api/feedback, so there's nothing to keep in sync here.
   const getResp = await fetch(messageUrl);
-  if (!getResp.ok) return false;
+  if (!getResp.ok) {
+    console.error(`replay-verifier: GET msg ${row.message_id} -> ${getResp.status}`);
+    return false;
+  }
   const msg = (await getResp.json()) as { embeds?: DiscordEmbed[] };
   const embed = msg.embeds?.[0];
   if (!embed) return false;
@@ -137,6 +207,9 @@ async function addReplayLink(env: Env, row: PendingRow): Promise<boolean> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ embeds: [embed] }),
   });
+  if (!patchResp.ok) {
+    console.error(`replay-verifier: PATCH msg ${row.message_id} -> ${patchResp.status}`);
+  }
   return patchResp.ok;
 }
 
@@ -160,6 +233,12 @@ function bumpAttempts(env: Env, row: PendingRow): Promise<{ success: boolean }> 
   )
     .bind(row.session_id, row.message_id)
     .run();
+}
+
+function json(body: unknown): Response {
+  return new Response(JSON.stringify(body, null, 2), {
+    headers: { "content-type": "application/json" },
+  });
 }
 
 interface DiscordEmbedField {
