@@ -19,3 +19,19 @@ CREATE TABLE IF NOT EXISTS votes (
 CREATE INDEX IF NOT EXISTS idx_votes_game_id ON votes(game_id);
 CREATE INDEX IF NOT EXISTS idx_votes_created_at ON votes(created_at);
 CREATE INDEX IF NOT EXISTS idx_votes_source ON votes(source);
+
+-- Deferred Discord session-replay links. /api/feedback inserts a row when a
+-- feedback submission carries a PostHog session id; the owdle-replay-verifier
+-- Worker later edits the Discord message to add the replay link once the
+-- recording exists. See db/migration-add-pending-replay-links.sql.
+CREATE TABLE IF NOT EXISTS pending_replay_links (
+  session_id  TEXT    NOT NULL,
+  message_id  TEXT    NOT NULL,
+  source      TEXT    NOT NULL DEFAULT 'owdle',
+  created_at  INTEGER NOT NULL,
+  attempts    INTEGER NOT NULL DEFAULT 0,
+  status      TEXT    NOT NULL DEFAULT 'pending',
+  PRIMARY KEY (session_id, message_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_pending_replay_status ON pending_replay_links(status, created_at);

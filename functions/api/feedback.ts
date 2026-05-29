@@ -7,7 +7,7 @@
 // Rate limit: per-IP via the same salted+bucketed hash used for votes,
 // enforced atomically with INSERT … SELECT … WHERE so concurrent requests
 // can't briefly exceed the cap. No PII is stored.
-import type { Env, Handler } from "../_lib/types";
+import type { Handler } from "../_lib/types";
 import { voterHash } from "../_lib/types";
 
 type Body = { body?: unknown; session_id?: unknown };
@@ -41,9 +41,10 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
   }
 
   // Optional PostHog session id captured by FeedbackButton when the
-  // dialog opened. When present we deep-link the Discord embed straight
-  // to the replay; when absent (PostHog blocked, recording not yet
-  // bootstrapped) we just omit the field.
+  // dialog opened. When present, we post the Discord message now and
+  // record a pending row so the verifier Worker can add the replay link
+  // once the recording exists. When absent (PostHog blocked / not yet
+  // bootstrapped) the message simply never gets a link.
   const sessionId =
     typeof payload.session_id === "string" && SESSION_ID_RE.test(payload.session_id)
       ? payload.session_id
@@ -78,38 +79,55 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
     return json({ error: "rate_limited" }, 429);
   }
 
-  // Fire-and-forget Discord notification. waitUntil lets the response
-  // return to the user immediately while the webhook POST drains in the
-  // background; if Discord is slow or down, the submission still
-  // succeeds. Errors are swallowed deliberately — the D1 row is the
-  // source of truth, the notification is a courtesy.
+  // Discord notification, sent in the background via waitUntil so the user
+  // gets their response immediately. The replay link is deliberately NOT
+  // included here: at submit time the session recording doesn't exist yet
+  // (PostHog needs a few minutes to process it) and may never exist (the
+  // visitor blocked tracking, or the session was under the 30s replay
+  // floor). So we post the message now, then record a pending row keyed by
+  // the Discord message id; the owdle-replay-verifier Worker edits the
+  // message to add the "Watch on PostHog" link once the recording lands.
   if (env.FEEDBACK_WEBHOOK_URL) {
-    const replayUrl = buildReplayUrl(env, sessionId);
-    const fields = replayUrl
-      ? [{ name: "Session replay", value: `[Watch on PostHog](${replayUrl})` }]
-      : undefined;
-    const payload = {
+    const webhookUrl = env.FEEDBACK_WEBHOOK_URL;
+    const messagePayload = {
       embeds: [
         {
           title: `New feedback · OWdle`,
           description: body,
           color: EMBED_COLOR,
           url: SITE_URL,
-          fields,
           timestamp: new Date().toISOString(),
           footer: { text: `submitter ${hash.slice(0, 8)}` },
         },
       ],
     };
     waitUntil(
-      fetch(env.FEEDBACK_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      }).then(
-        () => {},
-        () => {},
-      ),
+      (async () => {
+        try {
+          // `?wait=true` makes Discord return the created message object so
+          // we can capture its id; without it the POST returns 204 empty.
+          const resp = await fetch(`${webhookUrl}?wait=true`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(messagePayload),
+          });
+          if (!sessionId || !resp.ok) return;
+          const msg = (await resp.json()) as { id?: string };
+          if (!msg.id) return;
+          // INSERT OR IGNORE so a retry can't duplicate. The surrounding
+          // try/catch means a missing table (e.g. before the migration
+          // runs) never breaks the submission; the feedback row is saved.
+          await env.DB.prepare(
+            `INSERT OR IGNORE INTO pending_replay_links
+               (session_id, message_id, source, created_at, attempts, status)
+             VALUES (?, ?, ?, ?, 0, 'pending')`,
+          )
+            .bind(sessionId, msg.id, PROJECT, now)
+            .run();
+        } catch {
+          // Swallow: the Discord notification and replay link are courtesies.
+        }
+      })(),
     );
   }
 
@@ -121,19 +139,4 @@ function json(body: unknown, status = 200): Response {
     status,
     headers: { "content-type": "application/json; charset=utf-8" },
   });
-}
-
-// Returns a deep link to the PostHog replay for this session, or null
-// when the session id is missing (PostHog blocked / not initialized).
-// PostHog's UI routes use the project API token (the phc_… client key)
-// in the URL path, NOT the numeric project ID. This matches the URL
-// that posthog-js's get_session_replay_url() generates internally.
-// The token is a public client key (already in the frontend JS bundle).
-const POSTHOG_PROJECT_TOKEN_DEFAULT = "phc_AE5pvD5WozNPsftsUMBMKwaCWcjHhLjTVfdyRowmP7A5";
-
-function buildReplayUrl(env: Env, sessionId: string | null): string | null {
-  if (!sessionId) return null;
-  const token = env.POSTHOG_PROJECT_TOKEN || POSTHOG_PROJECT_TOKEN_DEFAULT;
-  const host = (env.POSTHOG_API_HOST ?? "https://us.posthog.com").replace(/\/$/, "");
-  return `${host}/project/${encodeURIComponent(token)}/replay/${encodeURIComponent(sessionId)}`;
 }

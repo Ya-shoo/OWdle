@@ -1,0 +1,34 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "owdle-replay-verifier",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-28",
+
+  // Cron-driven: every 2 minutes, scan pending_replay_links and, for any
+  // feedback whose PostHog recording has now landed, edit its Discord
+  // message to add the replay link. Cron Triggers are on the Workers free
+  // plan, so this stays free.
+  "triggers": { "crons": ["*/2 * * * *"] },
+
+  // Same canonical D1 as the Pages app (owdle-votes). /api/feedback writes
+  // the pending rows; this Worker reads and updates them.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "owdle-votes",
+      "database_id": "e51eedfa-9f64-4f22-86b2-29b26b413af8"
+    }
+  ],
+
+  // Non-secret config. Secrets are set out-of-band so they never live in
+  // git (run from the repo root):
+  //   wrangler secret put POSTHOG_PERSONAL_API_KEY --config workers/replay-verifier/wrangler.jsonc
+  //   wrangler secret put FEEDBACK_WEBHOOK_URL      --config workers/replay-verifier/wrangler.jsonc
+  // POSTHOG_PERSONAL_API_KEY must have the `session_recording:read` scope.
+  "vars": {
+    "POSTHOG_PROJECT_ID": "433581",
+    "POSTHOG_API_HOST": "https://us.posthog.com"
+  },
+
+  "observability": { "enabled": true }
+}
