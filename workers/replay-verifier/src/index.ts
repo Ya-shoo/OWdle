@@ -32,10 +32,11 @@ interface Env {
   DB: D1Database;
   POSTHOG_PROJECT_ID: string;
   POSTHOG_API_HOST?: string;
-  // Secrets (wrangler secret put):
-  POSTHOG_PERSONAL_API_KEY: string; // needs the session_recording:read scope
-  // Fallback webhooks for rows written before webhook_url was stored on the
-  // row. New rows carry their own webhook_url, so these are optional.
+  // Secret (wrangler secret put): needs the session_recording:read scope.
+  POSTHOG_PERSONAL_API_KEY: string;
+  // Fallback webhooks for any legacy rows written before webhook_url was
+  // stored on the row. New rows carry their own webhook_url, so these are
+  // optional and normally unused.
   FEEDBACK_WEBHOOK_URL?: string;
   FEEDBACK_WEBHOOK_URL_DEADLOCKLE?: string;
 }
@@ -77,62 +78,6 @@ export default {
         console.error(`replay-verifier: row ${row.session_id} failed`, err);
       }
     }
-  },
-
-  // TEMPORARY debug endpoint — remove once the link backfill is confirmed.
-  //   GET /?debug=owdle-rv         -> per-row diagnosis (exists, webhook, GET status)
-  //   GET /?debug=owdle-rv&run=1   -> actually process pending rows now, then
-  //                                   report the resulting row statuses
-  async fetch(req: Request, env: Env): Promise<Response> {
-    const url = new URL(req.url);
-    if (url.searchParams.get("debug") !== "owdle-rv") {
-      return new Response("forbidden", { status: 403 });
-    }
-    const doRun = url.searchParams.get("run") === "1";
-    const nowSec = Math.floor(Date.now() / 1000);
-    const res = await env.DB.prepare(
-      `SELECT session_id, message_id, source, created_at, attempts, webhook_url
-         FROM pending_replay_links WHERE status = 'pending'
-        ORDER BY created_at ASC LIMIT 25`,
-    ).all<PendingRow>();
-
-    if (doRun) {
-      for (const row of res.results ?? []) {
-        try {
-          await handleRow(env, row, nowSec);
-        } catch (err) {
-          console.error(`debug run: row ${row.session_id} failed`, err);
-        }
-      }
-      const after = await env.DB.prepare(
-        `SELECT session_id, status, attempts FROM pending_replay_links
-          ORDER BY created_at DESC LIMIT 25`,
-      ).all();
-      return json({ processed: (res.results ?? []).length, rows: after.results });
-    }
-
-    const out: Record<string, unknown>[] = [];
-    for (const row of res.results ?? []) {
-      const d: Record<string, unknown> = {
-        session_id: row.session_id,
-        message_id: row.message_id,
-        source: row.source,
-        attempts: row.attempts,
-      };
-      const exists = await recordingExists(env, row.session_id);
-      d.exists = exists;
-      const webhookUrl = row.webhook_url || webhookFor(env, row.source);
-      d.webhookSource = row.webhook_url ? "row" : webhookFor(env, row.source) ? "env" : "none";
-      if (exists === true && webhookUrl) {
-        d.webhookId = webhookUrl.split("/webhooks/")[1]?.split("/")[0] ?? "?";
-        const messageUrl = `${webhookUrl}/messages/${encodeURIComponent(row.message_id)}`;
-        const g = await fetch(messageUrl);
-        d.getStatus = g.status;
-        if (!g.ok) d.getBody = (await g.text()).slice(0, 200);
-      }
-      out.push(d);
-    }
-    return json(out);
   },
 };
 
@@ -233,12 +178,6 @@ function bumpAttempts(env: Env, row: PendingRow): Promise<{ success: boolean }> 
   )
     .bind(row.session_id, row.message_id)
     .run();
-}
-
-function json(body: unknown): Response {
-  return new Response(JSON.stringify(body, null, 2), {
-    headers: { "content-type": "application/json" },
-  });
 }
 
 interface DiscordEmbedField {
