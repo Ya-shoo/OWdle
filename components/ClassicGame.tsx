@@ -22,6 +22,13 @@ import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
 import { HintConfirmModal } from "./HintConfirmModal";
+import { ShareButton } from "./ShareButton";
+import { RoundShareCard } from "./ShareCard";
+import { SITE_URL } from "@/lib/site";
+import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
+import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { isDailyComplete } from "@/lib/storage";
+import { BUILT_MODE_SLUGS } from "@/lib/modes";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -326,17 +333,121 @@ export function ClassicGame() {
       )}
 
       <AnimatePresence>
-        {state.won && (
-          <motion.div
-            key="win"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
-          >
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+        {state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "classic",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <ClassicDailyComplete
+              key="win-daily"
+              answer={answer}
+              guesses={effectiveUsed}
+              hintsUsed={hintsUsed.length}
+              outcome="won"
+              day={day}
+            />
+          ) : (
+            <motion.div
+              key="win"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={answer.portrait}
+                    alt=""
+                    className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
+                  />
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                      Solved
+                    </div>
+                    <div className="mt-1 font-display text-3xl text-ink">
+                      {answer.name}{" "}
+                      <span className="text-ink-soft">
+                        in {effectiveUsed}
+                      </span>
+                    </div>
+                    {hintsUsed.length > 0 && (
+                      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+                        💡 used {hintsUsed.length}{" "}
+                        {hintsUsed.length === 1 ? "hint" : "hints"}
+                      </div>
+                    )}
+                    <ModeStatsLine mode="classic" />
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  <NextModeCTA current="classic" />
+                  <ShareButton
+                    renderCard={() => (
+                      <RoundShareCard
+                        mode="classic"
+                        answer={answer}
+                        guesses={effectiveUsed}
+                        outcome="won"
+                      />
+                    )}
+                    url={`${SITE_URL}/classic/`}
+                    text={`OWdle Classic · ${answer.name} in ${effectiveUsed}`}
+                    filename={`owdle-classic-${day}.png`}
+                    surface="round_result"
+                    mode="classic"
+                    dailyId={day}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {state.lost &&
+          !state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "classic",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <ClassicDailyComplete
+              key="loss-daily"
+              answer={answer}
+              guesses={state.guesses.length}
+              hintsUsed={hintsUsed.length}
+              outcome="lost"
+              day={day}
+            />
+          ) : (
+            <LossReveal
+              current="classic"
+              share={
+                <ShareButton
+                  renderCard={() => (
+                    <RoundShareCard
+                      mode="classic"
+                      answer={answer}
+                      guesses={effectiveUsed}
+                      outcome="lost"
+                    />
+                  )}
+                  url={`${SITE_URL}/classic/`}
+                  text={`OWdle Classic · ${answer.name} · Missed`}
+                  filename={`owdle-classic-${day}.png`}
+                  surface="round_result"
+                  mode="classic"
+                  dailyId={day}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={answer.portrait}
@@ -344,55 +455,18 @@ export function ClassicGame() {
                   className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                 />
                 <div className="flex-1">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                    Solved
+                  <div className="font-display text-3xl text-ink">
+                    {answer.name}
                   </div>
-                  <div className="mt-1 font-display text-3xl text-ink">
-                    {answer.name}{" "}
-                    <span className="text-ink-soft">
-                      in {state.guesses.length}
-                    </span>
+                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                    {state.guesses.length} guesses
+                    {hintsUsed.length > 0 && ` · ${hintsUsed.length} hint${hintsUsed.length === 1 ? "" : "s"}`}
                   </div>
-                  {hintsUsed.length > 0 && (
-                    <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
-                      💡 used {hintsUsed.length}{" "}
-                      {hintsUsed.length === 1 ? "hint" : "hints"}
-                    </div>
-                  )}
                   <ModeStatsLine mode="classic" />
                 </div>
               </div>
-              <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="classic" />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {state.lost && !state.won && (
-          <LossReveal current="classic">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={answer.portrait}
-                alt=""
-                className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
-              />
-              <div className="flex-1">
-                <div className="font-display text-3xl text-ink">
-                  {answer.name}
-                </div>
-                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-                  {state.guesses.length} guesses
-                  {hintsUsed.length > 0 && ` · ${hintsUsed.length} hint${hintsUsed.length === 1 ? "" : "s"}`}
-                </div>
-                <ModeStatsLine mode="classic" />
-              </div>
-            </div>
-          </LossReveal>
-        )}
+            </LossReveal>
+          ))}
       </AnimatePresence>
 
       {/* Guess history (newest at top) — interleaves real guesses with
@@ -701,5 +775,64 @@ function LegendChip({
         {label}
       </span>
     </span>
+  );
+}
+
+// Classic-specific wrapper around DailyCompleteResultCard. Owns the
+// mode-specific summary row (portrait + "Symmetra in 5" + hints used)
+// and the TryDeadlockleCard sibling that the user wanted OUTSIDE the
+// result card chrome.
+function ClassicDailyComplete({
+  answer,
+  guesses,
+  hintsUsed,
+  outcome,
+  day,
+}: {
+  answer: Hero;
+  guesses: number;
+  hintsUsed: number;
+  outcome: "won" | "lost";
+  day: string;
+}) {
+  const summary = (
+    <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={answer.portrait}
+        alt=""
+        className="h-14 w-14 rounded-(--radius-card) bg-muted object-cover sm:h-16 sm:w-16"
+      />
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          Classic {outcome === "won" ? "Solved" : "Missed"}
+        </div>
+        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+          {answer.name}
+          {outcome === "won" && (
+            <span className="text-ink-soft"> in {guesses}</span>
+          )}
+        </div>
+        {hintsUsed > 0 && (
+          <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+            💡 used {hintsUsed} {hintsUsed === 1 ? "hint" : "hints"}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+  return (
+    <>
+      <DailyCompleteResultCard
+        mode="classic"
+        guesses={guesses}
+        outcome={outcome}
+        day={day}
+        summary={summary}
+      />
+      <div className="mx-auto mt-8 mb-10 w-full max-w-lg">
+        <TryDeadlockleCard />
+      </div>
+    </>
   );
 }

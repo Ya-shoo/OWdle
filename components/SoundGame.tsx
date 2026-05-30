@@ -24,14 +24,22 @@ import { NextModeCTA } from "./NextModeCTA";
 import { ScrollIntoViewOnMount } from "./ScrollIntoViewOnMount";
 import { BonusRound } from "./BonusRound";
 import { WaveformPlayer } from "./WaveformPlayer";
+import { VolumeSlider } from "./VolumeSlider";
 import { DevSoundPicker } from "./DevSoundPicker";
 import { DevSoundTrimmer } from "./DevSoundTrimmer";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { saveSoundClipTrim, type SavedTrim } from "@/lib/soundTrims";
-import { ROLE_AUDIO_BOOST } from "@/lib/audio";
+import { loadVolume, ROLE_AUDIO_BOOST, saveVolume } from "@/lib/audio";
 import { LossReveal } from "./LossReveal";
 import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
+import { ShareButton } from "./ShareButton";
+import { RoundShareCard } from "./ShareCard";
+import { SITE_URL } from "@/lib/site";
+import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
+import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { isDailyComplete } from "@/lib/storage";
+import { BUILT_MODE_SLUGS } from "@/lib/modes";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -154,6 +162,31 @@ export function SoundGame() {
     });
   }, [day, isOverride, stateWon, stateLost, stateGaveUp, state?.guesses.length]);
 
+  // Warm the reveal clip the instant the round is won, so by the time the
+  // player finishes the bonus round and the <video> mounts it's already in
+  // the browser cache — turning a cold cross-origin fetch at reveal into a
+  // cache hit, which is what makes the video appear (near-)instantly. A
+  // no-cors GET is enough to populate the cache for the non-CORS <video> to
+  // reuse; the MP4 is cacheable (max-age 4h) + faststart, so once the bytes
+  // are local it plays right away. Deduped per clip; a cache miss (prime
+  // didn't finish) just falls back to today's cold fetch, so no regression.
+  const prefetchedVideoRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!day || !stateWon) return;
+    const pick = overrideClip ?? getSoundForDay(day);
+    if (!pick.videoUrl) return;
+    const src = media(pick.videoUrl);
+    if (prefetchedVideoRef.current === src) return;
+    prefetchedVideoRef.current = src;
+    // Consume the body (.blob()) so the browser actually streams the whole
+    // file to disk rather than pausing on backpressure with an unread body —
+    // a bare fetch() can leave the cache entry incomplete. The blob itself
+    // is opaque/useless to JS; we just discard it.
+    void fetch(src, { mode: "no-cors" })
+      .then((r) => r.blob())
+      .catch(() => {});
+  }, [day, stateWon, overrideClip]);
+
   useEffect(() => {
     const d = dayString();
     setDay(d);
@@ -223,7 +256,12 @@ export function SoundGame() {
   const heroGuessKeys = state.guesses.filter((k) => HEROES_BY_KEY[k]);
   const excludeKeys = new Set(heroGuessKeys);
 
+  // turnsUsed counts every slot spent — hero guesses AND skips — which is
+  // what's charged against the cap and what the result/share surfaces
+  // report as "in N". skipsUsed backs out the hidden portion so we can
+  // label it ("⏭ 2 skips"), mirroring Classic's "💡 used 2 hints".
   const turnsUsed = state.guesses.length;
+  const skipsUsed = turnsUsed - heroGuessKeys.length;
   const lost = state.lost === true || state.gaveUp === true;
   const ended = state.won || lost;
 
@@ -503,16 +541,125 @@ export function SoundGame() {
       )}
 
       <AnimatePresence>
-        {state.won && !lost && (
-          <motion.div
-            key="win"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
-          >
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+        {state.won &&
+          !lost &&
+          (isDailyComplete({
+            day,
+            currentMode: "sound",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <SoundDailyComplete
+              key="win-daily"
+              answer={answer}
+              label={label && !bonusPending ? label : null}
+              guesses={turnsUsed}
+              outcome="won"
+              day={day}
+            />
+          ) : (
+            <motion.div
+              key="win"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={answer.portrait}
+                    alt=""
+                    className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
+                  />
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                      Solved
+                    </div>
+                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                      {answer.name}
+                      {label && !bonusPending && (
+                        <span className="ml-2 text-ink-soft">· {label}</span>
+                      )}
+                    </div>
+                    <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                      in {turnsUsed}{" "}
+                      {turnsUsed === 1 ? "guess" : "guesses"}
+                    </div>
+                    {skipsUsed > 0 && (
+                      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+                        ⏭ {skipsUsed} {skipsUsed === 1 ? "skip" : "skips"}
+                      </div>
+                    )}
+                    <ModeStatsLine mode="sound" />
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  <NextModeCTA current="sound" scrollIntoViewOnMount={false} />
+                  <ShareButton
+                    renderCard={() => (
+                      <RoundShareCard
+                        mode="sound"
+                        answer={answer}
+                        guesses={turnsUsed}
+                        outcome="won"
+                      />
+                    )}
+                    url={`${SITE_URL}/sound/`}
+                    text={`OWdle Sound · ${answer.name} in ${turnsUsed}`}
+                    filename={`owdle-sound-${day}.png`}
+                    surface="round_result"
+                    mode="sound"
+                    dailyId={day}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lost &&
+          !state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "sound",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <SoundDailyComplete
+              key="loss-daily"
+              answer={answer}
+              label={label && !bonusPending ? label : null}
+              guesses={heroGuessKeys.length}
+              outcome="lost"
+              day={day}
+            />
+          ) : (
+            <LossReveal
+              current="sound"
+              scrollIntoViewOnMount={false}
+              share={
+                <ShareButton
+                  renderCard={() => (
+                    <RoundShareCard
+                      mode="sound"
+                      answer={answer}
+                      guesses={turnsUsed}
+                      outcome="lost"
+                    />
+                  )}
+                  url={`${SITE_URL}/sound/`}
+                  text={`OWdle Sound · ${answer.name} · Missed`}
+                  filename={`owdle-sound-${day}.png`}
+                  surface="round_result"
+                  mode="sound"
+                  dailyId={day}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={answer.portrait}
@@ -520,56 +667,23 @@ export function SoundGame() {
                   className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                 />
                 <div className="flex-1">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                    Solved
-                  </div>
-                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                  <div className="font-display text-2xl text-ink sm:text-3xl">
                     {answer.name}
                     {label && !bonusPending && (
                       <span className="ml-2 text-ink-soft">· {label}</span>
                     )}
                   </div>
                   <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-                    in {heroGuessKeys.length}{" "}
+                    after {heroGuessKeys.length} wrong{" "}
                     {heroGuessKeys.length === 1 ? "guess" : "guesses"}
+                    {skipsUsed > 0 &&
+                      ` · ${skipsUsed} ${skipsUsed === 1 ? "skip" : "skips"}`}
                   </div>
                   <ModeStatsLine mode="sound" />
                 </div>
               </div>
-              <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="sound" scrollIntoViewOnMount={false} />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {lost && !state.won && (
-          <LossReveal current="sound" scrollIntoViewOnMount={false}>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={answer.portrait}
-                alt=""
-                className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
-              />
-              <div className="flex-1">
-                <div className="font-display text-2xl text-ink sm:text-3xl">
-                  {answer.name}
-                  {label && !bonusPending && (
-                    <span className="ml-2 text-ink-soft">· {label}</span>
-                  )}
-                </div>
-                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-                  after {heroGuessKeys.length} wrong{" "}
-                  {heroGuessKeys.length === 1 ? "guess" : "guesses"}
-                </div>
-                <ModeStatsLine mode="sound" />
-              </div>
-            </div>
-          </LossReveal>
-        )}
+            </LossReveal>
+          ))}
       </AnimatePresence>
 
       <div className="space-y-4">
@@ -611,18 +725,45 @@ export function SoundGame() {
 // overlays the video during playback. Tapping it is a user gesture, so the
 // retry starts with sound. It's a real <button>, so it stays keyboard- and
 // screen-reader-accessible despite the missing native controls.
+//
+// The clip is primed into the browser cache the moment the round is won
+// (see the prefetch effect in SoundGame), so mounting here at reveal loads
+// from cache instead of opening a cold cross-origin connection — that's
+// what makes it appear fast rather than after a buffering pause.
 function RevealPlayer({ videoUrl }: { videoUrl: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   // Optimistic: assume autoplay will take so desktop never flashes the
   // glyph. The mount attempt flips this to false if the browser blocks it.
   const [playing, setPlaying] = useState(true);
+  // Volume is global across modes (shared with the waveform snippet). Lazy-
+  // read the saved level: RevealPlayer only mounts client-side after a win
+  // or loss, so there's no SSR/hydration pass to mismatch, and loadVolume()
+  // is window-guarded regardless. iOS ignores HTMLMediaElement.volume (it's
+  // hardware-controlled there), so the slider is a no-op on iOS — harmless,
+  // and desktop gets a real control.
+  const [volume, setVolume] = useState<number>(() => loadVolume());
 
+  // Apply the level to the element on mount and whenever the slider moves.
+  // Defined before the autoplay effect so it runs first (mount-phase effects
+  // fire in definition order) — the first audible frame is already at the
+  // user's volume.
+  useEffect(() => {
+    const el = videoRef.current;
+    if (el) el.volume = Math.max(0, Math.min(1, volume));
+  }, [volume]);
+
+  // Autoplay-with-sound on reveal.
   useEffect(() => {
     videoRef.current
       ?.play()
       .then(() => setPlaying(true))
       .catch(() => setPlaying(false));
   }, []);
+
+  const handleVolumeChange = (v: number) => {
+    setVolume(v);
+    saveVolume(v);
+  };
 
   return (
     <div className="w-full max-w-2xl">
@@ -656,9 +797,68 @@ function RevealPlayer({ videoUrl }: { videoUrl: string }) {
           </button>
         )}
       </div>
+      {/* Volume mirrors sound mode's own slider (same global setting). On
+          iOS it's a no-op — media volume is hardware-controlled there — but
+          it's the real control on desktop. */}
+      <div className="mt-3 flex justify-center">
+        <VolumeSlider value={volume} onChange={handleVolumeChange} />
+      </div>
       <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-info">
         Source clip · full audio + video
       </p>
     </div>
+  );
+}
+
+// Sound-specific wrapper around DailyCompleteResultCard. Owns the
+// mode-specific confirmation row + TryDeadlockleCard sibling.
+function SoundDailyComplete({
+  answer,
+  label,
+  guesses,
+  outcome,
+  day,
+}: {
+  answer: Hero;
+  label: string | null;
+  guesses: number;
+  outcome: "won" | "lost";
+  day: string;
+}) {
+  const summary = (
+    <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={answer.portrait}
+        alt=""
+        className="h-14 w-14 rounded-(--radius-card) bg-muted object-cover sm:h-16 sm:w-16"
+      />
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          Sound {outcome === "won" ? "Solved" : "Missed"}
+        </div>
+        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+          {answer.name}
+          {label && <span className="text-ink-soft"> · {label}</span>}
+          {outcome === "won" && (
+            <span className="text-ink-soft"> in {guesses}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+  return (
+    <>
+      <DailyCompleteResultCard
+        mode="sound"
+        guesses={guesses}
+        outcome={outcome}
+        day={day}
+        summary={summary}
+      />
+      <div className="mx-auto mt-8 mb-10 w-full max-w-lg">
+        <TryDeadlockleCard />
+      </div>
+    </>
   );
 }

@@ -10,6 +10,7 @@
 
 import { dayString } from "./daily";
 import { BUILT_MODE_SLUGS } from "./modes";
+import { modeAttempts } from "./tier";
 import { trackDailyCompleted } from "./tracking";
 
 const STREAK_KEY = "owdle.streak";
@@ -109,9 +110,10 @@ function summarizeDay(day: string): {
       } else if (parsed?.lost === true || parsed?.gaveUp === true) {
         lostCount++;
       }
-      if (Array.isArray(parsed?.guesses)) {
-        totalGuesses += parsed.guesses.length;
-      }
+      // Slots, not just hero picks — folds in Sound skips (inside guesses[])
+      // and Classic hints (separate hintsUsed[]). Returns 0 on malformed
+      // entries, same as the old Array.isArray guard.
+      totalGuesses += modeAttempts(parsed);
     } catch {
       // ignore malformed entries — they just won't contribute to the
       // summary, which is acceptable for analytics rollups.

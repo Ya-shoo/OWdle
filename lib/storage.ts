@@ -112,6 +112,28 @@ export function loadModeState(mode: string, day: string): ModeState {
   }
 }
 
+// Whether every built mode is finished for the given day. Pass the
+// current mode's known outcome so callers in the middle of finishing
+// it can use this without racing localStorage. `lib/modes.ts` imports
+// localStorage indirectly via this file so we keep the import inline
+// to avoid a cycle.
+export function isDailyComplete(opts: {
+  day: string;
+  // Pacific day for which to check completion.
+  currentMode: string;
+  // True if the current mode is in a terminal state (won, lost, or gave up).
+  currentDone: boolean;
+  // Built mode slugs to check. Passed in by the caller so this file
+  // doesn't import lib/modes.ts (avoids a cycle).
+  builtSlugs: ReadonlyArray<string>;
+}): boolean {
+  return opts.builtSlugs.every((slug) => {
+    if (slug === opts.currentMode) return opts.currentDone;
+    const st = loadModeState(slug, opts.day);
+    return st.won || st.lost === true || st.gaveUp === true;
+  });
+}
+
 export function saveModeState(mode: string, state: ModeState): void {
   if (typeof window === "undefined") return;
   try {

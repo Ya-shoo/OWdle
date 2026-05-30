@@ -53,7 +53,7 @@ export function KofiModal({ username }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-block cursor-pointer border-0 bg-transparent p-0 transition-transform duration-150 hover:-translate-y-0.5"
+        className="inline-block cursor-pointer border-0 bg-transparent p-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.04] active:scale-[0.98]"
         aria-label="Open Ko-fi tip panel"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

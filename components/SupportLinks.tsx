@@ -31,23 +31,43 @@ export function SupportLinks() {
         <div className="flex items-center gap-5">
           {/* Avatar doubles as a quick hop to the creator's Instagram —
               same destination as the IG icon below, but a much bigger
-              tap target on mobile. */}
-          <a
-            href="https://www.instagram.com/hiamyush/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Creator's Instagram"
-            className="shrink-0 rounded-full transition-opacity hover:opacity-90"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/kofi-avatar.jpg?v=2"
-              alt=""
-              width={112}
-              height={112}
-              className="h-28 w-28 rounded-full border border-line object-cover"
-            />
-          </a>
+              tap target on mobile. The wrapping div hosts a hover-reveal
+              speech bubble; the avatar itself keeps its scale-only press
+              animation. */}
+          <div className="group relative shrink-0">
+            <a
+              href="https://www.instagram.com/hiamyush/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Creator's Instagram"
+              className="block rounded-full transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.04] active:scale-[0.98]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/kofi-avatar.jpg?v=2"
+                alt=""
+                width={112}
+                height={112}
+                className="h-28 w-28 rounded-full border border-line object-cover"
+              />
+            </a>
+            {/* Speech bubble — pops in on avatar hover / keyboard focus.
+                Anchored to the avatar's top-right so it floats up and
+                away from the support copy. Tail points down-left at the
+                avatar from the bubble's bottom-left corner.
+                pointer-events-none so the cursor passing up onto the
+                bubble doesn't strand the avatar's hover state. */}
+            <div
+              role="tooltip"
+              className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-3 w-48 origin-bottom-left scale-90 rounded-2xl border border-line bg-ink px-3 py-2 text-center font-soft text-xs leading-snug text-canvas opacity-0 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.45)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-100 group-focus-within:scale-100 group-focus-within:opacity-100"
+            >
+              hi im yush! I like playing games and building fun things for me & my friends ^_^
+              <span
+                aria-hidden
+                className="absolute left-4 top-full -mt-1.5 h-3 w-3 rotate-45 border-b border-r border-line bg-ink"
+              />
+            </div>
+          </div>
           <div>
             <p className="font-soft text-2xl font-bold leading-none text-ink">
               yush

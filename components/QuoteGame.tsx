@@ -47,6 +47,13 @@ import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevQuotePicker } from "./DevQuotePicker";
+import { ShareButton } from "./ShareButton";
+import { QuoteShareCard } from "./ShareCard";
+import { SITE_URL } from "@/lib/site";
+import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
+import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { isDailyComplete } from "@/lib/storage";
+import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import clsx from "clsx";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
@@ -411,16 +418,123 @@ export function QuoteGame() {
       )}
 
       <AnimatePresence>
-        {won && (
-          <motion.div
-            key="win"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
-          >
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+        {won &&
+          (isDailyComplete({
+            day,
+            currentMode: "quote",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <QuoteDailyComplete
+              key="win-daily"
+              speakerA={speakerA}
+              speakerB={speakerB}
+              guesses={state.guesses.length}
+              outcome="won"
+              day={day}
+            />
+          ) : (
+            <motion.div
+              key="win"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                  <div className="flex shrink-0 -space-x-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={speakerA.portrait}
+                      alt=""
+                      className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-20 sm:w-20"
+                    />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={speakerB.portrait}
+                      alt=""
+                      className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-20 sm:w-20"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                      Solved
+                    </div>
+                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                      {speakerA.name} & {speakerB.name}{" "}
+                      <span className="text-ink-soft">
+                        in {state.guesses.length}
+                      </span>
+                    </div>
+                    <ModeStatsLine mode="quote" />
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  <NextModeCTA current="quote" scrollIntoViewOnMount={false} />
+                  <ShareButton
+                    renderCard={() => (
+                      <QuoteShareCard
+                        speakerA={speakerA}
+                        speakerB={speakerB}
+                        guesses={state.guesses.length}
+                        outcome="won"
+                      />
+                    )}
+                    url={`${SITE_URL}/quote/`}
+                    text={`OWdle Quote · ${speakerA.name} & ${speakerB.name} in ${state.guesses.length}`}
+                    filename={`owdle-quote-${day}.png`}
+                    surface="round_result"
+                    mode="quote"
+                    dailyId={day}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lost &&
+          !won &&
+          (isDailyComplete({
+            day,
+            currentMode: "quote",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <QuoteDailyComplete
+              key="loss-daily"
+              speakerA={speakerA}
+              speakerB={speakerB}
+              guesses={state.guesses.length}
+              outcome="lost"
+              day={day}
+            />
+          ) : (
+            <LossReveal
+              current="quote"
+              scrollIntoViewOnMount={false}
+              share={
+                <ShareButton
+                  renderCard={() => (
+                    <QuoteShareCard
+                      speakerA={speakerA}
+                      speakerB={speakerB}
+                      guesses={state.guesses.length}
+                      outcome="lost"
+                    />
+                  )}
+                  url={`${SITE_URL}/quote/`}
+                  text={`OWdle Quote · ${speakerA.name} & ${speakerB.name} · Missed`}
+                  filename={`owdle-quote-${day}.png`}
+                  surface="round_result"
+                  mode="quote"
+                  dailyId={day}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <div className="flex shrink-0 -space-x-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -436,62 +550,23 @@ export function QuoteGame() {
                   />
                 </div>
                 <div className="flex-1">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                    Solved
+                  <div className="font-display text-2xl text-ink sm:text-3xl">
+                    {speakerA.name} & {speakerB.name}
                   </div>
-                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
-                    {speakerA.name} & {speakerB.name}{" "}
-                    <span className="text-ink-soft">
-                      in {state.guesses.length}
-                    </span>
+                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                    {aRevealed && !bRevealed && (
+                      <>caught Speaker A · missed Speaker B</>
+                    )}
+                    {bRevealed && !aRevealed && (
+                      <>caught Speaker B · missed Speaker A</>
+                    )}
+                    {!aRevealed && !bRevealed && <>missed both speakers</>}
                   </div>
                   <ModeStatsLine mode="quote" />
                 </div>
               </div>
-              <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="quote" scrollIntoViewOnMount={false} />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {lost && !won && (
-          <LossReveal current="quote" scrollIntoViewOnMount={false}>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex shrink-0 -space-x-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={speakerA.portrait}
-                  alt=""
-                  className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-20 sm:w-20"
-                />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={speakerB.portrait}
-                  alt=""
-                  className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-20 sm:w-20"
-                />
-              </div>
-              <div className="flex-1">
-                <div className="font-display text-2xl text-ink sm:text-3xl">
-                  {speakerA.name} & {speakerB.name}
-                </div>
-                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-                  {aRevealed && !bRevealed && (
-                    <>caught Speaker A · missed Speaker B</>
-                  )}
-                  {bRevealed && !aRevealed && (
-                    <>caught Speaker B · missed Speaker A</>
-                  )}
-                  {!aRevealed && !bRevealed && <>missed both speakers</>}
-                </div>
-                <ModeStatsLine mode="quote" />
-              </div>
-            </div>
-          </LossReveal>
-        )}
+            </LossReveal>
+          ))}
       </AnimatePresence>
 
       {/* Aggregated guess history (newest first) */}
@@ -978,5 +1053,66 @@ function ConversationGuessRow({
         ))}
       </div>
     </motion.div>
+  );
+}
+
+// Quote-specific wrapper around DailyCompleteResultCard. Two portraits
+// stack in the summary row to match the live result card and the
+// QuoteShareCard's split visual identity.
+function QuoteDailyComplete({
+  speakerA,
+  speakerB,
+  guesses,
+  outcome,
+  day,
+}: {
+  speakerA: Hero;
+  speakerB: Hero;
+  guesses: number;
+  outcome: "won" | "lost";
+  day: string;
+}) {
+  const summary = (
+    <div className="flex items-center gap-3">
+      <div className="flex shrink-0 -space-x-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={speakerA.portrait}
+          alt=""
+          className="h-12 w-12 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-14 sm:w-14"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={speakerB.portrait}
+          alt=""
+          className="h-12 w-12 rounded-(--radius-card) bg-muted object-cover ring-2 ring-canvas sm:h-14 sm:w-14"
+        />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          Quote {outcome === "won" ? "Solved" : "Missed"}
+        </div>
+        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+          {speakerA.name} &amp; {speakerB.name}
+          {outcome === "won" && (
+            <span className="text-ink-soft"> in {guesses}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+  return (
+    <>
+      <DailyCompleteResultCard
+        mode="quote"
+        guesses={guesses}
+        outcome={outcome}
+        day={day}
+        summary={summary}
+      />
+      <div className="mx-auto mt-8 mb-10 w-full max-w-lg">
+        <TryDeadlockleCard />
+      </div>
+    </>
   );
 }

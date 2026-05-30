@@ -7,10 +7,10 @@ import { NextModeCTA } from "./NextModeCTA";
 
 // Shared "out of guesses" card. Slight red wash + "Better luck tomorrow"
 // eyebrow + caller-supplied reveal content (portrait, name, extras) +
-// the standard NextModeCTA. Each mode renders its own answer details as
-// children so the wrapper doesn't have to know about per-mode reveal
-// shape (Ability has the ability name + description, Splash has the
-// optional skin tag, etc.).
+// the standard NextModeCTA, optionally paired with a share button. Each
+// mode renders its own answer details as children so the wrapper doesn't
+// have to know about per-mode reveal shape (Ability has the ability name
+// + description, Splash has the optional skin tag, etc.).
 //
 // Color tokens: wrong/* (red) chosen over far/* (orange) so the muted
 // loss card reads as a clear miss rather than the bonus-round "off"
@@ -18,10 +18,15 @@ import { NextModeCTA } from "./NextModeCTA";
 export function LossReveal({
   current,
   children,
+  share,
   scrollIntoViewOnMount = true,
 }: {
   current: ModeSlug;
   children: ReactNode;
+  // Optional share button to render alongside NextModeCTA. Each game
+  // constructs its own (with its answer hero), so the wrapper stays
+  // mode-agnostic.
+  share?: ReactNode;
   scrollIntoViewOnMount?: boolean;
 }) {
   return (
@@ -37,11 +42,12 @@ export function LossReveal({
           Better luck tomorrow
         </div>
         {children}
-        <div className="flex justify-center sm:justify-start">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           <NextModeCTA
             current={current}
             scrollIntoViewOnMount={scrollIntoViewOnMount}
           />
+          {share}
         </div>
       </div>
     </motion.div>

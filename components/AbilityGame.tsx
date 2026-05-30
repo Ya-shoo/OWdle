@@ -30,6 +30,13 @@ import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevAbilityPicker } from "./DevAbilityPicker";
+import { ShareButton } from "./ShareButton";
+import { RoundShareCard } from "./ShareCard";
+import { SITE_URL } from "@/lib/site";
+import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
+import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { isDailyComplete } from "@/lib/storage";
+import { BUILT_MODE_SLUGS } from "@/lib/modes";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -271,16 +278,116 @@ export function AbilityGame() {
       )}
 
       <AnimatePresence>
-        {state.won && (
-          <motion.div
-            key="win"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
-          >
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+        {state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "ability",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <AbilityDailyComplete
+              key="win-daily"
+              answer={answer}
+              abilityName={ability.name}
+              guesses={state.guesses.length}
+              outcome="won"
+              day={day}
+            />
+          ) : (
+            <motion.div
+              key="win"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={answer.portrait}
+                    alt=""
+                    className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
+                  />
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                      Solved
+                    </div>
+                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                      {answer.name}'s{" "}
+                      <span className="italic">{ability.name}</span>{" "}
+                      <span className="text-ink-soft">
+                        in {state.guesses.length}
+                      </span>
+                    </div>
+                    <ModeStatsLine mode="ability" />
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  <NextModeCTA current="ability" scrollIntoViewOnMount={false} />
+                  <ShareButton
+                    renderCard={() => (
+                      <RoundShareCard
+                        mode="ability"
+                        answer={answer}
+                        guesses={state.guesses.length}
+                        outcome="won"
+                      />
+                    )}
+                    url={`${SITE_URL}/ability/`}
+                    text={`OWdle Ability · ${answer.name}'s ${ability.name} in ${state.guesses.length}`}
+                    filename={`owdle-ability-${day}.png`}
+                    surface="round_result"
+                    mode="ability"
+                    dailyId={day}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lost &&
+          !state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "ability",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <AbilityDailyComplete
+              key="loss-daily"
+              answer={answer}
+              abilityName={ability.name}
+              guesses={state.guesses.length}
+              outcome="lost"
+              day={day}
+            />
+          ) : (
+            <LossReveal
+              current="ability"
+              scrollIntoViewOnMount={false}
+              share={
+                <ShareButton
+                  renderCard={() => (
+                    <RoundShareCard
+                      mode="ability"
+                      answer={answer}
+                      guesses={state.guesses.length}
+                      outcome="lost"
+                    />
+                  )}
+                  url={`${SITE_URL}/ability/`}
+                  text={`OWdle Ability · ${answer.name}'s ${ability.name} · Missed`}
+                  filename={`owdle-ability-${day}.png`}
+                  surface="round_result"
+                  mode="ability"
+                  dailyId={day}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={answer.portrait}
@@ -288,50 +395,18 @@ export function AbilityGame() {
                   className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                 />
                 <div className="flex-1">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                    Solved
+                  <div className="font-display text-2xl text-ink sm:text-3xl">
+                    {answer.name}'s <span className="italic">{ability.name}</span>
                   </div>
-                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
-                    {answer.name}'s{" "}
-                    <span className="italic">{ability.name}</span>{" "}
-                    <span className="text-ink-soft">
-                      in {state.guesses.length}
-                    </span>
+                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                    after {state.guesses.length} wrong{" "}
+                    {state.guesses.length === 1 ? "guess" : "guesses"}
                   </div>
                   <ModeStatsLine mode="ability" />
                 </div>
               </div>
-              <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="ability" scrollIntoViewOnMount={false} />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {lost && !state.won && (
-          <LossReveal current="ability" scrollIntoViewOnMount={false}>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={answer.portrait}
-                alt=""
-                className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
-              />
-              <div className="flex-1">
-                <div className="font-display text-2xl text-ink sm:text-3xl">
-                  {answer.name}'s <span className="italic">{ability.name}</span>
-                </div>
-                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-                  after {state.guesses.length} wrong{" "}
-                  {state.guesses.length === 1 ? "guess" : "guesses"}
-                </div>
-                <ModeStatsLine mode="ability" />
-              </div>
-            </div>
-          </LossReveal>
-        )}
+            </LossReveal>
+          ))}
       </AnimatePresence>
 
       <div className="space-y-2.5">
@@ -542,5 +617,56 @@ function AbilityArtCard({
         </motion.div>
       )}
     </div>
+  );
+}
+
+// Ability-specific wrapper around DailyCompleteResultCard.
+function AbilityDailyComplete({
+  answer,
+  abilityName,
+  guesses,
+  outcome,
+  day,
+}: {
+  answer: Hero;
+  abilityName: string;
+  guesses: number;
+  outcome: "won" | "lost";
+  day: string;
+}) {
+  const summary = (
+    <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={answer.portrait}
+        alt=""
+        className="h-14 w-14 rounded-(--radius-card) bg-muted object-cover sm:h-16 sm:w-16"
+      />
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          Ability {outcome === "won" ? "Solved" : "Missed"}
+        </div>
+        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+          {answer.name}&apos;s <span className="italic">{abilityName}</span>
+          {outcome === "won" && (
+            <span className="text-ink-soft"> in {guesses}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+  return (
+    <>
+      <DailyCompleteResultCard
+        mode="ability"
+        guesses={guesses}
+        outcome={outcome}
+        day={day}
+        summary={summary}
+      />
+      <div className="mx-auto mt-8 mb-10 w-full max-w-lg">
+        <TryDeadlockleCard />
+      </div>
+    </>
   );
 }

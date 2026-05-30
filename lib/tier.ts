@@ -87,6 +87,20 @@ export type ModeProgress = {
   bonus?: { correct?: boolean | null } | null;
 };
 
+// Attempts a player spent on ONE mode — the "solved in N" number. Counts
+// every slot charged against the cap: real hero guesses PLUS the hidden
+// ones. Sound's skips already sit inside `guesses[]` (a SKIP_MARKER per
+// skip), so they're counted there; Classic keeps hints in a separate
+// `hintsUsed[]`, so we add both. Single source of truth for the result
+// cards, the daily rollup (HomeContent), and the streak summary — and it
+// matches the server-side guesses+hints total used for tiering, so the
+// number a player sees on their card lines up with their daily rank.
+export function modeAttempts(st: ModeProgress | null | undefined): number {
+  const guesses = Array.isArray(st?.guesses) ? st.guesses.length : 0;
+  const hints = Array.isArray(st?.hintsUsed) ? st.hintsUsed.length : 0;
+  return guesses + hints;
+}
+
 // Sum of guesses + Classic hints across the 5 built modes, plus the
 // loss penalty and bonus-question credit decimals. Lower is better.
 // Lost modes contribute their full guess count (which is the cap when
@@ -101,9 +115,7 @@ export function dailyTotal(
   for (const slug of Object.keys(CAPS) as ModeSlug[]) {
     if (slug === "map") continue; // not in BUILT_MODE_SLUGS
     const st = modes[slug];
-    const guesses = Array.isArray(st?.guesses) ? st.guesses.length : 0;
-    const hints = Array.isArray(st?.hintsUsed) ? st.hintsUsed.length : 0;
-    total += guesses + hints;
+    total += modeAttempts(st);
     if (st && st.won !== true) total += LOSS_PENALTY;
     if (st?.bonus?.correct === true) total -= BONUS_QUESTION_CREDIT;
   }

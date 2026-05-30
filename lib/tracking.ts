@@ -174,19 +174,34 @@ export function trackFeedbackOpened(): string | null {
 }
 
 // Fired when a user clicks a share affordance — the Twitter/X intent on
-// the homepage support panel, or the "Copy share text" button on Map
-// mode's result screen. Not idempotent: every click counts, since the
-// same person may re-share or copy-then-tweet. `surface` is where they
-// clicked from; `method` is how the share happens.
+// the homepage support panel, the legacy "Copy share text" button on Map
+// mode's result screen, or the image-share buttons on each round + daily
+// summary. Not idempotent: every click counts, since the same person may
+// re-share or copy-then-tweet. `surface` is where they clicked from;
+// `method` is how the share happens.
 export function trackShareClicked(opts: {
-  surface: "support_panel" | "map_result";
-  method: "twitter_intent" | "clipboard";
+  surface:
+    | "support_panel"
+    | "map_result"
+    | "round_result"
+    | "daily_complete";
+  method:
+    | "twitter_intent"
+    | "clipboard"
+    | "native"
+    | "clipboard-image"
+    | "clipboard-text"
+    | "download"
+    | "canceled"
+    | "error";
   dailyId?: string;
+  mode?: string;
 }): void {
   posthog.capture("share_clicked", {
     surface: opts.surface,
     method: opts.method,
     daily_id: opts.dailyId ?? null,
+    mode: opts.mode ?? null,
   });
 }
 

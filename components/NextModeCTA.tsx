@@ -11,19 +11,17 @@ import {
 } from "@/lib/modes";
 import { dayString } from "@/lib/daily";
 import { loadModeState } from "@/lib/storage";
-import { NextResetCountdown } from "./NextResetCountdown";
-import { StreakBadge } from "./StreakBadge";
-import { TryDeadlockleCard } from "./TryDeadlockleCard";
-import { DailyStatsBand } from "./DailyStatsBand";
-import { DailyTierBadge } from "./DailyTierBadge";
 
 // Primary CTA shown after a mode is solved. Big, filled, with an animated
 // arrow and entrance — the goal is for the player to immediately see that
 // there is a next game in the daily set and tap straight through.
 //
 // Routing rule: walk canonical play order, skip already-finished modes
-// (won or gave up), and recommend the first remaining one. If everything
-// is done, the CTA flips to a "Daily Complete" link back home.
+// (won or gave up), and recommend the first remaining one. When everything
+// is done we render nothing — the parent game has already detected that
+// state via isDailyComplete() and is rendering DailyCompleteResultCard
+// in place of the per-mode result card, which owns the back-to-home
+// affordance, share button, and countdown.
 //
 // We read all mode statuses synchronously in the initial state. This is
 // safe because the parent only mounts NextModeCTA after its own effect
@@ -36,38 +34,18 @@ export function NextModeCTA({
   current: ModeSlug;
   scrollIntoViewOnMount?: boolean;
 }) {
-  const [data] = useState<{
-    next: ModeDef | null;
-    totalGuesses: number;
-    roundGuesses: number;
-  }>(() => {
+  const [next] = useState<ModeDef | null>(() => {
     const day = dayString();
     const done = new Set<ModeSlug>();
-    let totalGuesses = 0;
-    let roundGuesses = 0;
-    // Treat wins, losses, and legacy "Show answer" gives-up as finished
-    // for routing: once the player is done with a mode (any outcome),
-    // looping them back into it isn't helpful. They can still revisit
-    // via the home grid if they want.
     for (const slug of BUILT_MODE_SLUGS) {
       const st = loadModeState(slug, day);
       if (st.won || st.lost || st.gaveUp) done.add(slug);
-      // ConversationState (Quote) shares the same on-disk shape; .length
-      // gives a usable per-mode count for both guess-array variants.
-      const count = Array.isArray(st.guesses) ? st.guesses.length : 0;
-      totalGuesses += count;
-      if (slug === current) roundGuesses = count;
     }
     // Defensive: ensure the just-won mode is treated as done even if the
     // localStorage write hasn't been observed by this read yet.
     done.add(current);
-    return {
-      next: nextUnfinishedMode(current, done),
-      totalGuesses,
-      roundGuesses,
-    };
+    return nextUnfinishedMode(current, done);
   });
-  const next = data.next;
 
   // After a win, the result card sits above an arbitrarily long guess
   // history. On long sessions the CTA can land below the fold without
@@ -100,21 +78,10 @@ export function NextModeCTA({
   }, []);
 
   if (next === null) {
-    return (
-      <motion.div
-        ref={wrapRef}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="block w-full max-w-xl"
-      >
-        <DailyCompletePanel
-          modeCount={BUILT_MODE_SLUGS.length}
-          totalGuesses={data.totalGuesses}
-          roundGuesses={data.roundGuesses}
-        />
-      </motion.div>
-    );
+    // Daily-complete state is handled by DailyCompleteResultCard up the
+    // tree. Render nothing here so we don't double up the back-to-home
+    // affordance or the score recap.
+    return null;
   }
 
   return (
@@ -127,7 +94,7 @@ export function NextModeCTA({
     >
       <Link
         href={`/${next.slug}/`}
-        className="tile-shape group inline-flex items-center gap-3 bg-accent px-6 py-3 shadow-[0_0_24px_-8px_var(--accent)] transition-all hover:bg-accent-soft hover:shadow-[0_0_32px_-6px_var(--accent)] active:scale-[0.98]"
+        className="group inline-flex items-center gap-3 rounded-full bg-accent px-6 py-3 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.3),0_0_4px_-1px_var(--accent)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] hover:bg-accent-soft hover:shadow-[0_3px_8px_-2px_rgba(0,0,0,0.4),0_0_6px_-2px_var(--accent)] active:scale-[0.98]"
       >
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-on-accent/75">
           Up Next
@@ -135,141 +102,7 @@ export function NextModeCTA({
         <span className="font-display text-base font-bold uppercase tracking-wide text-on-accent">
           {next.label}
         </span>
-        <span
-          aria-hidden
-          className="font-display text-base text-on-accent transition-transform group-hover:translate-x-1"
-        >
-          →
-        </span>
       </Link>
     </motion.div>
-  );
-}
-
-// Shown inline when this is the last unfinished mode of the day. The
-// player gets a round-by-round score recap, a 2:15am-Pacific reset
-// countdown, and a sister-site nudge as their next-action prompt.
-function DailyCompletePanel({
-  modeCount,
-  totalGuesses,
-  roundGuesses,
-}: {
-  modeCount: number;
-  totalGuesses: number;
-  roundGuesses: number;
-}) {
-  // This panel always renders nested inside a green win card (or red
-  // LossReveal), so it doesn't need its own border/background — that
-  // would double up the green-on-green nesting. Padding stays minimal;
-  // we lean on the parent card's p-4/p-5 for breathing room.
-  return (
-    <div data-daily-complete className="flex w-full flex-col gap-4">
-      <div className="relative flex flex-col">
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
-          <span aria-hidden>✓</span>
-          Daily Complete
-        </div>
-
-        {/* Score band: round vs total, tabular nums so digits don't jitter. */}
-        <div className="mt-3 grid grid-cols-2 gap-3 border-y border-correct/25 py-3">
-          <Stat
-            label="This round"
-            value={roundGuesses}
-            unit={roundGuesses === 1 ? "guess" : "guesses"}
-          />
-          <Stat
-            label={`Total across ${modeCount} ${modeCount === 1 ? "mode" : "modes"}`}
-            value={totalGuesses}
-            unit={totalGuesses === 1 ? "guess" : "guesses"}
-          />
-        </div>
-
-        {/* Daily sweep stats — pulled from /api/stats/today, hides
-            cleanly when the sample is too small. Renders as a single
-            muted line so it doesn't compete visually with the score
-            band's stat blocks. */}
-        <DailyStatsBand />
-
-        {/* Overwatch rank badge — shown when ≥ 10 finishers exist
-            today (server omits tierCutoffs below that). Headlines the
-            player's daily performance with the official OW rank icon
-            for the percentile band their composite landed in. */}
-        <div className="mt-3">
-          <DailyTierBadge />
-        </div>
-
-        {/* Streak band — only renders when current > 0 (StreakBadge
-            hides itself at 0). Sits between the score band and the
-            "Next puzzle in" countdown so the cadence reads stats →
-            rank → streak → time-to-next. */}
-        <div className="mt-3">
-          <StreakBadge variant="band" />
-        </div>
-
-        <div className="mt-3 flex flex-col items-center gap-1.5 border-b border-correct/25 pb-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
-            Next puzzle in
-          </span>
-          <div className="flex items-center gap-2.5">
-            <LiveDot />
-            <NextResetCountdown
-              label=""
-              className="font-display text-3xl font-semibold tabular-nums leading-none text-accent-soft sm:text-4xl"
-            />
-          </div>
-          <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">
-            Refreshes at 2:15am Pacific
-          </span>
-        </div>
-
-        <div className="mt-3 flex justify-center">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-info underline-offset-4 hover:underline"
-          >
-            ← Back to home
-          </Link>
-        </div>
-      </div>
-
-      {/* The player just cleared every mode for the day, so surfacing the
-          sister site is the natural next-action prompt. Compact variant
-          since this lives inside the max-w-md win card. */}
-      <TryDeadlockleCard compact />
-    </div>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  unit,
-}: {
-  label: string;
-  value: number;
-  unit: string;
-}) {
-  return (
-    <div className="flex flex-col items-center text-center">
-      <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
-        {label}
-      </span>
-      <span className="mt-0.5 font-display text-2xl tabular-nums leading-none text-accent-soft sm:text-3xl">
-        {value}
-      </span>
-      <span className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
-        {unit}
-      </span>
-    </div>
-  );
-}
-
-// Pulsing dot that visually anchors the countdown as something live.
-function LiveDot() {
-  return (
-    <span className="relative inline-flex h-2.5 w-2.5 shrink-0" aria-hidden>
-      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-correct opacity-70" />
-      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-correct" />
-    </span>
   );
 }

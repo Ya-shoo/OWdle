@@ -52,7 +52,7 @@ function FlameIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-type Variant = "header" | "hero" | "band";
+type Variant = "header" | "hero" | "band" | "inline";
 
 export function StreakBadge({ variant }: { variant: Variant }) {
   const streak = useStreak();
@@ -131,6 +131,37 @@ export function StreakBadge({ variant }: { variant: Variant }) {
             </div>
           )}
         </div>
+      </div>
+    );
+  }
+
+  // inline — chrome-less stat cell. No borders / padding, so a caller
+  // can place it side-by-side with another stat inside a shared band
+  // (DailyCompleteResultCard uses this to sit streak next to the total-
+  // guesses figure inside one row instead of two stacked bands).
+  if (variant === "inline") {
+    return (
+      <div
+        className="flex flex-col items-center gap-1 text-center"
+        aria-label={title}
+      >
+        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink-faint">
+          Streak
+        </span>
+        <div className="flex items-baseline gap-2 text-accent">
+          <FlameIcon size={20} />
+          <span className="font-display text-3xl font-extrabold tabular-nums leading-none sm:text-4xl">
+            {streak.current}
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+            {streak.current === 1 ? "day" : "days"}
+          </span>
+        </div>
+        {streak.longest > streak.current && (
+          <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
+            Best: <span className="tabular-nums">{streak.longest}</span>
+          </span>
+        )}
       </div>
     );
   }

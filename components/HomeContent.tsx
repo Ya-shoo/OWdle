@@ -18,12 +18,22 @@ import { RequestNextGame } from "./RequestNextGame";
 import { StreakBadge } from "./StreakBadge";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { ShareButton } from "./ShareButton";
+import { DailyShareCard, type DailyModeResult } from "./ShareCard";
+import { modeAttempts } from "@/lib/tier";
+import { SITE_URL } from "@/lib/site";
 
 type Status = {
   won: boolean;
   lost: boolean;
   gaveUp: boolean;
   guesses: number;
+  // Classic-only: hints consumed this round. Other modes always 0.
+  // Surfaces in the daily share image's tally line.
+  hints: number;
+  // Sound-only: skip-turn count (filtered from guesses[] via the
+  // __skip__ sentinel). Other modes always 0.
+  skips: number;
 };
 type StatusMap = Partial<Record<ModeSlug, Status>>;
 
@@ -41,7 +51,12 @@ export function HomeContent() {
         won: st.won,
         lost: st.lost === true,
         gaveUp: st.gaveUp === true,
-        guesses: st.guesses.length,
+        // Slots spent, not just hero picks: counts Sound skips (already in
+        // guesses[]) and Classic hints (separate hintsUsed[]) so the daily
+        // rollup + share card match each round's "in N" and the tier total.
+        guesses: modeAttempts(st),
+        hints: st.hintsUsed?.length ?? 0,
+        skips: st.guesses.filter((g) => g === "__skip__").length,
       };
     }
     setStatuses(map);
@@ -78,6 +93,7 @@ export function HomeContent() {
               wonCount={wonCount}
               lostCount={lostCount}
               totalGuesses={totalGuesses}
+              statuses={statuses}
             />
           ) : (
             <DefaultHero day={day} />
@@ -245,14 +261,36 @@ function DailyCompleteHero({
   wonCount,
   lostCount,
   totalGuesses,
+  statuses,
 }: {
   day: string;
   count: number;
   wonCount: number;
   lostCount: number;
   totalGuesses: number;
+  statuses: StatusMap;
 }) {
   const sweep = wonCount === count;
+  // Per-mode rollup for the shareable card. Same order as BUILT_MODE_SLUGS
+  // so the row order on the image matches the modes grid below the hero.
+  const results: DailyModeResult[] = BUILT_MODE_SLUGS.map((slug) => {
+    const st = statuses[slug];
+    const won = st?.won === true;
+    const lost = st?.lost === true || st?.gaveUp === true;
+    return {
+      slug,
+      outcome: won ? "won" : lost ? "lost" : "pending",
+      guesses: st?.guesses ?? 0,
+    };
+  });
+  const totalHints = BUILT_MODE_SLUGS.reduce(
+    (sum, s) => sum + (statuses[s]?.hints ?? 0),
+    0,
+  );
+  const totalSkips = BUILT_MODE_SLUGS.reduce(
+    (sum, s) => sum + (statuses[s]?.skips ?? 0),
+    0,
+  );
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -293,8 +331,29 @@ function DailyCompleteHero({
             </>
           )}
         </p>
-        <div className="mt-4 flex justify-center sm:justify-start">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           <StreakBadge variant="hero" />
+          <ShareButton
+            renderCard={() => (
+              <DailyShareCard
+                day={day}
+                results={results}
+                totalHints={totalHints}
+                totalSkips={totalSkips}
+              />
+            )}
+            url={SITE_URL}
+            text={
+              sweep
+                ? `OWdle · Swept all ${count} modes in ${totalGuesses} guesses`
+                : `OWdle · ${wonCount}/${count} in ${totalGuesses} guesses`
+            }
+            filename={`owdle-daily-${day}.png`}
+            surface="daily_complete"
+            dailyId={day}
+            variant="soft"
+            label="Share results"
+          />
         </div>
       </div>
     </motion.div>

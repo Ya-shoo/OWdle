@@ -21,6 +21,14 @@ import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
+import { ShareButton } from "./ShareButton";
+import { RoundShareCard } from "./ShareCard";
+import { SITE_URL } from "@/lib/site";
+import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
+import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { isDailyComplete } from "@/lib/storage";
+import { BUILT_MODE_SLUGS } from "@/lib/modes";
+import type { Skin } from "@/lib/heroes";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -223,16 +231,140 @@ export function SplashGame() {
       )}
 
       <AnimatePresence>
-        {state.won && (
-          <motion.div
-            key="win"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
-          >
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+        {state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "splash",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <SplashDailyComplete
+              key="win-daily"
+              answer={answer}
+              skin={skin}
+              guesses={state.guesses.length}
+              outcome="won"
+              day={day}
+            />
+          ) : (
+            <motion.div
+              key="win"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={answer.portrait}
+                    alt=""
+                    className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
+                  />
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                      Solved
+                    </div>
+                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                      {answer.name}{" "}
+                      <span className="text-ink-soft">
+                        in {state.guesses.length}
+                      </span>
+                    </div>
+                    {skin && (
+                      <div className="mt-2 flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] sm:justify-start">
+                        <span
+                          className={
+                            skin.rarity === "legendary"
+                              ? "text-accent-soft"
+                              : "text-info"
+                          }
+                        >
+                          {skin.rarity}
+                        </span>
+                        <span className="text-ink-soft">·</span>
+                        <span className="text-ink">{skin.name}</span>
+                      </div>
+                    )}
+                    <ModeStatsLine mode="splash" />
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  <NextModeCTA current="splash" scrollIntoViewOnMount={false} />
+                  <ShareButton
+                    renderCard={() => (
+                      <RoundShareCard
+                        mode="splash"
+                        answer={answer}
+                        guesses={state.guesses.length}
+                        outcome="won"
+                        skin={skin}
+                      />
+                    )}
+                    url={`${SITE_URL}/splash/`}
+                    text={
+                      skin
+                        ? `OWdle Spotlight · ${answer.name} (${skin.name}) in ${state.guesses.length}`
+                        : `OWdle Spotlight · ${answer.name} in ${state.guesses.length}`
+                    }
+                    filename={`owdle-splash-${day}.png`}
+                    surface="round_result"
+                    mode="splash"
+                    dailyId={day}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lost &&
+          !state.won &&
+          (isDailyComplete({
+            day,
+            currentMode: "splash",
+            currentDone: true,
+            builtSlugs: BUILT_MODE_SLUGS,
+          }) ? (
+            <SplashDailyComplete
+              key="loss-daily"
+              answer={answer}
+              skin={skin}
+              guesses={state.guesses.length}
+              outcome="lost"
+              day={day}
+            />
+          ) : (
+            <LossReveal
+              current="splash"
+              scrollIntoViewOnMount={false}
+              share={
+                <ShareButton
+                  renderCard={() => (
+                    <RoundShareCard
+                      mode="splash"
+                      answer={answer}
+                      guesses={state.guesses.length}
+                      outcome="lost"
+                      skin={skin}
+                    />
+                  )}
+                  url={`${SITE_URL}/splash/`}
+                  text={
+                    skin
+                      ? `OWdle Spotlight · ${answer.name} (${skin.name}) · Missed`
+                      : `OWdle Spotlight · ${answer.name} · Missed`
+                  }
+                  filename={`owdle-splash-${day}.png`}
+                  surface="round_result"
+                  mode="splash"
+                  dailyId={day}
+                />
+              }
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={answer.portrait}
@@ -240,17 +372,11 @@ export function SplashGame() {
                   className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                 />
                 <div className="flex-1">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                    Solved
-                  </div>
-                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
-                    {answer.name}{" "}
-                    <span className="text-ink-soft">
-                      in {state.guesses.length}
-                    </span>
+                  <div className="font-display text-2xl text-ink sm:text-3xl">
+                    {answer.name}
                   </div>
                   {skin && (
-                    <div className="mt-2 flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] sm:justify-start">
+                    <div className="mt-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em]">
                       <span
                         className={
                           skin.rarity === "legendary"
@@ -264,55 +390,15 @@ export function SplashGame() {
                       <span className="text-ink">{skin.name}</span>
                     </div>
                   )}
+                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                    after {state.guesses.length} wrong{" "}
+                    {state.guesses.length === 1 ? "guess" : "guesses"}
+                  </div>
                   <ModeStatsLine mode="splash" />
                 </div>
               </div>
-              <div className="flex justify-center sm:justify-start">
-                <NextModeCTA current="splash" scrollIntoViewOnMount={false} />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {lost && !state.won && (
-          <LossReveal current="splash" scrollIntoViewOnMount={false}>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={answer.portrait}
-                alt=""
-                className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
-              />
-              <div className="flex-1">
-                <div className="font-display text-2xl text-ink sm:text-3xl">
-                  {answer.name}
-                </div>
-                {skin && (
-                  <div className="mt-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em]">
-                    <span
-                      className={
-                        skin.rarity === "legendary"
-                          ? "text-accent-soft"
-                          : "text-info"
-                      }
-                    >
-                      {skin.rarity}
-                    </span>
-                    <span className="text-ink-soft">·</span>
-                    <span className="text-ink">{skin.name}</span>
-                  </div>
-                )}
-                <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-                  after {state.guesses.length} wrong{" "}
-                  {state.guesses.length === 1 ? "guess" : "guesses"}
-                </div>
-                <ModeStatsLine mode="splash" />
-              </div>
-            </div>
-          </LossReveal>
-        )}
+            </LossReveal>
+          ))}
       </AnimatePresence>
 
       <div className="space-y-4">
@@ -387,5 +473,73 @@ function SplashFrame({
         />
       </div>
     </div>
+  );
+}
+
+// Splash-specific wrapper around DailyCompleteResultCard. Owns the
+// mode-specific confirmation row (with optional skin rarity + name)
+// and the TryDeadlockleCard sibling.
+function SplashDailyComplete({
+  answer,
+  skin,
+  guesses,
+  outcome,
+  day,
+}: {
+  answer: Hero;
+  skin: Skin | null;
+  guesses: number;
+  outcome: "won" | "lost";
+  day: string;
+}) {
+  const summary = (
+    <div className="flex items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={answer.portrait}
+        alt=""
+        className="h-14 w-14 rounded-(--radius-card) bg-muted object-cover sm:h-16 sm:w-16"
+      />
+      <div className="min-w-0 flex-1">
+        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          Spotlight {outcome === "won" ? "Solved" : "Missed"}
+        </div>
+        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+          {answer.name}
+          {outcome === "won" && (
+            <span className="text-ink-soft"> in {guesses}</span>
+          )}
+        </div>
+        {skin && (
+          <div className="mt-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
+            <span
+              className={
+                skin.rarity === "legendary"
+                  ? "text-accent-soft"
+                  : "text-info"
+              }
+            >
+              {skin.rarity}
+            </span>
+            <span className="text-ink-soft">·</span>
+            <span className="text-ink">{skin.name}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+  return (
+    <>
+      <DailyCompleteResultCard
+        mode="splash"
+        guesses={guesses}
+        outcome={outcome}
+        day={day}
+        summary={summary}
+      />
+      <div className="mx-auto mt-8 mb-10 w-full max-w-lg">
+        <TryDeadlockleCard />
+      </div>
+    </>
   );
 }
