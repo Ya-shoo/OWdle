@@ -8,6 +8,8 @@ import {
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { FeedbackButton } from "@/components/FeedbackButton";
+import { DevThemeSwitcher } from "@/components/DevThemeSwitcher";
+import { THEME_INLINE_SCRIPT } from "@/lib/theme";
 import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_KEYWORDS,
@@ -104,11 +106,18 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${saira.variable} ${plexSans.variable} ${plexMono.variable} ${bricolage.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: THEME_INLINE_SCRIPT }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <Header />
         {children}
         <FeedbackButton />
+        <DevThemeSwitcher />
       </body>
     </html>
   );

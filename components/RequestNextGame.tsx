@@ -40,6 +40,43 @@ const SEARCH_DEBOUNCE_MS = 250;
 const PLACEHOLDER_IMG =
   "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
 
+// Dev-only stub for the leaderboard. /api/leaderboard is served by a
+// Cloudflare Pages Function that doesn't run under `next dev`, so locally
+// the panel sits in the empty state. The NODE_ENV check is replaced at
+// build time and this constant is tree-shaken from the prod bundle.
+const DEV_STUB_LEADERBOARD: LeaderEntry[] = [
+  {
+    game_id: "dev-stub-1",
+    game_name: "Minecraft",
+    game_image: "https://picsum.photos/seed/owdle-stub-mc/640/280",
+    game_released: "2011-11-18",
+  },
+  {
+    game_id: "dev-stub-2",
+    game_name: "Baldur's Gate III",
+    game_image: "https://picsum.photos/seed/owdle-stub-bg3/520/220",
+    game_released: "2023-08-03",
+  },
+  {
+    game_id: "dev-stub-3",
+    game_name: "Honkai: Star Rail",
+    game_image: "https://picsum.photos/seed/owdle-stub-hsr/520/220",
+    game_released: "2023-04-26",
+  },
+  {
+    game_id: "dev-stub-4",
+    game_name: "Cookie Clicker",
+    game_image: "https://picsum.photos/seed/owdle-stub-cc/520/220",
+    game_released: "2013-08-08",
+  },
+  {
+    game_id: "dev-stub-5",
+    game_name: "Genshin Impact",
+    game_image: "https://picsum.photos/seed/owdle-stub-gi/520/220",
+    game_released: "2020-09-28",
+  },
+];
+
 function loadVoted(): string[] {
   if (typeof window === "undefined") return [];
   try {
@@ -120,16 +157,19 @@ export function RequestNextGame() {
   // Cache-bust the leaderboard fetch so a successful submit always shows
   // the user's pick reflected immediately, bypassing the 30s edge cache.
   const loadLeaderboard = useCallback(async () => {
+    const devFallback =
+      process.env.NODE_ENV === "development" ? DEV_STUB_LEADERBOARD : [];
     try {
       const res = await fetch(`/api/leaderboard?t=${Date.now()}`);
       if (!res.ok) {
-        setLeaderboard([]);
+        setLeaderboard(devFallback);
         return;
       }
       const data = (await res.json()) as { results?: LeaderEntry[] };
-      setLeaderboard(data.results ?? []);
+      const results = data.results ?? [];
+      setLeaderboard(results.length === 0 ? devFallback : results);
     } catch {
-      setLeaderboard([]);
+      setLeaderboard(devFallback);
     }
   }, []);
 
@@ -300,17 +340,14 @@ export function RequestNextGame() {
             <h3 className="mt-1.5 font-soft text-lg font-bold text-ink sm:text-xl">
               Which game should I work on next?
             </h3>
-            <p className="mt-1.5 text-sm text-ink-soft">
-              Search any game and vote. The most requested ones get built.
-            </p>
             {refreshIn ? (
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+              <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
                 Vote again in{" "}
                 <span className="tabular-nums text-info">{refreshIn}</span>
               </p>
             ) : null}
 
-            <div className="relative mt-3.5">
+            <div className="relative mt-3">
               <div
                 className={clsx(
                   "flex items-stretch border transition-colors",
@@ -353,7 +390,7 @@ export function RequestNextGame() {
                       ? `${listboxId}-${results[activeIndex].id}`
                       : undefined
                   }
-                  className="flex-1 bg-transparent px-4 py-2.5 font-sans text-base text-ink placeholder:text-ink-faint disabled:opacity-50"
+                  className="flex-1 bg-transparent px-3.5 py-1.5 font-sans text-sm text-ink placeholder:text-ink-faint disabled:opacity-50"
                 />
                 {selected ? (
                   <button
@@ -369,6 +406,27 @@ export function RequestNextGame() {
                     …
                   </span>
                 ) : null}
+                <button
+                  type="button"
+                  onClick={submit}
+                  disabled={
+                    !selected ||
+                    status.tag === "submitting" ||
+                    (selected && voted.includes(selected.id))
+                  }
+                  className={clsx(
+                    "my-1 mr-1 inline-flex shrink-0 self-center items-center rounded-full px-3 py-1 font-soft text-xs font-bold transition-colors duration-150",
+                    selected && !voted.includes(selected.id)
+                      ? "bg-accent text-on-accent shadow-md shadow-accent/25 hover:bg-accent-soft"
+                      : "cursor-not-allowed border border-line bg-canvas/60 text-ink-faint",
+                  )}
+                >
+                  {status.tag === "submitting"
+                    ? "Sending…"
+                    : selected && voted.includes(selected.id)
+                      ? "Already voted"
+                      : "Submit vote"}
+                </button>
               </div>
 
               {open && !selected && results.length > 0 ? (
@@ -429,34 +487,11 @@ export function RequestNextGame() {
               ) : null}
             </div>
 
-            <div className="mt-3.5 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={submit}
-                disabled={
-                  !selected ||
-                  status.tag === "submitting" ||
-                  (selected && voted.includes(selected.id))
-                }
-                className={clsx(
-                  "inline-flex items-center gap-2 rounded-full px-5 py-2 font-soft text-sm font-bold transition-all duration-150",
-                  selected && !voted.includes(selected.id)
-                    ? "bg-accent text-on-accent shadow-lg shadow-accent/25 hover:bg-accent-soft hover:-translate-y-0.5"
-                    : "cursor-not-allowed border border-line bg-canvas text-ink-faint",
-                )}
-              >
-                {status.tag === "submitting"
-                  ? "Sending…"
-                  : selected && voted.includes(selected.id)
-                    ? "Already voted"
-                    : "Submit vote →"}
-              </button>
-              {status.tag === "error" ? (
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-far">
-                  {status.message}
-                </span>
-              ) : null}
-            </div>
+            {status.tag === "error" ? (
+              <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-[0.2em] text-far">
+                {status.message}
+              </p>
+            ) : null}
           </>
         )}
 
@@ -472,20 +507,20 @@ export function RequestNextGame() {
 // enough to read the game's cover art at a glance.
 function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
   return (
-    <div className="mt-5 border-t border-line pt-4">
+    <div className="mt-4 border-t border-line pt-3">
       <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
         Current top picks
       </p>
       {data === null ? (
-        <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+        <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
           Loading…
         </p>
       ) : data.length === 0 ? (
-        <p className="mt-3 text-sm text-ink-soft">
+        <p className="mt-2 text-sm text-ink-soft">
           No votes yet. Be the first to weigh in.
         </p>
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-2 grid grid-cols-2 gap-1.5 px-6">
           {data.map((g, i) => (
             <PickCard
               key={g.game_id}
@@ -520,7 +555,7 @@ function PickCard({
         hero && "col-span-2",
       )}
     >
-      <div className={clsx("relative", hero ? "aspect-[2.4/1]" : "aspect-video")}>
+      <div className={clsx("relative", hero ? "aspect-[3.3/1]" : "aspect-[2.5/1]")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={entry.game_image ?? PLACEHOLDER_IMG}
@@ -551,8 +586,8 @@ function PickCard({
 
         <p
           className={clsx(
-            "absolute inset-x-0 bottom-0 truncate px-3 py-2 font-display text-ink",
-            hero ? "text-lg sm:text-xl" : "text-sm",
+            "absolute inset-x-0 bottom-0 truncate px-3 py-1.5 font-display text-ink",
+            hero ? "text-base sm:text-lg" : "text-xs sm:text-sm",
           )}
         >
           {entry.game_name}

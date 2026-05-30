@@ -107,24 +107,26 @@ export function HomeContent() {
         </ul>
       </section>
 
-      {/* Sister-site card — sits between modes grid and engagement strip */}
-      <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
-        <TryDeadlockleCard />
-      </section>
-
       {/* Engagement strip: vote on next game + tip jar in one row.
-          60/40 split (3:2 grid) — vote gets a touch more horizontal room
-          since it's the more interactive ask. Single vertical hairline
-          divider between the two columns. */}
-      <section className="mx-auto max-w-6xl border-t border-line px-6 pt-12 pb-20 sm:pt-14">
-        <div className="grid gap-y-14 md:grid-cols-5 md:gap-y-0 md:divide-x md:divide-line">
-          <div className="md:col-span-3 md:pr-10 lg:pr-14">
+          54/46 split — vote keeps a slight horizontal lead since it's the
+          more interactive ask, but the column is trimmed so the leaderboard
+          tiles read at a comfortable size. Single vertical hairline divider
+          between the two columns. */}
+      <section className="mx-auto max-w-6xl border-t border-line px-6 pt-7 pb-12 sm:pt-8">
+        <div className="grid gap-y-14 md:grid-cols-[54fr_46fr] md:gap-y-0 md:divide-x md:divide-line">
+          <div className="md:pr-10 lg:pr-14">
             <RequestNextGame />
           </div>
-          <div className="md:col-span-2 md:pl-10 lg:pl-14">
+          <div className="md:pl-10 lg:pl-14">
             <SupportLinks />
           </div>
         </div>
+      </section>
+
+      {/* Sister-site card — sits beneath the engagement strip as a softer
+          outbound suggestion once the primary asks have been made. */}
+      <section className="mx-auto max-w-6xl px-6 pb-20 pt-4">
+        <TryDeadlockleCard />
       </section>
 
       <footer className="border-t border-line bg-inset/40">
@@ -192,7 +194,7 @@ function DefaultHero({ day }: { day: string | null }) {
           className="font-mono text-xs font-medium uppercase tracking-[0.22em] text-accent-soft transition-colors hover:text-accent"
           style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.4)" }}
         >
-          First time? How to play →
+          How to play →
         </Link>
       </div>
     </div>
@@ -211,24 +213,14 @@ function BeginButton() {
       className="begin-cta group relative inline-flex"
       aria-label="Begin"
     >
-      {/* outer warm bloom — pulses gently while hovered (see globals.css
-          .begin-cta rule). Tuned warmer/stronger than the old dark-body
-          halo since it now reinforces an already-bright body. */}
+      {/* button body — solid accent pill. Dark cast shadow underneath
+          for tactility; the orange rim is kept tight so it hugs the
+          edge rather than blooming outward. Hover scales the button up
+          (no Y-lift) so the affordance is "growth toward you" rather
+          than "lift off the page". Active dips below rest for a click
+          press-down feel. */}
       <span
-        aria-hidden
-        className="begin-halo pointer-events-none absolute -inset-1.5 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
-        style={{ background: "rgba(242, 101, 34, 0.6)" }}
-      />
-
-      {/* button body — solid accent panel with cut top-right + bottom-left
-          corners. Constant base glow keeps it feeling "live" at rest;
-          shifts to accent-soft + lift on hover. */}
-      <span
-        className="relative inline-flex items-center gap-4 bg-accent px-10 py-5 font-display text-lg font-bold uppercase tracking-[0.18em] text-on-accent shadow-[0_0_20px_-6px_var(--accent)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:bg-accent-soft group-hover:shadow-[0_0_24px_-6px_var(--accent)] group-active:translate-y-0"
-        style={{
-          clipPath:
-            "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))",
-        }}
+        className="relative inline-flex items-center gap-4 rounded-full bg-accent px-7 py-5 font-display text-lg font-bold uppercase tracking-[0.18em] text-on-accent shadow-[0_2px_6px_-1px_rgba(0,0,0,0.4),0_0_4px_-1px_var(--accent)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-hover:bg-accent-soft group-hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.45),0_0_6px_-2px_var(--accent)] group-active:scale-[0.98] group-active:shadow-[0_1px_3px_-1px_rgba(0,0,0,0.35),0_0_2px_-1px_var(--accent)]"
       >
         {/* leading triangle — dark, matches label */}
         <svg
@@ -242,24 +234,6 @@ function BeginButton() {
         </svg>
 
         <span>Begin</span>
-
-        {/* trailing arrow */}
-        <svg
-          aria-hidden
-          width="18"
-          height="12"
-          viewBox="0 0 18 12"
-          className="shrink-0 text-on-accent transition-transform duration-200 group-hover:translate-x-1"
-        >
-          <path
-            d="M0 6 L16 6 M11 1 L17 6 L11 11"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-          />
-        </svg>
       </span>
     </Link>
   );
@@ -319,7 +293,7 @@ function DailyCompleteHero({
             </>
           )}
         </p>
-        <div className="flex justify-center sm:justify-start">
+        <div className="mt-4 flex justify-center sm:justify-start">
           <StreakBadge variant="hero" />
         </div>
       </div>
