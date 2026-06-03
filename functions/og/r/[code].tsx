@@ -501,23 +501,13 @@ function ModeChip({
           }}
         >
           <svg width={26} height={26} viewBox="0 0 26 26">
-            {won ? (
-              <path
-                d="M5 14 L11 20 L22 7"
-                fill="none"
-                stroke={tone.fg}
-                strokeWidth="3.4"
-                strokeLinecap="square"
-              />
-            ) : (
-              <path
-                d="M6 6 L20 20 M20 6 L6 20"
-                fill="none"
-                stroke={tone.fg}
-                strokeWidth="3"
-                strokeLinecap="square"
-              />
-            )}
+            <path
+              d={won ? "M5 14 L11 20 L22 7" : "M6 6 L20 20 M20 6 L6 20"}
+              fill="none"
+              stroke={tone.fg}
+              strokeWidth={won ? 3.4 : 3}
+              strokeLinecap="square"
+            />
           </svg>
         </div>
         <span
