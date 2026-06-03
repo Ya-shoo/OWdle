@@ -14,7 +14,6 @@ import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_KEYWORDS,
   SITE_NAME,
-  SITE_TAGLINE,
   SITE_URL,
 } from "@/lib/site";
 
@@ -49,7 +48,7 @@ const bricolage = Bricolage_Grotesque({
   weight: ["600", "700", "800"],
 });
 
-const homeTitle = `${SITE_NAME} — ${SITE_TAGLINE}`;
+const homeTitle = `${SITE_NAME} — the daily Overwatch quiz`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -202,7 +202,7 @@ function DefaultHero({ day }: { day: string | null }) {
       </div>
       <Brand as="h1" size="2xl" className="mt-6 leading-[0.95]" />
       <p className="mt-6 max-w-xl text-lg text-ink-soft">
-        A daily Overwatch hero quiz.
+        Your daily Overwatch guessing game
       </p>
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <BeginButton />

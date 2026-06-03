@@ -83,6 +83,7 @@ const jsonLd = {
       "@id": `${SITE_URL}/#publisher`,
       name: SITE_NAME,
       url: SITE_URL,
+      sameAs: ["https://ko-fi.com/yushoo"],
     },
     {
       "@type": "ItemList",
