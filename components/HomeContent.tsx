@@ -22,6 +22,7 @@ import { ShareButton } from "./ShareButton";
 import { DailyShareCard, type DailyModeResult } from "./ShareCard";
 import { modeAttempts } from "@/lib/tier";
 import { SITE_URL } from "@/lib/site";
+import { encodeResults } from "@/lib/shareUrl";
 
 type Status = {
   won: boolean;
@@ -342,7 +343,21 @@ function DailyCompleteHero({
                 totalSkips={totalSkips}
               />
             )}
-            url={SITE_URL}
+            // Personalized share link — unfurls in chat to a per-player
+            // DailyShareCard preview via the /r/[code] Pages Function.
+            url={(() => {
+              const completed = results.filter(
+                (r) => r.outcome !== "pending",
+              ) as { slug: typeof results[number]["slug"]; outcome: "won" | "lost"; guesses: number }[];
+              if (completed.length === 0) return SITE_URL;
+              const { code } = encodeResults({
+                day,
+                results: completed,
+                hints: totalHints,
+                skips: totalSkips,
+              });
+              return `${SITE_URL}/r/${code}/`;
+            })()}
             text={
               sweep
                 ? `OWdle · Swept all ${count} modes in ${totalGuesses} guesses`

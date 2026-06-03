@@ -7,6 +7,7 @@ import { type ModeSlug, BUILT_MODE_SLUGS } from "@/lib/modes";
 import { loadModeState } from "@/lib/storage";
 import { prettyDay } from "@/lib/daily";
 import { SITE_URL } from "@/lib/site";
+import { encodeResults } from "@/lib/shareUrl";
 import { DailyStatsBand } from "./DailyStatsBand";
 import { DailyTierBadge } from "./DailyTierBadge";
 import { StreakBadge } from "./StreakBadge";
@@ -213,7 +214,23 @@ export function DailyCompleteResultCard({
             totalSkips={totalSkips}
           />
         )}
-        url={SITE_URL}
+        // Personalized share link — unfurls in Discord/iMessage/etc to
+        // the per-player DailyShareCard via the /r/[code] route. Filter
+        // pending entries (shouldn't exist post-completion but the type
+        // allows them) before encoding so the URL is well-formed.
+        url={(() => {
+          const completed = results.filter(
+            (r) => r.outcome !== "pending",
+          ) as { slug: typeof results[number]["slug"]; outcome: "won" | "lost"; guesses: number }[];
+          if (completed.length === 0) return SITE_URL;
+          const { code } = encodeResults({
+            day,
+            results: completed,
+            hints: totalHints,
+            skips: totalSkips,
+          });
+          return `${SITE_URL}/r/${code}/`;
+        })()}
         text={
           sweep
             ? `OWdle · Swept all ${results.length} modes in ${totalGuesses} guesses`
