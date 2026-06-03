@@ -58,25 +58,17 @@ export const onRequestGet: Handler = async ({ params }) => {
   const sweep = wonCount === decoded.results.length;
   const dateLabel = formatDate(decoded.date);
 
-  // Subset Google Fonts to just the characters we'll render. Cuts the
-  // font payload from ~80KB → ~5KB and shaves latency on cold loads.
-  const fontText = [
-    "OWdle",
-    dateLabel,
-    "Daily complete",
-    "guesses",
-    "guess",
-    "missed",
-    "hints",
-    "hint",
-    "skips",
-    "skip",
-    "playowdle.com",
-    "/",
-    ...Object.values(MODE_LABEL),
-    "0123456789",
-    "✓ ✕",
-  ].join("");
+  // Subset Google Fonts to just the characters we'll render. Includes
+  // both casings + the special glyphs we draw inline (checkmark, ✕).
+  // The lowercase/uppercase split matters because the OG uses literal
+  // "DAILY COMPLETE", "MAY 29, 2026" strings — `textTransform:
+  // uppercase` doesn't change which glyphs Satori asks for at load
+  // time, so missing the caps yields tofu boxes.
+  const fontText =
+    "OWdleabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+    "0123456789 ,.:·-/&✓✕" +
+    dateLabel +
+    Object.values(MODE_LABEL).join("");
 
   const [bricolageBold, bricolageMedium, plexMono, sairaMedium] =
     await Promise.all([
@@ -368,17 +360,25 @@ export const onRequestGet: Handler = async ({ params }) => {
 
         {/* Mode breakdown — top row of 3, bottom row of 2 centered.
             Flex is sufficient since each chip uses a fixed width keyed
-            to the card's content area. */}
+            to the card's content area. The outer column needs an
+            explicit full width so the inner rows can center within it. */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             marginTop: 32,
+            width: "100%",
           }}
         >
           <ModeRowFlex chips={topRow} />
           {bottomRow.length > 0 && (
-            <div style={{ display: "flex", marginTop: 14 }}>
+            <div
+              style={{
+                display: "flex",
+                marginTop: 14,
+                width: "100%",
+              }}
+            >
               <ModeRowFlex chips={bottomRow} centered />
             </div>
           )}
@@ -444,6 +444,7 @@ function ModeRowFlex({
     <div
       style={{
         display: "flex",
+        width: "100%",
         justifyContent: centered ? "center" : "flex-start",
       }}
     >
@@ -486,18 +487,39 @@ function ModeChip({
       }}
     >
       <div style={{ display: "flex", alignItems: "center" }}>
-        <span
+        {/* Icon as inline SVG, not text. Bricolage Grotesque doesn't
+            ship ✓ / ✕ glyphs so the text path falls back to system
+            fonts which Satori renders as bare letters (a V, an X). */}
+        <div
           style={{
             display: "flex",
-            fontFamily: "Bricolage Grotesque",
-            fontWeight: 800,
-            fontSize: 28,
-            color: tone.fg,
+            width: 28,
+            height: 28,
+            alignItems: "center",
+            justifyContent: "center",
             marginRight: 10,
           }}
         >
-          {won ? "✓" : "✕"}
-        </span>
+          <svg width={26} height={26} viewBox="0 0 26 26">
+            {won ? (
+              <path
+                d="M5 14 L11 20 L22 7"
+                fill="none"
+                stroke={tone.fg}
+                strokeWidth="3.4"
+                strokeLinecap="square"
+              />
+            ) : (
+              <path
+                d="M6 6 L20 20 M20 6 L6 20"
+                fill="none"
+                stroke={tone.fg}
+                strokeWidth="3"
+                strokeLinecap="square"
+              />
+            )}
+          </svg>
+        </div>
         <span
           style={{
             display: "flex",
@@ -520,7 +542,7 @@ function ModeChip({
           letterSpacing: "0.06em",
         }}
       >
-        {won ? result.guesses : "✕"}
+        {won ? result.guesses : "—"}
       </span>
     </div>
   );
