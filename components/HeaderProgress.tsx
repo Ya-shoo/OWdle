@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { dayString } from "@/lib/daily";
 import { loadModeState } from "@/lib/storage";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
-import { StreakBadge } from "./StreakBadge";
+import { StreakRankBadge } from "./StreakRankBadge";
 
 type ModeStatus = "won" | "lost" | "open";
 
@@ -74,7 +74,7 @@ export function HeaderProgress() {
       title={title}
       aria-label={title}
     >
-      <StreakBadge variant="header" />
+      <StreakRankBadge />
       <span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-info sm:inline">
         {doneCount} / {total}
       </span>

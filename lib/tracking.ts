@@ -184,7 +184,8 @@ export function trackShareClicked(opts: {
     | "support_panel"
     | "map_result"
     | "round_result"
-    | "daily_complete";
+    | "daily_complete"
+    | "streak_rank";
   method:
     | "twitter_intent"
     | "clipboard"
@@ -202,6 +203,22 @@ export function trackShareClicked(opts: {
     method: opts.method,
     daily_id: opts.dailyId ?? null,
     mode: opts.mode ?? null,
+  });
+}
+
+// Fired once when a player is promoted to a new, higher streak-rank tier
+// (Grandmaster → Champion → Top 500). StreakRankBadge gates this behind a
+// persistent localStorage ratchet, so it fires at most once per tier ever
+// reached — no per-day dedup needed here.
+export function trackStreakRankPromoted(opts: {
+  tier: "top500" | "champion" | "grandmaster";
+  streak: number;
+  poolN: number;
+}): void {
+  posthog.capture("streak_rank_promoted", {
+    tier: opts.tier,
+    streak: opts.streak,
+    pool_n: opts.poolN,
   });
 }
 

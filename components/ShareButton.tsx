@@ -34,7 +34,7 @@ type Props = {
   url: string;
   text: string;
   filename: string;
-  surface: "round_result" | "daily_complete";
+  surface: "round_result" | "daily_complete" | "streak_rank";
   mode?: ModeSlug;
   dailyId: string;
   variant?: "primary" | "soft";

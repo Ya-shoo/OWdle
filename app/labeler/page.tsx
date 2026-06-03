@@ -92,6 +92,12 @@ const TOOL_GROUPS: ReadonlyArray<{
         description:
           "All 7 Overwatch rank badges + an editable 4/5 composite calculator that renders the resulting tier. Synthetic cutoffs; no /api/stats/today dependency.",
       },
+      {
+        href: "/labeler/streak-rank-preview/",
+        label: "Streak rank preview",
+        description:
+          "Top 500 / Champion / Grandmaster streak badges, the header pill, the promotion modal, and the 1080² share card at a forced tier + streak. No /api/stats/streaks dependency.",
+      },
     ],
   },
   {
