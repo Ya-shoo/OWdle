@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { SiteFooter } from "@/components/SiteFooter";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { DevThemeSwitcher } from "@/components/DevThemeSwitcher";
 import { THEME_INLINE_SCRIPT } from "@/lib/theme";
@@ -115,6 +116,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Header />
         {children}
+        <SiteFooter />
         <FeedbackButton />
         <DevThemeSwitcher />
       </body>

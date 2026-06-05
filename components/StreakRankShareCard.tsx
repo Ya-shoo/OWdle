@@ -46,14 +46,8 @@ export function StreakRankShareCard({ tier, streak }: StreakRankShareCardProps) 
         padding: 56,
       }}
     >
-      {/* Tier-tinted radial wash behind the badge. */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `radial-gradient(circle at 50% 38%, ${hexA(accent, 0.07)} 0%, ${hexA(accent, 0.03)} 32%, transparent 58%)`,
-        }}
-      />
+      {/* Solid dark canvas — the tier-tinted radial wash that used to
+          sit behind the badge made the card look machine-generated. */}
 
       {/* Top brand row — wordmark left, "Streak Rank" eyebrow right. */}
       <div

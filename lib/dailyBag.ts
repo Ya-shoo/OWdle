@@ -21,7 +21,15 @@ const CONSTRAINED_COOLDOWN = 3;
 // Per-day weighted choice: 80% skin, 20% default art. Independent of how
 // often a hero appears in an epoch — keeps the ratio stable at 80:20 even
 // though pool=51 and epoch=50 means most heroes appear ~once per epoch.
+// Only applies to days before the skins-only cutover below.
 const SPLASH_SKIN_PCT = 80;
+
+// Skins-only cutover for Spotlight: from this Pacific puzzle day onward the
+// mode ALWAYS shows a skin (never default splash art) and the hero pool
+// drops heroes with no Epic/Legendary skins. Days in
+// [BAG_CUTOVER_DAY, this) keep the 80/20 weighted behavior so answers
+// already served don't shift retroactively.
+export const SPLASH_SKINS_ONLY_DAY = "2026-06-06";
 
 // One-time cutover bootstrap: the bag's epoch 0 generator sees the 5 legacy
 // puzzle days immediately before cutover as if they were prior slots, so the
@@ -32,6 +40,12 @@ const CUTOVER_BOOTSTRAP_DAYS = 5;
 
 const ABILITY_POOL: Hero[] = ANSWER_POOL.filter((h) => h.abilities.length > 0);
 const SPLASH_POOL: Hero[] = ANSWER_POOL.filter((h) => h.splash_url != null);
+// Skins-only era pool: a hero must own at least one skin to be the daily
+// Spotlight answer. Currently excludes only sierra (no Epic/Legendary
+// skins in skins.json).
+const SKINS_SPLASH_POOL: Hero[] = ANSWER_POOL.filter(
+  (h) => h.splash_url != null && h.skins.length > 0,
+);
 const LABELED_SOUND_KEYS: string[] = ANSWER_POOL.map((h) => h.key).filter(
   (k) => (SOUND_CLIPS[k] ?? []).length > 0,
 );
@@ -55,6 +69,7 @@ function indexToDayString(idx: number): string {
 }
 
 const BAG_CUTOVER_INDEX = dayStringToIndex(BAG_CUTOVER_DAY);
+const SPLASH_SKINS_ONLY_INDEX = dayStringToIndex(SPLASH_SKINS_ONLY_DAY);
 
 export function usesBag(day: string): boolean {
   return dayStringToIndex(day) >= BAG_CUTOVER_INDEX;
@@ -310,6 +325,48 @@ function soundEpochList(epoch: number): string[] {
   });
 }
 
+// Skins-only era Spotlight list. Built AFTER soundEpochList — unlike the
+// original splash list, which sound dedups against — so the sound picks
+// already served (and their epoch list) stay frozen across the cutover;
+// this list instead dedups against all three siblings itself.
+function skinsSplashEpochList(epoch: number): Hero[] {
+  return memoize(`splash:skins:${epoch}`, () => {
+    const classic = classicEpochList(epoch);
+    const ability = abilityEpochList(epoch);
+    const sound = soundEpochList(epoch);
+    const cross = classic.map(
+      (h, i) => new Set([h.key, ability[i].key, sound[i]]),
+    );
+
+    // One-time mid-epoch cutover guard (mirrors the cutover bootstrap):
+    // the first CONSTRAINED_COOLDOWN slots of the skins-only era also
+    // block whatever the OLD splash list actually served in the days
+    // immediately before the cutover, since this list's own cooldown
+    // lookback only sees its own (never-served) earlier slots.
+    const cut = getBagPosition(SPLASH_SKINS_ONLY_DAY);
+    if (epoch === cut.epoch) {
+      const oldList = splashEpochList(epoch);
+      const guardEnd = Math.min(cut.slot + CONSTRAINED_COOLDOWN, EPOCH_SIZE);
+      for (let s = cut.slot; s < guardEnd; s++) {
+        const lookbackStart = Math.max(0, s - CONSTRAINED_COOLDOWN);
+        for (let b = lookbackStart; b < cut.slot && b < s; b++) {
+          cross[s].add(oldList[b].key);
+        }
+      }
+    }
+
+    return buildEpochList({
+      seed: "owdle:splash:skins:bag",
+      epoch,
+      pool: SKINS_SPLASH_POOL,
+      epochSize: EPOCH_SIZE,
+      cooldownDays: CONSTRAINED_COOLDOWN,
+      getHeroKeys: heroKey,
+      crossModeKeysPerSlot: cross,
+    });
+  });
+}
+
 function quoteEpochList(epoch: number): Conversation[] {
   return memoize(`quote:${epoch}`, () =>
     buildEpochList({
@@ -403,10 +460,26 @@ export function bagSplashPick(day: string): {
   skinIndex: number | null;
 } {
   const { epoch, slot } = getBagPosition(day);
+  const dayIdx = dayStringToIndex(day);
+
+  // Skins-only era: every day is a skin. Hero comes from the dedicated
+  // skins-capable list; the skin itself rotates through the same seeded
+  // per-hero shuffle the 80/20 era used.
+  if (dayIdx >= SPLASH_SKINS_ONLY_INDEX) {
+    const list = skinsSplashEpochList(epoch);
+    const hero = list[slot];
+    const order = splashSkinOrder(epoch, hero);
+    const appearance = appearanceCountInEpoch(
+      list,
+      slot,
+      (h) => h.key === hero.key,
+    );
+    return { hero, skinIndex: order[(appearance - 1) % order.length] };
+  }
+
   const list = splashEpochList(epoch);
   const hero = list[slot];
 
-  const dayIdx = dayStringToIndex(day);
   const useSkin =
     hero.skins.length > 0 &&
     fnv1a(`owdle:splash:variant:bag:d${dayIdx}`) % 100 < SPLASH_SKIN_PCT;

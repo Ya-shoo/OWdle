@@ -98,6 +98,13 @@ const TOOL_GROUPS: ReadonlyArray<{
         description:
           "Top 500 / Champion / Grandmaster streak badges, the header pill, the promotion modal, and the 1080² share card at a forced tier + streak. No /api/stats/streaks dependency.",
       },
+      {
+        href: "/labeler/share-preview/",
+        label: "Share card preview",
+        description:
+          "Round + Quote 1080² share cards across hero / mode / outcome / skin knobs, plus the hero costume-palette editor (eyedropper) that writes data/hero-palettes.json.",
+        helper: "localhost:8791",
+      },
     ],
   },
   {

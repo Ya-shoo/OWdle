@@ -170,10 +170,11 @@ export function getAbilityForDay(day: string): {
   return { hero, ability: hero.abilities[abIdx], abilityIndex: abIdx };
 }
 
-// Splash mode picks a hero, then either the default splash or one of that
-// hero's skin variants (Epic/Legendary). Skins are weighted ~70% to keep
-// visual variety high; the default still appears regularly so newcomers see
-// the iconic look. Answer is always the hero — skin is purely cosmetic.
+// Splash mode picks a hero and one of that hero's skin variants
+// (Epic/Legendary). Since SPLASH_SKINS_ONLY_DAY (see dailyBag.ts) every
+// day is a skin and the skin name doubles as the post-win bonus question;
+// before that, skins were weighted ~70-80% with the default splash mixed
+// in. Answer is always the hero — the skin drives the art and the bonus.
 export function getSplashForDay(day: string): {
   hero: Hero;
   imageUrl: string;

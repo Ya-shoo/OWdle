@@ -42,10 +42,11 @@ export function LossReveal({
           Better luck tomorrow
         </div>
         {children}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <NextModeCTA
             current={current}
             scrollIntoViewOnMount={scrollIntoViewOnMount}
+            context="loss"
           />
           {share}
         </div>

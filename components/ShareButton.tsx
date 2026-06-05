@@ -1,38 +1,49 @@
 "use client";
 
-import { ReactNode, useCallback, useRef, useState } from "react";
-import { captureNodePng, tryNativeShare } from "@/lib/share-image";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { ogPreviewSrc } from "@/lib/shareLinks";
 import { trackShareClicked } from "@/lib/tracking";
 import type { ModeSlug } from "@/lib/modes";
 import { ShareModal } from "./ShareModal";
 
-// Share affordance with two paths:
+// Share affordance, link-first. The /r/[code] link IS the share: it
+// unfurls into the spray result card wherever it lands (Discord,
+// iMessage, Slack, X, WhatsApp...). Two paths:
 //
-//   1. **Touch-primary devices** (phones, tablets) — fire navigator.share
-//      with the image + url payload. The OS share sheet handles image+link
-//      together natively (iMessage, WhatsApp, etc. all parse this fine).
-//      Cheap, instant, and matches platform expectations.
+//   1. **Touch-primary devices** (phones, tablets) — navigator.share
+//      with JUST the url. No file attach: iOS share targets that accept
+//      files routinely drop the url/text members on the floor (the
+//      mobile cousin of the desktop multi-mime clipboard failure), and
+//      bare-url messages are also the only form iMessage unfurls. A
+//      small companion icon button opens the modal so mobile users keep
+//      a path to the preview + image Download.
 //
-//   2. **Pointer-primary devices** (desktop, laptop) — open ShareModal.
-//      The clipboard can only hold one mime-type at a time on desktop
-//      browsers, so the modal exposes explicit Copy-Image / Copy-Link /
-//      Download / X-intent actions instead of pretending both payloads
-//      get packed into one paste. Reliable; no "two identical images
-//      pasted" surprise from desktop share-sheet quirks.
+//   2. **Pointer-primary devices** (desktop, laptop) — open ShareModal:
+//      live preview of the actual unfurl image + one Copy-link action +
+//      a quiet Download.
 //
-// The split is gated by `(pointer: coarse)` rather than user-agent
-// sniffing — touch laptops still get the modal, iPad with magic
-// keyboard still gets native share, which matches what each device
-// actually does best.
+// The split is gated by touch capability + UA (see prefersNativeShare)
+// — touch laptops still get the modal, iPad with magic keyboard still
+// gets native share, which matches what each device actually does best.
 
 type Props = {
-  // Render function for the share card. Returns the offscreen card
-  // node — modal and mobile-native paths both invoke it on demand.
-  // (Render-fn shape preserved so we can plumb options through later
-  // without a callsite-wide rewrite.)
-  renderCard: () => ReactNode;
+  // Render function for a client-captured card. Only used by surfaces
+  // WITHOUT a server-rendered unfurl image (streak rank) — there the
+  // modal captures it for both preview and Download. Surfaces with an
+  // ogImageUrl preview/download the server image itself.
+  renderCard?: () => ReactNode;
+  // Bare share link — goes on the clipboard / into the OS sheet as-is.
   url: string;
-  text: string;
+  // The /og/r/[code] image matching `url`. When present the modal
+  // previews it (truthful by construction — it IS what friends see).
+  ogImageUrl?: string;
   filename: string;
   surface: "round_result" | "daily_complete" | "streak_rank";
   mode?: ModeSlug;
@@ -44,7 +55,7 @@ type Props = {
 export function ShareButton({
   renderCard,
   url,
-  text,
+  ogImageUrl,
   filename,
   surface,
   mode,
@@ -52,100 +63,113 @@ export function ShareButton({
   variant = "primary",
   label = "Share",
 }: Props) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  // Latched busy flag — guards against the double-click race where the
-  // user fires onClick twice before React renders the disabled state.
+  // Whether this device takes the native-share path — decides if the
+  // companion preview icon renders. useSyncExternalStore (no-op
+  // subscribe; capability never changes mid-session) gives us the
+  // hydration-safe server=false → client=detected flip without a
+  // setState-in-effect render cascade.
+  const nativeCapable = useSyncExternalStore(
+    subscribeNever,
+    prefersNativeShare,
+    () => false,
+  );
+  // Latched guard against the double-click race where the user fires
+  // onClick twice before the share sheet takes focus.
   const inFlightRef = useRef(false);
+
+  // Pre-render the unfurl card the moment the result exists. Fetching
+  // /og/r/[code] now means (a) the modal preview is instant instead of
+  // "Rendering…", and (b) in production the EDGE cache is warm before
+  // the link is ever pasted, so recipients' unfurlers hit a hot path
+  // too. Short delay keeps it off the result-reveal animation's back;
+  // data-saver connections skip it (the modal still renders on
+  // demand).
+  useEffect(() => {
+    if (!ogImageUrl) return;
+    const conn = (
+      navigator as Navigator & { connection?: { saveData?: boolean } }
+    ).connection;
+    if (conn?.saveData) return;
+    const id = window.setTimeout(() => {
+      prefetchImage(ogPreviewSrc(ogImageUrl));
+    }, 800);
+    return () => window.clearTimeout(id);
+  }, [ogImageUrl]);
 
   const handleClick = useCallback(async () => {
     if (inFlightRef.current) return;
     inFlightRef.current = true;
-    setBusy(true);
     try {
-      // Touch-primary devices (mobile) attempt the OS share sheet first.
-      // Mobile handles the image+url combo correctly. If the share API
-      // is unavailable OR the user actually shared OR cancelled, we're
-      // done. Only a genuine "failed" outcome bumps the flow to the
-      // modal so the user has explicit alternatives.
+      // Touch-primary devices get the OS share sheet with the bare
+      // link. "Shared" and "canceled" both end the flow; only a genuine
+      // failure (some webviews advertise navigator.share then reject)
+      // bumps to the modal so the user still has an explicit path.
       if (prefersNativeShare()) {
-        const node = cardRef.current;
-        if (node) {
-          const blob = await captureNodePng(node);
-          const outcome = await tryNativeShare({
-            blob,
-            filename,
-            url,
-            text,
-            title: text,
-          });
-          if (outcome === "shared") {
-            trackShareClicked({ surface, method: "native", dailyId, mode });
-            return;
-          }
-          if (outcome === "canceled") {
+        try {
+          await navigator.share({ url });
+          trackShareClicked({ surface, method: "native", dailyId, mode });
+          return;
+        } catch (err) {
+          if (err instanceof DOMException && err.name === "AbortError") {
             trackShareClicked({ surface, method: "canceled", dailyId, mode });
             return;
           }
-          // unavailable | failed → fall through to modal so the user
-          // can pick Copy Image / Copy Link / Download manually.
+          // fall through to the modal
         }
       }
 
-      // Desktop / pointer-primary OR mobile-native fell through. Open
-      // the modal — it does its own capture and exposes explicit Copy /
-      // Download / X-intent actions. PostHog events fire from inside
-      // the modal (one per action).
+      // Desktop / pointer-primary OR mobile-native fell through. The
+      // modal fires its own PostHog events (one per action).
       setModalOpen(true);
     } finally {
-      setBusy(false);
       inFlightRef.current = false;
     }
-  }, [filename, url, text, surface, mode, dailyId]);
+  }, [url, surface, mode, dailyId]);
 
+  // Both variants are SOLID fills — the earlier translucent tint washed
+  // out against the result-card backgrounds. Primary mirrors the accent
+  // pill's weight in info blue; soft is a solid muted chip for quieter
+  // hosts (home hero).
   const btnClass =
     variant === "primary"
-      ? "group inline-flex items-center gap-2 rounded-full bg-info/15 px-5 py-3 text-info ring-1 ring-info/40 transition-all hover:bg-info/25 hover:ring-info active:scale-[0.98] disabled:opacity-50"
-      : "group inline-flex items-center gap-2 rounded-full border border-line bg-inset/40 px-4 py-2 text-ink-soft transition-colors hover:border-info/60 hover:text-info active:scale-[0.98] disabled:opacity-50";
+      ? "group inline-flex items-center gap-2 rounded-full bg-info px-5 py-3 text-on-info shadow-[0_2px_6px_-1px_rgba(0,0,0,0.3),0_0_4px_-1px_var(--info)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] hover:brightness-110 hover:shadow-[0_3px_8px_-2px_rgba(0,0,0,0.4),0_0_6px_-2px_var(--info)] active:scale-[0.98] disabled:opacity-50"
+      : "group inline-flex items-center gap-2 rounded-full border border-edge bg-muted px-4 py-2 text-ink transition-all hover:border-info hover:text-info active:scale-[0.98] disabled:opacity-50";
 
   return (
     <>
       <button
         type="button"
         onClick={handleClick}
-        disabled={busy}
         aria-label={label}
         className={btnClass}
       >
-        {busy ? <Spinner /> : <ShareGlyph />}
+        <ShareGlyph />
         <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-          {busy ? "Preparing…" : label}
+          {label}
         </span>
       </button>
 
-      {/* Mobile/native path needs the offscreen card painted in the DOM
-          so captureNodePng can read it. Desktop path mounts its own copy
-          inside ShareModal, so this node is unused in that case (harmless
-          — modern-screenshot only reads from cardRef on demand). */}
-      <div
-        ref={cardRef}
-        aria-hidden
-        style={{
-          position: "fixed",
-          left: -100000,
-          top: 0,
-          pointerEvents: "none",
-        }}
-      >
-        {renderCard()}
-      </div>
+      {/* Companion affordance for the native-share path: the OS sheet
+          carries the link, so mobile users need a separate door to the
+          preview + image Download. Desktop never shows it — the main
+          button already opens the modal there. */}
+      {nativeCapable && (
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
+          aria-label="Preview card or save image"
+          className="inline-flex items-center justify-center rounded-full border border-edge bg-muted p-3 text-ink-soft transition-all hover:border-info hover:text-info active:scale-[0.98]"
+        >
+          <ImageGlyph />
+        </button>
+      )}
 
       {modalOpen && (
         <ShareModal
           renderCard={renderCard}
           url={url}
-          text={text}
+          ogImageUrl={ogImageUrl}
           filename={filename}
           surface={surface}
           mode={mode}
@@ -157,12 +181,29 @@ export function ShareButton({
   );
 }
 
+// Device share capability is fixed for the session — no store to
+// subscribe to.
+function subscribeNever(): () => void {
+  return () => {};
+}
+
+// Session-level prefetch dedupe — result cards re-mount (navigation,
+// StrictMode), and each OG render is sizable; one warm per URL is
+// plenty.
+const PREFETCHED = new Set<string>();
+
+function prefetchImage(src: string): void {
+  if (!src || PREFETCHED.has(src)) return;
+  PREFETCHED.add(src);
+  const img = new Image();
+  img.decoding = "async";
+  img.src = src;
+}
+
 // Whether to route this share through the OS share sheet vs. the modal.
-// Touch-primary devices answer "yes" — that's where Web Share with files
-// is reliable. Desktop platforms (including Mac Safari, which technically
-// supports share-with-files but produces the "two identical images
-// pasted" failure mode in Discord-style clipboard parsers) all get the
-// modal.
+// Touch-primary devices answer "yes" — that's where the sheet is the
+// idiomatic share surface. Desktop platforms (including Mac Safari) all
+// get the modal: a desktop "share" click means copy, not an OS sheet.
 //
 // We gate on touch capability (`maxTouchPoints > 0`) PLUS the absence
 // of desktop OS markers in the UA. `(pointer: coarse)` alone was too
@@ -208,30 +249,25 @@ function ShareGlyph() {
   );
 }
 
-function Spinner() {
+function ImageGlyph() {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      aria-hidden
-      className="animate-spin"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="14"
+        rx="2"
         stroke="currentColor"
-        strokeOpacity="0.25"
-        strokeWidth="3"
-        fill="none"
+        strokeWidth="2"
       />
+      <circle cx="9" cy="11" r="1.5" fill="currentColor" />
       <path
-        d="M21 12a9 9 0 0 0-9-9"
+        d="M21 17l-5-5-9 9"
         stroke="currentColor"
-        strokeWidth="3"
+        strokeWidth="2"
         strokeLinecap="round"
-        fill="none"
+        strokeLinejoin="round"
       />
     </svg>
   );

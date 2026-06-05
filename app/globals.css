@@ -715,6 +715,49 @@ select {
   animation: audio-cue-pulse 2s ease-in-out infinite;
 }
 
+/* ---------- header progress completion pop ----------
+   When a mode hits a terminal state, HeaderProgress pops the matching
+   daily-progress dot so players — first-timers especially — connect "I
+   finished a game" with the 1-of-5 tracker in the chrome. Scale only;
+   color comes from the dot's own state classes. The counter-tick pulse
+   runs on the "X / N" readout at the same moment. Both collapse to 1ms
+   under the global prefers-reduced-motion rule below. */
+
+@keyframes dot-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(2.4);
+  }
+  70% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.dot-pop {
+  animation: dot-pop 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes counter-tick {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.counter-tick {
+  animation: counter-tick 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ---------- final-day result card ----------
    The all-done summary NextModeCTA renders on the last solved/lost mode
    (score band + reset timer + Deadlockle nudge) is denser than the normal

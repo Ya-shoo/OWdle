@@ -23,8 +23,10 @@ import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
 import { HintConfirmModal } from "./HintConfirmModal";
 import { ShareButton } from "./ShareButton";
-import { RoundShareCard } from "./ShareCard";
-import { SITE_URL } from "@/lib/site";
+import { TextShareBlock } from "./TextShareBlock";
+import { buildClassicShareText } from "@/lib/share";
+import { roundShareLinks } from "@/lib/shareLinks";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
@@ -53,6 +55,8 @@ const HINT_UNLOCK_AT = [4, 7] as const;
 const MAX_HINTS = HINT_UNLOCK_AT.length;
 
 export function ClassicGame() {
+  // Inbound share-link attribution (?c= from /r/[code] redirects).
+  useShareLinkVisit("classic");
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ClassicState | null>(null);
   // Dev-only view toggle + override hero. When override is set we
@@ -384,25 +388,45 @@ export function ClassicGame() {
                     <ModeStatsLine mode="classic" />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <NextModeCTA current="classic" />
                   <ShareButton
-                    renderCard={() => (
-                      <RoundShareCard
-                        mode="classic"
-                        answer={answer}
-                        guesses={effectiveUsed}
-                        outcome="won"
-                      />
-                    )}
-                    url={`${SITE_URL}/classic/`}
-                    text={`OWdle Classic · ${answer.name} in ${effectiveUsed}`}
+                    {...roundShareLinks({
+                      day,
+                      slug: "classic",
+                      outcome: "won",
+                      guesses: state.guesses.length,
+                      hints: hintsUsed.length,
+                    })}
                     filename={`owdle-classic-${day}.png`}
                     surface="round_result"
                     mode="classic"
                     dailyId={day}
                   />
                 </div>
+                {/* Emoji-grid text share — the guess path as 🟩🟨🟥 rows
+                    (latest first, capped), LoLdle-style. Zero-friction
+                    copy/paste alongside the image share above. */}
+                <TextShareBlock
+                  text={buildClassicShareText({
+                    guesses: state.guesses,
+                    answer,
+                    won: true,
+                    hints: hintsUsed.length,
+                    // Personalized round link — the pasted text unfurls
+                    // the spoiler-free result card in link-preview chats.
+                    url: roundShareLinks({
+                      day,
+                      slug: "classic",
+                      outcome: "won",
+                      guesses: state.guesses.length,
+                      hints: hintsUsed.length,
+                    }).url,
+                  })}
+                  surface="round_result"
+                  mode="classic"
+                  dailyId={day}
+                />
               </div>
             </motion.div>
           ))}
@@ -430,16 +454,13 @@ export function ClassicGame() {
               current="classic"
               share={
                 <ShareButton
-                  renderCard={() => (
-                    <RoundShareCard
-                      mode="classic"
-                      answer={answer}
-                      guesses={effectiveUsed}
-                      outcome="lost"
-                    />
-                  )}
-                  url={`${SITE_URL}/classic/`}
-                  text={`OWdle Classic · ${answer.name} · Missed`}
+                  {...roundShareLinks({
+                    day,
+                    slug: "classic",
+                    outcome: "lost",
+                    guesses: state.guesses.length,
+                    hints: hintsUsed.length,
+                  })}
                   filename={`owdle-classic-${day}.png`}
                   surface="round_result"
                   mode="classic"

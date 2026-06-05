@@ -27,11 +27,13 @@ export type ModeState = {
   // reload. Pre-Phase-3 saves omit this; the renderer falls back to
   // appending hints at the end of the timeline.
   hintOrder?: number[];
-  // Sound mode bonus round: which ability did the player pick after winning?
-  // Optional; only Sound mode reads/writes this.
+  // Post-win bonus round (Sound: which ability was the clip? Splash:
+  // which skin is this?). Optional; only those modes read/write this.
   bonus?: {
-    selected: number; // index into hero.abilities[]
-    correct: boolean | null; // null when the clip wasn't labeled
+    // Sound: index into that day's bonus options array. Splash: index
+    // into the hero's skins[]; -1 = typed guess matched no skin.
+    selected: number;
+    correct: boolean | null; // null when no bonus data existed for the day
   };
 };
 
@@ -132,6 +134,40 @@ export function isDailyComplete(opts: {
     const st = loadModeState(slug, opts.day);
     return st.won || st.lost === true || st.gaveUp === true;
   });
+}
+
+// True when this browser has no trace of play from any PRIOR Pacific
+// day — used to gate first-session-only affordances (the auto-advance
+// countdown) so returning players never see them. Leans on the storage
+// key convention: every per-day key ends with its Pacific day string
+// (`owdle.classic.2026-06-03`, `owdle.tracked.mode_completed.classic.
+// 2026-06-03`), so one suffix check covers mode state and tracking
+// markers alike. The streak key is checked separately since it isn't
+// day-suffixed but survives even if per-day keys were pruned. Errs on
+// the side of `false` (treat as returning) when storage is unavailable:
+// the gated affordances are additive nudges, not core functionality.
+export function isFirstDay(today: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const k = window.localStorage.key(i);
+      if (!k || !k.startsWith("owdle.")) continue;
+      const m = /(\d{4}-\d{2}-\d{2})$/.exec(k);
+      if (m && m[1] < today) return false;
+    }
+    const rawStreak = window.localStorage.getItem("owdle.streak");
+    if (rawStreak) {
+      const s = JSON.parse(rawStreak) as {
+        lastCompletedDay?: unknown;
+        longest?: unknown;
+      };
+      if (typeof s?.lastCompletedDay === "string") return false;
+      if (typeof s?.longest === "number" && s.longest > 0) return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function saveModeState(mode: string, state: ModeState): void {

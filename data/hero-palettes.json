@@ -1,0 +1,223 @@
+{
+  "ana": [
+    "#5c7ea0",
+    "#d8d4cc",
+    "#b28137"
+  ],
+  "anran": [
+    "#f98866",
+    "#ffc05e"
+  ],
+  "ashe": [
+    "#b8443a",
+    "#d8d4cc"
+  ],
+  "baptiste": [
+    "#45c8b4",
+    "#d8d4cc"
+  ],
+  "bastion": [
+    "#8aa65a",
+    "#c9a35b"
+  ],
+  "brigitte": [
+    "#c75b35",
+    "#aab0b8",
+    "#e8c43d"
+  ],
+  "cassidy": [
+    "#b3503a",
+    "#c9a35b"
+  ],
+  "domina": [
+    "#c84858",
+    "#8d77d8"
+  ],
+  "doomfist": [
+    "#c07b42",
+    "#a8453a"
+  ],
+  "dva": [
+    "#f06ab4",
+    "#6fb8e8",
+    "#f5efe6"
+  ],
+  "echo": [
+    "#8ecdf0",
+    "#f0a0c8",
+    "#f5efe6"
+  ],
+  "emre": [
+    "#4aa8c8",
+    "#933227"
+  ],
+  "freja": [
+    "#52b8b8",
+    "#162f20"
+  ],
+  "genji": [
+    "#3a6e17",
+    "#9fabd2"
+  ],
+  "hanzo": [
+    "#5ba0c8",
+    "#e0b04e"
+  ],
+  "hazard": [
+    "#84c43d",
+    "#8d77d8"
+  ],
+  "illari": [
+    "#ecc44e",
+    "#f5efe6"
+  ],
+  "jetpack-cat": [
+    "#f0913c",
+    "#f5efe6",
+    "#6fb8e8"
+  ],
+  "junker-queen": [
+    "#5d9ce6",
+    "#d6d6d6",
+    "#d8693d"
+  ],
+  "junkrat": [
+    "#e8a23c",
+    "#8a9456"
+  ],
+  "juno": [
+    "#f078c8",
+    "#942192",
+    "#6fb8e8"
+  ],
+  "kiriko": [
+    "#e3556a",
+    "#45c8b4"
+  ],
+  "lifeweaver": [
+    "#f0a0c8",
+    "#f5efe6",
+    "#e0b04e"
+  ],
+  "lucio": [
+    "#76d94e",
+    "#e8c43d"
+  ],
+  "mauga": [
+    "#c8503c",
+    "#e0a84e"
+  ],
+  "mei": [
+    "#74c6ec",
+    "#f5efe6",
+    "#f0a0c8"
+  ],
+  "mercy": [
+    "#f0c75e",
+    "#f5efe6",
+    "#e8853d"
+  ],
+  "mizuki": [
+    "#62b8e0",
+    "#f0a0c8"
+  ],
+  "moira": [
+    "#a45ad8",
+    "#e8c43d"
+  ],
+  "orisa": [
+    "#5e9c46",
+    "#d8a84e",
+    "#b8443a"
+  ],
+  "pharah": [
+    "#5577d8",
+    "#e0b04e"
+  ],
+  "ramattra": [
+    "#8d77d8",
+    "#aab4c4"
+  ],
+  "reaper": [
+    "#9c3a3a",
+    "#d8d4cc"
+  ],
+  "reinhardt": [
+    "#8da3b8",
+    "#c84848",
+    "#e0b04e"
+  ],
+  "roadhog": [
+    "#cda53a",
+    "#5e8a8a"
+  ],
+  "sierra": [
+    "#d89248",
+    "#c9a35b"
+  ],
+  "sigma": [
+    "#6b7fa8",
+    "#e8853d"
+  ],
+  "sojourn": [
+    "#d8523d",
+    "#7a93ad"
+  ],
+  "soldier-76": [
+    "#5a72aa",
+    "#c84848",
+    "#f5efe6"
+  ],
+  "sombra": [
+    "#a050e0",
+    "#e36ad8"
+  ],
+  "symmetra": [
+    "#6fb8e8",
+    "#e0b04e"
+  ],
+  "torbjorn": [
+    "#d8693d",
+    "#c84848",
+    "#e0b04e"
+  ],
+  "tracer": [
+    "#f2952e",
+    "#6fb8e8"
+  ],
+  "vendetta": [
+    "#a8405e",
+    "#8d77d8"
+  ],
+  "venture": [
+    "#c9a35b",
+    "#4a8a8a"
+  ],
+  "widowmaker": [
+    "#9c6ad8",
+    "#e36ad8",
+    "#e0b04e"
+  ],
+  "winston": [
+    "#9aa6b4",
+    "#e8c43d"
+  ],
+  "wrecking-ball": [
+    "#e8853d",
+    "#aab0b8"
+  ],
+  "wuyang": [
+    "#5aa8e8",
+    "#f5efe6",
+    "#e0b04e"
+  ],
+  "zarya": [
+    "#f078b8",
+    "#e8853d",
+    "#f5efe6"
+  ],
+  "zenyatta": [
+    "#e6c358",
+    "#45c8b4"
+  ]
+}

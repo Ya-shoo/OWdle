@@ -18,11 +18,10 @@ import { RequestNextGame } from "./RequestNextGame";
 import { StreakBadge } from "./StreakBadge";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
-import { ShareButton } from "./ShareButton";
-import { DailyShareCard, type DailyModeResult } from "./ShareCard";
+import { DailyTextShare } from "./DailyTextShare";
+import { type DailyModeResult } from "./ShareCard";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { modeAttempts } from "@/lib/tier";
-import { SITE_URL } from "@/lib/site";
-import { encodeResults } from "@/lib/shareUrl";
 
 type Status = {
   won: boolean;
@@ -39,6 +38,9 @@ type Status = {
 type StatusMap = Partial<Record<ModeSlug, Status>>;
 
 export function HomeContent() {
+  // Inbound share-link attribution — daily /r/[code] links redirect
+  // here with ?c= appended.
+  useShareLinkVisit("home");
   const [day, setDay] = useState<string | null>(null);
   const [statuses, setStatuses] = useState<StatusMap>({});
 
@@ -146,36 +148,8 @@ export function HomeContent() {
         <TryDeadlockleCard />
       </section>
 
-      <footer className="border-t border-line bg-inset/40">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 font-mono text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
-          <div className="max-w-3xl text-[10px] leading-relaxed">
-            Sources:{" "}
-            <a
-              className="underline-offset-2 hover:underline"
-              href="https://overfast-api.tekrop.fr/"
-            >
-              OverFast API
-            </a>
-            ,{" "}
-            <a
-              className="underline-offset-2 hover:underline"
-              href="https://overwatch.fandom.com/"
-            >
-              Overwatch Fandom wiki
-            </a>{" "}
-            (CC-BY-SA), Blizzard press kit. Overwatch and all related
-            assets are © and ™ Blizzard Entertainment, Inc. OWdle is an
-            unofficial fan project, not endorsed by or affiliated with
-            Blizzard, and claims no ownership of assets used.
-          </div>
-          <Link
-            href="/how-to-play/"
-            className="uppercase tracking-[0.22em] text-accent-soft transition-colors hover:text-accent"
-          >
-            How to play →
-          </Link>
-        </div>
-      </footer>
+      {/* Attribution footer is rendered site-wide by SiteFooter in the
+          root layout. */}
     </main>
   );
 }
@@ -334,40 +308,16 @@ function DailyCompleteHero({
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           <StreakBadge variant="hero" />
-          <ShareButton
-            renderCard={() => (
-              <DailyShareCard
-                day={day}
-                results={results}
-                totalHints={totalHints}
-                totalSkips={totalSkips}
-              />
-            )}
-            // Personalized share link — unfurls in chat to a per-player
-            // DailyShareCard preview via the /r/[code] Pages Function.
-            url={(() => {
-              const completed = results.filter(
-                (r) => r.outcome !== "pending",
-              ) as { slug: typeof results[number]["slug"]; outcome: "won" | "lost"; guesses: number }[];
-              if (completed.length === 0) return SITE_URL;
-              const { code } = encodeResults({
-                day,
-                results: completed,
-                hints: totalHints,
-                skips: totalSkips,
-              });
-              return `${SITE_URL}/r/${code}/`;
-            })()}
-            text={
-              sweep
-                ? `OWdle · Swept all ${count} modes in ${totalGuesses} guesses`
-                : `OWdle · ${wonCount}/${count} in ${totalGuesses} guesses`
-            }
-            filename={`owdle-daily-${day}.png`}
-            surface="daily_complete"
-            dailyId={day}
-            variant="soft"
-            label="Share results"
+        </div>
+        {/* Copyable results text — LoLdle-style strings replace the
+            image share here; the embedded /r/[code] link still unfurls
+            the per-player card in chats that render previews. */}
+        <div className="mt-4">
+          <DailyTextShare
+            day={day}
+            results={results}
+            totalHints={totalHints}
+            totalSkips={totalSkips}
           />
         </div>
       </div>

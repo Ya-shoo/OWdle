@@ -143,12 +143,13 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
           </p>
 
           <div className="mt-3 flex w-full flex-col items-center gap-2">
+            {/* No ogImageUrl — streak rank has no personalized unfurl,
+                so the share modal previews the client-rendered card. */}
             <ShareButton
               renderCard={() => (
                 <StreakRankShareCard tier={tier} streak={streak} />
               )}
               url={SITE_URL}
-              text={`I'm a ${label} streaker on OWdle with a ${streak}-day streak!`}
               filename={`owdle-streak-${tier}.png`}
               surface="streak_rank"
               dailyId={dayString()}

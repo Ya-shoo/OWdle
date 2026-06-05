@@ -32,7 +32,7 @@ export const MODES: ModeDef[] = [
   {
     slug: "splash",
     label: "Spotlight",
-    blurb: "A cropped sliver of hero or skin art. It zooms out as you guess.",
+    blurb: "A cropped sliver of skin art. It zooms out as you guess.",
     built: true,
   },
   {

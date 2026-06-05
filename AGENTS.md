@@ -58,7 +58,9 @@ Current tools:
 - `/labeler/votes/` — embeds the votes admin dashboard (next-game vote tally across OWdle + Deadlockle).
 - `/labeler/feedback/` — embeds the free-form feedback admin dashboard.
 
-`npm run dev` is wired through `concurrently` to start four processes in parallel: `next dev`, `scripts/votes-admin-server.mjs` (`:8788`), `scripts/feedback-admin-server.mjs` (`:8790`), and `scripts/sound-trims-server.mjs` (`:8789`). One command, every dev tool reachable. `npm run dev:next` runs Next alone.
+`npm run dev` is wired through `concurrently` to start six processes in parallel: `next dev`, `scripts/votes-admin-server.mjs` (`:8788`), `scripts/feedback-admin-server.mjs` (`:8790`), `scripts/sound-trims-server.mjs` (`:8789`), `scripts/palette-server.mjs` (`:8791`), and `scripts/og-dev-server.mjs` (`:8799`). One command, every dev tool reachable. `npm run dev:next` runs Next alone.
+
+The og helper runs the Cloudflare Pages Functions (`functions/` — the `/og/r/[code]` share-card renderer and `/r/[code]` meta shell) locally via `wrangler pages dev`, because `next dev` has no functions runtime. `lib/shareLinks.ts` points the share modal's preview at `:8799` when `NODE_ENV === "development"` — keep the port in sync between those two files. Like the other helpers it survives missing resources (creates an empty `out/` if the site was never built; idles instead of killing the stack if wrangler can't boot).
 
 The votes / feedback helpers proxy authenticated requests to the live site using `ADMIN_SECRET` from `.env.secrets`. That file is gitignored and not committed to either machine by default. **The helpers are designed to survive a missing `.env.secrets`** — they still boot, but serve a "viewer offline · set ADMIN_SECRET" stub page instead of the real dashboard. The `npm run dev` flow therefore works on a fresh clone without ceremony; you only need `.env.secrets` when you actually want to read prod votes / feedback data, and then it's drop-the-file-and-restart.
 

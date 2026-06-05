@@ -1,4 +1,7 @@
-// Compact URL encoder for daily-complete share links. Format:
+// Compact URL encoders for the /r/[code] share namespace. Two formats
+// live side by side, distinguished purely by shape:
+//
+// DAILY (15 chars, dash-separated):
 //
 //   <YYMMDD>-<5 mode results>-<hints><skips>
 //
@@ -10,13 +13,29 @@
 // Example: 2026-05-29, results [3, 2, 1, 3, 4], 2 hints, 0 skips
 //   → "260529-32134-20"
 //
-// 15 chars total. URL: /r/260529-32134-20
+// ROUND (8-9 chars, no dashes):
 //
-// Mode order is fixed to BUILT_MODE_SLUGS so the encoder stays in lock
-// step with the in-app daily rollup. If a mode is added to or removed
-// from BUILT_MODE_SLUGS, OLD encoded links would decode with the wrong
-// slot-to-mode mapping — accept that as a known limitation since the
-// links are inherently dated (the date prefix already says the link
+//   <YYMMDD><mode letter><result>[modifier]
+//
+// One mode's single result. The result char reuses the daily alphabet
+// ("z" = missed); the optional trailing modifier char is base36 hints
+// (Classic) or skips (Sound) and is omitted when zero. Example:
+// 2026-06-04, Spotlight solved in 3 → "260604p3".
+//
+// The mode letter is matched case-insensitively: an early iteration
+// used UPPERCASE as an answer-revealing flag (since consolidated away —
+// every card is spoiler-free now), so uppercased codes simply decode to
+// the same card.
+//
+// The dash positions make the two formats impossible to confuse, so
+// decoders try daily first and fall through to round — existing daily
+// links in the wild keep decoding forever.
+//
+// Mode order is fixed to BUILT_MODE_SLUGS so the daily encoder stays in
+// lock step with the in-app daily rollup. If a mode is added to or
+// removed from BUILT_MODE_SLUGS, OLD encoded links would decode with the
+// wrong slot-to-mode mapping — accept that as a known limitation since
+// the links are inherently dated (the date prefix already says the link
 // refers to a past puzzle that may have used a different mode set).
 
 import { BUILT_MODE_SLUGS, type ModeSlug } from "./modes";
@@ -116,4 +135,85 @@ export function decodeResults(code: string): DecodedResults | null {
   const skips = parseInt(counterPart[1], 36);
   if (Number.isNaN(hints) || Number.isNaN(skips)) return null;
   return { date, results, hints, skips };
+}
+
+// ---------------------------------------------------------------------------
+// Round codes — one mode's single result.
+
+// Stable one-letter mode tags. These are URL surface area: once a code
+// is in the wild its letter can never be reassigned. "p" for splash
+// because "s" went to sound (and the public label is "Spotlight"
+// anyway); "m" reserved for the unshipped Map mode.
+const ROUND_MODE_CHAR: Record<ModeSlug, string> = {
+  classic: "c",
+  quote: "q",
+  splash: "p",
+  sound: "s",
+  ability: "a",
+  map: "m",
+};
+
+const CHAR_TO_MODE: Record<string, ModeSlug> = Object.fromEntries(
+  (Object.entries(ROUND_MODE_CHAR) as [ModeSlug, string][]).map(
+    ([slug, ch]) => [ch, slug],
+  ),
+);
+
+export type DecodedRound = {
+  // ISO date string YYYY-MM-DD reconstructed from the encoded YYMMDD.
+  date: string;
+  slug: ModeSlug;
+  outcome: "won" | "lost";
+  guesses: number;
+  // Modifier turns spent — at most one is nonzero, keyed by mode
+  // (Classic spends hints, Sound spends skips, others have neither).
+  hints: number;
+  skips: number;
+};
+
+export function encodeRoundResult(opts: {
+  day: string;
+  slug: ModeSlug;
+  outcome: "won" | "lost";
+  guesses: number;
+  hints?: number;
+  skips?: number;
+}): EncodedResults {
+  const date = encodeDate(opts.day);
+  const modeChar = ROUND_MODE_CHAR[opts.slug];
+  const result = encodeOne(opts.outcome, opts.guesses);
+  // The modifier slot's meaning is mode-determined, so the char doesn't
+  // need its own tag — just whichever counter this mode can spend.
+  const modifierCount =
+    opts.slug === "classic"
+      ? (opts.hints ?? 0)
+      : opts.slug === "sound"
+        ? (opts.skips ?? 0)
+        : 0;
+  const modifier = modifierCount > 0 ? clampToChar(modifierCount) : "";
+  return { code: `${date}${modeChar}${result}${modifier}` };
+}
+
+export function decodeRoundResult(code: string): DecodedRound | null {
+  const trimmed = code.replace(/\/+$/, "");
+  // 6 date digits + mode letter (case-insensitive, see header note) +
+  // result char + optional modifier char. Anchored and dash-free, so
+  // daily codes can never match.
+  const m = /^(\d{6})([a-zA-Z])([0-9a-z])([0-9a-z])?$/.exec(trimmed);
+  if (!m) return null;
+  const date = decodeDate(m[1]);
+  if (date === null) return null;
+  const slug = CHAR_TO_MODE[m[2].toLowerCase()];
+  if (!slug) return null;
+  const { outcome, guesses } = decodeOne(m[3]);
+  const modifierCount = m[4] ? parseInt(m[4], 36) : 0;
+  if (Number.isNaN(modifierCount)) return null;
+  return {
+    date,
+    slug,
+    outcome,
+    guesses,
+    hints: slug === "classic" ? modifierCount : 0,
+    skips: slug === "sound" ? modifierCount : 0,
+  };
 }

@@ -6,20 +6,20 @@ import { motion } from "motion/react";
 import { type ModeSlug, BUILT_MODE_SLUGS } from "@/lib/modes";
 import { loadModeState } from "@/lib/storage";
 import { prettyDay } from "@/lib/daily";
-import { SITE_URL } from "@/lib/site";
-import { encodeResults } from "@/lib/shareUrl";
 import { DailyStatsBand } from "./DailyStatsBand";
 import { DailyTierBadge } from "./DailyTierBadge";
 import { StreakBadge } from "./StreakBadge";
 import { NextResetCountdown } from "./NextResetCountdown";
+import { DailyTextShare } from "./DailyTextShare";
 import { ShareButton } from "./ShareButton";
-import { DailyShareCard, type DailyModeResult } from "./ShareCard";
+import { type DailyModeResult } from "./ShareCard";
+import { dailyShareLinks } from "@/lib/shareLinks";
 
 // Shown in place of the per-mode result card when the player finishes
 // their LAST mode of the day. Aggregates outcomes across every built
 // mode, surfaces the streak / tier / countdown the way the home-page
-// hero does, and routes the Share affordance through DailyShareCard
-// instead of the per-mode RoundShareCard. TryDeadlockleCard renders
+// hero does, and routes the Share affordance through the /r/[code]
+// link-unfurl share button. TryDeadlockleCard renders
 // as a sibling outside this card — that's a deliberate decision so the
 // cross-promo doesn't read as nested inside the player's result.
 
@@ -92,11 +92,29 @@ export function DailyCompleteResultCard({
     (sum, { st }) => sum + st.guesses.filter((g) => g === "__skip__").length,
     0,
   );
-  const sweep = wonCount === results.length;
   // Tone: green if the player won at least one mode (completed = win
   // worth celebrating), red only on the rare all-miss day so the card
   // chrome still reflects the day's character.
   const tone: "won" | "lost" = wonCount > 0 ? "won" : "lost";
+
+  // Personalized share links — bare /r/[code] for the button + the
+  // matching OG image for the modal preview. Pending entries shouldn't
+  // exist post-completion but the type allows them; filter defensively
+  // (same as DailyTextShare does for its embedded link).
+  const completedResults = results.filter((r) => r.outcome !== "pending") as {
+    slug: ModeSlug;
+    outcome: "won" | "lost";
+    guesses: number;
+  }[];
+  const shareLinks =
+    completedResults.length > 0
+      ? dailyShareLinks({
+          day,
+          results: completedResults,
+          hints: totalHints,
+          skips: totalSkips,
+        })
+      : null;
 
   return (
     <>
@@ -194,10 +212,37 @@ export function DailyCompleteResultCard({
       </div>
     </motion.div>
 
-    {/* Action row sits OUTSIDE the result card — Home + Share are
-        navigation/sharing affordances rather than part of the result
-        itself, so they belong below the card chrome. Same max-w as the
-        card so they line up under it. */}
+    {/* Copyable results text — LoLdle-style strings replace the image
+        share on this surface (zero-friction paste into Discord /
+        iMessage); the embedded /r/[code] link still unfurls the
+        per-player card image where chats render previews. */}
+    <div className="mx-auto mt-4 w-full max-w-lg">
+      <DailyTextShare
+        day={day}
+        results={results}
+        totalHints={totalHints}
+        totalSkips={totalSkips}
+      />
+    </div>
+
+    {/* Link-first share button — ALONGSIDE the text summary, not
+        replacing it. Copies the bare /r/[code] link (unfurls into the
+        daily summary card); the modal's Download exports the
+        DailyShareCard render for places links don't unfurl. */}
+    {shareLinks && (
+      <div className="mx-auto mt-3 flex w-full max-w-lg items-center justify-center gap-3">
+        <ShareButton
+          url={shareLinks.url}
+          ogImageUrl={shareLinks.ogImageUrl}
+          filename={`owdle-daily-${day}.png`}
+          surface="daily_complete"
+          dailyId={day}
+        />
+      </div>
+    )}
+
+    {/* Action row sits OUTSIDE the result card — navigation belongs
+        below the card chrome. Same max-w as the card so it lines up. */}
     <div className="mx-auto mt-4 flex w-full max-w-lg flex-wrap items-center justify-between gap-3 px-1">
       <Link
         href="/"
@@ -205,42 +250,6 @@ export function DailyCompleteResultCard({
       >
         ← Home
       </Link>
-      <ShareButton
-        renderCard={() => (
-          <DailyShareCard
-            day={day}
-            results={results}
-            totalHints={totalHints}
-            totalSkips={totalSkips}
-          />
-        )}
-        // Personalized share link — unfurls in Discord/iMessage/etc to
-        // the per-player DailyShareCard via the /r/[code] route. Filter
-        // pending entries (shouldn't exist post-completion but the type
-        // allows them) before encoding so the URL is well-formed.
-        url={(() => {
-          const completed = results.filter(
-            (r) => r.outcome !== "pending",
-          ) as { slug: typeof results[number]["slug"]; outcome: "won" | "lost"; guesses: number }[];
-          if (completed.length === 0) return SITE_URL;
-          const { code } = encodeResults({
-            day,
-            results: completed,
-            hints: totalHints,
-            skips: totalSkips,
-          });
-          return `${SITE_URL}/r/${code}/`;
-        })()}
-        text={
-          sweep
-            ? `OWdle · Swept all ${results.length} modes in ${totalGuesses} guesses`
-            : `OWdle · ${wonCount}/${results.length} in ${totalGuesses} guesses`
-        }
-        filename={`owdle-daily-${day}.png`}
-        surface="daily_complete"
-        dailyId={day}
-        label="Share results"
-      />
     </div>
   </>
   );

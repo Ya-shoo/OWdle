@@ -31,8 +31,8 @@ import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevAbilityPicker } from "./DevAbilityPicker";
 import { ShareButton } from "./ShareButton";
-import { RoundShareCard } from "./ShareCard";
-import { SITE_URL } from "@/lib/site";
+import { roundShareLinks } from "@/lib/shareLinks";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
@@ -68,6 +68,8 @@ function rotationForDay(day: string): number {
 }
 
 export function AbilityGame() {
+  // Inbound share-link attribution (?c= from /r/[code] redirects).
+  useShareLinkVisit("ability");
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ModeState | null>(null);
   const [hardMode, setHardMode] = useState(true);
@@ -323,19 +325,15 @@ export function AbilityGame() {
                     <ModeStatsLine mode="ability" />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <NextModeCTA current="ability" scrollIntoViewOnMount={false} />
                   <ShareButton
-                    renderCard={() => (
-                      <RoundShareCard
-                        mode="ability"
-                        answer={answer}
-                        guesses={state.guesses.length}
-                        outcome="won"
-                      />
-                    )}
-                    url={`${SITE_URL}/ability/`}
-                    text={`OWdle Ability · ${answer.name}'s ${ability.name} in ${state.guesses.length}`}
+                    {...roundShareLinks({
+                      day,
+                      slug: "ability",
+                      outcome: "won",
+                      guesses: state.guesses.length,
+                    })}
                     filename={`owdle-ability-${day}.png`}
                     surface="round_result"
                     mode="ability"
@@ -370,16 +368,12 @@ export function AbilityGame() {
               scrollIntoViewOnMount={false}
               share={
                 <ShareButton
-                  renderCard={() => (
-                    <RoundShareCard
-                      mode="ability"
-                      answer={answer}
-                      guesses={state.guesses.length}
-                      outcome="lost"
-                    />
-                  )}
-                  url={`${SITE_URL}/ability/`}
-                  text={`OWdle Ability · ${answer.name}'s ${ability.name} · Missed`}
+                  {...roundShareLinks({
+                    day,
+                    slug: "ability",
+                    outcome: "lost",
+                    guesses: state.guesses.length,
+                  })}
                   filename={`owdle-ability-${day}.png`}
                   surface="round_result"
                   mode="ability"

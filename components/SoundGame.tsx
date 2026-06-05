@@ -34,8 +34,9 @@ import { LossReveal } from "./LossReveal";
 import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { ShareButton } from "./ShareButton";
-import { RoundShareCard } from "./ShareCard";
-import { SITE_URL } from "@/lib/site";
+import { computeWaveformPeaks } from "@/lib/waveformPeaks";
+import { roundShareLinks } from "@/lib/shareLinks";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
@@ -82,8 +83,14 @@ function snippetDurationFor(
 }
 
 export function SoundGame() {
+  // Inbound share-link attribution (?c= from /r/[code] redirects).
+  useShareLinkVisit("sound");
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ModeState | null>(null);
+  // Static waveform peaks for the share card, decoded once the round
+  // ends (see WaveformPeaksLoader below — it can't ride the interactive
+  // player's state since that unmounts at reveal).
+  const [wavePeaks, setWavePeaks] = useState<number[] | null>(null);
   // Dev-only "view" toggle. Hides every dev panel when set to User so
   // we can preview the shipping game without ceremony.
   const [devView, setDevView] = useDevViewState("sound");
@@ -443,6 +450,15 @@ export function SoundGame() {
         />
       )}
 
+      {ended && wavePeaks == null && (
+        <WaveformPeaksLoader
+          audioUrl={audioUrl}
+          startOffset={activeStart}
+          endOffset={activeEnd}
+          onPeaks={setWavePeaks}
+        />
+      )}
+
       <div
         ref={mediaRef}
         className="mb-6 flex scroll-mt-6 flex-col items-center gap-3 sm:scroll-mt-8"
@@ -595,19 +611,16 @@ export function SoundGame() {
                     <ModeStatsLine mode="sound" />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <NextModeCTA current="sound" scrollIntoViewOnMount={false} />
                   <ShareButton
-                    renderCard={() => (
-                      <RoundShareCard
-                        mode="sound"
-                        answer={answer}
-                        guesses={turnsUsed}
-                        outcome="won"
-                      />
-                    )}
-                    url={`${SITE_URL}/sound/`}
-                    text={`OWdle Sound · ${answer.name} in ${turnsUsed}`}
+                    {...roundShareLinks({
+                      day,
+                      slug: "sound",
+                      outcome: "won",
+                      guesses: heroGuessKeys.length,
+                      skips: skipsUsed,
+                    })}
                     filename={`owdle-sound-${day}.png`}
                     surface="round_result"
                     mode="sound"
@@ -642,16 +655,13 @@ export function SoundGame() {
               scrollIntoViewOnMount={false}
               share={
                 <ShareButton
-                  renderCard={() => (
-                    <RoundShareCard
-                      mode="sound"
-                      answer={answer}
-                      guesses={turnsUsed}
-                      outcome="lost"
-                    />
-                  )}
-                  url={`${SITE_URL}/sound/`}
-                  text={`OWdle Sound · ${answer.name} · Missed`}
+                  {...roundShareLinks({
+                    day,
+                    slug: "sound",
+                    outcome: "lost",
+                    guesses: heroGuessKeys.length,
+                    skips: skipsUsed,
+                  })}
                   filename={`owdle-sound-${day}.png`}
                   surface="round_result"
                   mode="sound"
@@ -861,4 +871,42 @@ function SoundDailyComplete({
       </div>
     </>
   );
+}
+
+// Invisible helper: decodes the day's clip into share-card waveform
+// peaks once the round ends. Lives as a component (not an effect in
+// SoundGame proper) because the audio/trim values it needs are computed
+// after SoundGame's loading early-return, where hooks can't follow.
+// Renders nothing; unmounts as soon as the peaks land in parent state.
+function WaveformPeaksLoader({
+  audioUrl,
+  startOffset,
+  endOffset,
+  onPeaks,
+}: {
+  audioUrl: string;
+  startOffset: number | null;
+  endOffset: number | null;
+  onPeaks: (peaks: number[]) => void;
+}) {
+  // Pin the callback so a parent re-render can't retrigger the decode.
+  const onPeaksRef = useRef(onPeaks);
+  useEffect(() => {
+    onPeaksRef.current = onPeaks;
+  }, [onPeaks]);
+  useEffect(() => {
+    let cancelled = false;
+    computeWaveformPeaks({ audioUrl, startOffset, endOffset })
+      .then((peaks) => {
+        if (!cancelled) onPeaksRef.current(peaks);
+      })
+      .catch(() => {
+        // Silent: the share card falls back to splash art when peaks
+        // are missing — not worth surfacing an error for.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [audioUrl, startOffset, endOffset]);
+  return null;
 }

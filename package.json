@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n next,votes,feedback,trims -c cyan,yellow,blue,magenta --kill-others-on-fail \"next dev\" \"node scripts/votes-admin-server.mjs\" \"node scripts/feedback-admin-server.mjs\" \"node scripts/sound-trims-server.mjs\"",
+    "dev": "concurrently -n next,votes,feedback,trims,palettes,og -c cyan,yellow,blue,magenta,green,red --kill-others-on-fail \"next dev\" \"node scripts/votes-admin-server.mjs\" \"node scripts/feedback-admin-server.mjs\" \"node scripts/sound-trims-server.mjs\" \"node scripts/palette-server.mjs\" \"node scripts/og-dev-server.mjs\"",
     "dev:next": "next dev",
+    "og:dev": "node scripts/og-dev-server.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -14,6 +15,7 @@
     "votes:admin": "node scripts/votes-admin-server.mjs",
     "feedback:admin": "node scripts/feedback-admin-server.mjs",
     "sound:trims": "node scripts/sound-trims-server.mjs",
+    "palettes:admin": "node scripts/palette-server.mjs",
     "sync-clips": "bash -c 'for f in ~/Downloads/owdle-clips*.zip; do unzip -o \"$f\" -d public/; done' && node scripts/build-sound-clips.mjs",
     "sync-to-r2": "node scripts/sync-to-r2.mjs"
   },

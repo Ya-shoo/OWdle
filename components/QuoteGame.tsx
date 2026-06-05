@@ -48,8 +48,8 @@ import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevQuotePicker } from "./DevQuotePicker";
 import { ShareButton } from "./ShareButton";
-import { QuoteShareCard } from "./ShareCard";
-import { SITE_URL } from "@/lib/site";
+import { roundShareLinks } from "@/lib/shareLinks";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
@@ -79,6 +79,8 @@ function nextAudioAt(
 }
 
 export function QuoteGame() {
+  // Inbound share-link attribution (?c= from /r/[code] redirects).
+  useShareLinkVisit("quote");
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ConversationState | null>(null);
   // Which speaker the toggle is pointed at when *both* are still unsolved.
@@ -470,19 +472,15 @@ export function QuoteGame() {
                     <ModeStatsLine mode="quote" />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <NextModeCTA current="quote" scrollIntoViewOnMount={false} />
                   <ShareButton
-                    renderCard={() => (
-                      <QuoteShareCard
-                        speakerA={speakerA}
-                        speakerB={speakerB}
-                        guesses={state.guesses.length}
-                        outcome="won"
-                      />
-                    )}
-                    url={`${SITE_URL}/quote/`}
-                    text={`OWdle Quote · ${speakerA.name} & ${speakerB.name} in ${state.guesses.length}`}
+                    {...roundShareLinks({
+                      day,
+                      slug: "quote",
+                      outcome: "won",
+                      guesses: state.guesses.length,
+                    })}
                     filename={`owdle-quote-${day}.png`}
                     surface="round_result"
                     mode="quote"
@@ -517,16 +515,12 @@ export function QuoteGame() {
               scrollIntoViewOnMount={false}
               share={
                 <ShareButton
-                  renderCard={() => (
-                    <QuoteShareCard
-                      speakerA={speakerA}
-                      speakerB={speakerB}
-                      guesses={state.guesses.length}
-                      outcome="lost"
-                    />
-                  )}
-                  url={`${SITE_URL}/quote/`}
-                  text={`OWdle Quote · ${speakerA.name} & ${speakerB.name} · Missed`}
+                  {...roundShareLinks({
+                    day,
+                    slug: "quote",
+                    outcome: "lost",
+                    guesses: state.guesses.length,
+                  })}
                   filename={`owdle-quote-${day}.png`}
                   surface="round_result"
                   mode="quote"

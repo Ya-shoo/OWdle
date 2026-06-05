@@ -6,10 +6,12 @@ import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
 import { dayString, getSplashForDay, prettyDay } from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import {
+  trackBonusAnswered,
   trackGuessSubmitted,
   trackModeCompleted,
   trackModeStarted,
 } from "@/lib/tracking";
+import { SkinBonusRound } from "./SkinBonusRound";
 import { HeroCombobox } from "./HeroCombobox";
 import { GuessRow } from "./GuessRow";
 import { Brand } from "./Brand";
@@ -22,8 +24,8 @@ import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
 import { ShareButton } from "./ShareButton";
-import { RoundShareCard } from "./ShareCard";
-import { SITE_URL } from "@/lib/site";
+import { roundShareLinks } from "@/lib/shareLinks";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
@@ -54,6 +56,8 @@ const MAX_GUESSES = 5;
 const ZOOM_BY_GUESS = [20, 12, 7, 4, 2.5, 1.8, 1.4, 1.15, 1];
 
 export function SplashGame() {
+  // Inbound share-link attribution (?c= from /r/[code] redirects).
+  useShareLinkVisit("splash");
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ModeState | null>(null);
   // Dev-only view + override hero. When set, we serve that hero's
@@ -137,6 +141,18 @@ export function SplashGame() {
   const zoomIdx = Math.min(state.guesses.length, ZOOM_BY_GUESS.length - 1);
   const zoom = ended ? 1 : ZOOM_BY_GUESS[zoomIdx];
 
+  // Skin-name bonus: after winning, the player gets one shot at naming
+  // the (now fully revealed) skin via a search over the hero's full skin
+  // list. Eligible only when the day is a skin day AND the hero has more
+  // than one skin to search through — single-skin heroes and legacy
+  // default-art days have no question to ask. The result card shows
+  // alongside the pending bonus, but its skin rarity + name line (and
+  // the share card's) stays hidden until the bonus is answered so the
+  // card can't leak the answer.
+  const bonusEligible = skin != null && answer.skins.length >= 2;
+  const bonusPending = state.won && bonusEligible && !state.bonus;
+  const skinRevealed = bonusPending ? null : skin;
+
   const handleGuess = (hero: Hero) => {
     if (ended) return;
     const newGuesses = [...state.guesses, hero.key];
@@ -160,6 +176,28 @@ export function SplashGame() {
     };
     setState(next);
     if (!isOverride) saveModeState(MODE, next);
+  };
+
+  const handleBonus = (selected: number, correct: boolean | null) => {
+    if (!state.won || state.bonus) return;
+    const next: ModeState = { ...state, bonus: { selected, correct } };
+    setState(next);
+    if (!isOverride) {
+      saveModeState(MODE, next);
+      if (correct != null && skin) {
+        trackBonusAnswered({
+          mode: "splash",
+          dailyId: day,
+          correct,
+          answerId: skin.key,
+          // -1 = guessed text matched none of the hero's skins.
+          selectedId:
+            selected >= 0
+              ? (answer.skins[selected]?.key ?? "")
+              : "__no_match__",
+        });
+      }
+    }
   };
 
   return (
@@ -214,6 +252,17 @@ export function SplashGame() {
       </div>
       {ended && <ScrollIntoViewOnMount targetRef={artRef} />}
 
+      {state.won && bonusEligible && skin && (
+        <div className="mx-auto mb-8 w-full max-w-md">
+          <SkinBonusRound
+            skins={answer.skins}
+            correctSkinKey={skin.key}
+            saved={state.bonus}
+            onSelect={handleBonus}
+          />
+        </div>
+      )}
+
       {!ended && (
         <div className="mb-6 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -241,7 +290,7 @@ export function SplashGame() {
             <SplashDailyComplete
               key="win-daily"
               answer={answer}
-              skin={skin}
+              skin={skinRevealed}
               guesses={state.guesses.length}
               outcome="won"
               day={day}
@@ -272,42 +321,33 @@ export function SplashGame() {
                         in {state.guesses.length}
                       </span>
                     </div>
-                    {skin && (
+                    {skinRevealed && (
                       <div className="mt-2 flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] sm:justify-start">
                         <span
                           className={
-                            skin.rarity === "legendary"
+                            skinRevealed.rarity === "legendary"
                               ? "text-accent-soft"
                               : "text-info"
                           }
                         >
-                          {skin.rarity}
+                          {skinRevealed.rarity}
                         </span>
                         <span className="text-ink-soft">·</span>
-                        <span className="text-ink">{skin.name}</span>
+                        <span className="text-ink">{skinRevealed.name}</span>
                       </div>
                     )}
                     <ModeStatsLine mode="splash" />
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <NextModeCTA current="splash" scrollIntoViewOnMount={false} />
                   <ShareButton
-                    renderCard={() => (
-                      <RoundShareCard
-                        mode="splash"
-                        answer={answer}
-                        guesses={state.guesses.length}
-                        outcome="won"
-                        skin={skin}
-                      />
-                    )}
-                    url={`${SITE_URL}/splash/`}
-                    text={
-                      skin
-                        ? `OWdle Spotlight · ${answer.name} (${skin.name}) in ${state.guesses.length}`
-                        : `OWdle Spotlight · ${answer.name} in ${state.guesses.length}`
-                    }
+                    {...roundShareLinks({
+                      day,
+                      slug: "splash",
+                      outcome: "won",
+                      guesses: state.guesses.length,
+                    })}
                     filename={`owdle-splash-${day}.png`}
                     surface="round_result"
                     mode="splash"
@@ -342,21 +382,12 @@ export function SplashGame() {
               scrollIntoViewOnMount={false}
               share={
                 <ShareButton
-                  renderCard={() => (
-                    <RoundShareCard
-                      mode="splash"
-                      answer={answer}
-                      guesses={state.guesses.length}
-                      outcome="lost"
-                      skin={skin}
-                    />
-                  )}
-                  url={`${SITE_URL}/splash/`}
-                  text={
-                    skin
-                      ? `OWdle Spotlight · ${answer.name} (${skin.name}) · Missed`
-                      : `OWdle Spotlight · ${answer.name} · Missed`
-                  }
+                  {...roundShareLinks({
+                    day,
+                    slug: "splash",
+                    outcome: "lost",
+                    guesses: state.guesses.length,
+                  })}
                   filename={`owdle-splash-${day}.png`}
                   surface="round_result"
                   mode="splash"

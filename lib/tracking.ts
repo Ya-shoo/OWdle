@@ -92,6 +92,18 @@ export function trackModeCompleted(opts: {
     skin_key: opts.skinKey ?? null,
     conversation_id: opts.conversationId ?? null,
   });
+  // Announce the completion to same-page listeners — HeaderProgress pops
+  // the matching daily-progress dot. Piggybacks on this helper's per-day
+  // dedup so the animation fires exactly once per completion (never on
+  // re-mounts), and covers the final mode of the day too: the older
+  // `feedback:refresh` signal is dispatched from NextModeCTA's mount,
+  // which never happens on the last mode because DailyCompleteResultCard
+  // replaces the per-mode result card.
+  window.dispatchEvent(
+    new CustomEvent("mode:completed", {
+      detail: { mode: opts.mode, outcome: opts.outcome },
+    }),
+  );
 }
 
 export function trackHintUsed(opts: {
@@ -158,6 +170,55 @@ export function trackBonusOutcome(opts: {
   });
 }
 
+// Post-win bonus question answered (Spotlight's "which skin is this?").
+// Distinct from the Quote rescue funnel above (bonus_offered/used/outcome
+// track a save attempt) and from Classic's bonus_correct field on
+// mode_completed (which fires before the post-win bonus can be answered).
+// Idempotent per mode+day — the answer locks on first pick.
+export function trackBonusAnswered(opts: {
+  mode: Mode;
+  dailyId: string;
+  correct: boolean;
+  answerId: string;
+  selectedId: string;
+}): void {
+  if (alreadyFired(`bonus_answered.${opts.mode}.${opts.dailyId}`)) return;
+  posthog.capture("bonus_answered", {
+    mode: opts.mode,
+    daily_id: opts.dailyId,
+    correct: opts.correct,
+    answer_id: opts.answerId,
+    selected_id: opts.selectedId,
+  });
+}
+
+// Post-completion "next mode" handoff funnel. `shown` fires when the
+// first-day auto-advance countdown becomes visible and armed; `cancelled`
+// when a user gesture stops it (cancel_gesture says which kind);
+// `auto_fired` when the timer elapses and navigation happens; `clicked`
+// on any manual CTA click — countdown line or the regular pill, with
+// `first_day` separating the cohorts. Not idempotent: the pill can
+// legitimately be clicked more than once in a day (back-navigation);
+// dashboards dedupe as needed. from/to use plain strings rather than the
+// Mode union so future built modes don't need a type change here.
+export function trackNextModeCta(opts: {
+  action: "shown" | "cancelled" | "auto_fired" | "clicked";
+  fromMode: string;
+  toMode: string;
+  context: "win" | "loss";
+  firstDay: boolean;
+  cancelGesture?: "touch" | "scroll" | "tap" | "key" | "stay" | null;
+}): void {
+  posthog.capture("next_mode_cta", {
+    action: opts.action,
+    from_mode: opts.fromMode,
+    to_mode: opts.toMode,
+    context: opts.context,
+    first_day: opts.firstDay,
+    cancel_gesture: opts.cancelGesture ?? null,
+  });
+}
+
 // Fired when the feedback dialog opens. Doubles as a PostHog session-
 // recording trigger (configured in project settings): the moment this
 // event fires, the recorder is force-started for that session so the
@@ -175,10 +236,12 @@ export function trackFeedbackOpened(): string | null {
 
 // Fired when a user clicks a share affordance — the Twitter/X intent on
 // the homepage support panel, the legacy "Copy share text" button on Map
-// mode's result screen, or the image-share buttons on each round + daily
+// mode's result screen, or the link-share buttons on each round + daily
 // summary. Not idempotent: every click counts, since the same person may
 // re-share or copy-then-tweet. `surface` is where they clicked from;
-// `method` is how the share happens.
+// `method` is how the share happens. "clipboard-link" is the link-first
+// modal's copy action ("clipboard-image" died with the multi-mime
+// clipboard path — paste targets only ever honored one flavor).
 export function trackShareClicked(opts: {
   surface:
     | "support_panel"
@@ -190,7 +253,7 @@ export function trackShareClicked(opts: {
     | "twitter_intent"
     | "clipboard"
     | "native"
-    | "clipboard-image"
+    | "clipboard-link"
     | "clipboard-text"
     | "download"
     | "canceled"
@@ -203,6 +266,30 @@ export function trackShareClicked(opts: {
     method: opts.method,
     daily_id: opts.dailyId ?? null,
     mode: opts.mode ?? null,
+  });
+}
+
+// Fired when a visitor lands from a shared /r/[code] link — the redirect
+// appends ?c=<code> and the destination page reports it here, closing
+// the share → visit funnel that share_clicked opens. shared_* props
+// describe the SHARER's result (decoded from the code), not the
+// visitor's; landing_mode is where the visitor arrived ("home" for
+// daily codes). Not idempotent by design — every inbound click counts —
+// but the caller strips ?c= from the URL after firing so a reload
+// doesn't re-fire.
+export function trackShareLinkVisited(opts: {
+  landingMode: string;
+  code: string;
+  sharedDate: string;
+  sharedMode?: string;
+  sharedOutcome?: "won" | "lost";
+}): void {
+  posthog.capture("share_link_visited", {
+    landing_mode: opts.landingMode,
+    code: opts.code,
+    shared_date: opts.sharedDate,
+    shared_mode: opts.sharedMode ?? null,
+    shared_outcome: opts.sharedOutcome ?? null,
   });
 }
 
