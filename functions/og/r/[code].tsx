@@ -59,7 +59,50 @@ function ogCacheControl(request: Request): string {
     : "public, max-age=86400, s-maxage=86400, immutable";
 }
 
-export const onRequestGet: Handler = async ({ params, request }) => {
+// One retry — Google Fonts fetches occasionally hiccup on cold
+// isolates, and a single transient miss must not fail the card.
+function loadFont(opts: {
+  family: string;
+  weight: number;
+  text: string;
+}): Promise<ArrayBuffer> {
+  return loadGoogleFont(opts).catch(() => loadGoogleFont(opts));
+}
+
+// Buffer the rendered image fully before responding. Two reasons:
+// a mid-stream Satori failure throws HERE (caught by the handler's
+// error wrapper) instead of leaking a truncated-but-200 response, and
+// the cache headers only ever decorate verified-complete bytes.
+async function finalizeOg(
+  img: Response,
+  request: Request,
+): Promise<Response> {
+  const body = await img.arrayBuffer();
+  return new Response(body, {
+    headers: {
+      "content-type": "image/png",
+      "cache-control": ogCacheControl(request),
+      "access-control-allow-origin": "*",
+    },
+  });
+}
+
+export const onRequestGet: Handler = async (ctx) => {
+  try {
+    return await handleOg(ctx);
+  } catch {
+    // NEVER let a failure cache: a transient render error (cold
+    // isolate, font fetch hiccup) once got edge-cached under the
+    // canonical URL and served a dead unfurl until expiry. no-store
+    // keeps errors self-healing on the next request.
+    return new Response("Card render failed — retry shortly.", {
+      status: 503,
+      headers: { "cache-control": "no-store", "retry-after": "5" },
+    });
+  }
+};
+
+const handleOg: Handler = async ({ params, request }) => {
   const code = params.code;
   const decoded = decodeResults(code);
   if (!decoded) {
@@ -95,10 +138,10 @@ export const onRequestGet: Handler = async ({ params, request }) => {
 
   const [bricolageBold, bricolageMedium, plexMono, sairaMedium] =
     await Promise.all([
-      loadGoogleFont({ family: "Bricolage Grotesque", weight: 800, text: fontText }),
-      loadGoogleFont({ family: "Bricolage Grotesque", weight: 500, text: fontText }),
-      loadGoogleFont({ family: "IBM Plex Mono", weight: 500, text: fontText }),
-      loadGoogleFont({ family: "Saira Condensed", weight: 500, text: fontText }),
+      loadFont({ family: "Bricolage Grotesque", weight: 800, text: fontText }),
+      loadFont({ family: "Bricolage Grotesque", weight: 500, text: fontText }),
+      loadFont({ family: "IBM Plex Mono", weight: 500, text: fontText }),
+      loadFont({ family: "Saira Condensed", weight: 500, text: fontText }),
     ]);
 
   // Tally chips that flank the total-guesses number. Hints + missed
@@ -436,11 +479,7 @@ export const onRequestGet: Handler = async ({ params, request }) => {
   // workers-og APPENDS caller headers to its own cache defaults (the
   // names differ only by case), yielding a contradictory combo — so
   // set on the response instead of passing through options.
-  res.headers.set("cache-control", ogCacheControl(request));
-  // Public image; the share modal's spoiler-free Download fetches it
-  // as a blob (cross-origin against the og-dev server).
-  res.headers.set("access-control-allow-origin", "*");
-  return res;
+  return finalizeOg(res, request);
 };
 
 // Renders a centered row of up to three mode chips.
@@ -631,9 +670,9 @@ async function renderRoundOg(
     modeLabel;
 
   const [bricolageBold, bricolageMedium, plexMono] = await Promise.all([
-    loadGoogleFont({ family: "Bricolage Grotesque", weight: 800, text: fontText }),
-    loadGoogleFont({ family: "Bricolage Grotesque", weight: 500, text: fontText }),
-    loadGoogleFont({ family: "IBM Plex Mono", weight: 500, text: fontText }),
+    loadFont({ family: "Bricolage Grotesque", weight: 800, text: fontText }),
+    loadFont({ family: "Bricolage Grotesque", weight: 500, text: fontText }),
+    loadFont({ family: "IBM Plex Mono", weight: 500, text: fontText }),
   ]);
 
   const res = new ImageResponse(
@@ -894,7 +933,5 @@ async function renderRoundOg(
       ],
     },
   );
-  res.headers.set("cache-control", ogCacheControl(request));
-  res.headers.set("access-control-allow-origin", "*");
-  return res;
+  return finalizeOg(res, request);
 }
