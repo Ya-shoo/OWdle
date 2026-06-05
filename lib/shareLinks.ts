@@ -61,6 +61,13 @@ export function ogPreviewSrc(ogImageUrl: string): string {
   return `${ogImageUrl}${ogImageUrl.includes("?") ? "&" : "?"}v=dev`;
 }
 
+// OG image URL for an already-encoded code — used by surfaces that
+// reference a FIXED example card (the share announcement) rather than
+// encoding live results.
+export function ogImageUrlForCode(code: string): string {
+  return `${OG_ORIGIN}/og/r/${code}`;
+}
+
 export function dailyShareLinks(opts: {
   day: string;
   results: { slug: ModeSlug; outcome: "won" | "lost"; guesses: number }[];

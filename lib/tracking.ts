@@ -293,6 +293,15 @@ export function trackShareLinkVisited(opts: {
   });
 }
 
+// One-time "you can share now" release announcement modal. `shown`
+// fires when it pops; `dismissed` carries how it was closed so we can
+// see whether people actually read it.
+export function trackShareAnnounce(opts: {
+  action: "shown" | "dismissed";
+}): void {
+  posthog.capture("share_announce", { action: opts.action });
+}
+
 // Fired once when a player is promoted to a new, higher streak-rank tier
 // (Grandmaster → Champion → Top 500). StreakRankBadge gates this behind a
 // persistent localStorage ratchet, so it fires at most once per tier ever

@@ -9,6 +9,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FeedbackButton } from "@/components/FeedbackButton";
+import { ShareAnnounceModal } from "@/components/ShareAnnounceModal";
 import { DevThemeSwitcher } from "@/components/DevThemeSwitcher";
 import { THEME_INLINE_SCRIPT } from "@/lib/theme";
 import {
@@ -118,6 +119,7 @@ export default function RootLayout({
         {children}
         <SiteFooter />
         <FeedbackButton />
+        <ShareAnnounceModal />
         <DevThemeSwitcher />
       </body>
     </html>
