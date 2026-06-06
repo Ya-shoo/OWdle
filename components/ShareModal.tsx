@@ -371,10 +371,6 @@ export function ShareModal({
             </p>
           )}
 
-          <p className="font-mono text-[9px] leading-relaxed text-ink-faint">
-            Paste the link anywhere — Discord, iMessage, X — and it
-            unfurls into your result card.
-          </p>
         </div>
       </motion.div>
 
