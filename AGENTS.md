@@ -95,7 +95,12 @@ Deadlockle's launch night — keep the two repos in lockstep:
   it draws as tofu. (✓/✕ are inline SVG, not text.)
 - The sharer's prefetch (ShareButton) and the modal preview (ShareModal) both
   RETRY failed loads — the sharer's device shoulders the one cold render each
-  code needs.
+  code needs. **Retries fetch DISTINCT URLs** (`ogRetrySrc` adds `?r=N`):
+  WebKit replays a same-URL image failure from its in-session memory cache
+  without re-requesting (no-store notwithstanding), which silently made every
+  retry a no-op on iOS — daily-summary codes (per-player unique, never
+  prewarmed) showed "Preview unavailable" and went un-warmed for unfurlers.
+  The query param is invisible server-side (R2 keys on the path code alone).
 - `.github/workflows/prewarm-og.yml` renders all ~98 possible round codes
   daily after the 2:15am reset (dual UTC crons for DST). Daily-summary codes
   stay on-demand.

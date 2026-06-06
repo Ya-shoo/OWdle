@@ -8,7 +8,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { ogPreviewSrc } from "@/lib/shareLinks";
+import { ogRetrySrc } from "@/lib/shareLinks";
 import { trackShareClicked } from "@/lib/tracking";
 import type { ModeSlug } from "@/lib/modes";
 import { ShareModal } from "./ShareModal";
@@ -92,7 +92,7 @@ export function ShareButton({
     ).connection;
     if (conn?.saveData) return;
     const id = window.setTimeout(() => {
-      prefetchImage(ogPreviewSrc(ogImageUrl));
+      prefetchImage(ogImageUrl);
     }, 800);
     return () => window.clearTimeout(id);
   }, [ogImageUrl]);
@@ -196,21 +196,29 @@ const PREFETCHED = new Set<string>();
 // the one cold wasm render each code ever needs (successes persist
 // server-side in R2), so it must shoulder transient cold-isolate 503s
 // — a give-up-on-first-error prefetch left the link un-warmed exactly
-// when warming mattered most.
-function prefetchImage(src: string, attempt = 0): void {
-  if (!src) return;
+// when warming mattered most. Each retry fetches a DISTINCT URL
+// (ogRetrySrc): WebKit replays a same-URL image failure from its
+// memory cache without re-requesting, which made retries a no-op on
+// iOS — precisely the devices whose native-share path depends on this
+// prefetch alone to warm the link for unfurlers. Daily-summary codes
+// are per-player unique (never prewarmed by the round-code cron), so
+// they always run this gauntlet; four attempts at ~50% cold-kill odds
+// leave a code un-warmed ~6% of the time, and the modal's own ladder
+// picks up from there.
+function prefetchImage(url: string, attempt = 0): void {
+  if (!url) return;
   if (attempt === 0) {
-    if (PREFETCHED.has(src)) return;
-    PREFETCHED.add(src);
+    if (PREFETCHED.has(url)) return;
+    PREFETCHED.add(url);
   }
   const img = new Image();
   img.decoding = "async";
-  if (attempt < 2) {
+  if (attempt < 3) {
     img.onerror = () => {
-      window.setTimeout(() => prefetchImage(src, attempt + 1), 2500);
+      window.setTimeout(() => prefetchImage(url, attempt + 1), 2500);
     };
   }
-  img.src = src;
+  img.src = ogRetrySrc(url, attempt);
 }
 
 // Whether to route this share through the OS share sheet vs. the modal.

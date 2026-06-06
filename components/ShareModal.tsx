@@ -4,7 +4,7 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { createPortal } from "react-dom";
 import { captureNodePng } from "@/lib/share-image";
-import { ogPreviewSrc } from "@/lib/shareLinks";
+import { ogPreviewSrc, ogRetrySrc } from "@/lib/shareLinks";
 import { trackShareClicked } from "@/lib/tracking";
 import type { ModeSlug } from "@/lib/modes";
 
@@ -57,11 +57,14 @@ export function ShareModal({
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   // Preview attempt counter — a failed/stalled OG load retries up to
-  // twice (fresh <img> via key) before the final "unavailable" copy.
-  // Cold renders can 503 transiently (free-plan CPU limits; the error
-  // is no-store so a refetch self-heals) — a single-shot <img> turned
-  // those into a dead preview even though the very next request would
-  // have succeeded. The client-captured fallback path never retries.
+  // three times (fresh <img> via key) before the final "unavailable"
+  // copy. Cold renders can 503 transiently (free-plan CPU limits; the
+  // error is no-store so a refetch self-heals) — a single-shot <img>
+  // turned those into a dead preview even though the very next request
+  // would have succeeded. Each retry fetches a DISTINCT URL
+  // (ogRetrySrc) — WebKit replays a same-URL failure from its memory
+  // cache, which silently defeated the whole ladder on iOS. The
+  // client-captured fallback path never retries.
   const [previewTry, setPreviewTry] = useState(0);
   const retryTimer = useRef<number | null>(null);
   const [downloadBusy, setDownloadBusy] = useState(false);
@@ -137,11 +140,18 @@ export function ShareModal({
 
   const handlePreviewError = useCallback(() => {
     // Only the server-rendered OG path retries — the client-captured
-    // fallback (blob URL) failing again deterministically.
-    if (ogSrc && previewTry < 2) {
-      retryTimer.current = window.setTimeout(() => {
-        setPreviewTry((t) => t + 1);
-      }, 1800);
+    // fallback (blob URL) failing again deterministically. Backoff
+    // grows per attempt (1.8s/3.6s/5.4s): instant 503s otherwise burn
+    // the ladder in seconds, and the later spacing honors the
+    // function's retry-after: 5 while giving the platform time to
+    // route off the cold isolate.
+    if (ogSrc && previewTry < 3) {
+      retryTimer.current = window.setTimeout(
+        () => {
+          setPreviewTry((t) => t + 1);
+        },
+        1800 * (previewTry + 1),
+      );
     } else {
       setFailed(true);
     }
@@ -226,7 +236,12 @@ export function ShareModal({
   // SSR/RSC type checker.
   if (typeof document === "undefined") return null;
 
-  const previewSrc = ogSrc ?? fallbackPreviewUrl;
+  // OG previews fetch the per-attempt URL — retries MUST differ from
+  // the failed attempt's URL or WebKit serves the failure from cache
+  // (see ogRetrySrc). Attempt 0 matches the prefetch's canonical URL.
+  const previewSrc = ogImageUrl
+    ? ogRetrySrc(ogImageUrl, previewTry)
+    : fallbackPreviewUrl;
 
   const overlay = (
     <div

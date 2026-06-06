@@ -68,6 +68,24 @@ export function ogPreviewSrc(ogImageUrl: string): string {
   return `${ogImageUrl}${ogImageUrl.includes("?") ? "&" : "?"}v=dev-${DEV_BUST}`;
 }
 
+// RETRY attempts get a distinct query param in EVERY environment, not
+// just dev. WebKit pins a URL's FAILED image load in its in-session
+// memory cache — a fresh <img> on the same URL replays the failure
+// without touching the network, no-store notwithstanding. That made
+// the whole retry ladder (prefetch + modal) a silent no-op on iOS:
+// one cold-render 503 and every "retry" re-served the cached error,
+// landing on "Preview unavailable" while desktop self-healed. The
+// param is invisible server-side (the OG function keys its R2 store
+// on the path code alone), so a busted retry renders identical bytes
+// and persists under the canonical key. Attempt 0 stays on the
+// canonical URL so the prefetch and the modal share one cache entry
+// on the success path.
+export function ogRetrySrc(ogImageUrl: string, attempt: number): string {
+  const base = ogPreviewSrc(ogImageUrl);
+  if (attempt <= 0) return base;
+  return `${base}${base.includes("?") ? "&" : "?"}r=${attempt}`;
+}
+
 // OG image URL for an already-encoded code — used by surfaces that
 // reference a FIXED example card (the share announcement) rather than
 // encoding live results.
