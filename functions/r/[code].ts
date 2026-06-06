@@ -26,10 +26,12 @@
 // that disables meta refresh.
 
 import { decodeResults, decodeRoundResult } from "../../lib/shareUrl";
+import { captureServerEvent } from "../_lib/posthog";
 
 type Handler = (ctx: {
   request: Request;
   params: { code: string };
+  waitUntil(p: Promise<unknown>): void;
 }) => Promise<Response>;
 
 const SITE_ORIGIN = "https://playowdle.com";
@@ -118,7 +120,93 @@ const SHELL_HEADERS = {
   "cache-control": "public, max-age=300, s-maxage=300",
 } as const;
 
-export const onRequestGet: Handler = async ({ params, request }) => {
+// Map a fetcher's User-Agent to the platform it unfurls for, or null
+// for anything that looks like a human browser. Humans who click a
+// share link land on the destination page and fire share_link_visited
+// from JS — capturing them here too would double-count the visit half
+// of the funnel, so only bot fetches report.
+function unfurlPlatform(ua: string): string | null {
+  const s = ua.toLowerCase();
+  if (!s) return null;
+  // Apple's link-preview fetcher (iMessage, Notes, Mail) presents BOTH
+  // tokens appended to a Safari-ish UA — must match before the
+  // individual twitter/facebook checks.
+  if (s.includes("facebot twitterbot")) return "imessage";
+  if (s.includes("discordbot")) return "discord";
+  if (s.includes("slackbot") || s.includes("slack-imgproxy")) return "slack";
+  if (s.includes("twitterbot")) return "twitter";
+  if (s.includes("facebookexternalhit") || s.includes("facebot"))
+    return "facebook";
+  if (s.includes("telegrambot")) return "telegram";
+  if (s.includes("whatsapp")) return "whatsapp";
+  if (s.includes("linkedinbot")) return "linkedin";
+  if (s.includes("redditbot")) return "reddit";
+  // Teams and Skype share one preview fetcher.
+  if (s.includes("skypeuripreview")) return "teams";
+  if (s.includes("snapchat")) return "snapchat";
+  // Search/AI crawlers hit /r/ URLs they find in the wild — real bot
+  // traffic but NOT a person pasting a share link, so they get their
+  // own bucket for dashboards to exclude. (Applebot is Siri/Spotlight
+  // crawling, distinct from the iMessage preview UA above.)
+  if (
+    /googlebot|bingbot|duckduckbot|yandexbot|baiduspider|applebot|petalbot|gptbot|claudebot|perplexitybot|amazonbot|ccbot/.test(
+      s,
+    )
+  )
+    return "search_crawler";
+  // Generic automation fallback: still a bot, origin unknown. Raw UA
+  // ships as a prop so new platforms can be promoted to named buckets.
+  if (/bot|crawler|spider|scrape|preview|embed|curl|wget|python|go-http|node-fetch|axios|httpclient/.test(s))
+    return "other_bot";
+  return null;
+}
+
+// Report a bot fetch of a valid share link to PostHog — the
+// "link got pasted somewhere that unfurls" beat between share_clicked
+// (client, sharer side) and share_link_visited (client, visitor side).
+// shared_* prop names mirror share_link_visited so the three events
+// read as one funnel. Localhost (wrangler pages dev / og-dev-server)
+// logs instead of sending, same split as ogCacheControl's. Counts are
+// directional: the 5-minute s-maxage above means an edge-cached repeat
+// fetch of the same code never reaches this function, and platforms
+// with their own embed caches (Discord) scrape once per URL anyway.
+function captureUnfurl(opts: {
+  request: Request;
+  waitUntil: (p: Promise<unknown>) => void;
+  code: string;
+  codeType: "daily" | "round";
+  sharedDate: string;
+  sharedMode?: string;
+  sharedOutcome?: "won" | "lost";
+}): void {
+  const ua = opts.request.headers.get("user-agent") ?? "";
+  const platform = unfurlPlatform(ua);
+  if (!platform) return;
+
+  const host = new URL(opts.request.url).hostname;
+  if (host === "localhost" || host === "127.0.0.1") {
+    console.log(
+      `[unfurl] would capture share_link_unfurled: ${platform} ${opts.codeType} ${opts.code} (localhost — not sent)`,
+    );
+    return;
+  }
+
+  captureServerEvent({
+    event: "share_link_unfurled",
+    properties: {
+      code: opts.code,
+      code_type: opts.codeType,
+      shared_date: opts.sharedDate,
+      shared_mode: opts.sharedMode ?? null,
+      shared_outcome: opts.sharedOutcome ?? null,
+      platform,
+      user_agent: ua,
+    },
+    waitUntil: opts.waitUntil,
+  });
+}
+
+export const onRequestGet: Handler = async ({ params, request, waitUntil }) => {
   const code = params.code;
   const url = new URL(request.url);
   const origin = url.origin || SITE_ORIGIN;
@@ -127,6 +215,13 @@ export const onRequestGet: Handler = async ({ params, request }) => {
 
   const daily = decodeResults(code);
   if (daily) {
+    captureUnfurl({
+      request,
+      waitUntil,
+      code,
+      codeType: "daily",
+      sharedDate: daily.date,
+    });
     const wonCount = daily.results.filter((r) => r.outcome === "won").length;
     const total = daily.results.length;
     const totalGuesses = daily.results.reduce((s, r) => s + r.guesses, 0);
@@ -150,6 +245,15 @@ export const onRequestGet: Handler = async ({ params, request }) => {
 
   const round = decodeRoundResult(code);
   if (round) {
+    captureUnfurl({
+      request,
+      waitUntil,
+      code,
+      codeType: "round",
+      sharedDate: round.date,
+      sharedMode: round.slug,
+      sharedOutcome: round.outcome,
+    });
     const label = MODE_LABEL[round.slug] ?? round.slug;
     const dateLabel = formatDate(round.date);
     const title =

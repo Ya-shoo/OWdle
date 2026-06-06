@@ -271,7 +271,11 @@ export function trackShareClicked(opts: {
 
 // Fired when a visitor lands from a shared /r/[code] link — the redirect
 // appends ?c=<code> and the destination page reports it here, closing
-// the share → visit funnel that share_clicked opens. shared_* props
+// the share → visit funnel that share_clicked opens. The middle beat,
+// share_link_unfurled, is captured SERVER-side in functions/r/[code].ts
+// when a platform bot (Discord, iMessage, Slack…) fetches the link
+// shell — bots don't run JS, so it can't live in this file; its
+// shared_* props mirror this event's. shared_* props
 // describe the SHARER's result (decoded from the code), not the
 // visitor's; landing_mode is where the visitor arrived ("home" for
 // daily codes). Not idempotent by design — every inbound click counts —
