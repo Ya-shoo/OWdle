@@ -5,7 +5,7 @@ export const SITE_NAME = "OWdle";
 export const SITE_TAGLINE = "the daily Overwatch quiz";
 
 export const SITE_DEFAULT_DESCRIPTION =
-  "OWdle is the daily Overwatch Wordle — a free hero quiz game. Guess the daily Overwatch hero by attributes, ability icons, splash art, and voice lines. New puzzle every day at 2:15am Pacific Time.";
+  "OWdle is the daily Overwatch guessing game. Guess heroes by their attributes, ability sounds, splash art, and more. New puzzle every day at 2:15am Pacific Time.";
 
 // Support/tip links for the home-page engagement section. Yash to update
 // the Ko-fi handle once an account exists. SHARE_TEXT is consumed by the
