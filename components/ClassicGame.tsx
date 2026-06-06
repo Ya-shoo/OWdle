@@ -390,23 +390,12 @@ export function ClassicGame() {
                 </div>
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <NextModeCTA current="classic" />
-                  <ShareButton
-                    {...roundShareLinks({
-                      day,
-                      slug: "classic",
-                      outcome: "won",
-                      guesses: state.guesses.length,
-                      hints: hintsUsed.length,
-                    })}
-                    filename={`owdle-classic-${day}.png`}
-                    surface="round_result"
-                    mode="classic"
-                    dailyId={day}
-                  />
                 </div>
                 {/* Emoji-grid text share — the guess path as 🟩🟨🟥 rows
-                    (latest first, capped), LoLdle-style. Zero-friction
-                    copy/paste alongside the image share above. */}
+                    (latest first, capped), LoLdle-style. The link-first
+                    ShareButton rides in the block's action row — ONE
+                    share affordance per card, at the bottom (mirrors
+                    Deadlockle's layout). */}
                 <TextShareBlock
                   text={buildClassicShareText({
                     guesses: state.guesses,
@@ -426,6 +415,21 @@ export function ClassicGame() {
                   surface="round_result"
                   mode="classic"
                   dailyId={day}
+                  share={
+                    <ShareButton
+                      {...roundShareLinks({
+                        day,
+                        slug: "classic",
+                        outcome: "won",
+                        guesses: state.guesses.length,
+                        hints: hintsUsed.length,
+                      })}
+                      filename={`owdle-classic-${day}.png`}
+                      surface="round_result"
+                      mode="classic"
+                      dailyId={day}
+                    />
+                  }
                 />
               </div>
             </motion.div>

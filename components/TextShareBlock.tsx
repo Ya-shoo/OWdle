@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { trackShareClicked } from "@/lib/tracking";
 
 // LoLdle-style copyable share block: the text itself, visible and
@@ -8,14 +8,21 @@ import { trackShareClicked } from "@/lib/tracking";
 // friction-free into Discord / iMessage / group chats. Callers build
 // the text (daily summary, classic emoji grid, …) and this owns the
 // clipboard / native-share / X-intent plumbing + tracking.
+//
+// When a `share` node is passed, it renders IN PLACE of the block's
+// own native-share/X button — one share affordance per surface, and
+// it's the link-first ShareButton (carries the /r/[code] unfurl card).
+// Mirrors Deadlockle's one-button layout; surfaces not yet migrated
+// keep the built-in button by omitting the prop.
 type Props = {
   text: string;
   surface: "round_result" | "daily_complete";
   dailyId: string;
   mode?: Parameters<typeof trackShareClicked>[0]["mode"];
+  share?: ReactNode;
 };
 
-export function TextShareBlock({ text, surface, dailyId, mode }: Props) {
+export function TextShareBlock({ text, surface, dailyId, mode, share }: Props) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -30,7 +37,7 @@ export function TextShareBlock({ text, surface, dailyId, mode }: Props) {
     }
   };
 
-  const share = async () => {
+  const shareText = async () => {
     if (typeof navigator.share === "function") {
       try {
         await navigator.share({ text });
@@ -66,18 +73,20 @@ export function TextShareBlock({ text, surface, dailyId, mode }: Props) {
           className="inline-flex items-center gap-2 rounded-full bg-info/15 px-5 py-3 text-info ring-1 ring-info/40 transition-all hover:bg-info/25 hover:ring-info active:scale-[0.98]"
         >
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-            {copied ? "Copied ✓" : "Copy"}
+            {copied ? "Copied ✓" : share ? "Copy text" : "Copy"}
           </span>
         </button>
-        <button
-          type="button"
-          onClick={share}
-          className="inline-flex items-center gap-2 rounded-full border border-line bg-inset/40 px-4 py-3 text-ink-soft transition-colors hover:border-info/60 hover:text-info active:scale-[0.98]"
-        >
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-            Share
-          </span>
-        </button>
+        {share ?? (
+          <button
+            type="button"
+            onClick={shareText}
+            className="inline-flex items-center gap-2 rounded-full border border-line bg-inset/40 px-4 py-3 text-ink-soft transition-colors hover:border-info/60 hover:text-info active:scale-[0.98]"
+          >
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
+              Share
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );
