@@ -1,0 +1,87 @@
+# Pre-warms every possible ROUND share card for the current Pacific
+# puzzle day, right after the 2:15am PT reset. First renders on the
+# free Workers plan can exceed the per-request CPU limit (cold wasm
+# init) — but a successful render persists to R2 forever, so warming
+# the full round-code space once per day makes every round card a
+# storage hit before any player shares one. Daily-summary codes are
+# combinatorially unbounded and stay on-demand (sharer prefetch retries
+# + permanent storage cover them).
+#
+# Two UTC schedules cover PST/PDT; the off-season run lands before the
+# reset and harmlessly re-warms yesterday (already stored). Code space
+# (~98/day) mirrors lib/shareUrl.ts + per-mode caps:
+#   classic c: wins g1-8 with hints h0-2 (g+h<=8), losses z/z1/z2
+#   quote   q: wins 1-8, loss z
+#   splash  p: wins 1-5, loss z
+#   sound   s: wins g1-8 x skips k (g+k<=8), losses z + z1..z7
+#   ability a: wins 1-14 (base36 a-e past 9), loss z
+
+name: Pre-warm OG cards
+
+on:
+  schedule:
+    - cron: "25 9 * * *" # 02:25 PDT (summer) / 01:25 PST (harmless)
+    - cron: "25 10 * * *" # 02:25 PST (winter) / 03:25 PDT (harmless)
+  workflow_dispatch:
+
+jobs:
+  prewarm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Render every round code for today
+        run: |
+          DAY=$(TZ=America/Los_Angeles date +%y%m%d)
+          echo "Pacific puzzle day: $DAY"
+
+          codes=()
+          # classic: wins (guesses+hints<=8) with hint modifier
+          for h in 0 1 2; do
+            max=$((8 - h))
+            for g in $(seq 1 $max); do
+              if [ $h -eq 0 ]; then codes+=("${DAY}c${g}"); else codes+=("${DAY}c${g}${h}"); fi
+            done
+          done
+          codes+=("${DAY}cz" "${DAY}cz1" "${DAY}cz2")
+          # quote: 1-8 + loss
+          for g in $(seq 1 8); do codes+=("${DAY}q${g}"); done
+          codes+=("${DAY}qz")
+          # splash: 1-5 + loss
+          for g in $(seq 1 5); do codes+=("${DAY}p${g}"); done
+          codes+=("${DAY}pz")
+          # sound: wins (picks g, skips k, g+k<=8) with skip modifier
+          for g in $(seq 1 8); do
+            maxk=$((8 - g))
+            for k in $(seq 0 $maxk); do
+              if [ $k -eq 0 ]; then codes+=("${DAY}s${g}"); else codes+=("${DAY}s${g}${k}"); fi
+            done
+          done
+          # sound losses: 8 attempts spent, skip tally 0-8 (all-skip
+          # losses encode picks=0, skips=8)
+          codes+=("${DAY}sz")
+          for k in $(seq 1 8); do codes+=("${DAY}sz${k}"); done
+          # ability: 1-14 + loss (base36 past 9)
+          for g in 1 2 3 4 5 6 7 8 9 a b c d e; do codes+=("${DAY}a${g}"); done
+          codes+=("${DAY}az")
+
+          echo "${#codes[@]} codes"
+          failed=()
+          for code in "${codes[@]}"; do
+            ok=0
+            for try in 1 2 3 4 5; do
+              st=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+                "https://playowdle.com/og/r/${code}")
+              if [ "$st" = "200" ]; then ok=1; break; fi
+              sleep 2
+            done
+            if [ $ok -eq 0 ]; then
+              failed+=("$code")
+              echo "::warning::$code never rendered (last status $st)"
+            fi
+          done
+
+          echo "warmed $(( ${#codes[@]} - ${#failed[@]} ))/${#codes[@]}"
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "::error::${#failed[@]} codes failed all retries: ${failed[*]}"
+            exit 1
+          fi

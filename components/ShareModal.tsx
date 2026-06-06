@@ -56,6 +56,14 @@ export function ShareModal({
   );
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
+  // Preview attempt counter — a failed/stalled OG load retries up to
+  // twice (fresh <img> via key) before the final "unavailable" copy.
+  // Cold renders can 503 transiently (free-plan CPU limits; the error
+  // is no-store so a refetch self-heals) — a single-shot <img> turned
+  // those into a dead preview even though the very next request would
+  // have succeeded. The client-captured fallback path never retries.
+  const [previewTry, setPreviewTry] = useState(0);
+  const retryTimer = useRef<number | null>(null);
   const [downloadBusy, setDownloadBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState<"link" | "download" | null>(null);
@@ -127,17 +135,37 @@ export function ShareModal({
     return () => window.clearTimeout(id);
   }, [confirmed]);
 
-  // Stall guard for the OG preview: if the image neither loads nor
+  const handlePreviewError = useCallback(() => {
+    // Only the server-rendered OG path retries — the client-captured
+    // fallback (blob URL) failing again deterministically.
+    if (ogSrc && previewTry < 2) {
+      retryTimer.current = window.setTimeout(() => {
+        setPreviewTry((t) => t + 1);
+      }, 1800);
+    } else {
+      setFailed(true);
+    }
+  }, [ogSrc, previewTry]);
+
+  useEffect(
+    () => () => {
+      if (retryTimer.current != null) {
+        window.clearTimeout(retryTimer.current);
+      }
+    },
+    [],
+  );
+
+  // Stall guard for the OG preview: if an attempt neither loads nor
   // errors within 8s (hot-reload races in dev, flaky networks in prod),
-  // fall through to the "preview unavailable" copy instead of pinning
-  // "Rendering preview…" forever. Copy link never depended on it.
+  // route it through the same retry path as an explicit error instead
+  // of pinning "Rendering preview…" forever. Copy link never depended
+  // on it.
   useEffect(() => {
     if (!ogSrc || ogStatus !== "loading") return;
-    const id = window.setTimeout(() => {
-      setFailed((cur) => cur || true);
-    }, 8000);
+    const id = window.setTimeout(handlePreviewError, 8000);
     return () => window.clearTimeout(id);
-  }, [ogSrc, ogStatus]);
+  }, [ogSrc, ogStatus, previewTry, handlePreviewError]);
 
   const handleCopyLink = useCallback(async () => {
     try {
@@ -264,10 +292,11 @@ export function ShareModal({
             {previewSrc && ogStatus !== "error" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
+                key={previewTry}
                 src={previewSrc}
                 alt="Share preview"
                 onLoad={() => setLoaded(true)}
-                onError={() => setFailed(true)}
+                onError={handlePreviewError}
                 className="absolute inset-0 h-full w-full object-cover"
               />
             ) : null}

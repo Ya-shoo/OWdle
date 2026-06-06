@@ -192,11 +192,24 @@ function subscribeNever(): () => void {
 // plenty.
 const PREFETCHED = new Set<string>();
 
-function prefetchImage(src: string): void {
-  if (!src || PREFETCHED.has(src)) return;
-  PREFETCHED.add(src);
+// The prefetch RETRIES failed loads: the sharer's device is what pays
+// the one cold wasm render each code ever needs (successes persist
+// server-side in R2), so it must shoulder transient cold-isolate 503s
+// — a give-up-on-first-error prefetch left the link un-warmed exactly
+// when warming mattered most.
+function prefetchImage(src: string, attempt = 0): void {
+  if (!src) return;
+  if (attempt === 0) {
+    if (PREFETCHED.has(src)) return;
+    PREFETCHED.add(src);
+  }
   const img = new Image();
   img.decoding = "async";
+  if (attempt < 2) {
+    img.onerror = () => {
+      window.setTimeout(() => prefetchImage(src, attempt + 1), 2500);
+    };
+  }
   img.src = src;
 }
 

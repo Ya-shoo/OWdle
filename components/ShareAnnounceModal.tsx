@@ -3,7 +3,6 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
-import { ogImageUrlForCode, ogPreviewSrc } from "@/lib/shareLinks";
 import { trackShareAnnounce } from "@/lib/tracking";
 
 // One-time release announcement for the link-share system. Pops once
@@ -22,12 +21,14 @@ const SEEN_KEY = "owdle.announce.shareLinks";
 const ANNOUNCE_EXPIRED =
   Date.now() > new Date("2026-06-19T00:00:00-07:00").getTime();
 
-// Fixed example card: a daily 5/5 sweep (date 2026-06-05, results
-// 3/2/4/3/2, no hints/skips). Hardcoding the code keeps this component
-// pure — encoding live results would need today's date in render — and
-// the image is immutable + permanently edge-cached anyway. It renders
-// with the CURRENT card design since the OG worker draws it live.
-const EXAMPLE_CODE = "260605-32432-00";
+// Fixed example card: a PRE-BAKED static render of the daily 5/5 sweep
+// (code 260605-32432-00), shipped as a plain asset so the modal never
+// waits on (or risks) a live OG render — it serves from the Pages edge
+// like any image. Regenerate after card-design changes:
+//
+//   curl -s https://playowdle.com/og/r/260605-32432-00 \
+//     -o public/announce-example.png
+const EXAMPLE_SRC = "/announce-example.png";
 
 function subscribeNever(): () => void {
   return () => {};
@@ -59,7 +60,22 @@ export function ShareAnnounceModal() {
   );
   const [dismissed, setDismissed] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
-  const open = eligible && !dismissed;
+  // Preload the example card BEFORE revealing the dialog — popping the
+  // chrome and letting the image pour in afterwards read as jank. The
+  // asset is a same-origin static (edge-cached), so this resolves in a
+  // beat; if it errors we open anyway and just omit the image.
+  const [imgReady, setImgReady] = useState(false);
+  useEffect(() => {
+    if (!eligible || dismissed) return;
+    const img = new Image();
+    img.onload = () => setImgReady(true);
+    img.onerror = () => {
+      setImgFailed(true);
+      setImgReady(true);
+    };
+    img.src = EXAMPLE_SRC;
+  }, [eligible, dismissed]);
+  const open = eligible && !dismissed && imgReady;
 
   // Track the pop exactly once per mount-session.
   useEffect(() => {
@@ -98,9 +114,7 @@ export function ShareAnnounceModal() {
 
   if (!open || typeof document === "undefined") return null;
 
-  const exampleSrc = imgFailed
-    ? null
-    : ogPreviewSrc(ogImageUrlForCode(EXAMPLE_CODE));
+  const exampleSrc = imgFailed ? null : EXAMPLE_SRC;
 
   const overlay = (
     <div

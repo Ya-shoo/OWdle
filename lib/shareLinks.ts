@@ -50,15 +50,22 @@ export function roundShareLinks(opts: {
 
 // The browser-facing src for an OG preview — used by BOTH the
 // result-card prefetch and the modal <img>, so their cache keys line
-// up exactly. In dev a static marker shifts the URL away from entries
-// the browser cached before the og server answered no-store (an
-// immutable cache hit never revalidates, so a header fix alone can't
-// evict it).
+// up exactly. In dev the marker is PER PAGE LOAD (module-scope Date
+// read keeps the impure call out of render): Safari's in-session
+// memory cache re-serves images on reload even when the og server
+// answered no-store (WebKit quirk — no true hard-reload exists), which
+// pinned previews from minutes-old renderer iterations while
+// design-tweaking on Deadlockle. A fresh module evaluation → fresh
+// query param → the cache can't match. Prefetch/modal parity holds
+// because both read the same module constant within a page session.
+const DEV_BUST =
+  process.env.NODE_ENV === "development" ? Date.now().toString(36) : "";
+
 export function ogPreviewSrc(ogImageUrl: string): string {
   if (!ogImageUrl || process.env.NODE_ENV !== "development") {
     return ogImageUrl;
   }
-  return `${ogImageUrl}${ogImageUrl.includes("?") ? "&" : "?"}v=dev`;
+  return `${ogImageUrl}${ogImageUrl.includes("?") ? "&" : "?"}v=dev-${DEV_BUST}`;
 }
 
 // OG image URL for an already-encoded code — used by surfaces that

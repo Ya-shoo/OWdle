@@ -15,5 +15,20 @@
       "database_name": "owdle-votes",
       "database_id": "e51eedfa-9f64-4f22-86b2-29b26b413af8"
     }
+  ],
+
+  // R2 bucket for rendered OG share cards (functions/og/r/[code].tsx).
+  // Free-plan Workers CPU limits kill ~half of COLD wasm renders (lazy
+  // resvg/yoga init inside the request), so a card renders once and
+  // every later request — unfurlers, re-scrapes, week-old links —
+  // serves the stored PNG. Shared `dailydles` bucket; cards live under
+  // og-cache/owdle/, disjoint from both sites' media prefixes (and from
+  // Deadlockle's og-cache/deadlockle/). Ported from Deadlockle's
+  // launch-night hardening (2026-06-05) — keep the repos in lockstep.
+  "r2_buckets": [
+    {
+      "binding": "OG_CACHE",
+      "bucket_name": "dailydles"
+    }
   ]
 }
