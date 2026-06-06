@@ -65,23 +65,43 @@ jobs:
           codes+=("${DAY}az")
 
           echo "${#codes[@]} codes"
-          failed=()
-          for code in "${codes[@]}"; do
-            ok=0
-            for try in 1 2 3 4 5; do
-              st=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
-                "https://playowdle.com/og/r/${code}")
-              if [ "$st" = "200" ]; then ok=1; break; fi
-              sleep 2
-            done
-            if [ $ok -eq 0 ]; then
-              failed+=("$code")
-              echo "::warning::$code never rendered (last status $st)"
-            fi
-          done
 
-          echo "warmed $(( ${#codes[@]} - ${#failed[@]} ))/${#codes[@]}"
+          # Two passes with a cool-down between them: a CPU-killed wasm
+          # init can WEDGE the isolate this runner's connections are
+          # pinned to, failing every code after some point in the loop.
+          # The pause lets routing/isolates rotate; pass 2 only touches
+          # what pass 1 missed (successes are already stored in R2).
+          # Red runs (and the failure email they send) therefore mean a
+          # real persistent problem, not one unlucky isolate.
+          warm_pass() {
+            local -n in_codes=$1
+            local -n out_failed=$2
+            out_failed=()
+            for code in "${in_codes[@]}"; do
+              local ok=0 st=""
+              for try in 1 2 3 4 5; do
+                st=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+                  "https://playowdle.com/og/r/${code}")
+                if [ "$st" = "200" ]; then ok=1; break; fi
+                sleep 2
+              done
+              if [ $ok -eq 0 ]; then out_failed+=("$code"); fi
+            done
+          }
+
+          warm_pass codes pass1_failed
+          echo "pass 1: warmed $(( ${#codes[@]} - ${#pass1_failed[@]} ))/${#codes[@]}"
+
+          failed=()
+          if [ ${#pass1_failed[@]} -gt 0 ]; then
+            echo "cooling down 90s before pass 2 (${#pass1_failed[@]} codes left)"
+            sleep 90
+            warm_pass pass1_failed failed
+            echo "pass 2: warmed $(( ${#pass1_failed[@]} - ${#failed[@]} ))/${#pass1_failed[@]}"
+          fi
+
+          echo "total warmed $(( ${#codes[@]} - ${#failed[@]} ))/${#codes[@]}"
           if [ ${#failed[@]} -gt 0 ]; then
-            echo "::error::${#failed[@]} codes failed all retries: ${failed[*]}"
+            echo "::error::${#failed[@]} codes failed both passes: ${failed[*]}"
             exit 1
           fi
