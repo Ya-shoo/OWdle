@@ -9,12 +9,12 @@
 #
 # Two UTC schedules cover PST/PDT; the off-season run lands before the
 # reset and harmlessly re-warms yesterday (already stored). Code space
-# (~98/day) mirrors lib/shareUrl.ts + per-mode caps:
+# (~93/day) mirrors lib/shareUrl.ts + per-mode caps:
 #   classic c: wins g1-8 with hints h0-2 (g+h<=8), losses z/z1/z2
 #   quote   q: wins 1-8, loss z
 #   splash  p: wins 1-5, loss z
 #   sound   s: wins g1-8 x skips k (g+k<=8), losses z + z1..z7
-#   ability a: wins 1-14 (base36 a-e past 9), loss z
+#   ability a: wins 1-8, loss z
 
 name: Pre-warm OG cards
 
@@ -60,8 +60,8 @@ jobs:
           # losses encode picks=0, skips=8)
           codes+=("${DAY}sz")
           for k in $(seq 1 8); do codes+=("${DAY}sz${k}"); done
-          # ability: 1-14 + loss (base36 past 9)
-          for g in 1 2 3 4 5 6 7 8 9 a b c d e; do codes+=("${DAY}a${g}"); done
+          # ability: 1-8 + loss
+          for g in $(seq 1 8); do codes+=("${DAY}a${g}"); done
           codes+=("${DAY}az")
 
           echo "${#codes[@]} codes"

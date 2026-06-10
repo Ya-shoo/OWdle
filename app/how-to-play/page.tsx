@@ -55,13 +55,13 @@ const MODE_SECTIONS: {
     slug: "ability",
     num: "03",
     label: "Ability",
-    lede: "A blurred ability icon that sharpens with each miss.",
+    lede: "A hidden ability icon, uncovered tile by tile as you miss.",
     body: (
       <>
         <p>
-          The puzzle starts with a tightly cropped, heavily blurred ability
-          icon that widens and sharpens with each wrong guess. You have
-          fourteen attempts to name the hero who owns it.
+          The icon hides behind a grid of nine tiles. One is uncovered at
+          the start, and every wrong guess uncovers another. You have
+          eight attempts to name the hero who owns it.
         </p>
       </>
     ),

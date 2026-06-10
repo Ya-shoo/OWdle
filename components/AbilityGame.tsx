@@ -42,15 +42,22 @@ const IS_DEV = process.env.NODE_ENV !== "production";
 
 const MODE = "ability";
 
-// 4×4 reveal grid — 16 tiles total. Initial peek shows 1 tile;
-// every wrong guess reveals one more. Win unmasks all.
-const GRID_DIM = 4;
-const TOTAL_CELLS = GRID_DIM * GRID_DIM;
+// 3×3 reveal grid — 9 tiles total. Initial peek shows 1 tile;
+// every wrong guess reveals one more. Win unmasks all. Fewer, larger
+// tiles than the original 4×4 because players were spam-guessing just
+// to uncover enough icon to start guessing for real — each tile now
+// shows enough to make even the first reveals meaningful.
+const GRID_COLS = 3;
+const GRID_ROWS = 3;
+const TOTAL_CELLS = GRID_COLS * GRID_ROWS;
 const INITIAL_REVEALS = 1;
 
 // Hard cap on guesses. Player loses on the cap-th wrong attempt and
 // the icon snaps fully revealed (no rotation) inside the LossReveal.
-const MAX_GUESSES = 14;
+// Same cap as Classic/Quote/Sound, and on 9 tiles it keeps one tile
+// hidden at the final decision point — the icon never fully reveals
+// while the round is live.
+const MAX_GUESSES = 8;
 
 // Hard mode rotates the icon by a per-day amount so it's harder to recognize
 // even with most cells revealed. Defaults on; the player can toggle off any
@@ -561,16 +568,16 @@ function AbilityArtCard({
             aria-hidden={!!revealedHero}
             className="absolute inset-0 grid"
             style={{
-              gridTemplateColumns: `repeat(${GRID_DIM}, 1fr)`,
-              gridTemplateRows: `repeat(${GRID_DIM}, 1fr)`,
+              gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
+              gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
             }}
           >
             {Array.from({ length: TOTAL_CELLS }).map((_, i) => {
               const isRevealed = revealedSet.has(i);
-              const col = i % GRID_DIM;
-              const row = Math.floor(i / GRID_DIM);
-              const isLastCol = col === GRID_DIM - 1;
-              const isLastRow = row === GRID_DIM - 1;
+              const col = i % GRID_COLS;
+              const row = Math.floor(i / GRID_COLS);
+              const isLastCol = col === GRID_COLS - 1;
+              const isLastRow = row === GRID_ROWS - 1;
               return (
                 <motion.div
                   key={i}

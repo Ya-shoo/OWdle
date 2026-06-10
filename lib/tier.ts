@@ -24,13 +24,13 @@ import type { ModeSlug } from "./modes";
 //   ClassicGame.tsx  → 8
 //   SoundGame.tsx    → 8
 //   QuoteGame.tsx    → 8
-//   AbilityGame.tsx  → 12
+//   AbilityGame.tsx  → 8
 //   SplashGame.tsx   → 5
 export const CAPS: Record<ModeSlug, number> = {
   classic: 8,
   sound: 8,
   quote: 8,
-  ability: 12,
+  ability: 8,
   splash: 5,
   // Map is built:false in lib/modes.ts so this entry is unused, but the
   // record type requires it. If/when Map ships, set to its real cap.
