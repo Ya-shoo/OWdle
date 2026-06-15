@@ -197,6 +197,13 @@ export function QuoteGame() {
   const lost = state.lost === true;
   const ended = won || lost;
 
+  // Per-speaker guess tallies. The two speakers are independent sub-puzzles,
+  // so first-try-both should read as "1 / 1" (one-shot each) rather than a
+  // conflated "2". Each guess is target-tagged and a slot locks once solved,
+  // so the per-speaker count is just the number of guesses aimed at it.
+  const aGuessCount = state.guesses.filter((g) => g.target === 0).length;
+  const bGuessCount = state.guesses.filter((g) => g.target === 1).length;
+
   // Per-target exclusion: a hero already tried as Speaker A can still be
   // tried as Speaker B (the player may correctly suspect them in the other
   // slot).
@@ -432,6 +439,8 @@ export function QuoteGame() {
               speakerA={speakerA}
               speakerB={speakerB}
               guesses={state.guesses.length}
+              aGuesses={aGuessCount}
+              bGuesses={bGuessCount}
               outcome="won"
               day={day}
             />
@@ -466,7 +475,7 @@ export function QuoteGame() {
                     <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
                       {speakerA.name} & {speakerB.name}{" "}
                       <span className="text-ink-soft">
-                        in {state.guesses.length}
+                        in {aGuessCount} - {bGuessCount}
                       </span>
                     </div>
                     <ModeStatsLine mode="quote" />
@@ -506,6 +515,8 @@ export function QuoteGame() {
               speakerA={speakerA}
               speakerB={speakerB}
               guesses={state.guesses.length}
+              aGuesses={aGuessCount}
+              bGuesses={bGuessCount}
               outcome="lost"
               day={day}
             />
@@ -986,7 +997,18 @@ function ConversationGuessRow({
   isLatest: boolean;
 }) {
   const targetLabel = target === 0 ? "A" : "B";
-  const targetColor = target === 0 ? "text-info" : "text-accent-soft";
+  const isA = target === 0;
+  // Speaker hue is consistent with the dialogue line labels and the toggle
+  // (A = info, B = accent-soft). Correctness is shown by intensity (a
+  // brighter fill + ✓), never by switching hue — so the colour always
+  // answers "which speaker was this guess for?".
+  const speakerChip = isCorrect
+    ? isA
+      ? "bg-info/25 text-info ring-info/70"
+      : "bg-accent-soft/25 text-accent-soft ring-accent-soft/70"
+    : isA
+      ? "bg-info/15 text-info ring-info/45"
+      : "bg-accent-soft/15 text-accent-soft ring-accent-soft/45";
   const results = compareHero(guess, speaker);
 
   const affiliationTooltip: TileTooltip | null = guess.affiliation_explanation
@@ -1024,14 +1046,11 @@ function ConversationGuessRow({
         </div>
         <span
           className={clsx(
-            "shrink-0 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em]",
-            "border",
-            isCorrect
-              ? "border-correct/50 bg-correct/15 text-correct"
-              : `border-line bg-muted/50 ${targetColor}`,
+            "shrink-0 px-3 py-1.5 text-xs font-normal uppercase tracking-[0.14em] ring-1",
+            speakerChip,
           )}
         >
-          {isCorrect ? "✓" : "for"} Speaker {targetLabel}
+          {isCorrect ? "✓ " : ""}Speaker {targetLabel}
         </span>
       </div>
 
@@ -1057,12 +1076,16 @@ function QuoteDailyComplete({
   speakerA,
   speakerB,
   guesses,
+  aGuesses,
+  bGuesses,
   outcome,
   day,
 }: {
   speakerA: Hero;
   speakerB: Hero;
   guesses: number;
+  aGuesses?: number;
+  bGuesses?: number;
   outcome: "won" | "lost";
   day: string;
 }) {
@@ -1089,7 +1112,13 @@ function QuoteDailyComplete({
         <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
           {speakerA.name} &amp; {speakerB.name}
           {outcome === "won" && (
-            <span className="text-ink-soft"> in {guesses}</span>
+            <span className="text-ink-soft">
+              {" "}
+              in{" "}
+              {aGuesses != null && bGuesses != null
+                ? `${aGuesses} - ${bGuesses}`
+                : guesses}
+            </span>
           )}
         </div>
       </div>
