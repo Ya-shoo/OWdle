@@ -4,6 +4,15 @@ export const SITE_URL = "https://playowdle.com";
 export const SITE_NAME = "OWdle";
 export const SITE_TAGLINE = "the daily Overwatch quiz";
 
+// Google Analytics 4 measurement ID for playowdle.com. Non-secret — it ships
+// in the page source on the live site — so it lives here as a constant rather
+// than an env var, which avoids GA silently failing to load if a deploy
+// machine's .env drifts (Yash deploys from both Mac and Windows). Consumed by
+// components/GoogleAnalytics.tsx, which only loads gtag in production builds.
+// GA exists purely to satisfy Monumetric's traffic verification for ad
+// onboarding; PostHog (instrumentation-client.ts) remains primary analytics.
+export const GA_MEASUREMENT_ID = "G-98FN2ZJ7MV";
+
 export const SITE_DEFAULT_DESCRIPTION =
   "OWdle is the daily Overwatch guessing game. Guess heroes by their attributes, ability sounds, splash art, and more. New puzzle every day at 2:15am Pacific Time.";
 

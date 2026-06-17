@@ -12,6 +12,7 @@ import { FeedbackButton } from "@/components/FeedbackButton";
 import { ShareAnnounceModal } from "@/components/ShareAnnounceModal";
 import { DevThemeSwitcher } from "@/components/DevThemeSwitcher";
 import { AdRails } from "@/components/AdRails";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { THEME_INLINE_SCRIPT } from "@/lib/theme";
 import {
   SITE_DEFAULT_DESCRIPTION,
@@ -123,6 +124,7 @@ export default function RootLayout({
         <ShareAnnounceModal />
         <AdRails />
         <DevThemeSwitcher />
+        <GoogleAnalytics />
       </body>
     </html>
   );
