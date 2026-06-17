@@ -1,1 +1,12 @@
-{}
+{
+  "pharah": {
+    "barrage": {
+      "startOffset": 1.0281
+    }
+  },
+  "sierra": {
+    "tracking-shot": {
+      "startOffset": 0.0717
+    }
+  }
+}
