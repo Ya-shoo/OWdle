@@ -115,8 +115,13 @@ function cleanDialogueText(t) {
 }
 
 // Parse one interaction row's dialogue cell into [{ label, text }, …].
-// Wiki convention: each turn is `* '''Speaker''': spoken text`.
+// Wiki convention: each turn is `* '''Speaker''': spoken text`. Newer hero
+// pages (e.g. Shion) instead tuck the colon INSIDE the bold tag
+// (`* '''Speaker:''' spoken text`); normalize that to the colon-outside form
+// first. The negative lookahead `(?!:)` leaves `'''Soldier: 76''':` (a colon
+// that belongs to the speaker's name) untouched.
 function parseTurns(dialogueCell) {
+  dialogueCell = dialogueCell.replace(/'''([^']*?):'''(?!:)/g, "'''$1''':");
   const turns = [];
   // Split by newline that starts a new bullet — keeps multi-sentence turns intact.
   const lines = dialogueCell.split(/\n\*+\s*/);
@@ -278,10 +283,27 @@ async function main() {
   const labelToKey = buildLabelLookup(heroes);
   const banned = buildForbiddenTokens(heroes);
 
+  // Scoped single-hero append mode: `QUOTE_ONLY=<key>` scrapes ONLY that
+  // hero's Quotes page and APPENDS its new conversations to the existing
+  // manifest, leaving every other hero's conversations untouched. Speaker
+  // resolution + spoiler scrub still run against the full roster. Unset →
+  // original full-roster rebuild. (Use when adding a single new hero.)
+  const ONLY_HERO = process.env.QUOTE_ONLY || null;
+  const targetHeroes = ONLY_HERO ? heroes.filter((h) => h.key === ONLY_HERO) : heroes;
+  if (ONLY_HERO && targetHeroes.length === 0) {
+    throw new Error(`QUOTE_ONLY=${ONLY_HERO} not found in heroes.json`);
+  }
+  // When a line's .ogg isn't on the wiki yet (typical for a day-old hero whose
+  // dialogue is transcribed before audio is uploaded), keep the line text-only
+  // rather than dropping the whole conversation. On by default in scoped mode;
+  // a later re-run backfills audio idempotently. Full rebuilds stay strict.
+  const ALLOW_TEXT_ONLY = ONLY_HERO != null || process.env.ALLOW_TEXT_ONLY === "1";
+  let textOnlyLines = 0;
+
   // Pass 1: collect raw rows from every hero's Interactions section.
-  console.log(`Pass 1: scanning ${heroes.length} heroes for Interactions sections...`);
+  console.log(`Pass 1: scanning ${targetHeroes.length} hero(es) for Interactions sections...`);
   const allRows = [];
-  for (const h of heroes) {
+  for (const h of targetHeroes) {
     const wikitext = await getQuotesWikitext(h);
     if (!wikitext) continue;
     const section = extractInteractionsSection(wikitext);
@@ -407,18 +429,44 @@ async function main() {
         await new Promise((r) => setTimeout(r, 60));
       } catch (e) {
         await unlink(tmpPath).catch(() => {});
-        console.log(`    ${t.audioFile}: ${e.message}`);
-        allOk = false;
-        break;
+        if (ALLOW_TEXT_ONLY) {
+          // Ship the line text-only (no `audio` key); audio backfills later.
+          lines.push({ speaker: t.speaker, text: t.text });
+          textOnlyLines++;
+        } else {
+          console.log(`    ${t.audioFile}: ${e.message}`);
+          allOk = false;
+          break;
+        }
       }
     }
     if (allOk) {
       manifest.push({ speakers: c.speakers, lines });
     }
   }
+  if (textOnlyLines > 0) {
+    console.log(`  (${textOnlyLines} line(s) shipped text-only — audio not yet on the wiki)`);
+  }
 
-  await writeFile(OUT_MANIFEST, JSON.stringify(manifest, null, 2));
-  console.log(`\nWrote ${manifest.length} conversations → data/quote-conversations.json`);
+  // In scoped mode, append to the existing manifest instead of overwriting.
+  // A brand-new hero shares no conversations with the existing set, so a
+  // plain concat is safe; full-rebuild mode overwrites as before.
+  let finalManifest = manifest;
+  let trailingNewline = "";
+  if (ONLY_HERO) {
+    const existingRaw = await readFile(OUT_MANIFEST, "utf-8");
+    trailingNewline = existingRaw.endsWith("\n") ? "\n" : "";
+    const existing = JSON.parse(existingRaw);
+    // Replace (not append) this hero's conversations so re-runs — e.g. to
+    // backfill audio once the wiki has it — stay idempotent instead of
+    // duplicating. Every other hero's conversations are left untouched.
+    const kept = existing.filter((c) => !c.speakers.includes(ONLY_HERO));
+    finalManifest = kept.concat(manifest);
+    const replaced = existing.length - kept.length;
+    console.log(`\n${ONLY_HERO}: wrote ${manifest.length} conversation(s) (${replaced} replaced, ${kept.length} others untouched).`);
+  }
+  await writeFile(OUT_MANIFEST, JSON.stringify(finalManifest, null, 2) + trailingNewline);
+  console.log(`Wrote ${finalManifest.length} conversations → data/quote-conversations.json`);
 }
 
 main().catch((err) => {

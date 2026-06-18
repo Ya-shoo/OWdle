@@ -4,7 +4,9 @@ import skinsData from "@/data/skins.json";
 export type Role = "tank" | "damage" | "support";
 export type Species = "human" | "omnic" | "cyborg" | "animal" | "ai";
 export type Gender = "female" | "male" | "non-binary" | "neutral";
-export type Rarity = "epic" | "legendary" | "mythic";
+// "common" is used for a hero's default/base splash when it is folded into
+// the Splash pool for skin-poor heroes (e.g. Shion, Sierra) — see skins.json.
+export type Rarity = "epic" | "legendary" | "mythic" | "common";
 
 export type Ability = {
   name: string;

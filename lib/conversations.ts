@@ -12,10 +12,12 @@ export type ConversationLine = {
   speaker: 0 | 1;
   text: string;
   // Public-relative URL to the per-line voice clip
-  // (e.g. /voicelines/quote/hanzo_-_how_would_you_know.mp3). Always present
-  // for wiki-sourced conversations; only entries with full per-line audio
-  // make it into the manifest.
-  audio: string;
+  // (e.g. /voicelines/quote/hanzo_-_how_would_you_know.mp3). Optional: brand-new
+  // heroes often have their interaction TEXT transcribed on the wiki before the
+  // per-line .ogg audio is uploaded, so a conversation can ship text-only and
+  // have audio backfilled later. Quote mode degrades gracefully (the per-line
+  // play affordance simply stays inert when audio is absent).
+  audio?: string;
 };
 
 export type Conversation = {

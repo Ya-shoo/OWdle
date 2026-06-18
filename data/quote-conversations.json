@@ -16856,5 +16856,354 @@
         "audio": "/voicelines/quote/zenyatta_-_i_embrace_the_unknown.mp3"
       }
     ]
+  },
+  {
+    "speakers": [
+      "ana",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "I don't know why you're so happy to kill. I've never enjoyed it, even for the worst people."
+      },
+      {
+        "speaker": 1,
+        "text": "Oh, always with the guilt and the regret. Don't you humans know how to have any fun?"
+      },
+      {
+        "speaker": 0,
+        "text": "How could we, with the likes of you around?"
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "domina"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "I admire your silhouette, Singhania. It's so... maverick, pairing those arms with that coat."
+      },
+      {
+        "speaker": 1,
+        "text": "Aww, thank you! It's truly humbling to earn the adulations of such a... fashion provocateur."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "echo"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "Ugh! I don't know how you stand it, pretending to listen when the humans talk."
+      },
+      {
+        "speaker": 1,
+        "text": "I'm not pretending. I've met many brilliant humans, and I have so much to learn."
+      },
+      {
+        "speaker": 0,
+        "text": "Like what? How to hurt, and hate, and kill?"
+      },
+      {
+        "speaker": 1,
+        "text": "I choose what lessons I take with me. I hope someday, you'll do the same."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "genji"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "You know, the first time I saw you, I thought you were handsome."
+      },
+      {
+        "speaker": 1,
+        "text": "And then, you learned I was a Shimada?"
+      },
+      {
+        "speaker": 0,
+        "text": "I learnt you were human... and I'm much picker when it comes to flesh."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "hanzo"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "How would you rate our prison cells? I'm looking to make them worse."
+      },
+      {
+        "speaker": 1,
+        "text": "I am shocked you keep them at all, given the rumors about your past..."
+      },
+      {
+        "speaker": 0,
+        "text": "They're all true. But I hold the keys, now... and I make for a cruel warden."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "hanzo"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "If Hanamura was in my hands, the first thing I'd do is tear down that ugly castle."
+      },
+      {
+        "speaker": 1,
+        "text": "Hm. Fitting behaviour for one who has never had a place to call home..."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "kiriko",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "If I see your bike on my turf, I'm slashing your tires."
+      },
+      {
+        "speaker": 1,
+        "text": "And if I see you, I'll slash much more than that."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "kiriko",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "Count your days. You Hashimoto will pay for the lives you've ruined."
+      },
+      {
+        "speaker": 1,
+        "text": "sighs You take away one whelp's daddy, and you never hear the end of it!"
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "kiriko",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "Dad's greatest creations were for the people he cherished most. Those pistols will never compare."
+      },
+      {
+        "speaker": 1,
+        "text": "Oh, they measure up. I threatened your poor father's life to make sure of it."
+      },
+      {
+        "speaker": 0,
+        "text": "His creations reflect our souls. You don't even have one."
+      },
+      {
+        "speaker": 1,
+        "text": "Of course not. I don't need that kind of dead weight."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "lifeweaver"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "You have such a... pristine face. Did you design it yourself?"
+      },
+      {
+        "speaker": 1,
+        "text": "Why, you flatter me! But I assure you, I've made no alterations."
+      },
+      {
+        "speaker": 0,
+        "text": "So what if you had? Even the most beautiful faces can be improved with the stroke of a knife."
+      },
+      {
+        "speaker": 1,
+        "text": "Oh! Well... if you say so."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "lucio",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "So, I'm tryna ask everybody this: what is your favorite animal?",
+        "audio": "/voicelines/quote/l_cio_-_so__i_m_trying_to_ask_everybody_this._what_is_your_favorite_animal.mp3"
+      },
+      {
+        "speaker": 1,
+        "text": "I like killer whales very much."
+      },
+      {
+        "speaker": 0,
+        "text": "Uh, yeah! I can see it."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "mizuki"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "Is something wrong, Obake-kun? You look nervous."
+      },
+      {
+        "speaker": 1,
+        "text": "Why do you care?"
+      },
+      {
+        "speaker": 0,
+        "text": "I will always care about you. Have I not made that clear?"
+      },
+      {
+        "speaker": 1,
+        "text": "I... sigh You have."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "mizuki"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "I hate to think of what misfortune you'll bring your new \"friends...\" sigh All because you exist."
+      },
+      {
+        "speaker": 1,
+        "text": "Shut. Up."
+      },
+      {
+        "speaker": 0,
+        "text": "Poor, poor Obake-kun... once a cursed demon child, always a cursed demon child."
+      },
+      {
+        "speaker": 1,
+        "text": "I said... SHUT UP!"
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "mizuki"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "How dare you turn your back on me? Don't you remember what happens to those who step out of line?"
+      },
+      {
+        "speaker": 1,
+        "text": "Trust me. I couldn't forget if I tried."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "ramattra",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "What have you done to yourself? Living as a hollow facsimile of our oppressors."
+      },
+      {
+        "speaker": 1,
+        "text": "Ha! Would you rather I kept the scars they gave me?"
+      },
+      {
+        "speaker": 0,
+        "text": "There is strength in our struggle, sister."
+      },
+      {
+        "speaker": 1,
+        "text": "Thank the Iris for your wisdom. I'd have hated to learn that the hard way."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "ramattra",
+      "shion"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "Your attempts to find power in human structures are misguided."
+      },
+      {
+        "speaker": 1,
+        "text": "You think you're better than them? You'd shackle me, all the same."
+      },
+      {
+        "speaker": 0,
+        "text": "Though you may not believe it, I am attempting to bring us peace."
+      },
+      {
+        "speaker": 1,
+        "text": "scoff What a worthless, impossible dream."
+      }
+    ]
+  },
+  {
+    "speakers": [
+      "shion",
+      "sojourn"
+    ],
+    "lines": [
+      {
+        "speaker": 0,
+        "text": "That train ride was oh so fun, Vivi! Next time, we should fight to the death."
+      },
+      {
+        "speaker": 1,
+        "text": "I don't have time to ruin your plans again... but I'm sure my agents would love the chance."
+      },
+      {
+        "speaker": 0,
+        "text": "Your agents? No! That won't have the same spark."
+      }
+    ]
   }
 ]

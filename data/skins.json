@@ -5727,6 +5727,28 @@
       "file": "/skins/roadhog/stitched.jpg"
     }
   ],
+  "shion": [
+    {
+      "key": "cyber-biker",
+      "name": "Cyber Biker",
+      "rarity": "legendary",
+      "file": "/skins/shion/cyber-biker.jpg"
+    },
+    {
+      "key": "classic",
+      "name": "Classic",
+      "rarity": "common",
+      "file": "/splash/shion.jpg"
+    }
+  ],
+  "sierra": [
+    {
+      "key": "classic",
+      "name": "Classic",
+      "rarity": "common",
+      "file": "/splash/sierra.jpg"
+    }
+  ],
   "sigma": [
     {
       "key": "archangel",

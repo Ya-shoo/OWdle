@@ -23,5 +23,15 @@
     "primary-fire": {
       "startOffset": 0.1247
     }
+  },
+  "pharah": {
+    "barrage": {
+      "startOffset": 1.0281
+    }
+  },
+  "sierra": {
+    "tracking-shot": {
+      "startOffset": 0.0717
+    }
   }
 }

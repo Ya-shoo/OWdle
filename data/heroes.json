@@ -2287,6 +2287,66 @@
     "affiliation_explanation": "Exiled from Junkertown but still tied to it by origin; in a gray zone where he’s useful to the faction but not officially pardoned."
   },
   {
+    "key": "shion",
+    "name": "Shion",
+    "role": "damage",
+    "subrole": "flanker",
+    "gamemodes": [
+      "quickplay"
+    ],
+    "portrait": "/portraits/shion.png",
+    "location": "Tokyo, Japan",
+    "country": "Japan",
+    "continent": "Asia",
+    "age": 28,
+    "hp": 250,
+    "birthday": "Sep 9",
+    "birthday_month": "September",
+    "species": "omnic",
+    "gender": "female",
+    "release_year": 2026,
+    "abilities": [
+      {
+        "name": "Kira Pistols",
+        "description": "Rapid-fire anima pistols.",
+        "icon": "/abilities/shion/kira-pistols.png",
+        "videoUrl": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt0bfa6a7184fdac37/6a28acdd799ece0b1bda23e5/pistol.mp4"
+      },
+      {
+        "name": "Execution",
+        "description": "Fire an X-shaped volley. Hold to tighten its spread.",
+        "icon": "/abilities/shion/execution.png",
+        "videoUrl": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltaf20e95fa71b8681/6a28ad4bab7fcd758a5d1a7b/execute.mp4"
+      },
+      {
+        "name": "Joyride",
+        "description": "Rev your engine. Reactivate to dismount and launch your bike forward.",
+        "icon": "/abilities/shion/joyride.png",
+        "videoUrl": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt5c4b8cf54ba924f7/6a28ada1aafc971efe6ac5ca/joyride.mp4"
+      },
+      {
+        "name": "Evade",
+        "description": "Dash and briefly gain overhealth.",
+        "icon": "/abilities/shion/evade.png",
+        "videoUrl": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt58393c38dd3b3d3f/6a28adc2aafc9775f26ac5ce/evade.mp4"
+      },
+      {
+        "name": "Satsuriku Spree",
+        "description": "Rush forward 3 times in a storm of gunfire.",
+        "icon": "/abilities/shion/satsuriku-spree.png",
+        "videoUrl": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt422ebcc3d75d60b0/6a28addea64c7a4ce474dbc1/spree.mp4"
+      }
+    ],
+    "backgrounds": [
+      "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt056203a7089a4f39/6a28a8edbf530332a91d93e7/960_Shion.png",
+      "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt8a44cee96c28a435/6a28a8e3f1f5dd6cddd650b4/1600_Shion.png",
+      "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt26a62724a8a3587e/6a28a8d9d8658f40b63c9335/2600_Shion.png"
+    ],
+    "splash_url": "/splash/shion.jpg",
+    "affiliation": "Hashimoto clan",
+    "affiliation_explanation": "An omnic who slew the Hashimoto crime syndicate that had enslaved her and seized their power for herself; now operates in alliance with Talon."
+  },
+  {
     "key": "sierra",
     "name": "Sierra",
     "role": "damage",

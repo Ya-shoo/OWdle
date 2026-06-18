@@ -52,6 +52,7 @@ const OVERLAY = {
   "mei":           { species: "human",  gender: "female",     release_year: 2016, country: "China" },
   "pharah":        { species: "human",  gender: "female",     release_year: 2016, country: "Egypt" },
   "reaper":        { species: "human",  gender: "male",       release_year: 2016, country: "USA" },
+  "shion":         { species: "omnic",  gender: "female",     release_year: 2026, country: "Japan" },
   "sierra":        { species: "human",  gender: "female",     release_year: 2026, country: "USA" },
   "sojourn":       { species: "cyborg", gender: "female",     release_year: 2022, country: "Canada" },
   "soldier-76":    { species: "human",  gender: "male",       release_year: 2016, country: "USA" },
