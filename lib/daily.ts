@@ -114,10 +114,21 @@ function fnv1a(s: string): number {
   return h >>> 0;
 }
 
+// Manual day -> hero pins for Classic, applied BEFORE the daily bag/hash.
+// Spotlights a specific hero on a specific Pacific puzzle day (e.g. a new
+// hero's launch). Only the named day is affected — the bag is not reshuffled,
+// so every other day's answer is unchanged; the bag's own pick for a pinned
+// day simply isn't shown that day. Key must be a valid hero key in heroes.json.
+const CLASSIC_PINS: Record<string, string> = {
+  "2026-06-18": "shion", // Shion launch spotlight
+};
+
 export function getHeroForDay(day: string): Hero {
   if (ANSWER_POOL.length === 0) {
     throw new Error("ANSWER_POOL is empty — check data/heroes.json");
   }
+  const pinned = CLASSIC_PINS[day];
+  if (pinned && HEROES_BY_KEY[pinned]) return HEROES_BY_KEY[pinned];
   if (usesBag(day)) return bagClassicHero(day);
   const idx = fnv1a(`owdle:classic:${day}`) % ANSWER_POOL.length;
   return ANSWER_POOL[idx];
