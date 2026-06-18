@@ -181,6 +181,14 @@ export function getAbilityForDay(day: string): {
   return { hero, ability: hero.abilities[abIdx], abilityIndex: abIdx };
 }
 
+// Manual day -> (hero, skin) pins for Splash, applied BEFORE the daily bag.
+// Spotlights a specific hero + skin on a specific Pacific puzzle day without
+// reshuffling the bag (every other day is unchanged). `skin` is a skin key
+// from skins.json; the named skin drives both the art and the post-win bonus.
+const SPLASH_PINS: Record<string, { hero: string; skin: string }> = {
+  "2026-06-19": { hero: "shion", skin: "cyber-biker" }, // Shion launch spotlight
+};
+
 // Splash mode picks a hero and one of that hero's skin variants
 // (Epic/Legendary). Since SPLASH_SKINS_ONLY_DAY (see dailyBag.ts) every
 // day is a skin and the skin name doubles as the post-win bonus question;
@@ -193,6 +201,12 @@ export function getSplashForDay(day: string): {
 } {
   if (SPLASH_POOL.length === 0) {
     throw new Error("SPLASH_POOL is empty");
+  }
+  const pin = SPLASH_PINS[day];
+  if (pin) {
+    const hero = HEROES_BY_KEY[pin.hero];
+    const skin = hero?.skins.find((s) => s.key === pin.skin);
+    if (hero && skin) return { hero, imageUrl: skin.file, skin };
   }
   if (usesBag(day)) {
     const { hero, skinIndex } = bagSplashPick(day);
