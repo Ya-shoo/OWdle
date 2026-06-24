@@ -25,6 +25,16 @@ if (key && !key.startsWith("phc_REPLACE") && !posthog.__loaded) {
     capture_pageleave: true,
     capture_exceptions: true,
     person_profiles: "identified_only",
+    // Every event/snapshot is one Cloudflare Pages Function request via
+    // /ingest, and the free plan caps at 100k/day. Two cuts keep us under it:
+    //  - autocapture off: $autocapture (clicks/changes) was our #1 event by
+    //    far (~16k/day) and pure noise — everything we care about has an
+    //    explicit event in lib/tracking.ts. Also drops $rageclick/$dead_click.
+    //  - session replay sampled to 15%: replay uploads many /s/ snapshot
+    //    requests per recorded session. A client sampleRate (0..1) overrides
+    //    the project's remote setting and takes precedence (posthog-js).
+    autocapture: false,
+    session_recording: { sampleRate: 0.15 },
     defaults: "2026-01-30",
   });
   posthog.register({ site: "owdle" });
