@@ -464,7 +464,7 @@ export function SoundGame() {
         className="mb-6 flex scroll-mt-6 flex-col items-center gap-3 sm:scroll-mt-8"
       >
         {reveal && videoUrl ? (
-          <RevealPlayer videoUrl={videoUrl} />
+          <RevealPlayer videoUrl={videoUrl} posterUrl={answer.portrait} />
         ) : (
           <>
             <WaveformPlayer
@@ -740,11 +740,24 @@ export function SoundGame() {
 // (see the prefetch effect in SoundGame), so mounting here at reveal loads
 // from cache instead of opening a cold cross-origin connection — that's
 // what makes it appear fast rather than after a buffering pause.
-function RevealPlayer({ videoUrl }: { videoUrl: string }) {
+function RevealPlayer({
+  videoUrl,
+  posterUrl,
+}: {
+  videoUrl: string;
+  posterUrl?: string;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   // Optimistic: assume autoplay will take so desktop never flashes the
   // glyph. The mount attempt flips this to false if the browser blocks it.
   const [playing, setPlaying] = useState(true);
+  // Hard load failure for the reveal MP4 (a 404 / dropped fetch / codec
+  // miss). The hero is already named in the result card below, so this is
+  // cosmetic — but a dead black box reads as broken. Auto-retry the load
+  // once, then fall back to the hero portrait + an explicit retry so the
+  // reveal never strands on an unresponsive black rectangle.
+  const [errored, setErrored] = useState(false);
+  const errorRetriesRef = useRef(0);
   // Volume is global across modes (shared with the waveform snippet). Lazy-
   // read the saved level: RevealPlayer only mounts client-side after a win
   // or loss, so there's no SSR/hydration pass to mismatch, and loadVolume()
@@ -775,9 +788,39 @@ function RevealPlayer({ videoUrl }: { videoUrl: string }) {
     saveVolume(v);
   };
 
+  // A media-element load error fires for transient reasons too (a dropped
+  // connection, a CDN blip). Re-issue load() once before giving up so the
+  // common case self-heals; only then fall back to the portrait.
+  const handleVideoError = () => {
+    const el = videoRef.current;
+    if (el && errorRetriesRef.current < 1) {
+      errorRetriesRef.current += 1;
+      el.load();
+      el.play()
+        .then(() => setPlaying(true))
+        .catch(() => setPlaying(false));
+      return;
+    }
+    setErrored(true);
+    setPlaying(false);
+  };
+
+  const handleRetry = () => {
+    errorRetriesRef.current = 0;
+    setErrored(false);
+    const el = videoRef.current;
+    if (!el) return;
+    el.load();
+    el.play()
+      .then(() => setPlaying(true))
+      .catch(() => setPlaying(false));
+  };
+
   return (
     <div className="w-full max-w-2xl">
       <div className="relative">
+        {/* Kept mounted even when errored (just hidden) so handleRetry can
+            re-issue load() against the live element. */}
         <video
           ref={videoRef}
           src={media(videoUrl)}
@@ -786,9 +829,36 @@ function RevealPlayer({ videoUrl }: { videoUrl: string }) {
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onEnded={() => setPlaying(false)}
-          className="block w-full rounded-(--radius-card) bg-black"
+          onError={handleVideoError}
+          className={
+            errored
+              ? "hidden"
+              : "block w-full rounded-(--radius-card) bg-black"
+          }
         />
-        {!playing && (
+        {errored && (
+          <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-(--radius-card) border border-line bg-inset/60 p-6 text-center">
+            {posterUrl && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={posterUrl}
+                alt=""
+                className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover"
+              />
+            )}
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+              Reveal clip didn&apos;t load
+            </div>
+            <button
+              type="button"
+              onClick={handleRetry}
+              className="rounded-(--radius-card) border border-line bg-inset/60 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:border-accent/60 hover:text-accent"
+            >
+              ⟳ Retry
+            </button>
+          </div>
+        )}
+        {!playing && !errored && (
           <button
             type="button"
             onClick={() => videoRef.current?.play().catch(() => {})}
