@@ -44,6 +44,17 @@ const CACHE_CONTROL = "public, max-age=86400, s-maxage=31536000, immutable";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const ONLY = process.argv.find((a) => a.startsWith("--only="))?.slice("--only=".length) ?? null;
+// Re-master EVERY clip for the listed heroes (comma-separated keys), even if
+// its audioUrl already carries a ?v= hash. Used to lift clips that went
+// through the pipeline once but still landed too quiet for a role/hero.
+// Without this flag the script only touches the legacy un-hashed batch.
+const HEROES =
+  process.argv
+    .find((a) => a.startsWith("--heroes="))
+    ?.slice("--heroes=".length)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean) ?? null;
 
 function run(cmd, args, opts = {}) {
   return new Promise((res, rej) => {
@@ -132,7 +143,11 @@ async function main() {
   const toFix = [];
   for (const [hero, clips] of Object.entries(manifest)) {
     for (const clip of clips) {
-      if (clip.audioUrl.includes("?v=")) continue;
+      if (HEROES) {
+        if (!HEROES.includes(hero)) continue;
+      } else if (clip.audioUrl.includes("?v=")) {
+        continue;
+      }
       if (ONLY && `${hero}/${clip.slug}` !== ONLY) continue;
       toFix.push({ hero, clip });
     }
