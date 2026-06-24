@@ -37,13 +37,31 @@ export function gainFromVolume(v: number): number {
 }
 
 // Per-role gain multiplier applied on top of the user's volume setting.
-// Support ability sounds (healing chimes, ambient pulses, gentle UI cues)
-// are mastered noticeably quieter in-game than damage gunshots and tank
-// impacts, so we boost them so a player at default volume can still hear
-// them clearly. Non-support roles stay at 1× to avoid clipping the
-// already-loud transients on Reinhardt charges, Junkrat grenades, etc.
+// Support and tank clips in our set are mastered noticeably quieter than
+// damage gunshots, so we lift them so a player at default volume hears them
+// clearly. Playback rides an HTMLAudioElement / <video> whose `volume` is
+// clamped to [0, 1] (see WaveformPlayer), so a boost can't amplify past a
+// clip's native level — it just lets the clip reach that level instead of
+// sitting at the default 75%. There's no >1 gain and thus no clipping risk,
+// which is why lifting these is safe.
 export const ROLE_AUDIO_BOOST: Record<"tank" | "damage" | "support", number> = {
-  tank: 1,
+  tank: 1.6,
   damage: 1,
   support: 1.6,
 };
+
+// Per-hero overrides, taking precedence over the role boost for the rare
+// hero whose specific clips are quieter than its role peers — e.g. Shion's
+// custom anime SFX, which are damage-role but mastered low. Keyed by hero.key.
+export const HERO_AUDIO_BOOST: Record<string, number> = {
+  shion: 1.6,
+};
+
+// Resolve the gain boost for a hero: an explicit per-hero override wins,
+// otherwise fall back to the role default.
+export function audioBoostFor(hero: {
+  key: string;
+  role: "tank" | "damage" | "support";
+}): number {
+  return HERO_AUDIO_BOOST[hero.key] ?? ROLE_AUDIO_BOOST[hero.role];
+}

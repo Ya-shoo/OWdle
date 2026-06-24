@@ -29,7 +29,7 @@ import { DevSoundPicker } from "./DevSoundPicker";
 import { DevSoundTrimmer } from "./DevSoundTrimmer";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { saveSoundClipTrim, type SavedTrim } from "@/lib/soundTrims";
-import { loadVolume, ROLE_AUDIO_BOOST, saveVolume } from "@/lib/audio";
+import { audioBoostFor, loadVolume, saveVolume } from "@/lib/audio";
 import { LossReveal } from "./LossReveal";
 import { GuessRemaining } from "./GuessRemaining";
 import { ModeStatsLine } from "./ModeStatsLine";
@@ -464,13 +464,17 @@ export function SoundGame() {
         className="mb-6 flex scroll-mt-6 flex-col items-center gap-3 sm:scroll-mt-8"
       >
         {reveal && videoUrl ? (
-          <RevealPlayer videoUrl={videoUrl} posterUrl={answer.portrait} />
+          <RevealPlayer
+            videoUrl={videoUrl}
+            posterUrl={answer.portrait}
+            boost={audioBoostFor(answer)}
+          />
         ) : (
           <>
             <WaveformPlayer
               audioUrl={audioUrl}
               revealDuration={snippetDuration}
-              boost={ROLE_AUDIO_BOOST[answer.role]}
+              boost={audioBoostFor(answer)}
               startOffset={activeStart}
               endOffset={activeEnd}
               onAudioMetadata={IS_DEV ? handleAudioMetadata : undefined}
@@ -743,9 +747,11 @@ export function SoundGame() {
 function RevealPlayer({
   videoUrl,
   posterUrl,
+  boost = 1,
 }: {
   videoUrl: string;
   posterUrl?: string;
+  boost?: number;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   // Optimistic: assume autoplay will take so desktop never flashes the
@@ -772,8 +778,8 @@ function RevealPlayer({
   // user's volume.
   useEffect(() => {
     const el = videoRef.current;
-    if (el) el.volume = Math.max(0, Math.min(1, volume));
-  }, [volume]);
+    if (el) el.volume = Math.max(0, Math.min(1, volume * boost));
+  }, [volume, boost]);
 
   // Autoplay-with-sound on reveal.
   useEffect(() => {

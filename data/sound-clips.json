@@ -868,28 +868,28 @@
       "slug": "execution",
       "label": "Execution",
       "audioUrl": "/sounds/shion/execution.mp3?v=4ca070ea",
-      "videoUrl": "/sounds/shion/execution.mp4?v=802739b2",
+      "videoUrl": "/sounds/shion/execution.mp4?v=f9a15604",
       "duration": 3.38
     },
     {
       "slug": "joyride",
       "label": "Joyride",
       "audioUrl": "/sounds/shion/joyride.mp3?v=f2bbf72e",
-      "videoUrl": "/sounds/shion/joyride.mp4?v=f22b6cb4",
+      "videoUrl": "/sounds/shion/joyride.mp4?v=1c199dec",
       "duration": 6.77
     },
     {
       "slug": "kira-pistols",
       "label": "Kira Pistols",
       "audioUrl": "/sounds/shion/kira-pistols.mp3?v=28aba80a",
-      "videoUrl": "/sounds/shion/kira-pistols.mp4?v=0d672d87",
+      "videoUrl": "/sounds/shion/kira-pistols.mp4?v=784c8ba4",
       "duration": 9.89
     },
     {
       "slug": "satsuriku-spree",
       "label": "Satsuriku Spree",
       "audioUrl": "/sounds/shion/satsuriku-spree.mp3?v=b683df21",
-      "videoUrl": "/sounds/shion/satsuriku-spree.mp4?v=bafcc0ac",
+      "videoUrl": "/sounds/shion/satsuriku-spree.mp4?v=707f75c0",
       "duration": 7.13
     }
   ],
