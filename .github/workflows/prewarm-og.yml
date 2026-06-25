@@ -7,8 +7,8 @@
 # combinatorially unbounded and stay on-demand (sharer prefetch retries
 # + permanent storage cover them).
 #
-# Two UTC schedules cover PST/PDT; the off-season run lands before the
-# reset and harmlessly re-warms yesterday (already stored). Code space
+# Two UTC schedules cover PST/PDT year-round; a guard in the job skips
+# whichever trigger is the off-season duplicate, so we render once/day. Code space
 # (~93/day) mirrors lib/shareUrl.ts + per-mode caps:
 #   classic c: wins g1-8 with hints h0-2 (g+h<=8), losses z/z1/z2
 #   quote   q: wins 1-8, loss z
@@ -33,6 +33,17 @@ jobs:
         run: |
           DAY=$(TZ=America/Los_Angeles date +%y%m%d)
           echo "Pacific puzzle day: $DAY"
+
+          # Both UTC crons fire daily (GitHub Actions has no DST awareness),
+          # so the job ran twice/day and re-warmed already-stored codes at
+          # full request cost. Only the trigger landing at ~02:xx PT (just
+          # after the 2:15am reset) should proceed; skip the duplicate.
+          # Manual dispatch (workflow_dispatch) always runs.
+          HOUR=$(TZ=America/Los_Angeles date +%H)
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ] && [ "$HOUR" != "02" ]; then
+            echo "Pacific hour $HOUR — off-season duplicate trigger, skipping."
+            exit 0
+          fi
 
           codes=()
           # classic: wins (guesses+hints<=8) with hint modifier

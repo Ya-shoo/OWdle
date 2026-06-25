@@ -25,16 +25,20 @@ if (key && !key.startsWith("phc_REPLACE") && !posthog.__loaded) {
     capture_pageleave: true,
     capture_exceptions: true,
     person_profiles: "identified_only",
-    // Every event/snapshot is one Cloudflare Pages Function request via
-    // /ingest, and the free plan caps at 100k/day. Two cuts keep us under it:
+    // Every event is one Cloudflare Pages Function request via /ingest, and
+    // the free plan caps at 100k/day. Cuts that keep us under it:
     //  - autocapture off: $autocapture (clicks/changes) was our #1 event by
     //    far (~16k/day) and pure noise — everything we care about has an
     //    explicit event in lib/tracking.ts. Also drops $rageclick/$dead_click.
-    //  - session replay sampled to 15%: replay uploads many /s/ snapshot
-    //    requests per recorded session. A client sampleRate (0..1) overrides
-    //    the project's remote setting and takes precedence (posthog-js).
+    //  - flags/decide off: we run no feature flags, experiments, or surveys,
+    //    so the /flags request posthog-js fires on every page load (and the
+    //    remote-config fetch) returned nothing we use. Skip both.
+    //  - session recording off: replay is disabled project-side (0 recordings
+    //    in 30d), so the recorder never armed. Explicit so turning flags off
+    //    can't let the client config accidentally start it.
     autocapture: false,
-    session_recording: { sampleRate: 0.15 },
+    advanced_disable_flags: true,
+    disable_session_recording: true,
     defaults: "2026-01-30",
   });
   posthog.register({ site: "owdle" });

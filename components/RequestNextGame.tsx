@@ -154,13 +154,16 @@ export function RequestNextGame() {
   const reqIdRef = useRef(0);
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  // Cache-bust the leaderboard fetch so a successful submit always shows
-  // the user's pick reflected immediately, bypassing the 30s edge cache.
-  const loadLeaderboard = useCallback(async () => {
+  // The mount load hits the shared 30s edge cache (so most homepage views
+  // are free CDN hits). Only the post-submit refetch cache-busts, so the
+  // voter still sees their own pick reflected immediately.
+  const loadLeaderboard = useCallback(async (fresh = false) => {
     const devFallback =
       process.env.NODE_ENV === "development" ? DEV_STUB_LEADERBOARD : [];
     try {
-      const res = await fetch(`/api/leaderboard?t=${Date.now()}`);
+      const res = await fetch(
+        fresh ? `/api/leaderboard?t=${Date.now()}` : "/api/leaderboard",
+      );
       if (!res.ok) {
         setLeaderboard(devFallback);
         return;
@@ -271,7 +274,7 @@ export function RequestNextGame() {
       setVoted(next);
       saveVoted(next);
       setStatus({ tag: "submitted", game: selected });
-      loadLeaderboard();
+      loadLeaderboard(true);
     } catch {
       setStatus({
         tag: "error",
