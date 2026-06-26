@@ -30,7 +30,13 @@ export function SiteFooter() {
             Inc., and all rights remain with their respective owners.
           </span>{" "}
           OWdle is an unofficial fan project, not endorsed by or
-          affiliated with Blizzard.
+          affiliated with Blizzard.{" · "}
+          <Link
+            href="/privacy/"
+            className="underline-offset-2 transition-colors hover:text-accent hover:underline"
+          >
+            Privacy
+          </Link>
         </div>
         <Link
           href="/how-to-play/"
