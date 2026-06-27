@@ -6,13 +6,23 @@ import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import { detectAdblock, type AdblockResult } from "@/lib/adblock";
 import { trackAdInventory } from "@/lib/tracking";
 
-// Ghost ad rails — invisible measurement probes for the planned side-rail
-// ad placements (2–3 stacked units per gutter, desktop only, nothing
-// across the top). Renders EMPTY fixed-position slot containers in the
-// left/right gutters of the home page and built mode pages, then reports
-// what real ads in those exact positions would have served. Zero visual
-// change in production; dev builds draw dashed outlines so the layout can
-// be eyeballed before any network script ever ships.
+// Ghost ad rails — invisible measurement probes for the planned ad
+// placements. Two inventory stacks, mutually exclusive per pageview:
+//
+//   • DESKTOP side rails (2–3 stacked units per gutter, nothing across the
+//     top) — render EMPTY fixed-position slot containers in the left/right
+//     gutters of the home + built-mode pages.
+//   • MOBILE stack (everything a side rail can't serve — phones, tablets,
+//     narrow desktop windows): a sticky bottom ANCHOR + IN-CONTENT 300×250
+//     units placed down the scroll. Measured here too so the "what would
+//     mobile earn" question stops being a model and becomes data.
+//
+// A pageview gets ONE or the OTHER: if the viewport is wide+tall enough for
+// a side rail, that's its inventory; otherwise the mobile stack fills in.
+// No double-serving, so `rail_tier === "none"` is exactly the mobile-stack
+// population. Zero visual change in production; dev builds draw dashed
+// outlines (rails in the gutters, a bar at the bottom for the anchor) so the
+// layout can be eyeballed before any network script ever ships.
 //
 // Per pageview, the `ad_inventory` event answers the questions the ad-
 // revenue model currently guesses at:
@@ -20,6 +30,14 @@ import { trackAdInventory } from "@/lib/tracking";
 //     none) given the max-w-6xl content column
 //   - slots_per_side: how many stacked units fit this viewport's HEIGHT —
 //     1080p realistically fits one 300×600, tall monitors fit three units
+//   - anchor_eligible / anchor_imps: would a mobile sticky anchor serve, and
+//     how many viewable impressions it racks up over the visit (it's always
+//     in view, so its whole-visit time IS its viewability)
+//   - incontent_fit / incontent_viewed: how many in-content 300×250 units
+//     the document is tall enough to hold, and how many the visitor actually
+//     scrolled into view (a measured viewable count, not an assumption)
+//   - mobile_imps_total: anchor + in-content, the mobile analog of
+//     est_impressions_total
 //   - visible_s → est_impressions_total: rails are position:fixed, so a
 //     slot is viewable exactly while the tab is visible on this page; a
 //     30s-refresh network turns that time into extra impressions (capped,
@@ -36,7 +54,8 @@ import { trackAdInventory } from "@/lib/tracking";
 //
 // The tier is locked at pageview start: a pageview's inventory is what was
 // available when the page rendered. Mid-view window resizes are rare and
-// re-tiering would let one pv_id claim two different layouts.
+// re-tiering would let one pv_id claim two different layouts. Scroll depth
+// is the one thing that legitimately grows mid-view, so it's tracked live.
 //
 // This component ships near-IDENTICALLY in the Deadlockle repo (event +
 // prop names exactly shared — DailyDles dashboards span both sites; `site`
@@ -54,6 +73,18 @@ const SLOT_GAP_PX = 16;
 // so analysis can re-derive impressions under different refresh rules.
 const REFRESH_SECONDS = 30;
 const MAX_REFRESHES_PER_SLOT = 9;
+
+// Mobile stack geometry. The anchor is a single 320×50 sticky unit (the
+// universally-allowed mobile leaderboard) — its height only drives the dev
+// outline, never the impression count. In-content 300×250 units are
+// simulated one per ~screenful of scroll below the fold, capped: a unit
+// counts as a viewable impression only once the visitor scrolls its slot
+// position into view, so incontent_viewed is measured behavior, not a guess.
+const ANCHOR_W = 320;
+const ANCHOR_H = 50;
+const INCONTENT_FIRST_PX_FROM_VIEWPORT = 1; // first unit ≈ one screen down
+const INCONTENT_SPACING_PX = 900;
+const MAX_INCONTENT = 4;
 
 type SlotSpec = { w: number; h: number };
 
@@ -121,6 +152,30 @@ function fitStack(tier: Tier, viewportH: number): SlotSpec[] {
   return fitted;
 }
 
+// In-content 300×250 placement model for the mobile stack. Units sit at
+// depths { viewportH, viewportH + spacing, viewportH + 2·spacing, … } down
+// the document. A unit FITS if the document is tall enough to reach its slot
+// position; it's VIEWED if the visitor actually scrolled that far. Returns
+// both so dashboards see the ceiling (fit) and the realized impressions
+// (viewed). maxScrollPx is the deepest pixel that entered the viewport
+// (scrollY + viewportH).
+function fitInContent(
+  viewportH: number,
+  docScrollH: number,
+  maxScrollPx: number,
+): { fit: number; viewed: number } {
+  let fit = 0;
+  let viewed = 0;
+  for (let i = 0; i < MAX_INCONTENT; i++) {
+    const pos =
+      viewportH * INCONTENT_FIRST_PX_FROM_VIEWPORT + i * INCONTENT_SPACING_PX;
+    if (pos > docScrollH) break;
+    fit++;
+    if (pos <= maxScrollPx) viewed++;
+  }
+  return { fit, viewed };
+}
+
 type PvState = {
   pvId: string;
   seq: number;
@@ -133,6 +188,9 @@ type PvState = {
   slotSizes: string; // one side, e.g. "300x600+300x250"
   viewportW: number;
   viewportH: number;
+  anchorEligible: boolean; // mobile stack serves (no side rail fit)
+  maxScrollPx: number; // deepest pixel scrolled into view (scrollY + viewportH)
+  docScrollH: number; // tallest document height seen this pageview
 };
 
 function newPvId(): string {
@@ -158,24 +216,31 @@ const DEV_LABEL_STYLE: CSSProperties = {
   fontFamily: "var(--font-plex-mono), monospace",
 };
 
+type RenderState = {
+  rails: { tier: Tier; slots: SlotSpec[] } | null;
+  anchor: boolean;
+};
+
 export function AdRails() {
   const pathname = usePathname();
-  const [render, setRender] = useState<{ tier: Tier; slots: SlotSpec[] } | null>(
-    null,
-  );
+  // Derived synchronously so an ad-page → non-ad-page navigation hides the
+  // probes on the SAME render (no stale rails) — which also keeps the effect
+  // free of a cascading setGeom(null) just to clear them.
+  const isAdPage = pageMetaFor(pathname ?? "/") !== null;
+  const [geom, setGeom] = useState<RenderState | null>(null);
   const adblockRef = useRef<AdblockResult>({ cosmetic: null, network: null });
 
   useEffect(() => {
     const meta = pageMetaFor(pathname ?? "/");
-    if (!meta) {
-      setRender(null);
-      return;
-    }
+    if (!meta) return;
 
     const tier = pickTier(window.innerWidth);
     const slots = tier ? fitStack(tier, window.innerHeight) : [];
     const eligible = tier !== null && slots.length > 0;
-    setRender(eligible ? { tier, slots } : null);
+    // Mobile stack serves exactly when a side rail could NOT — phones,
+    // tablets, and desktop windows too narrow/short for a gutter unit.
+    const anchorEligible = !eligible;
+    setGeom({ rails: eligible ? { tier, slots } : null, anchor: anchorEligible });
 
     const pv: PvState = {
       pvId: newPvId(),
@@ -190,6 +255,9 @@ export function AdRails() {
       slotSizes: slots.map((s) => `${s.w}x${s.h}`).join("+"),
       viewportW: window.innerWidth,
       viewportH: window.innerHeight,
+      anchorEligible,
+      maxScrollPx: window.innerHeight, // first screen is viewed without scrolling
+      docScrollH: document.documentElement.scrollHeight,
     };
 
     void detectAdblock().then((r) => {
@@ -208,6 +276,14 @@ export function AdRails() {
       }
     };
 
+    // Scroll handler stays layout-read-free (no scrollHeight here — that
+    // would force a reflow on every scroll tick and jank mobile). It only
+    // touches cached scroll/size values; document height is sampled at flush.
+    const onScroll = () => {
+      const depth = window.scrollY + pv.viewportH;
+      if (depth > pv.maxScrollPx) pv.maxScrollPx = depth;
+    };
+
     const flush = (
       reason: "hidden" | "pagehide" | "route_change",
       beacon: boolean,
@@ -215,6 +291,8 @@ export function AdRails() {
       const openMs =
         pv.visibleSince != null ? performance.now() - pv.visibleSince : 0;
       const visibleS = (pv.visibleMs + openMs) / 1000;
+
+      // Desktop side rails.
       const slotsTotal = pv.slotsPerSide * 2;
       const impsPerSlot =
         slotsTotal === 0
@@ -224,6 +302,25 @@ export function AdRails() {
               Math.floor(visibleS / REFRESH_SECONDS),
               MAX_REFRESHES_PER_SLOT,
             );
+
+      // Mobile stack. Sample document height once here (flush is rare —
+      // hidden/pagehide/route — so the one reflow is free). The anchor is a
+      // single always-in-view slot, so it earns base + the same 30s-refresh
+      // ladder over the visit; in-content units earn one viewable impression
+      // each (no refresh — the visitor scrolls past them).
+      pv.docScrollH = Math.max(
+        pv.docScrollH,
+        document.documentElement.scrollHeight,
+      );
+      const anchorImps = pv.anchorEligible
+        ? 1 +
+          Math.min(Math.floor(visibleS / REFRESH_SECONDS), MAX_REFRESHES_PER_SLOT)
+        : 0;
+      const inContent = pv.anchorEligible
+        ? fitInContent(pv.viewportH, pv.docScrollH, pv.maxScrollPx)
+        : { fit: 0, viewed: 0 };
+      const mobileImpsTotal = anchorImps + inContent.viewed;
+
       pv.seq += 1;
       trackAdInventory(
         {
@@ -242,6 +339,15 @@ export function AdRails() {
           time_on_page_s:
             Math.round((performance.now() - pv.startedAt) / 100) / 10,
           est_impressions_total: slotsTotal * impsPerSlot,
+          // Mobile stack (mutually exclusive with side rails — all 0 when a
+          // side rail served, i.e. rail_tier !== "none").
+          anchor_eligible: pv.anchorEligible,
+          anchor_imps: anchorImps,
+          doc_scroll_h: Math.round(pv.docScrollH),
+          max_scroll_px: Math.round(pv.maxScrollPx),
+          incontent_fit: inContent.fit,
+          incontent_viewed: inContent.viewed,
+          mobile_imps_total: mobileImpsTotal,
           adblock_cosmetic: adblockRef.current.cosmetic,
           adblock_network: adblockRef.current.network,
         },
@@ -264,54 +370,87 @@ export function AdRails() {
 
     window.addEventListener("pagehide", onPageHide);
     document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       window.removeEventListener("pagehide", onPageHide);
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("scroll", onScroll);
       closeSpan();
       flush("route_change", false);
     };
   }, [pathname]);
 
-  if (!render) return null;
+  if (!isAdPage || !geom) return null;
 
-  const { tier, slots } = render;
-  // Symmetric: each rail's outer edge sits CONTENT_HALF + GAP + railW from
-  // center; tier gating guarantees that's ≥ EDGE_MARGIN from the screen edge.
-  const offset = CONTENT_HALF_PX + RAIL_GAP_PX + tier.railW;
   const isDev = process.env.NODE_ENV === "development";
 
   return (
     <>
-      {(["left", "right"] as const).map((side) => (
+      {geom.rails
+        ? (["left", "right"] as const).map((side) => {
+            // Symmetric: each rail's outer edge sits CONTENT_HALF + GAP +
+            // railW from center; tier gating guarantees that's ≥ EDGE_MARGIN
+            // from the screen edge.
+            const offset =
+              CONTENT_HALF_PX + RAIL_GAP_PX + geom.rails!.tier.railW;
+            return (
+              <div
+                key={side}
+                aria-hidden
+                // z-10: under the header (z-50) and any modal; pointer-events-
+                // none so an invisible probe can never swallow a click.
+                className="pointer-events-none fixed z-10 hidden lg:block"
+                style={{ top: TOP_OFFSET_PX, [side]: `calc(50% - ${offset}px)` }}
+              >
+                {geom.rails!.slots.map((slot, i) => (
+                  <div
+                    key={i}
+                    data-rail-slot={`${side}_${i}`}
+                    style={{
+                      width: slot.w,
+                      height: slot.h,
+                      marginTop: i > 0 ? SLOT_GAP_PX : 0,
+                      ...(isDev ? DEV_SLOT_STYLE : undefined),
+                    }}
+                  >
+                    {isDev ? (
+                      <span style={DEV_LABEL_STYLE}>
+                        ghost {slot.w}×{slot.h}
+                      </span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            );
+          })
+        : null}
+
+      {geom.anchor ? (
         <div
-          key={side}
           aria-hidden
-          // z-10: under the header (z-50) and any modal; pointer-events-none
-          // so an invisible probe can never swallow a click.
-          className="pointer-events-none fixed z-10 hidden lg:block"
-          style={{ top: TOP_OFFSET_PX, [side]: `calc(50% - ${offset}px)` }}
+          data-mobile-anchor
+          // Driven by the eligibility flag, NOT a CSS breakpoint: the anchor
+          // serves on every viewport a side rail couldn't (incl. narrow
+          // desktop). pointer-events-none so the invisible probe never eats a
+          // tap; z-10 keeps it under the header and any modal.
+          className="pointer-events-none fixed inset-x-0 bottom-0 z-10 flex justify-center"
         >
-          {slots.map((slot, i) => (
-            <div
-              key={i}
-              data-rail-slot={`${side}_${i}`}
-              style={{
-                width: slot.w,
-                height: slot.h,
-                marginTop: i > 0 ? SLOT_GAP_PX : 0,
-                ...(isDev ? DEV_SLOT_STYLE : undefined),
-              }}
-            >
-              {isDev ? (
-                <span style={DEV_LABEL_STYLE}>
-                  ghost {slot.w}×{slot.h}
-                </span>
-              ) : null}
-            </div>
-          ))}
+          <div
+            style={{
+              width: ANCHOR_W,
+              height: ANCHOR_H,
+              ...(isDev ? DEV_SLOT_STYLE : undefined),
+            }}
+          >
+            {isDev ? (
+              <span style={DEV_LABEL_STYLE}>
+                ghost anchor {ANCHOR_W}×{ANCHOR_H}
+              </span>
+            ) : null}
+          </div>
         </div>
-      ))}
+      ) : null}
     </>
   );
 }
