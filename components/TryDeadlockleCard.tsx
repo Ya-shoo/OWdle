@@ -20,21 +20,11 @@ export function TryDeadlockleCard({ compact = false }: { compact?: boolean }) {
       rel="noopener noreferrer"
       aria-label="Try Deadlockle, the daily Deadlock quiz (opens in a new tab)"
       className={
-        "group relative block cursor-pointer overflow-hidden border border-line bg-surface transition-colors hover:bg-muted focus-visible:bg-muted active:bg-muted " +
+        "group relative block cursor-pointer overflow-hidden border border-line bg-canvas transition-colors hover:bg-muted focus-visible:bg-muted active:bg-muted " +
         (compact ? "p-4" : "p-6 sm:p-7")
       }
       style={{ touchAction: "manipulation", WebkitTapHighlightColor: "rgba(214,160,92,0.18)" }}
     >
-      {/* Deadlock teal/amber wash — hints at the destination palette */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 w-1/2"
-        style={{
-          background:
-            "linear-gradient(110deg, transparent 0%, rgba(94,197,212,0.05) 50%, rgba(214,160,92,0.18) 100%)",
-        }}
-      />
-
       <div
         className={
           compact

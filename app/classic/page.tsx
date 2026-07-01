@@ -1,6 +1,7 @@
 import { ClassicGame } from "@/components/ClassicGame";
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { ModeFooterNav } from "@/components/ModeFooterNav";
+import { SiteGreeter } from "@/components/SiteGreeter";
 import { modeJsonLd, modeMetadata } from "@/lib/site";
 
 const META = {
@@ -24,6 +25,7 @@ export default function ClassicPage() {
         }}
       />
       <ModeBreadcrumbs label={META.title} />
+      <SiteGreeter />
       <ClassicGame />
       <ModeFooterNav current="classic" />
     </>

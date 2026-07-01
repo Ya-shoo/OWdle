@@ -22,6 +22,8 @@ import { DailyTextShare } from "./DailyTextShare";
 import { type DailyModeResult } from "./ShareCard";
 import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { modeAttempts } from "@/lib/tier";
+import { SiteGreeter } from "./SiteGreeter";
+import { HomeFaq } from "./HomeFaq";
 
 type Status = {
   won: boolean;
@@ -86,6 +88,7 @@ export function HomeContent() {
 
   return (
     <main className="flex-1">
+      <SiteGreeter />
       <section className="relative isolate flex min-h-[min(72vh,720px)] items-end overflow-hidden">
         <HomeBanner />
         <div className="relative mx-auto w-full max-w-6xl px-6 pb-14 pt-24 sm:pb-20 sm:pt-32">
@@ -144,9 +147,13 @@ export function HomeContent() {
 
       {/* Sister-site card — sits beneath the engagement strip as a softer
           outbound suggestion once the primary asks have been made. */}
-      <section className="mx-auto max-w-6xl px-6 pb-20 pt-4">
+      <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
         <TryDeadlockleCard />
       </section>
+
+      {/* Indexable FAQ — target-keyword copy for search, collapsible so it
+          stays out of the way for players who don't need it. */}
+      <HomeFaq />
 
       {/* Attribution footer is rendered site-wide by SiteFooter in the
           root layout. */}
@@ -344,45 +351,16 @@ function CompleteBadge({
       className="relative shrink-0"
       style={{ width: 220, height: 252 }}
     >
-      {/* Outer ambient glow — sits behind the badge */}
-      <div
-        aria-hidden
-        className="absolute pointer-events-none"
-        style={{
-          inset: -32,
-          background:
-            "radial-gradient(ellipse at center, rgba(74,222,128,0.32), transparent 65%)",
-          filter: "blur(14px)",
-        }}
-      />
-
-      {/* Hexagonal frame with glow + sharp stroke */}
+      {/* Hexagonal frame — flat fill + sharp stroke */}
       <svg
         viewBox="0 0 220 252"
         className="absolute inset-0 h-full w-full"
         aria-hidden
       >
-        <defs>
-          <linearGradient id="badge-fill" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="rgba(74,222,128,0.22)" />
-            <stop offset="100%" stopColor="rgba(74,222,128,0.04)" />
-          </linearGradient>
-          <filter id="badge-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3.5" />
-          </filter>
-        </defs>
-        {/* glow halo around the edge */}
-        <polygon
-          points="110,4 215,63 215,189 110,248 5,189 5,63"
-          fill="none"
-          stroke="rgba(74,222,128,0.65)"
-          strokeWidth="3"
-          filter="url(#badge-glow)"
-        />
         {/* fill + sharp stroke */}
         <polygon
           points="110,4 215,63 215,189 110,248 5,189 5,63"
-          fill="url(#badge-fill)"
+          fill="rgba(74,222,128,0.12)"
           stroke="var(--tile-correct)"
           strokeWidth="1.75"
         />

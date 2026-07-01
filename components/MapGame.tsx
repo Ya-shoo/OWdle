@@ -1910,10 +1910,6 @@ function ResultOverlay(props: {
               onClick={onNext}
               className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-(--radius-card) bg-accent px-7 py-3 font-mono text-xs uppercase tracking-[0.24em] text-on-accent shadow-[0_6px_18px_-6px_rgba(0,0,0,0.5)] transition-[transform,box-shadow,opacity] duration-200 ease-out hover:-translate-y-[2px] hover:scale-[1.03] hover:shadow-[0_10px_26px_-8px_var(--accent)] active:translate-y-0 active:scale-[0.99] active:duration-75"
             >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-500 ease-out group-hover:translate-x-full"
-              />
               <span className="relative">
                 {isLast ? "See final score" : "Next round"}
               </span>

@@ -18,5 +18,10 @@ export default function DevHubLayout({
   children: React.ReactNode;
 }) {
   if (!IS_DEV) notFound();
-  return <div className="dev-ui min-h-screen bg-bg">{children}</div>;
+  // flex-1 (not min-h-screen): the root <body> is a fixed-height flex-col with
+  // an mt-auto footer. An explicit min-height here lets flex-shrink clamp this
+  // box to one screen while tall content overflows — pinning the footer
+  // mid-page over the content. flex-1 (implicit min-height:auto) grows to
+  // content, so the footer always lands below it (matches the home main).
+  return <div className="dev-ui flex flex-1 flex-col bg-bg">{children}</div>;
 }

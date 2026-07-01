@@ -360,10 +360,7 @@ export function RequestNextGame() {
                       ? "border-edge"
                       : "border-line focus-within:border-edge",
                 )}
-                style={{
-                  background:
-                    "linear-gradient(180deg, #1d1814 0%, #14110d 100%)",
-                }}
+                style={{ background: "var(--bg-inset)" }}
               >
                 <input
                   ref={inputRef}

@@ -60,20 +60,6 @@
   /* motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* atmosphere */
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(242, 101, 34, 0.08),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(45, 156, 219, 0.06),
-      transparent 70%
-    );
-  --noise-opacity: 0.05;
-  --scanline-opacity: 0.035;
   color-scheme: dark;
 }
 
@@ -132,17 +118,6 @@
   --tile-far-fg: #120e0a;
   --tile-wrong: #2a2218;
   --tile-wrong-fg: #8b8579;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(242, 101, 34, 0.08),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(251, 191, 36, 0.05),
-      transparent 70%
-    );
 }
 
 [data-theme="green"] {
@@ -159,17 +134,6 @@
   --tile-far-fg: #0a120c;
   --tile-wrong: #1a2820;
   --tile-wrong-fg: #8b958f;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(242, 101, 34, 0.08),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(74, 222, 128, 0.05),
-      transparent 70%
-    );
 }
 
 /* ---------- holiday palettes ----------
@@ -192,17 +156,6 @@
   --tile-far-fg: #0a1410;
   --tile-wrong: #1c2c22;
   --tile-wrong-fg: #8b958f;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(220, 38, 38, 0.09),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(74, 222, 128, 0.06),
-      transparent 70%
-    );
 }
 
 [data-theme="newyears"] {
@@ -219,17 +172,6 @@
   --tile-far-fg: #0a0e1c;
   --tile-wrong: #1c2440;
   --tile-wrong-fg: #8a93a8;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(251, 191, 36, 0.10),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(99, 102, 241, 0.07),
-      transparent 70%
-    );
 }
 
 [data-theme="valentines"] {
@@ -246,17 +188,6 @@
   --tile-far-fg: #14080c;
   --tile-wrong: #2e1822;
   --tile-wrong-fg: #998088;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(239, 68, 68, 0.09),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(244, 114, 182, 0.06),
-      transparent 70%
-    );
 }
 
 [data-theme="stpatricks"] {
@@ -273,17 +204,6 @@
   --tile-far-fg: #0a1610;
   --tile-wrong: #1a3022;
   --tile-wrong-fg: #8b9b8a;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(74, 222, 128, 0.10),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(251, 191, 36, 0.07),
-      transparent 70%
-    );
 }
 
 [data-theme="july4"] {
@@ -300,17 +220,6 @@
   --tile-far-fg: #08101c;
   --tile-wrong: #1a2640;
   --tile-wrong-fg: #8a92a8;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(239, 68, 68, 0.09),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(96, 165, 250, 0.07),
-      transparent 70%
-    );
 }
 
 [data-theme="halloween"] {
@@ -327,17 +236,6 @@
   --tile-far-fg: #100a18;
   --tile-wrong: #281a32;
   --tile-wrong-fg: #8f8295;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(242, 101, 34, 0.10),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(168, 85, 247, 0.07),
-      transparent 70%
-    );
 }
 
 [data-theme="thanksgiving"] {
@@ -354,17 +252,6 @@
   --tile-far-fg: #160e08;
   --tile-wrong: #34281a;
   --tile-wrong-fg: #998878;
-  --bg-pattern:
-    radial-gradient(
-      ellipse 60% 40% at 10% 0%,
-      rgba(217, 119, 6, 0.09),
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 50% 35% at 90% 100%,
-      rgba(180, 83, 9, 0.06),
-      transparent 70%
-    );
 }
 
 /* ---------- base ---------- */
@@ -438,33 +325,6 @@ img {
 }
 .dev-ui [class*="text-[11px]"] {
   font-size: 13px !important;
-}
-
-/* atmospheric background wash */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image: var(--bg-pattern);
-  z-index: 0;
-}
-
-/* subtle scanline overlay */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0,
-    transparent 2px,
-    rgba(255, 255, 255, var(--scanline-opacity)) 2px,
-    rgba(255, 255, 255, var(--scanline-opacity)) 3px
-  );
-  mix-blend-mode: overlay;
 }
 
 main,
@@ -756,6 +616,83 @@ select {
 
 .counter-tick {
   animation: counter-tick 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Avatar greeter idle chip (home-page mascot) ----------
+   The mascot's pop-in / collapse / fade are Tailwind transitions in
+   components/AvatarGreeter.tsx. The one keyframe lives here: once the mascot
+   tucks away into its little "•••" chip, the chip gives a friendly bobble
+   every 3s to signal it's interactive (hover / tap to replay). The chip's
+   show/hide is opacity-only so this transform-based nudge doesn't fight it.
+   The global prefers-reduced-motion rule collapses it to a static frame. */
+@keyframes greeter-chip-nudge {
+  0%,
+  20%,
+  100% {
+    transform: translateY(0);
+  }
+  5% {
+    transform: translateY(-6px);
+  }
+  11% {
+    transform: translateY(0);
+  }
+  15% {
+    transform: translateY(-3px);
+  }
+}
+.greeter-chip-nudge {
+  animation: greeter-chip-nudge 3s ease-in-out infinite;
+}
+
+/* ---------- Avatar greeter idle-chip typing indicator ----------
+   Alternative to the whole-chip bobble: the three dots ripple upward in
+   sequence like a chat "typing…" cue, hinting the mascot has something to say.
+   One shared keyframe; each dot is staggered by an inline animation-delay.
+   Under reduced motion the blanket rule stops the loop and these resets hold
+   the dots solid + still for a clean static frame. */
+@keyframes greeter-typing {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  28% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+.greeter-typing-dot {
+  animation: greeter-typing 1.35s ease-in-out infinite;
+}
+
+/* The chip bubble itself bobs in lockstep with the dots (same 1.35s cycle,
+   cresting mid-ripple) so the bubble + typing read as one lively motion.
+   transform-origin at the tail so it "speaks" from its anchor. */
+@keyframes greeter-chip-bob {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-2px) scale(1.025);
+  }
+}
+.greeter-chip-bob {
+  animation: greeter-chip-bob 1.35s ease-in-out infinite;
+  transform-origin: bottom right;
+}
+@media (prefers-reduced-motion: reduce) {
+  .greeter-typing-dot {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .greeter-chip-bob {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 /* ---------- final-day result card ----------

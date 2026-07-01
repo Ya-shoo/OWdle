@@ -33,5 +33,20 @@
     "tracking-shot": {
       "startOffset": 0.0717
     }
+  },
+  "domina": {
+    "sonic-repulsors": {
+      "startOffset": 0.4595
+    }
+  },
+  "baptiste": {
+    "amplification-matrix": {
+      "startOffset": 0.4549
+    }
+  },
+  "reaper": {
+    "death-blossom": {
+      "startOffset": 0.5713
+    }
   }
 }

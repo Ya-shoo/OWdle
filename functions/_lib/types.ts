@@ -29,6 +29,14 @@ export type Env = {
   // Optional override; defaults to https://us.posthog.com. EU instances
   // would set this to https://eu.posthog.com.
   POSTHOG_API_HOST?: string;
+  // Discord bot token + channel id for the home-page greeter — functions/
+  // api/greeter.ts reads PINNED messages from the channel to drive the
+  // mascot's announcement. Optional: when unset the endpoint serves a
+  // bundled fallback greeting, so local dev and unconfigured deploys keep
+  // working. Set via `wrangler pages secret put DISCORD_BOT_TOKEN` (and
+  // DISCORD_CHANNEL_ID), or in .dev.vars for local `wrangler pages dev`.
+  DISCORD_BOT_TOKEN?: string;
+  DISCORD_CHANNEL_ID?: string;
 };
 
 export type Context = {
@@ -48,6 +56,22 @@ const TWO_DAYS_MS = 2 * 86400 * 1000;
 export async function voterHash(ip: string, project: string): Promise<string> {
   const bucket = Math.floor(Date.now() / TWO_DAYS_MS);
   const buf = new TextEncoder().encode(`${ip}:${project}:${bucket}`);
+  const out = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(out))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// Poll-stable voter hash for the avatar-greeter mini-polls — sha256(ip +
+// project + poll id), with NO time-bucket rotation (unlike voterHash above),
+// so a visitor counts as one vote for the life of a given poll. Privacy is
+// preserved: it's a one-way hash of the IP, never the IP itself.
+export async function pollVoterHash(
+  ip: string,
+  project: string,
+  pollId: string,
+): Promise<string> {
+  const buf = new TextEncoder().encode(`poll:${ip}:${project}:${pollId}`);
   const out = await crypto.subtle.digest("SHA-256", buf);
   return Array.from(new Uint8Array(out))
     .map((b) => b.toString(16).padStart(2, "0"))

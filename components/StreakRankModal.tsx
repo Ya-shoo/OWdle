@@ -73,17 +73,6 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
         className="relative w-full max-w-[420px] overflow-hidden border border-line bg-surface text-ink"
         style={{ borderRadius: 16 }}
       >
-        {/* Tier-tinted glow wash from the top. */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `radial-gradient(ellipse 90% 60% at 50% -8%, ${hexA(accent, 0.12)} 0%, transparent 60%)`,
-            pointerEvents: "none",
-          }}
-        />
-
         <button
           type="button"
           onClick={onClose}
@@ -101,21 +90,13 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
             New streak rank
           </span>
 
-          {/* Badge pop with a tier-tinted halo. */}
+          {/* Badge pop. */}
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 220, damping: 14, delay: 0.08 }}
             className="relative my-1"
           >
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                inset: -30,
-                background: `radial-gradient(circle, ${hexA(accent, 0.2)} 0%, transparent 72%)`,
-              }}
-            />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/ranks/${tier}.png`}
@@ -169,9 +150,4 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
   );
 
   return createPortal(overlay, document.body);
-}
-
-function hexA(hex: string, a: number): string {
-  const h = hex.replace("#", "");
-  return `rgba(${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}, ${a})`;
 }

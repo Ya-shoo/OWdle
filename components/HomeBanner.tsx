@@ -80,24 +80,17 @@ export function HomeBanner() {
         </AnimatePresence>
       )}
 
-      {/* Top hairline tint and bottom-to-top fade keep the headline legible
-          and ground the banner against the page background. */}
+      {/* Top hairline tint keeps the headline legible; the bottom half is a
+          long, feathered fade that eases the banner into the flat page
+          background so there's no hard seam where the art meets the cards.
+          Extra stops in the 55–100% band spread the darkening gradually
+          rather than ramping up over a short distance. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(10,14,20,0.55) 0%, rgba(10,14,20,0.10) 28%, rgba(10,14,20,0.50) 70%, var(--bg-base) 100%)",
-        }}
-      />
-
-      {/* Subtle accent vignette in OW orange — barely there, but adds warmth */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 60% at 90% 100%, rgba(242,101,34,0.10), transparent 65%)",
+            "linear-gradient(to bottom, rgba(10,14,20,0.55) 0%, rgba(10,14,20,0.04) 32%, rgba(10,14,20,0.10) 58%, rgba(10,14,20,0.24) 76%, rgba(10,14,20,0.48) 89%, rgba(10,14,20,0.80) 96%, var(--bg-base) 100%)",
         }}
       />
     </div>
