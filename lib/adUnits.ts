@@ -44,7 +44,7 @@ export const AD_UNITS: Record<AdUnitKey, AdUnit> = {
   // monitors are deferred (see the Phase 2 note at the bottom).
   rail_left: {
     key: "rail_left",
-    slotId: "",
+    slotId: "3429147103",
     role: "rail",
     sizes: [
       [300, 600],
@@ -54,7 +54,7 @@ export const AD_UNITS: Record<AdUnitKey, AdUnit> = {
   },
   rail_right: {
     key: "rail_right",
-    slotId: "",
+    slotId: "3004429674",
     role: "rail",
     sizes: [
       [300, 600],
@@ -69,7 +69,7 @@ export const AD_UNITS: Record<AdUnitKey, AdUnit> = {
   // anchor ads).
   mobile_anchor: {
     key: "mobile_anchor",
-    slotId: "",
+    slotId: "6320858157",
     role: "anchor",
     sizes: [
       [320, 50],

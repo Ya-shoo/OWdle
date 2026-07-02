@@ -1,7 +1,7 @@
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { SITE_URL, modeMetadata } from "@/lib/site";
 
-const LAST_UPDATED = "June 26, 2026";
+const LAST_UPDATED = "July 2, 2026";
 const PRIVACY_EMAIL = "privacy@playowdle.com";
 
 const PAGE_DESCRIPTION =
@@ -12,12 +12,6 @@ export const metadata = modeMetadata({
   title: "Privacy Policy",
   description: PAGE_DESCRIPTION,
 });
-
-// Monumetric's required affiliate-disclosure wording, kept verbatim for ad
-// onboarding. Stored as a JS string so the exact punctuation is preserved and
-// it isn't subject to JSX entity-escaping.
-const MONUMETRIC_DISCLOSURE =
-  "This Site is affiliated with Monumetric (dba for The Blogger Network, LLC) for the purposes of placing advertising on the Site, and Monumetric will collect and use certain data for advertising purposes.";
 
 const linkCls = "underline underline-offset-2 hover:text-accent";
 
@@ -117,8 +111,9 @@ export default function PrivacyPolicyPage() {
               including Google Analytics (<code>_ga</code> cookies).
             </li>
             <li>
-              Advertising &mdash; Monumetric and its partners, for delivering,
-              capping, personalizing, and measuring ads (when ads are live).
+              Advertising &mdash; Google AdSense and its partners, for
+              delivering, capping, personalizing, and measuring ads (when ads
+              are live).
             </li>
             <li>Payments &mdash; Ko-fi, only if the tip panel is opened.</li>
             <li>
@@ -137,28 +132,22 @@ export default function PrivacyPolicyPage() {
           </p>
 
           <h2 id="advertising">Advertising</h2>
-          <p>OWdle is supported by ads, managed through Monumetric.</p>
+          <p>OWdle is supported by ads served through Google AdSense.</p>
           <p>
-            {MONUMETRIC_DISCLOSURE}{" "}To learn more about Monumetric&rsquo;s data
-            usage, click here:{" "}
-            <a
-              className={linkCls}
-              href="https://www.monumetric.com/publisher-advertising-privacy"
-            >
-              Publisher Advertising Privacy
-            </a>
-            .
-          </p>
-          <p>
-            Monumetric works with third-party advertising partners, including
-            Google. These partners may set their own cookies and use device and
-            usage data to select, deliver, cap, measure, and personalize ads. For
-            how Google uses data from sites that use its advertising, see{" "}
+            Third-party vendors, including Google, use cookies to serve ads based
+            on a user&rsquo;s prior visits to this and other websites.
+            Google&rsquo;s advertising cookies let it and its partners select,
+            deliver, cap, measure, and personalize ads. For how Google uses data
+            from sites that use its advertising, see{" "}
             <a
               className={linkCls}
               href="https://policies.google.com/technologies/partner-sites"
             >
               Google&rsquo;s partner-sites notice
+            </a>
+            . Users can opt out of personalized advertising in{" "}
+            <a className={linkCls} href="https://myadcenter.google.com/">
+              Google&rsquo;s Ads Settings
             </a>
             .
           </p>
@@ -216,9 +205,7 @@ export default function PrivacyPolicyPage() {
           <ul>
             <li>Analytics providers, including Google.</li>
             <li>A hosting and content-delivery provider.</li>
-            <li>
-              Monumetric (The Blogger Network, LLC) and its advertising partners.
-            </li>
+            <li>Google AdSense and its advertising partners.</li>
             <li>Ko-fi, only if a user chooses to tip.</li>
           </ul>
           <p>

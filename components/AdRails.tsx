@@ -234,6 +234,13 @@ export function AdRails() {
   // closeable). Session-scoped: once closed it stays closed across route
   // changes. Unused while ads are dormant.
   const [anchorClosed, setAnchorClosed] = useState(false);
+  // Fill status of the live mobile anchor. Starts "pending"; AdSlot reports
+  // "filled"/"unfilled". The close button + click-through only turn on once
+  // it's "filled" (an unfilled slot would be an invisible tap-catcher), and the
+  // whole strip is dropped on "unfilled".
+  const [anchorStatus, setAnchorStatus] = useState<
+    "pending" | "filled" | "unfilled"
+  >("pending");
   const adblockRef = useRef<AdblockResult>({ cosmetic: null, network: null });
 
   useEffect(() => {
@@ -451,15 +458,17 @@ export function AdRails() {
           })
         : null}
 
-      {geom.anchor && !(anchorLive && anchorClosed) ? (
+      {geom.anchor &&
+      !(anchorLive && anchorClosed) &&
+      anchorStatus !== "unfilled" ? (
         <div
-          aria-hidden={anchorLive ? undefined : true}
+          aria-hidden={anchorStatus === "filled" ? undefined : true}
           data-mobile-anchor
-          // Driven by the eligibility flag, NOT a CSS breakpoint: the anchor
-          // serves on every viewport a side rail couldn't (incl. narrow
-          // desktop). pointer-events-none only while it's an invisible probe.
+          // Serves on every viewport a side rail couldn't (incl. narrow
+          // desktop). Clickable only once the ad actually fills — an unfilled
+          // slot left clickable would be an invisible tap-catcher over content.
           className={`fixed inset-x-0 bottom-0 z-10 flex justify-center${
-            anchorLive ? "" : " pointer-events-none"
+            anchorStatus === "filled" ? "" : " pointer-events-none"
           }`}
         >
           <div
@@ -472,32 +481,35 @@ export function AdRails() {
           >
             {anchorLive ? (
               <>
-                <button
-                  type="button"
-                  aria-label="Close ad"
-                  onClick={() => setAnchorClosed(true)}
-                  className="pointer-events-auto"
-                  style={{
-                    position: "absolute",
-                    top: -18,
-                    right: 0,
-                    width: 18,
-                    height: 18,
-                    lineHeight: "16px",
-                    fontSize: 12,
-                    border: "none",
-                    borderRadius: "4px 4px 0 0",
-                    background: "rgba(10,14,20,0.85)",
-                    color: "rgba(230,230,240,0.9)",
-                    cursor: "pointer",
-                  }}
-                >
-                  ✕
-                </button>
+                {anchorStatus === "filled" ? (
+                  <button
+                    type="button"
+                    aria-label="Close ad"
+                    onClick={() => setAnchorClosed(true)}
+                    className="pointer-events-auto"
+                    style={{
+                      position: "absolute",
+                      top: -18,
+                      right: 0,
+                      width: 18,
+                      height: 18,
+                      lineHeight: "16px",
+                      fontSize: 12,
+                      border: "none",
+                      borderRadius: "4px 4px 0 0",
+                      background: "rgba(10,14,20,0.85)",
+                      color: "rgba(230,230,240,0.9)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    ✕
+                  </button>
+                ) : null}
                 <AdSlot
                   slotId={AD_UNITS.mobile_anchor.slotId}
                   w={ANCHOR_W}
                   h={ANCHOR_H}
+                  onStatus={(s) => setAnchorStatus(s)}
                 />
               </>
             ) : isDev ? (
