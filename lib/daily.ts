@@ -8,6 +8,7 @@ import {
 import { CONVERSATIONS, type Conversation } from "./conversations";
 import sfxData from "@/data/sfx.json";
 import soundClipsData from "@/data/sound-clips.json";
+import meleeClipsData from "@/data/melee-clips.json";
 import iconOverridesData from "@/data/sound-clip-icons.json";
 import soundClipTrimsData from "@/data/sound-clip-trims.json";
 import spotsData from "@/data/spots.json";
@@ -351,6 +352,71 @@ export function getSoundBonusOptions(
       isCorrect: clip.slug === correctSlug,
     };
   });
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Melee mode — one stitched melee clip per hero (data/melee-clips.json,
+// produced by the melee labeler → sync-melee). Unlike sound mode there's
+// exactly one clip per hero, so the daily pick is just a hero. WIP.
+// ─────────────────────────────────────────────────────────────────────────
+
+type MeleeClip = {
+  audioUrl: string;
+  videoUrl: string | null;
+  duration: number;
+};
+const MELEE_CLIPS = meleeClipsData as Record<string, MeleeClip>;
+// Heroes with a melee clip that also resolve to a real roster entry.
+const MELEE_KEYS: string[] = Object.keys(MELEE_CLIPS)
+  .filter((k) => HEROES_BY_KEY[k])
+  .sort();
+
+export type ResolvedMeleeClip = {
+  hero: Hero;
+  audioUrl: string;
+  videoUrl: string | null;
+  duration: number | null;
+};
+
+export function getMeleeForDay(day: string): ResolvedMeleeClip {
+  if (MELEE_KEYS.length === 0) {
+    throw new Error("MELEE pool is empty — check data/melee-clips.json");
+  }
+  const idx = fnv1a(`owdle:melee:${day}`) % MELEE_KEYS.length;
+  const heroKey = MELEE_KEYS[idx];
+  const clip = MELEE_CLIPS[heroKey];
+  return {
+    hero: HEROES_BY_KEY[heroKey],
+    audioUrl: clip.audioUrl,
+    videoUrl: clip.videoUrl,
+    duration: clip.duration,
+  };
+}
+
+// Dev-only: resolve a specific hero's melee clip (dev hero picker).
+export function resolveMeleeClip(heroKey: string): ResolvedMeleeClip | null {
+  const hero = HEROES_BY_KEY[heroKey];
+  const clip = MELEE_CLIPS[heroKey];
+  if (!hero || !clip) return null;
+  return {
+    hero,
+    audioUrl: clip.audioUrl,
+    videoUrl: clip.videoUrl,
+    duration: clip.duration,
+  };
+}
+
+// Dev-only: every melee clip, for the dev hero picker on the melee page.
+export function getAllMeleeClips(): {
+  heroKey: string;
+  heroName: string;
+  duration: number;
+}[] {
+  return MELEE_KEYS.map((k) => ({
+    heroKey: k,
+    heroName: HEROES_BY_KEY[k].name,
+    duration: MELEE_CLIPS[k].duration,
+  })).sort((a, b) => a.heroName.localeCompare(b.heroName));
 }
 
 export function getConversationForDay(day: string): {

@@ -31,7 +31,60 @@ type Segment = {
 
 type FfmpegState = "idle" | "loading" | "ready" | "error";
 
-const STORAGE_KEY = "owdle:labeler:segments:v3";
+// The labeler powers two dev tools off one engine (timeline + ffmpeg +
+// zip). `sound` is the original per-ability clip cutter; `melee` is the
+// one-clip-per-hero variant for Melee mode. Everything mode-specific is
+// funneled through MODE_CONFIG so the two never diverge in the UI or the
+// slicing logic — only in labeling, output layout, and roster flow.
+export type LabelerMode = "sound" | "melee";
+
+type ModeConfig = {
+  // Header title.
+  title: string;
+  // localStorage namespace — kept distinct so an in-progress melee pass
+  // never clobbers in-progress sound work (and vice-versa).
+  storageKey: string;
+  // Top-level folder inside the exported zip + the public/ dir sync-*
+  // unzips into.
+  outputRoot: string;
+  // Download filename stem. Distinct stems let `sync-clips` and
+  // `sync-melee` glob their own archives without cross-contamination.
+  zipPrefix: string;
+  // Shown in the export footnote.
+  syncCmd: string;
+  // When set, the label is locked to this value (melee has exactly one
+  // clip per hero, so there's nothing to type). null = free/preset labels.
+  fixedLabel: string | null;
+  // After committing a segment: advance to the next ability preset
+  // (`ability`) or hop to the next hero still missing a clip (`hero`).
+  advance: "ability" | "hero";
+  // Enforce a single clip per hero — re-committing a hero overwrites its
+  // prior segment instead of stacking a duplicate.
+  oneClipPerHero: boolean;
+};
+
+const MODE_CONFIG: Record<LabelerMode, ModeConfig> = {
+  sound: {
+    title: "Sound labeler",
+    storageKey: "owdle:labeler:segments:v3",
+    outputRoot: "sounds",
+    zipPrefix: "owdle-clips",
+    syncCmd: "npm run sync-clips",
+    fixedLabel: null,
+    advance: "ability",
+    oneClipPerHero: false,
+  },
+  melee: {
+    title: "Melee labeler",
+    storageKey: "owdle:labeler:melee:segments:v1",
+    outputRoot: "melee",
+    zipPrefix: "owdle-melee",
+    syncCmd: "npm run sync-melee",
+    fixedLabel: "melee",
+    advance: "hero",
+    oneClipPerHero: true,
+  },
+};
 
 function totalDuration(ranges: Range[]): number {
   return ranges.reduce((sum, r) => sum + Math.max(0, r.end - r.start), 0);
@@ -53,7 +106,8 @@ function fmtTime(t: number): string {
   return `${m}:${s.padStart(5, "0")}`;
 }
 
-export function Labeler() {
+export function Labeler({ mode = "sound" }: { mode?: LabelerMode }) {
+  const cfg = MODE_CONFIG[mode];
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
@@ -62,7 +116,7 @@ export function Labeler() {
   const [outTime, setOutTime] = useState(0);
   const [heroKey, setHeroKey] = useState<string>(HERO_OPTIONS[0]?.key ?? "");
   const [label, setLabel] = useState<string>(
-    () => getPresets(HERO_OPTIONS[0]?.key ?? "")[0] ?? "",
+    () => cfg.fixedLabel ?? getPresets(HERO_OPTIONS[0]?.key ?? "")[0] ?? "",
   );
   const [segments, setSegments] = useState<Segment[]>([]);
   // Ranges that have been "stacked" but not yet committed as a segment.
@@ -96,6 +150,8 @@ export function Labeler() {
   // When hero changes, jump to that hero's first preset unless the user is
   // already typing something hero-agnostic that they want to keep.
   useEffect(() => {
+    // Melee's label is locked — switching heroes must not disturb it.
+    if (cfg.fixedLabel) return;
     const lc = label.trim().toLowerCase();
     const currentInPresets = presets.some((p) => p.toLowerCase() === lc);
     const currentInExtras = extras.some((p) => p.toLowerCase() === lc);
@@ -107,11 +163,14 @@ export function Labeler() {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(cfg.storageKey);
       if (raw) {
         setSegments(JSON.parse(raw));
         return;
       }
+      // The v2 (start/end) schema only ever existed for sound; nothing to
+      // migrate for melee.
+      if (mode !== "sound") return;
       // Migrate from the v2 (start/end) schema if present, then drop the
       // old key so subsequent loads are clean.
       const v2 = localStorage.getItem("owdle:labeler:segments:v2");
@@ -135,15 +194,16 @@ export function Labeler() {
     } catch {
       // ignore
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(segments));
+      localStorage.setItem(cfg.storageKey, JSON.stringify(segments));
     } catch {
       // ignore (quota/private mode)
     }
-  }, [segments]);
+  }, [segments, cfg.storageKey]);
 
   useEffect(() => {
     if (ffmpegState !== "idle") return;
@@ -297,7 +357,7 @@ export function Labeler() {
 
   const addSegment = () => {
     if (!heroOption) return;
-    const trimmed = label.trim();
+    const trimmed = cfg.fixedLabel ?? label.trim();
     if (!trimmed) {
       setError("Label is required.");
       return;
@@ -326,11 +386,33 @@ export function Labeler() {
       slug,
       ranges,
     };
-    setSegments((s) => [...s, seg]);
+    // One-clip-per-hero (melee): re-committing a hero overwrites its prior
+    // segment rather than stacking a duplicate. The resulting set also
+    // drives the "next undone hero" jump below, so compute it eagerly
+    // instead of leaning on the async state update.
+    const nextSegments = cfg.oneClipPerHero
+      ? [...segments.filter((x) => x.heroKey !== heroOption.key), seg]
+      : [...segments, seg];
+    setSegments(nextSegments);
     setPendingRanges([]);
     setInTime(0);
     setOutTime(0);
     setError(null);
+
+    if (cfg.advance === "hero") {
+      // Hop to the next hero still missing a clip (wrapping), so a full
+      // roster pass is just mark → Add, mark → Add.
+      const done = new Set(nextSegments.map((x) => x.heroKey));
+      const start = HERO_OPTIONS.findIndex((h) => h.key === heroOption.key);
+      for (let step = 1; step <= HERO_OPTIONS.length; step++) {
+        const cand = HERO_OPTIONS[(start + step) % HERO_OPTIONS.length];
+        if (!done.has(cand.key)) {
+          setHeroKey(cand.key);
+          break;
+        }
+      }
+      return;
+    }
 
     const idx = presets.findIndex(
       (p) => p.toLowerCase() === trimmed.toLowerCase(),
@@ -406,8 +488,8 @@ export function Labeler() {
 
     try {
       let zip = new JSZip();
-      let sounds = zip.folder("sounds");
-      if (!sounds) throw new Error("Couldn't create zip folder");
+      let root = zip.folder(cfg.outputRoot);
+      if (!root) throw new Error("Couldn't create zip folder");
       let inCurrentZip = 0;
       let zipIndex = 1;
       const totalZips = Math.ceil(segments.length / CLIPS_PER_ZIP);
@@ -424,12 +506,12 @@ export function Labeler() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `owdle-clips-${String(zipIndex).padStart(2, "0")}.zip`;
+        a.download = `${cfg.zipPrefix}-${String(zipIndex).padStart(2, "0")}.zip`;
         a.click();
         URL.revokeObjectURL(url);
         zip = new JSZip();
-        sounds = zip.folder("sounds");
-        if (!sounds) throw new Error("Couldn't create zip folder");
+        root = zip.folder(cfg.outputRoot);
+        if (!root) throw new Error("Couldn't create zip folder");
         inCurrentZip = 0;
         zipIndex++;
       };
@@ -440,8 +522,11 @@ export function Labeler() {
 
       for (let i = 0; i < segments.length; i++) {
         const s = segments[i];
-        const folder = sounds.folder(s.heroKey);
+        // Melee is flat — melee/<hero>.{mp4,mp3}, one clip per hero. Sound
+        // nests — sounds/<hero>/<slug>.{mp4,mp3}.
+        const folder = mode === "melee" ? root : root.folder(s.heroKey);
         if (!folder) continue;
+        const baseName = mode === "melee" ? s.heroKey : s.slug;
 
         const id = `${s.heroKey}/${s.slug}`;
         const totalDur = totalDuration(s.ranges).toFixed(2);
@@ -467,9 +552,9 @@ export function Labeler() {
             await Promise.race([
               (async () => {
                 const mp4 = await sliceVideoRanges(s.ranges);
-                folder.file(`${s.slug}.mp4`, mp4);
+                folder.file(`${baseName}.mp4`, mp4);
                 const mp3 = await sliceAudioRanges(s.ranges);
-                folder.file(`${s.slug}.mp3`, mp3);
+                folder.file(`${baseName}.mp3`, mp3);
               })(),
               new Promise<never>((_, reject) =>
                 setTimeout(
@@ -550,7 +635,7 @@ export function Labeler() {
         // Brief one-off feedback so the user knows to expect multiple
         // downloads. Not an error; clears on the next user action.
         setError(
-          `Exported ${segments.length} clips across ${zipIndex - 1} zip files. Run "npm run sync-clips" — it now globs for owdle-clips-*.zip.`,
+          `Exported ${segments.length} clips across ${zipIndex - 1} zip files. Run "${cfg.syncCmd}" — it globs for ${cfg.zipPrefix}-*.zip.`,
         );
       }
     } catch (e) {
@@ -626,6 +711,13 @@ export function Labeler() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Heroes with a committed clip — melee shows this as roster progress and
+  // marks done heroes in the picker so a full-roster pass is legible.
+  const doneHeroKeys = useMemo(
+    () => new Set(segments.map((s) => s.heroKey)),
+    [segments],
+  );
+
   const inRatio = duration ? inTime / duration : 0;
   const outRatio = duration ? outTime / duration : 0;
   const playRatio = duration ? currentTime / duration : 0;
@@ -650,7 +742,7 @@ export function Labeler() {
               OWdle dev tool
             </p>
             <h1 className="mt-1 font-display text-3xl text-ink sm:text-4xl">
-              Sound labeler
+              {cfg.title}
             </h1>
           </div>
           <span
@@ -891,7 +983,9 @@ export function Labeler() {
                   >
                     {HERO_OPTIONS.map((h) => (
                       <option key={h.key} value={h.key}>
-                        {h.name}
+                        {mode === "melee" && doneHeroKeys.has(h.key)
+                          ? `✓ ${h.name}`
+                          : h.name}
                       </option>
                     ))}
                   </select>
@@ -900,12 +994,15 @@ export function Labeler() {
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
                     Label{" "}
                     <span className="text-ink-faint/70 normal-case tracking-normal">
-                      (becomes the filename)
+                      {cfg.fixedLabel
+                        ? "(locked — one melee clip per hero)"
+                        : "(becomes the filename)"}
                     </span>
                   </span>
                   <input
                     type="text"
                     value={label}
+                    disabled={!!cfg.fixedLabel}
                     onChange={(e) => setLabel(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -915,15 +1012,17 @@ export function Labeler() {
                       }
                     }}
                     placeholder="e.g., Biotic Rifle, Scoped Fire"
-                    className="rounded-(--radius-card) border border-line bg-inset/60 px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                    className="rounded-(--radius-card) border border-line bg-inset/60 px-3 py-2 text-sm text-ink outline-none focus:border-accent disabled:cursor-not-allowed disabled:opacity-60"
                   />
                   <span className="mt-0.5 font-mono text-[9px] tracking-[0.18em] text-ink-faint">
-                    → /sounds/{heroKey}/{slugify(label) || "—"}.{`{mp4,mp3}`}
+                    {mode === "melee"
+                      ? `→ /melee/${heroKey}.{mp4,mp3}`
+                      : `→ /sounds/${heroKey}/${slugify(label) || "—"}.{mp4,mp3}`}
                   </span>
                 </label>
               </div>
 
-              {(presets.length > 0 || extras.length > 0) && (
+              {!cfg.fixedLabel && (presets.length > 0 || extras.length > 0) && (
                 <div className="flex flex-col gap-2">
                   <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
                     {heroOption?.name} presets
@@ -1050,10 +1149,12 @@ export function Labeler() {
             <aside className="flex h-fit flex-col gap-3 rounded-(--radius-card) border border-line bg-inset/40 p-4">
               <div className="flex items-baseline justify-between">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
-                  Segments
+                  {mode === "melee" ? "Heroes" : "Segments"}
                 </p>
                 <span className="font-mono text-[10px] tracking-[0.18em] text-ink-faint">
-                  {segments.length}
+                  {mode === "melee"
+                    ? `${doneHeroKeys.size}/${HERO_OPTIONS.length}`
+                    : segments.length}
                 </span>
               </div>
 
@@ -1132,11 +1233,12 @@ export function Labeler() {
               <div className="mt-2 border-t border-line pt-3 font-mono text-[9px] leading-relaxed tracking-[0.14em] text-ink-faint">
                 Export emits ZIPs in batches of 10 to bound memory.{" "}
                 <code className="rounded-sm bg-bg/60 px-1 text-ink-soft">
-                  npm run sync-clips
+                  {cfg.syncCmd}
                 </code>{" "}
                 unzips every{" "}
-                <code className="text-ink-soft">owdle-clips-*.zip</code>{" "}
-                into <code className="text-ink-soft">public/sounds/</code>.
+                <code className="text-ink-soft">{cfg.zipPrefix}-*.zip</code>{" "}
+                into{" "}
+                <code className="text-ink-soft">public/{cfg.outputRoot}/</code>.
               </div>
             </aside>
           </div>

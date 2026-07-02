@@ -83,6 +83,18 @@ const TOOL_GROUPS: ReadonlyArray<{
     ],
   },
   {
+    title: "Melee mode",
+    blurb: "One melee clip per hero — WIP feeding a future Melee mode.",
+    tools: [
+      {
+        href: "/labeler/melee/",
+        label: "Melee labeler",
+        description:
+          "The audio labeler in one-clip-per-hero mode. Stack a hero's melee swings, stitch into one, auto-advance to the next un-done hero. Exports flat melee/<hero>.{mp4,mp3} → npm run sync-melee.",
+      },
+    ],
+  },
+  {
     title: "Site admin",
     blurb: "Live read-outs of submissions from the prod site.",
     tools: [
@@ -112,6 +124,7 @@ const TOOL_GROUPS: ReadonlyArray<{
       { href: "/ability/", label: "Ability", description: "Reveal-the-ability puzzle." },
       { href: "/splash/", label: "Spotlight", description: "Sliver of splash art." },
       { href: "/sound/", label: "Sound", description: "Voice line / SFX puzzle." },
+      { href: "/melee/", label: "Melee", description: "Name the hero from their melee sound (WIP, unlisted)." },
       { href: "/map/", label: "Map", description: "Overwatch GeoGuessr (WIP, unlisted)." },
     ],
   },

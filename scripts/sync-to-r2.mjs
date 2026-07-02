@@ -38,12 +38,25 @@ const REPO_ROOT = resolve(__dirname, "..");
 // (small, change rarely).
 const SYNC_DIRS = [
   "public/sounds",
+  "public/melee",
   "public/maps",
   "public/skins",
   "public/voicelines",
   "public/banners",
 ];
-const CONCURRENCY = 8;
+// Optional positional arg limits the sync to matching dirs, e.g.
+// `node scripts/sync-to-r2.mjs melee` syncs only public/melee — lets you
+// push one new media type without HEAD-checking the whole bucket (far
+// gentler on the API). No arg = sync everything, as before.
+const DIR_FILTER = process.argv.slice(2).find((a) => !a.startsWith("--"));
+const ACTIVE_DIRS = DIR_FILTER
+  ? SYNC_DIRS.filter((d) => d.includes(DIR_FILTER))
+  : SYNC_DIRS;
+// Parallel upload workers. Override with R2_CONCURRENCY to go gentle on
+// the API for large batches (e.g. the melee MP4s, ~90 MB each): high
+// concurrency both spikes memory — each worker holds a full file in RAM —
+// and can trip API rate/burst limits. Default 8 preserves prior behavior.
+const CONCURRENCY = Number(process.env.R2_CONCURRENCY) || 8;
 const CACHE_CONTROL = "public, max-age=86400, s-maxage=31536000, immutable";
 const FORCE = process.argv.includes("--force");
 
@@ -224,9 +237,16 @@ async function main() {
   console.log(`account: ${accountId}`);
   console.log(`bucket:  ${BUCKET}`);
   if (FORCE) console.log("mode:    --force (skip HEAD, re-upload everything)");
+  if (DIR_FILTER) {
+    if (ACTIVE_DIRS.length === 0) {
+      console.error(`No SYNC_DIRS match "${DIR_FILTER}" — nothing to do.`);
+      return;
+    }
+    console.log(`dirs:    ${ACTIVE_DIRS.join(", ")}  (filter "${DIR_FILTER}")`);
+  }
 
   const allFiles = [];
-  for (const d of SYNC_DIRS) {
+  for (const d of ACTIVE_DIRS) {
     const abs = join(REPO_ROOT, d);
     for await (const f of walk(abs)) {
       const rel = relative(REPO_ROOT, f).replace(/^public[\\/]/, "");

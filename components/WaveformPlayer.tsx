@@ -35,7 +35,32 @@ type Props = {
     autoStartOffset: number;
     fullPeaks: number[];
   }) => void;
+  // Visual style. "bars" (default) is the sound-mode look — discrete
+  // centered amplitude bars. "melee" renders a filled amplitude envelope
+  // with a play-progress sweep, a distinct look for Melee mode.
+  variant?: "bars" | "melee";
 };
+
+// Build an SVG path for a filled, mirrored amplitude envelope from a
+// normalized peaks array — top edge left→right, then the mirrored bottom
+// edge back. Used by the "melee" waveform variant.
+function envelopePath(pk: number[]): string {
+  const n = pk.length;
+  if (n === 0) return "";
+  const pts = pk.map((p, i) => {
+    const x = n > 1 ? (i / (n - 1)) * VIEW_WIDTH : 0;
+    const ampl = Math.max(MIN_AMPL, p * MAX_AMPL);
+    return { x, top: CENTER_Y - ampl, bot: CENTER_Y + ampl };
+  });
+  let d = `M ${pts[0].x.toFixed(2)} ${pts[0].top.toFixed(2)}`;
+  for (let i = 1; i < n; i++) {
+    d += ` L ${pts[i].x.toFixed(2)} ${pts[i].top.toFixed(2)}`;
+  }
+  for (let i = n - 1; i >= 0; i--) {
+    d += ` L ${pts[i].x.toFixed(2)} ${pts[i].bot.toFixed(2)}`;
+  }
+  return d + " Z";
+}
 
 // Resolution of the full-file peaks delivered to the dev trim editor.
 // Higher than the playable waveform's BAR_COUNT (96) so the editor has
@@ -71,6 +96,7 @@ export function WaveformPlayer({
   startOffset = null,
   endOffset = null,
   onAudioMetadata,
+  variant = "bars",
 }: Props) {
   // Pin the callback in a ref so changing identity (parent re-renders
   // each keystroke in the dev trim editor) doesn't re-trigger the audio
@@ -457,6 +483,7 @@ export function WaveformPlayer({
   const playProgressRatio = revealRatio * progress;
   const cursorX = VIEW_WIDTH * playProgressRatio;
   const boundaryX = VIEW_WIDTH * revealRatio;
+  const meleePath = variant === "melee" && peaks ? envelopePath(peaks) : "";
 
   return (
     <div className="flex w-full max-w-2xl flex-col items-center gap-4">
@@ -473,6 +500,59 @@ export function WaveformPlayer({
       >
         {peaks ? (
           <>
+            {variant === "melee" ? (
+              <svg
+                viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+                preserveAspectRatio="none"
+                className="block h-24 w-full"
+                aria-hidden
+              >
+                <defs>
+                  <clipPath id="melee-played">
+                    <rect
+                      x="0"
+                      y="0"
+                      width={Math.max(0, cursorX)}
+                      height={VIEW_HEIGHT}
+                    />
+                  </clipPath>
+                </defs>
+                {/* center baseline — a subtle oscilloscope cue */}
+                <line
+                  x1={0}
+                  x2={VIEW_WIDTH}
+                  y1={CENTER_Y}
+                  y2={CENTER_Y}
+                  stroke="var(--color-line)"
+                  strokeWidth="0.75"
+                  strokeOpacity={0.5}
+                />
+                {/* full envelope — the whole clip is available in melee */}
+                <path
+                  d={meleePath}
+                  className="fill-accent/30 transition-[fill] group-hover:fill-accent/50"
+                />
+                {/* played sweep, clipped to the playhead */}
+                {playing && (
+                  <path
+                    d={meleePath}
+                    className="fill-accent"
+                    clipPath="url(#melee-played)"
+                  />
+                )}
+                {playing && (
+                  <line
+                    x1={cursorX}
+                    x2={cursorX}
+                    y1={0}
+                    y2={VIEW_HEIGHT}
+                    stroke="var(--color-accent)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                )}
+              </svg>
+            ) : (
             <svg
               viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
               preserveAspectRatio="none"
@@ -535,6 +615,7 @@ export function WaveformPlayer({
                 />
               )}
             </svg>
+            )}
 
             <AnimatePresence>
               {!playing && (
@@ -566,15 +647,29 @@ export function WaveformPlayer({
       <VolumeSlider value={volume} onChange={handleVolumeChange} />
 
       <div className="flex items-baseline gap-2 font-mono text-[10px] uppercase tracking-[0.24em]">
-        <span className="text-info">Audible</span>
-        <span className="font-display text-2xl tracking-normal text-ink">
-          {revealDuration.toFixed(1)}
-          <span className="ml-0.5 text-base text-ink-soft">s</span>
-        </span>
-        {totalDuration > 0 && (
-          <span className="text-ink-faint">
-            of {totalDuration.toFixed(1)}s
-          </span>
+        {variant === "melee" ? (
+          // The whole clip is always audible in melee — there's no
+          // reveal ladder — so just show its length, not "X of Y".
+          <>
+            <span className="text-info">Melee clip</span>
+            <span className="font-display text-2xl tracking-normal text-ink">
+              {totalDuration.toFixed(1)}
+              <span className="ml-0.5 text-base text-ink-soft">s</span>
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="text-info">Audible</span>
+            <span className="font-display text-2xl tracking-normal text-ink">
+              {revealDuration.toFixed(1)}
+              <span className="ml-0.5 text-base text-ink-soft">s</span>
+            </span>
+            {totalDuration > 0 && (
+              <span className="text-ink-faint">
+                of {totalDuration.toFixed(1)}s
+              </span>
+            )}
+          </>
         )}
       </div>
       {error && peaks && (

@@ -4,6 +4,7 @@ export type ModeSlug =
   | "ability"
   | "splash"
   | "sound"
+  | "melee"
   | "map";
 
 export type ModeDef = {
@@ -46,6 +47,12 @@ export const MODES: ModeDef[] = [
     label: "Sound",
     blurb: "A short voice line, lengthening with each miss.",
     built: true,
+  },
+  {
+    slug: "melee",
+    label: "Melee",
+    blurb: "Hear a hero's melee. Three guesses.",
+    built: false,
   },
   {
     slug: "map",
