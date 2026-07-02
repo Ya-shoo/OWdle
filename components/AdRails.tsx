@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import { detectAdblock, type AdblockResult } from "@/lib/adblock";
 import { trackAdInventory } from "@/lib/tracking";
+import { AdSlot } from "@/components/AdSlot";
+import { AD_UNITS, ADSENSE_ENABLED } from "@/lib/adUnits";
 
 // Ghost ad rails — invisible measurement probes for the planned ad
 // placements. Two inventory stacks, mutually exclusive per pageview:
@@ -228,6 +230,10 @@ export function AdRails() {
   // free of a cascading setGeom(null) just to clear them.
   const isAdPage = pageMetaFor(pathname ?? "/") !== null;
   const [geom, setGeom] = useState<RenderState | null>(null);
+  // Dismiss state for the live mobile anchor (AdSense anchors must be
+  // closeable). Session-scoped: once closed it stays closed across route
+  // changes. Unused while ads are dormant.
+  const [anchorClosed, setAnchorClosed] = useState(false);
   const adblockRef = useRef<AdblockResult>({ cosmetic: null, network: null });
 
   useEffect(() => {
@@ -384,6 +390,15 @@ export function AdRails() {
   if (!isAdPage || !geom) return null;
 
   const isDev = process.env.NODE_ENV === "development";
+  // A unit goes "live" only when ads are armed (prod build + a set
+  // ADSENSE_CLIENT) AND that specific unit has a provisioned slotId. So during
+  // the verification phase — client set for AdSense to review, but no ad units
+  // created yet — the loader script ships (components/GoogleAdsense.tsx) while
+  // these rails/anchor stay invisible probes exactly as before: no empty ad
+  // frames, no orphan close button. Going live flips a container to clickable
+  // + non-aria-hidden.
+  const anchorLive =
+    ADSENSE_ENABLED && AD_UNITS.mobile_anchor.slotId !== "";
 
   return (
     <>
@@ -394,13 +409,19 @@ export function AdRails() {
             // from the screen edge.
             const offset =
               CONTENT_HALF_PX + RAIL_GAP_PX + geom.rails!.tier.railW;
+            const railUnit =
+              side === "left" ? AD_UNITS.rail_left : AD_UNITS.rail_right;
+            const railLive = ADSENSE_ENABLED && railUnit.slotId !== "";
             return (
               <div
                 key={side}
-                aria-hidden
-                // z-10: under the header (z-50) and any modal; pointer-events-
-                // none so an invisible probe can never swallow a click.
-                className="pointer-events-none fixed z-10 hidden lg:block"
+                aria-hidden={railLive ? undefined : true}
+                // z-10: under the header (z-50) and any modal. pointer-events-
+                // none only while it's an invisible probe — a live ad must be
+                // clickable.
+                className={`fixed z-10 hidden lg:block${
+                  railLive ? "" : " pointer-events-none"
+                }`}
                 style={{ top: TOP_OFFSET_PX, [side]: `calc(50% - ${offset}px)` }}
               >
                 {geom.rails!.slots.map((slot, i) => (
@@ -414,7 +435,11 @@ export function AdRails() {
                       ...(isDev ? DEV_SLOT_STYLE : undefined),
                     }}
                   >
-                    {isDev ? (
+                    {railLive && i === 0 ? (
+                      // Launch fills only the top gutter slot; deeper slots
+                      // stay measured-but-unfilled until Phase 2.
+                      <AdSlot slotId={railUnit.slotId} w={slot.w} h={slot.h} />
+                    ) : isDev ? (
                       <span style={DEV_LABEL_STYLE}>
                         ghost {slot.w}×{slot.h}
                       </span>
@@ -426,24 +451,56 @@ export function AdRails() {
           })
         : null}
 
-      {geom.anchor ? (
+      {geom.anchor && !(anchorLive && anchorClosed) ? (
         <div
-          aria-hidden
+          aria-hidden={anchorLive ? undefined : true}
           data-mobile-anchor
           // Driven by the eligibility flag, NOT a CSS breakpoint: the anchor
           // serves on every viewport a side rail couldn't (incl. narrow
-          // desktop). pointer-events-none so the invisible probe never eats a
-          // tap; z-10 keeps it under the header and any modal.
-          className="pointer-events-none fixed inset-x-0 bottom-0 z-10 flex justify-center"
+          // desktop). pointer-events-none only while it's an invisible probe.
+          className={`fixed inset-x-0 bottom-0 z-10 flex justify-center${
+            anchorLive ? "" : " pointer-events-none"
+          }`}
         >
           <div
             style={{
+              position: "relative",
               width: ANCHOR_W,
               height: ANCHOR_H,
               ...(isDev ? DEV_SLOT_STYLE : undefined),
             }}
           >
-            {isDev ? (
+            {anchorLive ? (
+              <>
+                <button
+                  type="button"
+                  aria-label="Close ad"
+                  onClick={() => setAnchorClosed(true)}
+                  className="pointer-events-auto"
+                  style={{
+                    position: "absolute",
+                    top: -18,
+                    right: 0,
+                    width: 18,
+                    height: 18,
+                    lineHeight: "16px",
+                    fontSize: 12,
+                    border: "none",
+                    borderRadius: "4px 4px 0 0",
+                    background: "rgba(10,14,20,0.85)",
+                    color: "rgba(230,230,240,0.9)",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✕
+                </button>
+                <AdSlot
+                  slotId={AD_UNITS.mobile_anchor.slotId}
+                  w={ANCHOR_W}
+                  h={ANCHOR_H}
+                />
+              </>
+            ) : isDev ? (
               <span style={DEV_LABEL_STYLE}>
                 ghost anchor {ANCHOR_W}×{ANCHOR_H}
               </span>
