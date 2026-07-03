@@ -18,14 +18,33 @@ export const GA_MEASUREMENT_ID = "G-98FN2ZJ7MV";
 // than an env var (a drifted .env on the Mac or Windows deploy box would
 // otherwise silently disable ads). Setting it makes components/GoogleAdsense.tsx
 // load the AdSense library in production — this IS the verification <script>
-// AdSense asks you to add to <head>. Individual ad units still stay dark until
-// each gets a real slotId in lib/adUnits.ts (provisioned after the site is
-// approved), so arming the client is safe during review: the loader ships and
-// zero ads render. Matching ads.txt line lives in public/ads.txt:
+// AdSense asks you to add to <head>. Matching ads.txt line lives in
+// public/ads.txt:
 //   google.com, pub-2123726970271006, DIRECT, f08c47fec0942fa0
 // Typed `string` (not the string literal) so `ADSENSE_CLIENT !== ""` gating in
 // lib/adUnits.ts stays a real runtime check rather than a no-overlap TS error.
 export const ADSENSE_CLIENT: string = "ca-pub-2123726970271006";
+
+// Approval gate — the master switch for whether real ad UNITS may render.
+// MUST stay false until AdSense actually approves the site to serve ads.
+//
+// Why this exists: setting ADSENSE_CLIENT (loader) + a slotId per unit is NOT
+// enough to safely go live. During the review window Google has nothing
+// approved to serve, so every <ins> reserves its box and paints an empty white
+// frame; the collapse-on-unfilled net in AdSlot.tsx only clears it if Google
+// cleanly reports data-ad-status="unfilled", which it does NOT do reliably
+// pre-approval (requests hang, or blanks come back stamped "filled") — leaving
+// stuck empty rails on the live page. So slotIds alone must never arm a unit.
+//
+// The loader script (GoogleAdsense.tsx) is gated on ADSENSE_CLIENT ONLY, not on
+// this flag, so it keeps shipping for the review crawler while every unit stays
+// dark. On approval: flip this to true and redeploy — rails + anchor light up,
+// nothing else changes.
+//
+// Typed `boolean` (not the `false` literal) for the same reason ADSENSE_CLIENT
+// is typed `string`: it keeps ADSENSE_ENABLED a real boolean so the gated
+// branches don't narrow to dead code, and flipping to true stays a clean edit.
+export const ADSENSE_APPROVED: boolean = false;
 
 export const SITE_DEFAULT_DESCRIPTION =
   "OWdle is the daily Overwatch guessing game. Guess heroes by their attributes, ability sounds, splash art, and more. New puzzle every day at 2:15am Pacific Time.";

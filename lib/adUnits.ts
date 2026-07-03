@@ -1,4 +1,4 @@
-import { ADSENSE_CLIENT } from "@/lib/site";
+import { ADSENSE_CLIENT, ADSENSE_APPROVED } from "@/lib/site";
 
 // AdSense unit catalog — the single source of truth mapping the ghost
 // AdRails geometry (components/AdRails.tsx) onto real AdSense units. Auto ads
@@ -7,20 +7,29 @@ import { ADSENSE_CLIENT } from "@/lib/site";
 // exactly as instrumented — nothing Google injects on its own.
 //
 // Arming: everything stays inert until ADSENSE_ENABLED — a production build
-// AND a non-empty ADSENSE_CLIENT (pasted into lib/site.ts on approval). Until
+// AND a non-empty ADSENSE_CLIENT AND ADSENSE_APPROVED (the approval gate in
+// lib/site.ts, flipped true only once AdSense clears the site to serve). Until
 // then AdRails renders its usual dev outlines / prod-nothing and keeps its
 // ad_inventory measurement running untouched; zero ad markup ships.
 //
-// slotId: each unit's numeric data-ad-slot from the AdSense dashboard, filled
-// in alongside ADSENSE_CLIENT post-approval. An empty slotId means "not
-// created yet" and AdSlot renders nothing for it — so units can be wired into
-// the layout now and light up one at a time as they're provisioned.
+// The approval gate is what makes wiring slotIds ahead of approval safe: a real
+// slotId no longer arms a unit by itself (that shipped empty white rails during
+// the review window — Google reserves the box but has nothing approved to fill,
+// and the collapse-on-unfilled net doesn't fire reliably pre-approval). Units
+// go live only when Google actually will serve. See ADSENSE_APPROVED.
+//
+// slotId: each unit's numeric data-ad-slot from the AdSense dashboard. An empty
+// slotId still means "not created yet" and AdSlot renders nothing for it — so
+// units can be wired into the layout now and, once ADSENSE_APPROVED flips, light
+// up one at a time as they're provisioned.
 //
 // Ships near-identically in the Deadlockle repo — keep unit roles/sizes in
 // lockstep; only the ids differ per site.
 
 export const ADSENSE_ENABLED =
-  process.env.NODE_ENV === "production" && ADSENSE_CLIENT !== "";
+  process.env.NODE_ENV === "production" &&
+  ADSENSE_CLIENT !== "" &&
+  ADSENSE_APPROVED;
 
 export type AdUnit = {
   key: string;
