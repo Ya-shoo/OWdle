@@ -6,7 +6,7 @@ import Link from "next/link";
 export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-line bg-inset/40">
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 font-mono text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-5 font-mono text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-3xl text-[10px] leading-relaxed">
           Sources:{" "}
           <a

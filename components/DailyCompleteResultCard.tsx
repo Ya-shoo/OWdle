@@ -29,6 +29,7 @@ const MODE_LABEL: Record<ModeSlug, string> = {
   splash: "Spotlight",
   sound: "Sound",
   ability: "Ability",
+  melee: "Melee",
   map: "Map",
 };
 

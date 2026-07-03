@@ -7,6 +7,7 @@ import { detectAdblock, type AdblockResult } from "@/lib/adblock";
 import { trackAdInventory } from "@/lib/tracking";
 import { AdSlot } from "@/components/AdSlot";
 import { AD_UNITS, ADSENSE_ENABLED } from "@/lib/adUnits";
+import { setRightRailVisible } from "@/lib/adRailSignal";
 
 // Ghost ad rails — invisible measurement probes for the planned ad
 // placements. Two inventory stacks, mutually exclusive per pageview:
@@ -63,10 +64,22 @@ import { AD_UNITS, ADSENSE_ENABLED } from "@/lib/adUnits";
 // prop names exactly shared — DailyDles dashboards span both sites; `site`
 // / `$host` split them). Fix bugs in lockstep.
 
-// max-w-6xl (1152px) + px-6 (2×24px) → content footprint 1200px, half 600.
-const CONTENT_HALF_PX = 600;
-const RAIL_GAP_PX = 24; // breathing room between content edge and rail
-const EDGE_MARGIN_PX = 16; // rail never pinned to the screen edge
+// The max-w-6xl content column is 1152px wide (border-box, so px-6 lives
+// inside it); the VISIBLE content within that padding is ~1104px → half ≈ 552.
+// We anchor rails to ~560 (a hair outside the visible content, right at the
+// column's padding edge) rather than the old over-conservative 600. That ~40px
+// correction is exactly what lets a 160×600 rail fit the ~180px gutter of a
+// 1512px laptop (e.g. a 14" MacBook) with NO content narrowing. Sub-1440
+// viewports still can't fit a rail (gutter < rail width) → mobile anchor.
+const CONTENT_HALF_PX = 560;
+const RAIL_GAP_PX = 16; // breathing room between content edge and rail
+// The rail's INNER (content-facing) edge, tier-independent: whatever width the
+// rail is, its inner edge lands CONTENT_HALF + GAP from viewport center, i.e.
+// `right: calc(50% - 576px)`. Exported so corner-floating UI (the greeter) can
+// park just inside it with a constant gap at every viewport width — both it and
+// the rail anchor to 50%, so one offset clears every tier. See SiteGreeter.
+export const RAIL_INNER_FROM_CENTER_PX = CONTENT_HALF_PX + RAIL_GAP_PX;
+const EDGE_MARGIN_PX = 8; // rail may sit close to the screen edge on laptops
 const TOP_OFFSET_PX = 88; // clears the site header
 const BOTTOM_MARGIN_PX = 24;
 const SLOT_GAP_PX = 16;
@@ -98,8 +111,9 @@ type Tier = {
 };
 
 // Ordered widest-first; the first tier whose minViewportW fits wins.
-// wide300 ≈ ≥1880px viewports, narrow160 ≈ ≥1600px — both derived from the
-// geometry constants above rather than hand-picked breakpoints.
+// wide300 ≈ ≥1768px viewports, narrow160 ≈ ≥1488px — both derived from the
+// geometry constants above rather than hand-picked breakpoints. The ~1488
+// narrow160 floor is what brings 1512px laptops (14" MacBook) into rails.
 const TIERS: Tier[] = [
   {
     name: "wide300",
@@ -218,6 +232,57 @@ const DEV_LABEL_STYLE: CSSProperties = {
   fontFamily: "var(--font-plex-mono), monospace",
 };
 
+// Dev-only placeholder "creative" for the ads preview (?adpreview=1). Sized to
+// the exact reserved slot so the ads-on layout reads true; deliberately looks
+// like a house/placeholder ad (diagonal hatch + "Advertisement" + dimensions),
+// never mistaken for a real served ad.
+function MockAd({ w, h }: { w: number; h: number }) {
+  const compact = h < 90;
+  return (
+    <div
+      style={{
+        width: w,
+        height: h,
+        display: "flex",
+        flexDirection: compact ? "row" : "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: compact ? 8 : 4,
+        background:
+          "repeating-linear-gradient(135deg,#eef1f6,#eef1f6 10px,#e6e9f0 10px,#e6e9f0 20px)",
+        border: "1px solid #c4cad6",
+        color: "#5b6274",
+        fontFamily: "monospace",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {!compact ? (
+        <span
+          style={{
+            position: "absolute",
+            top: 4,
+            right: 5,
+            fontSize: 9,
+            color: "#98a0b2",
+          }}
+        >
+          ⓘ ✕
+        </span>
+      ) : null}
+      <span
+        style={{ fontSize: 10, letterSpacing: "0.15em", textTransform: "uppercase" }}
+      >
+        Advertisement
+      </span>
+      <span style={{ fontSize: compact ? 11 : 13, fontWeight: 700 }}>
+        {w} × {h}
+      </span>
+    </div>
+  );
+}
+
 type RenderState = {
   rails: { tier: Tier; slots: SlotSpec[] } | null;
   anchor: boolean;
@@ -241,7 +306,31 @@ export function AdRails() {
   const [anchorStatus, setAnchorStatus] = useState<
     "pending" | "filled" | "unfilled"
   >("pending");
+  // Fill status of the top RIGHT gutter rail — the one rail the corner greeter
+  // can collide with. Set from that rail's AdSlot (below) and fed to the
+  // adRailSignal so the greeter shifts only when an ad actually paints there.
+  const [rightRailFilled, setRightRailFilled] = useState(false);
+  // Dev-only mock-ads preview. `?adpreview=1` fills the launching slots (top
+  // gutter rail + mobile anchor) with placeholder creatives so the ads-on
+  // layout can be eyeballed before AdSense fills anything; `?adpreview=0`
+  // clears it. Sticky per session so SPA navigation keeps it on. Read only in
+  // development and consumed only under `isDev` gates, so it can never reach
+  // production.
+  const [preview, setPreview] = useState(false);
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    const q = new URLSearchParams(window.location.search).get("adpreview");
+    try {
+      if (q === "0") sessionStorage.removeItem("adpreview");
+      else if (q !== null) sessionStorage.setItem("adpreview", "1");
+      setPreview(sessionStorage.getItem("adpreview") === "1");
+    } catch {
+      setPreview(q !== null && q !== "0");
+    }
+  }, [pathname]);
   const adblockRef = useRef<AdblockResult>({ cosmetic: null, network: null });
+
+  const isDev = process.env.NODE_ENV === "development";
 
   useEffect(() => {
     const meta = pageMetaFor(pathname ?? "/");
@@ -394,9 +483,22 @@ export function AdRails() {
     };
   }, [pathname]);
 
+  // Publish "a visible right rail is on screen" for corner-floating UI (the
+  // desktop greeter) to dodge. Visible = an ad actually paints in the right
+  // gutter: the dev preview mock, or a live unit that reported FILLED — never an
+  // eligible-but-unfilled ghost. Tier is irrelevant; the greeter only needs the
+  // boolean, then parks against the tier-independent inner edge itself.
+  const rightRailShowing =
+    isAdPage &&
+    geom?.rails != null &&
+    ((isDev && preview) ||
+      (ADSENSE_ENABLED && AD_UNITS.rail_right.slotId !== "" && rightRailFilled));
+  useEffect(() => {
+    setRightRailVisible(rightRailShowing);
+  }, [rightRailShowing]);
+
   if (!isAdPage || !geom) return null;
 
-  const isDev = process.env.NODE_ENV === "development";
   // A unit goes "live" only when ads are armed (prod build + a set
   // ADSENSE_CLIENT) AND that specific unit has a provisioned slotId. So during
   // the verification phase — client set for AdSense to review, but no ad units
@@ -426,10 +528,18 @@ export function AdRails() {
                 // z-10: under the header (z-50) and any modal. pointer-events-
                 // none only while it's an invisible probe — a live ad must be
                 // clickable.
-                className={`fixed z-10 hidden lg:block${
+                // max-lg:hidden lg:block (NOT `hidden lg:block`): in this
+                // project's Tailwind v4 the plain `.hidden` wins the cascade
+                // over `.lg:block` even when the lg query matches, so the old
+                // idiom computed display:none at ALL widths and the rails never
+                // rendered. Mutually-exclusive ranges avoid the fight.
+                className={`fixed z-10 max-lg:hidden lg:block${
                   railLive ? "" : " pointer-events-none"
                 }`}
-                style={{ top: TOP_OFFSET_PX, [side]: `calc(50% - ${offset}px)` }}
+                style={{
+                  top: TOP_OFFSET_PX,
+                  [side]: `calc(50% - ${offset}px)`,
+                }}
               >
                 {geom.rails!.slots.map((slot, i) => (
                   <div
@@ -444,8 +554,22 @@ export function AdRails() {
                   >
                     {railLive && i === 0 ? (
                       // Launch fills only the top gutter slot; deeper slots
-                      // stay measured-but-unfilled until Phase 2.
-                      <AdSlot slotId={railUnit.slotId} w={slot.w} h={slot.h} />
+                      // stay measured-but-unfilled until Phase 2. The right
+                      // rail reports its fill up so the corner greeter can dodge
+                      // it only when an ad truly serves (left rail: no listener).
+                      <AdSlot
+                        slotId={railUnit.slotId}
+                        w={slot.w}
+                        h={slot.h}
+                        onStatus={
+                          side === "right"
+                            ? (s) => setRightRailFilled(s === "filled")
+                            : undefined
+                        }
+                      />
+                    ) : isDev && preview && i === 0 ? (
+                      // Preview mirrors launch: only the top slot fills.
+                      <MockAd w={slot.w} h={slot.h} />
                     ) : isDev ? (
                       <span style={DEV_LABEL_STYLE}>
                         ghost {slot.w}×{slot.h}
@@ -470,6 +594,11 @@ export function AdRails() {
           className={`fixed inset-x-0 bottom-0 z-10 flex justify-center${
             anchorStatus === "filled" ? "" : " pointer-events-none"
           }`}
+          // Dev ads-preview only: lift the mock anchor above bottom-anchored
+          // dev chrome (DevThemeSwitcher is fixed bottom-left at z-50) so the
+          // 320×50 placeholder is actually visible when eyeballing the mobile
+          // ads layout. Prod + ghost keep z-10 (style omitted → className wins).
+          style={isDev && preview ? { zIndex: 60 } : undefined}
         >
           <div
             style={{
@@ -512,6 +641,8 @@ export function AdRails() {
                   onStatus={(s) => setAnchorStatus(s)}
                 />
               </>
+            ) : isDev && preview ? (
+              <MockAd w={ANCHOR_W} h={ANCHOR_H} />
             ) : isDev ? (
               <span style={DEV_LABEL_STYLE}>
                 ghost anchor {ANCHOR_W}×{ANCHOR_H}

@@ -17,6 +17,7 @@
     "sound:trims": "node scripts/sound-trims-server.mjs",
     "palettes:admin": "node scripts/palette-server.mjs",
     "sync-clips": "bash -c 'for f in ~/Downloads/owdle-clips*.zip; do unzip -o \"$f\" -d public/; done' && node scripts/build-sound-clips.mjs",
+    "sync-melee": "bash -c 'for f in ~/Downloads/owdle-melee*.zip; do unzip -o \"$f\" -d public/; done' && node scripts/build-melee-clips.mjs",
     "sync-to-r2": "node scripts/sync-to-r2.mjs"
   },
   "dependencies": {

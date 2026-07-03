@@ -35,6 +35,16 @@ type Props = {
     autoStartOffset: number;
     fullPeaks: number[];
   }) => void;
+  // Visual style. "bars" (default) is the sound-mode look — discrete
+  // centered amplitude bars with a reveal ladder. "melee" swaps that for
+  // a mirrored-bar music visualizer: a row of gradient bars whose heights
+  // track the decoded amplitude envelope in sync with the playhead, so the
+  // field visibly reacts as the clip plays (tall bars on the hit, a low
+  // shimmer in the quiet).
+  // The two share ALL the playback / decode / volume / error machinery —
+  // only the drawn surface differs — so the bars path is byte-identical
+  // when variant is left at its default.
+  variant?: "bars" | "melee";
 };
 
 // Resolution of the full-file peaks delivered to the dev trim editor.
@@ -72,6 +82,53 @@ const MAX_SKIP_SECONDS = 0.25;
 const DECODE_ATTEMPTS = 3;
 const DECODE_BACKOFF_MS = [350, 800];
 
+// Iterative in-place radix-2 Cooley–Tukey FFT — used only by the melee spectrum
+// visualizer to turn a window of decoded samples into a frequency spectrum (the
+// fixed bars whose heights pulse with the audio). `re`/`im` are equal-length
+// arrays whose length MUST be a power of two; both are transformed in place
+// (real input → put samples in `re`, zeros in `im`).
+function fftInPlace(re: Float64Array, im: Float64Array) {
+  const n = re.length;
+  // Bit-reversal permutation.
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      const tr = re[i];
+      re[i] = re[j];
+      re[j] = tr;
+      const ti = im[i];
+      im[i] = im[j];
+      im[j] = ti;
+    }
+  }
+  // Butterfly stages.
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = (-2 * Math.PI) / len;
+    const wRe = Math.cos(ang);
+    const wIm = Math.sin(ang);
+    const half = len >> 1;
+    for (let i = 0; i < n; i += len) {
+      let curRe = 1;
+      let curIm = 0;
+      for (let k = 0; k < half; k++) {
+        const ik = i + k;
+        const jk = ik + half;
+        const bRe = re[jk] * curRe - im[jk] * curIm;
+        const bIm = re[jk] * curIm + im[jk] * curRe;
+        re[jk] = re[ik] - bRe;
+        im[jk] = im[ik] - bIm;
+        re[ik] += bRe;
+        im[ik] += bIm;
+        const nextRe = curRe * wRe - curIm * wIm;
+        curIm = curRe * wIm + curIm * wRe;
+        curRe = nextRe;
+      }
+    }
+  }
+}
+
 export function WaveformPlayer({
   audioUrl,
   revealDuration,
@@ -79,6 +136,7 @@ export function WaveformPlayer({
   startOffset = null,
   endOffset = null,
   onAudioMetadata,
+  variant = "bars",
 }: Props) {
   // Pin the callback in a ref so changing identity (parent re-renders
   // each keystroke in the dev trim editor) doesn't re-trigger the audio
@@ -107,6 +165,17 @@ export function WaveformPlayer({
   // abort. The button stays live so the user can just tap again.
   const [playError, setPlayError] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  // Melee replay guard. el.paused flips to false the instant play() is called,
+  // long before the returned promise resolves — so it's an unreliable "is it
+  // playing" signal during the start window. Replaying right as a clip ends
+  // seeks an `ended` element, whose play() promise is slow/racy to resolve; in
+  // that window `playing` is still false (the glyph would show, inviting a tap)
+  // yet el.paused is already false (so a tap hits the pause branch and aborts
+  // the still-starting playback, stranding the element in a stalled/slow-motion
+  // state). `starting` marks the window: the glyph hides and the melee toggle
+  // ignores taps until the start settles.
+  const [starting, setStarting] = useState(false);
+  const startingRef = useRef(false);
   const [progress, setProgress] = useState(0);
 
   // Bumped to force the playback element to rebuild — used by the manual
@@ -135,6 +204,8 @@ export function WaveformPlayer({
   // takes playback down with it.
   const peaksCtxRef = useRef<AudioContext | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Canvas for the melee oscilloscope variant (unused on the bars path).
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stopTimerRef = useRef<number | null>(null);
   // Pending element-reload timer (auto-retry after a load error). Tracked
   // so clip switches / unmount can cancel it instead of letting it fire
@@ -203,6 +274,8 @@ export function WaveformPlayer({
     setLoadError(false);
     setPlayError(null);
     setPlaying(false);
+    setStarting(false);
+    startingRef.current = false;
     setProgress(0);
 
     if (stopTimerRef.current != null) {
@@ -239,7 +312,27 @@ export function WaveformPlayer({
     // Native events are the source of truth for `playing`, so a missed
     // rAF stop (e.g. the tab backgrounds mid-snippet) can't strand the
     // flag at true — which froze the cursor and hid the play control.
-    el.onended = () => setPlaying(false);
+    el.onended = () => {
+      // Clip hit its natural end. Clear any pending safety-stop so it can't fire
+      // against the next play, and for melee rewind to the onset so the element
+      // rests in a clean *paused* state rather than the `ended` state: WebKit is
+      // flaky about seek()+play() on a just-ended element — an immediate replay
+      // reset the thumbnail but played nothing, then ran the next tap back in
+      // slow motion (waiting a beat for `ended` to settle avoided it). Resting
+      // at the onset also makes replay a plain resume with no seek, sidestepping
+      // the race; the rewind trips the visualizer's seek-back reset so the
+      // spectrum re-primes here too.
+      if (stopTimerRef.current != null) {
+        window.clearTimeout(stopTimerRef.current);
+        stopTimerRef.current = null;
+      }
+      if (variant === "melee") {
+        try {
+          el.currentTime = startOffsetRef.current;
+        } catch {}
+      }
+      setPlaying(false);
+    };
     el.onpause = () => setPlaying(false);
     el.oncanplay = () => {
       setReady(true);
@@ -459,6 +552,11 @@ export function WaveformPlayer({
 
   useEffect(() => {
     if (!playing) return;
+    // Melee has no reveal ladder or progress cursor and plays the whole clip to
+    // its natural end (onended stops it and rewinds for a clean replay). Running
+    // this sound-mode tick for melee only added a second stop path that raced
+    // onended at the clip's end — skip it entirely for melee.
+    if (variant === "melee") return;
     const el = audioRef.current;
     if (!el) return;
     let raf = 0;
@@ -503,7 +601,7 @@ export function WaveformPlayer({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing, revealDuration]);
+  }, [playing, revealDuration, variant]);
 
   // HTMLAudioElement.volume is clamped to [0, 1], so the >1 headroom we
   // used to get from a WebAudio GainNode is gone. Folding `boost` in
@@ -528,7 +626,236 @@ export function WaveformPlayer({
     };
   }, []);
 
-  const play = () => {
+  // ── Melee spectrum visualizer ─────────────────────────────────────────
+  // Only mounts for variant="melee". A single rAF loop paints a row of
+  // mirrored, FIXED-position frequency bars (the reference clip's look): each
+  // bar is a frequency band whose height pulses with the audio — the bars
+  // never translate, they only grow and shrink in place. Heights come from an
+  // FFT of a window of the decoded samples taken at the live playhead
+  // (audioRef.currentTime), which ONLY advances while the clip is actually
+  // playing — so the spectrum is frozen (static) when paused and reacts in
+  // sync with the audio when it plays. Before the first tap the playhead sits
+  // at 0, so we bias the window to the clip's first audible sample to preview
+  // the onset rather than silence. Decode is decoration here too: if
+  // decodedRef never populates (decode failed) the bars sit at their floor
+  // height and playback still works on its own element. Reads everything live
+  // from refs, so the loop never needs to be torn down mid-clip.
+  useEffect(() => {
+    if (variant !== "melee") return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const g = canvas.getContext("2d");
+    if (!g) return;
+
+    // Resolve theme tokens once (fall back to the known accent hexes).
+    const rootStyles = getComputedStyle(document.documentElement);
+    const accent =
+      rootStyles.getPropertyValue("--color-accent").trim() || "#f26522";
+    const accentSoft =
+      rootStyles.getPropertyValue("--color-accent-soft").trim() || "#ffa466";
+
+    // Fixed-position frequency-spectrum bars (the reference clip's look): each
+    // bar is a frequency band, low → high left → right. A wider F_MIN..F_MAX
+    // spread covers more of the spectrum; more BARS = a finer comb.
+    const FFT_SIZE = 2048; // sample window fed to the FFT (must be a power of 2)
+    const BARS = 56; // number of mirrored frequency bars
+    const F_MIN = 45; // lowest frequency mapped to a bar (Hz)
+    const F_MAX = 13000; // highest frequency mapped to a bar (Hz)
+    const GAMMA = 0.4; // spectrum compression — lower lifts the quiet bands
+    const OUT_GAIN = 1.35; // push the loudest bands toward the ceiling
+    const MIN_BAR_FRAC = 0.04; // shortest bar, as a fraction of the half-height
+    // Auto-gain (AGC): normalize each frame against a running level that snaps
+    // up instantly and releases slowly, so a melee clip's quieter body/tail get
+    // lifted into view (lively like the reference) while the hit still peaks.
+    // FLOOR_FRAC caps the gain so near-silence doesn't amplify into noise.
+    const AGC_DECAY = 0.984; // per-frame release of the running level
+    const FLOOR_FRAC = 0.025; // gain floor, as a fraction of the clip peak
+    // Per-bar attack/decay smoothing: bars jump up fast and fall back slowly
+    // (the reference's springy bounce) instead of strobing frame-to-frame.
+    const ATTACK = 0.6;
+    const DECAY = 0.13;
+    // Gradient endpoints (warm → hot), echoing the reference's red→magenta.
+    const GRAD_FROM = accentSoft; // light orange
+    const GRAD_TO = "#ff3d7f"; // hot pink
+
+    // Buffers + per-clip caches, allocated once and reused every frame so the
+    // rAF loop never churns garbage.
+    const re = new Float64Array(FFT_SIZE);
+    const im = new Float64Array(FFT_SIZE);
+    const hann = new Float64Array(FFT_SIZE);
+    for (let i = 0; i < FFT_SIZE; i++) {
+      hann[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (FFT_SIZE - 1));
+    }
+    const displayed = new Float64Array(BARS); // smoothed bar heights (0..1)
+    const rawBands = new Float64Array(BARS); // this frame's raw band magnitudes
+    let bandBins: number[][] = []; // [startBin, endBin) per bar
+    let cachedSpecPeak = 1; // loudest band magnitude in the clip (AGC ceiling)
+    let agc = 1; // running auto-gain level, advances only while playing
+    let raf = 0;
+    let cachedDecoded: typeof decodedRef.current = null;
+    let lastDrawT = 0; // previous frame's playhead — detects a replay seek-back
+
+    // Load one Hann-windowed FFT window of samples starting at `s0`, transform
+    // in place. Caller must guarantee s0 in [0, data.length - FFT_SIZE].
+    const loadWindow = (data: Float32Array, s0: number) => {
+      for (let i = 0; i < FFT_SIZE; i++) {
+        re[i] = data[s0 + i] * hann[i];
+        im[i] = 0;
+      }
+      fftInPlace(re, im);
+    };
+
+    // Mean FFT magnitude across a bar's frequency-bin range (call after
+    // loadWindow has populated re/im).
+    const bandMag = (b: number): number => {
+      const bs = bandBins[b][0];
+      const be = bandBins[b][1];
+      let sum = 0;
+      for (let k = bs; k < be; k++)
+        sum += Math.sqrt(re[k] * re[k] + im[k] * im[k]);
+      return sum / (be - bs);
+    };
+
+    // Per-clip setup: log-spaced frequency bins per bar + the loudest band
+    // magnitude anywhere in the clip, so per-frame bars normalize against a
+    // stable reference (this preserves the natural bass-left taper instead of
+    // auto-gaining every band to full height every frame).
+    const prepareClip = (data: Float32Array, sampleRate: number) => {
+      const nyqBin = FFT_SIZE / 2;
+      const binHz = sampleRate / FFT_SIZE;
+      bandBins = [];
+      for (let b = 0; b < BARS; b++) {
+        const f0 = F_MIN * Math.pow(F_MAX / F_MIN, b / BARS);
+        const f1 = F_MIN * Math.pow(F_MAX / F_MIN, (b + 1) / BARS);
+        const b0 = Math.max(1, Math.min(nyqBin - 1, Math.floor(f0 / binHz)));
+        const b1 = Math.max(b0 + 1, Math.min(nyqBin, Math.ceil(f1 / binHz)));
+        bandBins.push([b0, b1]);
+      }
+      let peak = 0;
+      for (let s = 0; s + FFT_SIZE <= data.length; s += FFT_SIZE) {
+        loadWindow(data, s);
+        for (let b = 0; b < BARS; b++) {
+          const m = bandMag(b);
+          if (m > peak) peak = m;
+        }
+      }
+      cachedSpecPeak = peak > 1e-9 ? peak : 1;
+      agc = cachedSpecPeak;
+      displayed.fill(0);
+    };
+
+    const draw = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cssW = canvas.clientWidth || 1;
+      const cssH = canvas.clientHeight || 1;
+      const w = Math.round(cssW * dpr);
+      const h = Math.round(cssH * dpr);
+      if (canvas.width !== w) canvas.width = w;
+      if (canvas.height !== h) canvas.height = h;
+      g.clearRect(0, 0, w, h);
+      const midY = h / 2;
+
+      const decoded = decodedRef.current;
+      const el = audioRef.current;
+      const live = !!el && !el.paused;
+      const usableH = midY - Math.max(2, 3 * dpr);
+
+      if (decoded && decoded.data.length > FFT_SIZE) {
+        const { data, sampleRate } = decoded;
+        if (decoded !== cachedDecoded) {
+          prepareClip(data, sampleRate);
+          cachedDecoded = decoded;
+        }
+        // FFT window CENTERED on the playhead. currentTime is frozen when
+        // paused (static spectrum) and biased to the onset before the first
+        // play so the resting frame previews the hit rather than silence.
+        const startBias =
+          Number.isFinite(startOffsetRef.current) && startOffsetRef.current > 0
+            ? startOffsetRef.current
+            : 0;
+        const curT = el ? el.currentTime : 0;
+        // A backward jump in the playhead means the clip was restarted (a
+        // replay seeks back to the onset). Over the previous full playthrough
+        // the AGC decayed toward the quiet tail (to ~0.3-0.55x the clip peak),
+        // so without re-priming it the replay normalizes the loud hit against
+        // that lowered reference — over-gaining the whole field, swelling the
+        // spectrum and flattening its taper (and slamming bands to the ceiling
+        // when the tail is long enough to decay further). Reset it to the clip
+        // peak (the exact state prepareClip leaves) so a replay looks identical
+        // to the first play, spectrum taper and all.
+        if (curT < lastDrawT - 0.05) {
+          agc = cachedSpecPeak;
+          displayed.fill(0);
+        }
+        lastDrawT = curT;
+        const center = Math.floor(Math.max(curT, startBias) * sampleRate);
+        let s0 = center - FFT_SIZE / 2;
+        if (s0 < 0) s0 = 0;
+        if (s0 > data.length - FFT_SIZE) s0 = data.length - FFT_SIZE;
+        loadWindow(data, s0);
+        // First pass: raw band magnitudes + this frame's peak, to drive the
+        // auto-gain. AGC advances only while playing, so it (and the whole
+        // field) stays frozen when paused.
+        let rawMax = 0;
+        for (let b = 0; b < BARS; b++) {
+          const m = bandMag(b);
+          rawBands[b] = m;
+          if (m > rawMax) rawMax = m;
+        }
+        if (live) agc = Math.max(rawMax, agc * AGC_DECAY);
+        const ref = Math.max(agc, cachedSpecPeak * FLOOR_FRAC);
+        for (let b = 0; b < BARS; b++) {
+          const norm = rawBands[b] / ref;
+          let t = Math.pow(norm < 0 ? 0 : norm, GAMMA) * OUT_GAIN;
+          t = t < 0 ? 0 : t > 1 ? 1 : t;
+          // Snap when paused/at rest (perfectly static); attack fast + decay
+          // slow while playing so bars spring up and settle down.
+          if (!live) displayed[b] = t;
+          else if (t > displayed[b]) displayed[b] += (t - displayed[b]) * ATTACK;
+          else displayed[b] += (t - displayed[b]) * DECAY;
+        }
+      } else {
+        // Still decoding / decode failed — settle the bars down to the floor.
+        for (let b = 0; b < BARS; b++) {
+          displayed[b] = live ? displayed[b] * (1 - DECAY) : 0;
+        }
+      }
+
+      // Mirrored bars at FIXED positions with a horizontal warm → hot gradient
+      // and a soft glow. Only the heights change frame-to-frame.
+      const grad = g.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, GRAD_FROM);
+      grad.addColorStop(1, GRAD_TO);
+      g.save();
+      g.fillStyle = grad;
+      g.shadowColor = accent;
+      g.shadowBlur = (live ? 7 : 3) * dpr;
+      g.globalAlpha = live ? 1 : 0.8;
+      const slot = w / BARS;
+      const barW = Math.max(1.5, slot * 0.5);
+      const minH = usableH * MIN_BAR_FRAC;
+      for (let b = 0; b < BARS; b++) {
+        const half = Math.max(minH, displayed[b] * usableH);
+        const x = b * slot + (slot - barW) / 2;
+        const y = midY - half;
+        const bh = half * 2;
+        const r = Math.min(barW / 2, half);
+        g.beginPath();
+        if (g.roundRect) g.roundRect(x, y, barW, bh, r);
+        else g.rect(x, y, barW, bh);
+        g.fill();
+      }
+      g.restore();
+
+      raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+    // Depends only on `variant`; everything dynamic (decoded samples, the
+    // playhead, the trim offsets) is read live from refs inside the loop.
+  }, [variant]);
+
+  const play = (seekToStart = true) => {
     const el = audioRef.current;
     if (!el) return;
 
@@ -546,11 +873,15 @@ export function WaveformPlayer({
     // frame is at the right offset and amplitude. Reading volumeRef
     // (not the `volume` state directly) keeps us off the closure-
     // staleness footgun if the slider was dragged between renders.
-    try {
-      el.currentTime = startOffsetRef.current;
-    } catch {
-      // Some browsers throw if metadata isn't loaded yet — leave
-      // currentTime at 0 and let the silence-skip happen on replay.
+    // Seek to the audible start on a fresh play; a melee resume passes
+    // seekToStart=false so playback continues from where it was paused.
+    if (seekToStart) {
+      try {
+        el.currentTime = startOffsetRef.current;
+      } catch {
+        // Some browsers throw if metadata isn't loaded yet — leave
+        // currentTime at 0 and let the silence-skip happen on replay.
+      }
     }
     el.volume = Math.max(0, Math.min(1, volumeRef.current * boost));
 
@@ -604,14 +935,23 @@ export function WaveformPlayer({
       );
     };
 
+    // Mark the start in-flight before play(): el.paused is already false from
+    // here, but playback isn't confirmed until this promise resolves. The glyph
+    // + melee toggle key off `starting` across this window (see its decl).
+    startingRef.current = true;
+    setStarting(true);
     const result = el.play();
     if (result && typeof result.then === "function") {
       result
         .then(() => {
+          startingRef.current = false;
+          setStarting(false);
           setPlaying(true);
           scheduleSafetyStop();
         })
         .catch((e) => {
+          startingRef.current = false;
+          setStarting(false);
           // A fast re-tap interrupts the prior play() promise with an
           // AbortError — not a real failure, so don't surface it.
           if (e instanceof DOMException && e.name === "AbortError") return;
@@ -627,6 +967,8 @@ export function WaveformPlayer({
           );
         });
     } else {
+      startingRef.current = false;
+      setStarting(false);
       setPlaying(true);
       scheduleSafetyStop();
     }
@@ -650,9 +992,47 @@ export function WaveformPlayer({
     setReloadKey((k) => k + 1);
   };
 
+  // Melee plays the FULL clip, so its tap is a real play/pause TOGGLE (not
+  // sound mode's replay-the-snippet): tapping while playing pauses and freezes
+  // the scope; tapping again resumes from where it stopped; from a fresh or
+  // finished clip it (re)starts at the audible onset. This is what makes the
+  // control feel reliable instead of "sometimes restarts, sometimes nothing."
+  const handleMeleePlayPause = () => {
+    const el = audioRef.current;
+    if (!el) return;
+    // A start is still in flight (play() called, promise not resolved yet).
+    // Ignore the tap: el.paused is already false, so the pause branch below
+    // would abort the starting playback and strand the element mid-seek — the
+    // stalled, slow-motion replay you get from double-tapping right as a clip
+    // ends. The start settles on its own, and the glyph is hidden meanwhile.
+    if (startingRef.current) return;
+    if (!el.paused) {
+      if (stopTimerRef.current != null) {
+        window.clearTimeout(stopTimerRef.current);
+        stopTimerRef.current = null;
+      }
+      el.pause();
+      setPlaying(false);
+      return;
+    }
+    // Resume from the current position, unless we're at/past the end or before
+    // the audible start — then restart from the onset.
+    const end = Number.isFinite(endOffsetRef.current)
+      ? endOffsetRef.current
+      : el.duration || Infinity;
+    const restart =
+      el.currentTime >= end - 0.05 ||
+      el.currentTime < startOffsetRef.current - 0.01;
+    play(restart);
+  };
+
   const handleBarClick = () => {
     if (loadError) {
       handleRetry();
+      return;
+    }
+    if (variant === "melee") {
+      handleMeleePlayPause();
       return;
     }
     play();
@@ -671,8 +1051,13 @@ export function WaveformPlayer({
   const cursorX = VIEW_WIDTH * playProgressRatio;
   const boundaryX = VIEW_WIDTH * revealRatio;
 
-  // Centered play/pause affordance, shared by the rich waveform and the
-  // fallback bar. Hidden while playing so nothing overlays the cursor.
+  // Centered play affordance, shared by the rich waveform and the fallback
+  // bar. Hidden while playing (or starting) so nothing overlays the cursor
+  // (sound) or the pulsing spectrum (melee) — the moving visual is itself the
+  // "it's playing" signal, and hiding it across the start window keeps it from
+  // flickering back during a replay's seek and inviting a stray second tap. It
+  // fades back in the instant playback stops, so the tap-to-replay (sound) /
+  // tap-to-resume (melee toggle) affordance stays discoverable.
   const playGlyph = (
     <div
       className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -680,8 +1065,10 @@ export function WaveformPlayer({
     >
       <svg
         viewBox="0 0 24 24"
-        className={`ml-0.5 h-9 w-9 fill-ink drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)] transition-all duration-200 group-hover:scale-110 ${
-          playing ? "opacity-0" : "opacity-60 group-hover:opacity-100"
+        className={`h-9 w-9 fill-ink drop-shadow-[0_1px_3px_rgba(0,0,0,0.55)] transition-all duration-200 group-hover:scale-110 ${
+          playing || starting
+            ? "opacity-0"
+            : "ml-0.5 opacity-60 group-hover:opacity-100"
         }`}
         aria-hidden
       >
@@ -692,11 +1079,20 @@ export function WaveformPlayer({
 
   let barAriaLabel: string;
   if (loadError) barAriaLabel = "Audio failed to load — tap to retry";
+  else if (variant === "melee")
+    barAriaLabel = playing ? "Playing melee clip" : "Play melee clip";
   else if (playing) barAriaLabel = "Playing snippet";
   else barAriaLabel = `Play ${revealDuration.toFixed(1)} second snippet`;
 
   return (
-    <div className="flex w-full max-w-2xl flex-col items-center gap-4">
+    <div
+      className={
+        "flex w-full flex-col items-center gap-4 " +
+        // Melee's bar field reads cleaner in a slightly narrower frame than
+        // sound's full-width waveform.
+        (variant === "melee" ? "max-w-xl" : "max-w-2xl")
+      }
+    >
       <motion.button
         type="button"
         onClick={handleBarClick}
@@ -723,6 +1119,25 @@ export function WaveformPlayer({
               Couldn&apos;t load audio · tap to retry
             </div>
           </div>
+        ) : variant === "melee" ? (
+          // Live oscilloscope. The canvas is painted by the rAF loop above;
+          // the play glyph rides on top until the element is playing. A
+          // quiet "Loading audio…" shows only until the element is loadable.
+          <>
+            <canvas ref={canvasRef} className="block h-32 w-full" aria-hidden />
+            {ready || decodeFailed || peaks ? (
+              playGlyph
+            ) : (
+              <div
+                className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                aria-hidden
+              >
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                  Loading audio…
+                </div>
+              </div>
+            )}
+          </>
         ) : peaks ? (
           <>
             <svg
@@ -839,15 +1254,29 @@ export function WaveformPlayer({
       <VolumeSlider value={volume} onChange={handleVolumeChange} />
 
       <div className="flex items-baseline gap-2 font-mono text-[10px] uppercase tracking-[0.24em]">
-        <span className="text-info">Audible</span>
-        <span className="font-display text-2xl tracking-normal text-ink">
-          {revealDuration.toFixed(1)}
-          <span className="ml-0.5 text-base text-ink-soft">s</span>
-        </span>
-        {totalDuration > 0 && (
-          <span className="text-ink-faint">
-            of {totalDuration.toFixed(1)}s
-          </span>
+        {variant === "melee" ? (
+          // The whole clip is always playable in melee — no reveal ladder —
+          // so just surface its length rather than "X of Y".
+          <>
+            <span className="text-info">Melee clip</span>
+            <span className="font-display text-2xl tracking-normal text-ink">
+              {totalDuration.toFixed(1)}
+              <span className="ml-0.5 text-base text-ink-soft">s</span>
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="text-info">Audible</span>
+            <span className="font-display text-2xl tracking-normal text-ink">
+              {revealDuration.toFixed(1)}
+              <span className="ml-0.5 text-base text-ink-soft">s</span>
+            </span>
+            {totalDuration > 0 && (
+              <span className="text-ink-faint">
+                of {totalDuration.toFixed(1)}s
+              </span>
+            )}
+          </>
         )}
       </div>
       {playError && (

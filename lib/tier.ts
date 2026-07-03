@@ -32,8 +32,10 @@ export const CAPS: Record<ModeSlug, number> = {
   quote: 8,
   ability: 8,
   splash: 5,
-  // Map is built:false in lib/modes.ts so this entry is unused, but the
-  // record type requires it. If/when Map ships, set to its real cap.
+  // Melee and Map are built:false in lib/modes.ts so these entries are
+  // unused, but the record type requires them. Melee's real cap is 3
+  // (MeleeGame.tsx MAX_GUESSES); set Map's when it ships.
+  melee: 3,
   map: 5,
 };
 

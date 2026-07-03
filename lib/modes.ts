@@ -4,6 +4,7 @@ export type ModeSlug =
   | "ability"
   | "splash"
   | "sound"
+  | "melee"
   | "map";
 
 export type ModeDef = {
@@ -24,6 +25,12 @@ export const MODES: ModeDef[] = [
     built: true,
   },
   {
+    slug: "sound",
+    label: "Sound",
+    blurb: "A snippet of a hero's ability sound — each miss plays more.",
+    built: true,
+  },
+  {
     slug: "quote",
     label: "Quote",
     blurb: "Two heroes talk before a match. Identify both speakers.",
@@ -36,16 +43,16 @@ export const MODES: ModeDef[] = [
     built: true,
   },
   {
-    slug: "sound",
-    label: "Sound",
-    blurb: "A short voice line, lengthening with each miss.",
-    built: true,
-  },
-  {
     slug: "ability",
     label: "Ability",
     blurb: "An ability icon, gradually revealed. Which hero?",
     built: true,
+  },
+  {
+    slug: "melee",
+    label: "Melee",
+    blurb: "A hero's melee sound. Name them in three guesses.",
+    built: false,
   },
   {
     slug: "map",

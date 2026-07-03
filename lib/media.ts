@@ -49,6 +49,7 @@ const TRIMMED_BASE = MEDIA_BASE.endsWith("/")
 // that happened to be wrapped in media()).
 const R2_PREFIXES = [
   "/sounds/",
+  "/melee/",
   "/maps/",
   "/skins/",
   "/voicelines/",

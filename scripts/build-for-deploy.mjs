@@ -29,7 +29,7 @@ const STAGE_ROOT = join(REPO_ROOT, ".staged-media");
 // Dirs that serve from R2 in production — stash them out of public/
 // before next build so they don't ship via Pages. Keep in sync with
 // scripts/sync-to-r2.mjs SYNC_DIRS.
-const STAGED = ["sounds", "maps", "skins", "voicelines", "banners"];
+const STAGED = ["sounds", "melee", "maps", "skins", "voicelines", "banners"];
 
 async function exists(p) {
   try {

@@ -6,8 +6,9 @@ import { modeJsonLd, modeMetadata } from "@/lib/site";
 const META = {
   slug: "sound",
   title: "Sound",
+  seoTitle: "Overwatch Ability Sound Quiz",
   description:
-    "Identify the Overwatch hero from a short voice line. The audio clip lengthens with each miss. A daily Overwatch voice line and sound effect quiz.",
+    "Can you name the Overwatch hero from just an ability sound? Each miss plays a little more. New audio puzzle, fresh hero every day.",
 };
 
 export const metadata = modeMetadata(META);

@@ -380,9 +380,15 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  if (url.startsWith("/api/votes")) {
+  // Proxy admin data to prod with the Bearer header attached server-side.
+  // `/api/votes{,-raw}` powers this page's own same-origin dashboard;
+  // `/api/poll-results` powers the Next dev-hub greeter-poll dashboard on
+  // :3000 — a CROSS-origin caller, so every response here carries a CORS
+  // header (without it the browser can't even read prod's admin 401).
+  if (url.startsWith("/api/votes") || url.startsWith("/api/poll-results")) {
+    const cors = { "access-control-allow-origin": "*" };
     if (SECRET == null) {
-      res.writeHead(503, { "content-type": "application/json" });
+      res.writeHead(503, { "content-type": "application/json", ...cors });
       res.end(
         JSON.stringify({
           error: "no_admin_secret",
@@ -401,10 +407,11 @@ const server = createServer(async (req, res) => {
       res.writeHead(upstream.status, {
         "content-type":
           upstream.headers.get("content-type") ?? "application/json; charset=utf-8",
+        ...cors,
       });
       res.end(body);
     } catch (e) {
-      res.writeHead(502, { "content-type": "application/json" });
+      res.writeHead(502, { "content-type": "application/json", ...cors });
       res.end(JSON.stringify({ error: `upstream_failed: ${String(e)}` }));
     }
     return;
@@ -422,7 +429,7 @@ server.listen(PORT, "127.0.0.1", () => {
       `  ⚠ ADMIN_SECRET not found in .env.secrets — serving "viewer offline" page`,
     );
   } else {
-    console.log(`\n  proxying ${ORIGIN}/api/votes{,-raw}`);
+    console.log(`\n  proxying ${ORIGIN}/api/{votes,votes-raw,poll-results}`);
   }
   console.log(`  bound to 127.0.0.1 only · ctrl-c to stop\n`);
 });

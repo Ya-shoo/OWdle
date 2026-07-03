@@ -58,6 +58,7 @@ const MODE_LABEL: Record<ModeSlug, string> = {
   splash: "Spotlight",
   sound: "Sound",
   ability: "Ability",
+  melee: "Melee",
   map: "Map",
 };
 
@@ -73,6 +74,7 @@ const CHIP_COLOR: Record<ModeSlug, string> = {
   splash: "#a18df5", // lavender (Mario Kart frame)
   sound: "#c3d934", // chartreuse (GB pixel-yellow-green)
   ability: "#6e58d8", // indigo (GameCube)
+  melee: "#f2843d", // orange (reserved for melee mode)
   map: "#3ecfbf", // teal (reserved for map mode)
 };
 

@@ -10,8 +10,13 @@ import { useCallback, useEffect, useState } from "react";
 type Choice = { choice: string; count: number; owdle: number; deadlockle: number };
 type Poll = { pollId: string; total: number; last: number; choices: Choice[] };
 
-const LOCAL = "http://localhost:8799"; // OWdle og/functions helper
-const LIVE = "https://playowdle.com";
+const LOCAL = "http://localhost:8799"; // OWdle og/functions helper (local D1)
+// LIVE reads the shared prod D1's RAW counts, which are admin-gated. Hitting
+// playowdle.com directly from the browser 401s (no ADMIN_SECRET) and the 401
+// is CORS-blocked, so we route through the votes-admin helper on :8788, which
+// attaches the Bearer ADMIN_SECRET server-side and adds CORS. Needs
+// `npm run dev` running with ADMIN_SECRET in .env.secrets.
+const LIVE = "http://localhost:8788";
 
 export default function PollsDashboard() {
   const [source, setSource] = useState<"local" | "live">("local");
@@ -85,12 +90,15 @@ export default function PollsDashboard() {
       {err && (
         <p className="rounded-(--radius-card) border border-line bg-inset/40 p-4 font-mono text-[11px] leading-relaxed text-ink-soft">
           Couldn&apos;t reach{" "}
-          {source === "local" ? `the dev helper (${LOCAL})` : LIVE}/api/poll-results
+          {source === "local"
+            ? `the dev helper (${LOCAL})`
+            : `the admin proxy (${LIVE})`}
+          /api/poll-results
           {" — "}
           {err}.{" "}
           {source === "local"
             ? "Is `npm run dev` running?"
-            : "Deploy the poll endpoints first."}
+            : "Is `npm run dev` running with ADMIN_SECRET in .env.secrets? LIVE reads prod through the :8788 admin proxy."}
         </p>
       )}
 

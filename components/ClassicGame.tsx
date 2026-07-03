@@ -184,7 +184,7 @@ export function ClassicGame() {
 
   if (!day || !state || !answer) {
     return (
-      <main className="mx-auto max-w-6xl px-6 py-16">
+      <main className="mx-auto w-full max-w-4xl px-6 py-16">
         <div className="font-mono text-xs uppercase tracking-[0.2em] text-ink-faint">
           Loading…
         </div>
@@ -276,7 +276,7 @@ export function ClassicGame() {
     (thresholdMet || safetyMet);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-16">
+    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:py-16">
       <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-info">

@@ -4,106 +4,52 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# Media pipeline (R2)
+# OWdle — daily Overwatch guessing game (playowdle.com)
 
-Heavy assets — `public/sounds/`, `public/maps/`, `public/skins/`, `public/voicelines/`, `public/banners/` — live in Cloudflare R2, served via the custom domain `media.playowdle.com`. They are **not in the git repo** (gitignored). Data files in `data/` (sound-clips.json, skins.json, banners.json, quote-conversations.json, spots.json, map-calibrations.json, maps.json) keep RELATIVE paths like `/sounds/ana/biotic-grenade.mp3` — never bake the R2 hostname into stored data.
+One daily hero, guessed across several modes. **Next.js 16.2.4 / React 19**, static export (`output: "export"` → `out/`) deployed to **Cloudflare Pages**; dynamic bits are **Pages Functions** (`functions/`). Shared infra with the sibling sites: R2 bucket `dailydles`, D1 `owdle-votes`, one PostHog project.
 
-The remaining `public/` dirs — `portraits`, `abilities`, `splash`, `sfx`, plus `kofi-avatar.jpg` — stay tracked in git and ship via Cloudflare Pages. They're small and change rarely; no R2 sync overhead.
+Sibling repos (same architecture — keep shared machinery in lockstep): `../Deadlockle`, `../WuWadle`. **For anything cross-site — the shared engine model, the R2/D1/PostHog conventions, or procedures like "add a mode" / "update media" / "deploy" — use the `dailydles` skill.**
 
-URL resolution at the rendering boundary:
+## Where things live
+- `app/` — App Router routes. One dir per mode (`/classic`, `/quote`, `/splash`, `/sound`, `/ability`, `/map`) plus `/how-to-play`, `/privacy`. Dev-only tools under `app/labeler/**` (404 in prod).
+- `components/` — ~70 components: the per-mode `*Game.tsx` engines, share stack (`ShareButton`/`ShareModal`/`ShareCard`), nav/CTA, streak & rank badges, greeter, `Map*` labeler UIs.
+- `lib/` — the game engine (see next section).
+- `data/` — committed JSON that drives content (`heroes.json`, `skins.json`, `quote-conversations.json`, `sound-clips.json`, `spots.json`/`maps.json`/`map-calibrations.json`, `gamemodes.json`, …). **Relative media paths only — never bake the R2 host into data.**
+- `db/` — D1 schema + migrations (`owdle-votes`; tables `votes`, `feedback`, `poll_votes`, `pending_replay_links`).
+- `functions/` — Cloudflare Pages Functions: `og/r/[code].tsx` (OG card render → R2 cache), `r/[code].ts` (unfurl shell), `ingest/[[path]].ts` (PostHog proxy), `api/*` (vote, feedback, greeter, stats, …).
+- `scripts/` — build/asset pipeline + dev helper servers (see `docs/dev-hub.md`).
+- `workers/replay-verifier/` — standalone Worker attaching PostHog replay links to Discord feedback (serves both sites).
+- `public/` — Pages-served static assets. Heavy dirs (`sounds/ maps/ skins/ voicelines/ banners/`) live in R2, gitignored (see `docs/media-and-r2.md`).
 
-```ts
-import { media } from "@/lib/media";
-// <img src={media(cal.overheadFile)} />
-// <audio src={media(clip.audioUrl)} />
-// fetch(media(audioUrl))
-// new Audio(media(audioUrl))
-```
+## The engine — how a "mode" works
+A mode is a row in `MODES` (`lib/modes.ts`), typed `ModeDef {slug,label,blurb,built}`; `built:false` hides it from the grid/sitemap. `BUILT_MODE_SLUGS` is the canonical play order and the source of truth for share-code slot order. Each mode has a thin server route `app/<slug>/page.tsx` (sets `modeMetadata`/`modeJsonLd`, renders `<XGame/>`); the client engine is `components/XGame.tsx`. It derives the **date-seeded** daily answer via `get<Mode>ForDay(dayString())` in `lib/daily.ts` (FNV-1a of `owdle:<mode>:<day>` into a pool, or the shuffle-bag in `lib/dailyBag.ts` after `BAG_CUTOVER_DAY`), hydrates/persists `ModeState` via `lib/storage.ts` (key `owdle.<mode>.<day>`), fires events via `lib/tracking.ts`, and on a terminal state builds share links (`lib/shareLinks.ts`) + calls `bumpStreakIfNeeded` (`lib/streak.ts`). The day is "complete" when every `BUILT_MODE_SLUGS` mode is won/lost → drives streak, the daily share code, and rank tier (`lib/streakRank.ts`). Day rolls **2:15am America/Los_Angeles**.
 
-In production builds `lib/media.ts` resolves the relative path against `https://media.playowdle.com` (default fallback). In dev it falls through to a relative URL served from local `public/` if those files exist.
+Key engine files: `lib/modes.ts` · `lib/daily.ts` + `lib/dailyBag.ts` · `lib/storage.ts` · `lib/heroes.ts` (roster + `ANSWER_POOL`) · `lib/compare.ts` (Classic attribute tiles) · `lib/shareUrl.ts` (code codec, Functions-safe) · `lib/media.ts`. Scoring is **map-mode only** (`lib/scoring.ts`); other modes are won/lost + guess count.
 
-The build pipeline keeps R2 media out of the Pages deploy by staging the five R2-bound dirs to `.staged-media/` during `next build`, then restoring. The wrapper script is `scripts/build-for-deploy.mjs` and `npm run build:deploy` calls it. The full `npm run deploy:live` chains `sync-to-r2 → build:deploy → wrangler pages deploy → git push` — one command pushes local asset changes to R2, builds the site, deploys to Pages, and pushes the code change to GitHub.
+## Modes
+| mode | route | component | status |
+|---|---|---|---|
+| classic | `/classic` | `ClassicGame.tsx` | shipped |
+| quote | `/quote` | `QuoteGame.tsx` | shipped |
+| splash ("Spotlight") | `/splash` | `SplashGame.tsx` | shipped |
+| sound | `/sound` | `SoundGame.tsx` | shipped |
+| ability | `/ability` | `AbilityGame.tsx` | shipped |
+| map | `/map` | `MapGame.tsx` | **WIP** (`built:false`, unlisted; much of it untracked — see `docs/dev-hub.md`) |
 
-To upload media to R2 outside of a deploy: `npm run sync-to-r2`. Reads `~/.wrangler/config/default.toml` (or platform equivalent) for the OAuth token, walks all five R2-bound dirs, HEAD-checks each key against R2 to skip already-uploaded files, then PUTs the rest at 8× concurrency.
+## Commands
+- `npm run dev` — full stack via `concurrently`: `next dev` (:3000) + helper servers (votes :8788, feedback :8790, sound-trims :8789, palette :8791, og :8799). `npm run dev:next` = Next alone.
+- `npm run build` / `npm run build:deploy` — `build:deploy` (`scripts/build-for-deploy.mjs`) stages R2 media out of the Pages upload.
+- `npm run deploy:live` — `sync-to-r2 → build:deploy → wrangler pages deploy --branch=main → git push`. ("deploy" = deploy + commit + push; confirm with Yash first.)
+- `npm run sync-to-r2` — upload media to R2 (HEAD-diff, 8× concurrency). `sync-clips` = PC-only Sound clip ingest. `deploy:verifier` = deploy the replay-verifier Worker.
 
-# Mac vs PC dev split
+## Deep dives — read only when working in these areas
+- Media / R2 pipeline + Mac↔PC dev setup → `docs/media-and-r2.md`
+- Share cards & the OG renderer (incident-hardened — do not simplify away) → `docs/share-cards.md`
+- Dev hub (`/labeler/*`), helper servers, and Map-mode WIP → `docs/dev-hub.md`
+- Map data pipeline (Blender overheads) → `docs/blender-map-pipeline.md`
+- Cross-site architecture, registries & procedures → the **`dailydles` skill**
 
-Yash develops OWdle on both Mac and Windows. Either machine can edit and deploy — `npm run deploy:live` syncs local asset changes to R2 first, then builds + deploys + pushes. The five R2-bound dirs (`sounds`, `maps`, `skins`, `voicelines`, `banners`) may or may not exist locally on a given machine depending on what work happens there.
-
-For dev on either machine after a fresh clone:
-
-1. **Wrangler authenticated**: `npx wrangler login` once (so `npm run sync-to-r2` works and production deploys work).
-2. **`.env.local` at the repo root** (gitignored) with:
-   ```
-   NEXT_PUBLIC_MEDIA_BASE=https://media.playowdle.com
-   ```
-   Without this, `next dev` falls through to relative `/sounds/...` URLs and can't serve them locally (the dirs may not exist on this machine). Setting the env var routes dev fetches at R2.
-
-3. **No need to download media locally**. Either machine can run the full app against R2.
-
-What the Mac side should NOT do without coordinating with Windows:
-- `npm run sync-clips` — only works on the PC where the source zips live in `~/Downloads/owdle-clips*.zip`. Mac-side dev pulls finished media from R2.
-- `npm run sync-spots` — operates on locally captured spots files. Same reasoning.
-
-# Dev hub
-
-Local-only tools live at `/labeler/*` (dev-only — production builds emit 404s for every page under it via `notFound()` in `app/labeler/layout.tsx`). Open them at `http://localhost:3000/labeler/` after `npm run dev`. The vision is one place where both OWdle and Deadlockle internal workflows live — test new features, edit/correct data, optimize before launching.
-
-The hub itself is at `app/labeler/page.tsx` — a server-rendered index of every tool, grouped into sections (Map mode, Sound mode, Site admin, Play) via the `TOOL_GROUPS` config. Adding a tool means appending a row there, not editing a separate nav component.
-
-Current tools:
-
-- `/labeler/sound/` — audio labeler. Loads a capture video, lets you mark in/out ranges per ability, exports a ZIP of trimmed clips for `npm run sync-clips`.
-- `/labeler/map/{calibrate,review,edit,admin}/` — map mode labeling pipeline (calibrate overhead, review screenshots, edit pins, aggregate spot feedback).
-- `/labeler/votes/` — embeds the votes admin dashboard (next-game vote tally across OWdle + Deadlockle).
-- `/labeler/feedback/` — embeds the free-form feedback admin dashboard.
-
-`npm run dev` is wired through `concurrently` to start six processes in parallel: `next dev`, `scripts/votes-admin-server.mjs` (`:8788`), `scripts/feedback-admin-server.mjs` (`:8790`), `scripts/sound-trims-server.mjs` (`:8789`), `scripts/palette-server.mjs` (`:8791`), and `scripts/og-dev-server.mjs` (`:8799`). One command, every dev tool reachable. `npm run dev:next` runs Next alone.
-
-The og helper runs the Cloudflare Pages Functions (`functions/` — the `/og/r/[code]` share-card renderer and `/r/[code]` meta shell) locally via `wrangler pages dev`, because `next dev` has no functions runtime. `lib/shareLinks.ts` points the share modal's preview at `:8799` when `NODE_ENV === "development"` — keep the port in sync between those two files. Like the other helpers it survives missing resources (creates an empty `out/` if the site was never built; idles instead of killing the stack if wrangler can't boot).
-
-The votes / feedback helpers proxy authenticated requests to the live site using `ADMIN_SECRET` from `.env.secrets`. That file is gitignored and not committed to either machine by default. **The helpers are designed to survive a missing `.env.secrets`** — they still boot, but serve a "viewer offline · set ADMIN_SECRET" stub page instead of the real dashboard. The `npm run dev` flow therefore works on a fresh clone without ceremony; you only need `.env.secrets` when you actually want to read prod votes / feedback data, and then it's drop-the-file-and-restart.
-
-Adding a new tool:
-1. Create `app/labeler/<tool>/page.tsx` — call `notFound()` when `NODE_ENV === "production"`.
-2. Append a row to the `TOOL_GROUPS` config in `app/labeler/page.tsx` (pick the right section, or add a new one).
-3. If it needs a helper server: add a `scripts/<tool>-server.mjs`, chain it into the `concurrently` invocation in `npm run dev`, and — if it depends on a secret or other external resource — make startup survive that resource being missing so a clean clone of the repo still gets a working dev flow.
-
-# Tracked-state notes for future sessions
-
-Multiple modes are in-flight. As of the R2 migration commit (`f6efdf6 Move media to Cloudflare R2…`):
-
-- **Sound, Quote, Classic, Ability, Splash modes**: tracked + shipped. Routes are `/sound`, `/quote`, `/classic`, `/ability`, `/splash`.
-- **Map mode**: WIP, mostly untracked on Yash's Windows PC. Files include `components/MapGame.tsx`, `components/MapReview.tsx`, `components/MapCalibrate.tsx`, `components/MapEdit.tsx`, `components/MapAdmin.tsx`, `lib/affine.ts`, `lib/calibration-mode.ts`, `lib/mapDetection.ts`, `lib/maps.ts`, `lib/scoring.ts`, `lib/storage.ts` (modifications), `app/labeler/map/**`, `app/map/`. **None of these are pushed yet** — see `git stash list` for any stashed-and-not-yet-restored state and your local working tree for current map work.
-- The R2 migration commit included `media()` wrapping in tracked components (SoundGame, QuoteGame, WaveformPlayer). Map mode components already use `media()` in their untracked state and will continue to work when committed.
-- `data/sound-clips.json` is up-to-date through all 49 heroes (35 DPS/support + 14 tanks added in the R2 migration commit).
-
-# OG share-card hardening (ported from Deadlockle, 2026-06-06)
-
-The /og/r/[code] renderer carries the full reliability stack proven on
-Deadlockle's launch night — keep the two repos in lockstep:
-
-- **Renders persist to R2** (`OG_CACHE` → shared `dailydles` bucket, keys
-  `og-cache/owdle/<REV>/<code>.png`): free-plan Workers CPU limits kill ~half
-  of COLD wasm renders (lazy resvg/yoga init inside the request), so each code
-  renders once and every later request serves storage. **Bump RENDER_REV in
-  functions/og/r/[code].tsx whenever the card design changes** — stored
-  renders are immortal. Local dev bypasses storage (live render always).
-- **Fonts are self-hosted subsets** (`public/og-fonts/`, regenerated by
-  `scripts/fetch-og-fonts.mjs`) — the render path never leaves the zone. If a
-  card ever renders a NEW glyph, add it to that script's SUBSET and re-run, or
-  it draws as tofu. (✓/✕ are inline SVG, not text.)
-- The sharer's prefetch (ShareButton) and the modal preview (ShareModal) both
-  RETRY failed loads — the sharer's device shoulders the one cold render each
-  code needs. **Retries fetch DISTINCT URLs** (`ogRetrySrc` adds `?r=N`):
-  WebKit replays a same-URL image failure from its in-session memory cache
-  without re-requesting (no-store notwithstanding), which silently made every
-  retry a no-op on iOS — daily-summary codes (per-player unique, never
-  prewarmed) showed "Preview unavailable" and went un-warmed for unfurlers.
-  The query param is invisible server-side (R2 keys on the path code alone).
-- `.github/workflows/prewarm-og.yml` renders all ~98 possible round codes
-  daily after the 2:15am reset (dual UTC crons for DST). Daily-summary codes
-  stay on-demand.
-- The announce modal embeds a PRE-BAKED card (`public/announce-example.png`),
-  not a live render. Regenerate after design changes:
-  `curl -s https://playowdle.com/og/r/260605-32432-00 -o public/announce-example.png`
+## Conventions
+- Media URLs resolve at the render boundary — always `media(path)` from `lib/media.ts`, never a bare R2 host in stored data.
+- PostHog event/prop names are **network-identical across all three sites** (`site` super-property splits them; here `"owdle"`). Never rename on one side only.
+- Keep share machinery (`lib/shareUrl.ts`, `functions/og`, `functions/r`) in lockstep with the siblings; bump `RENDER_REV` in `functions/og/r/[code].tsx` on any card-design change.

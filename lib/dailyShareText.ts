@@ -14,6 +14,7 @@ const MODE_EMOJI: Record<ModeSlug, string> = {
   splash: "🎨",
   sound: "🔊",
   ability: "⚡",
+  melee: "🥊",
   map: "🗺️",
 };
 
@@ -25,6 +26,7 @@ const MODE_TEXT_LABEL: Record<ModeSlug, string> = {
   splash: "Spotlight",
   sound: "Sound",
   ability: "Ability",
+  melee: "Melee",
   map: "Map",
 };
 

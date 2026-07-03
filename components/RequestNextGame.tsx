@@ -520,7 +520,7 @@ function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
           No votes yet. Be the first to weigh in.
         </p>
       ) : (
-        <div className="mt-2 grid grid-cols-2 gap-1.5 px-6">
+        <div className="mt-2 grid grid-cols-2 gap-1.5">
           {data.map((g, i) => (
             <PickCard
               key={g.game_id}
@@ -573,12 +573,15 @@ function PickCard({
 
         <span
           className={clsx(
-            "absolute left-2 top-2 inline-flex items-center border bg-canvas/85 px-1.5 py-0.5 font-mono text-[10px] tabular-nums backdrop-blur-sm",
+            // Rank chip sits over the cover art, so it keeps a dark scrim +
+            // light/accent glyphs regardless of how light or busy the
+            // underlying cover art is (independent of the card's surface).
+            "absolute left-2 top-2 inline-flex items-center border bg-black/70 px-1.5 py-0.5 font-mono text-[10px] tabular-nums backdrop-blur-sm",
             rank === 1
               ? "border-accent text-accent"
               : rank <= 3
                 ? "border-accent-soft text-accent-soft"
-                : "border-line text-ink-faint",
+                : "border-white/25 text-white/70",
           )}
         >
           {String(rank).padStart(2, "0")}
@@ -586,7 +589,9 @@ function PickCard({
 
         <p
           className={clsx(
-            "absolute inset-x-0 bottom-0 truncate px-3 py-1.5 font-display text-ink",
+            // Name band rides the dark bottom gradient, so it stays light and
+            // legible over any cover art regardless of the card's surface.
+            "absolute inset-x-0 bottom-0 truncate px-3 py-1.5 font-display text-white",
             hero ? "text-base sm:text-lg" : "text-xs sm:text-sm",
           )}
         >

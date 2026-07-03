@@ -15,6 +15,8 @@
 import { useEffect, useState } from "react";
 import { AvatarGreeter } from "./AvatarGreeter";
 import { FALLBACK_GREETING, type GreeterAnnouncement } from "@/lib/greeter";
+import { useRightRailVisible } from "@/lib/adRailSignal";
+import { RAIL_INNER_FROM_CENTER_PX } from "@/components/AdRails";
 
 // `next dev` has no Functions runtime, so in dev we hit the wrangler pages-dev
 // helper that serves functions/ (the same :8799 the OG preview uses — keep the
@@ -22,6 +24,18 @@ import { FALLBACK_GREETING, type GreeterAnnouncement } from "@/lib/greeter";
 const API_BASE =
   process.env.NODE_ENV === "development" ? "http://localhost:8799" : "";
 const GREETER_API = `${API_BASE}/api/greeter`;
+
+// When a right side-rail ad is showing, the greeter's whole corner (idle chip,
+// wave, and the announcement bubble that fans out to its left) lands under the
+// rail. Park its right edge just inside the rail's inner edge instead. The gap
+// is constant across every viewport and tier because both the rail and the
+// greeter anchor to 50%. Below the rail's min width no rail serves and the
+// signal stays off, so the greeter keeps its normal top-right perch (right-20).
+const GREETER_RAIL_CLEARANCE_PX = 24;
+const GREETER_RIGHT_CLEAR_OF_RAIL = `calc(50% - ${
+  RAIL_INNER_FROM_CENTER_PX - GREETER_RAIL_CLEARANCE_PX
+}px)`;
+const GREETER_RIGHT_DEFAULT = "5rem"; // Tailwind right-20
 
 export function SiteGreeter() {
   const [state, setState] = useState<{
@@ -65,10 +79,20 @@ export function SiteGreeter() {
     };
   }, [isDesktop]);
 
+  // Shift clear of the right side-rail ad when one is actually on screen
+  // (published by AdRails; false until a live unit fills or the dev preview
+  // mock shows).
+  const railVisible = useRightRailVisible();
+
   if (!isDesktop || !state.done || !state.announcement) return null;
 
   return (
-    <div className="pointer-events-none fixed right-20 top-28 z-40">
+    <div
+      className="pointer-events-none fixed top-28 z-40 transition-[right] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+      style={{
+        right: railVisible ? GREETER_RIGHT_CLEAR_OF_RAIL : GREETER_RIGHT_DEFAULT,
+      }}
+    >
       <AvatarGreeter announcement={state.announcement} apiBase={API_BASE} />
     </div>
   );

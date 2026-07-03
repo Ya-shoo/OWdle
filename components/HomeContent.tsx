@@ -108,7 +108,7 @@ export function HomeContent() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-12 sm:pt-16">
-        <div className="mb-6 flex items-baseline justify-between border-b border-line pb-3">
+        <div className="mb-6 flex items-baseline justify-between">
           <h2 className="utility-label text-sm text-info">Modes</h2>
           <span className="utility-label text-sm text-ink-faint">
             {day
@@ -117,9 +117,12 @@ export function HomeContent() {
           </span>
         </div>
 
-        <ul className="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+        {/* Standalone mode cards: rounded, separated by air, each lifting
+            off the canvas with a lighter-navy fill + hairline border + a
+            tight contained shadow — no seam grid delineating them. */}
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {MODES.map((mode) => (
-            <li key={mode.slug} className="bg-canvas">
+            <li key={mode.slug}>
               <ModeCard
                 mode={mode}
                 status={mode.built ? statuses[mode.slug] : undefined}
@@ -129,17 +132,21 @@ export function HomeContent() {
         </ul>
       </section>
 
-      {/* Engagement strip: vote on next game + tip jar in one row.
-          54/46 split — vote keeps a slight horizontal lead since it's the
-          more interactive ask, but the column is trimmed so the leaderboard
-          tiles read at a comfortable size. Single vertical hairline divider
-          between the two columns. */}
-      <section className="mx-auto max-w-6xl border-t border-line px-6 pt-7 pb-12 sm:pt-8">
-        <div className="grid gap-y-14 md:grid-cols-[54fr_46fr] md:gap-y-0 md:divide-x md:divide-line">
-          <div className="md:pr-10 lg:pr-14">
+      {/* Engagement strip: vote on next game + tip jar, each in its own
+          panel instead of two halves split by hairlines. Dark `bg-muted`
+          fill — a step darker than the navy mode cards above (same surface as
+          the sister-site card below) so the strip sits deep in the board's
+          dark palette rather than inverting to a competing light tier. All
+          children are token-driven (text-ink, bg-inset, border-line, …), so
+          they read correctly on the dark surface with no per-child styling.
+          54/46 keeps the interactive vote column slightly wider; they stack
+          on mobile with the same gap as the modes grid. */}
+      <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
+        <div className="grid gap-4 md:grid-cols-[54fr_46fr]">
+          <div className="rounded-(--radius-card) border border-line bg-muted p-6 shadow-card sm:p-8">
             <RequestNextGame />
           </div>
-          <div className="md:pl-10 lg:pl-14">
+          <div className="rounded-(--radius-card) border border-line bg-muted p-6 shadow-card sm:p-8">
             <SupportLinks />
           </div>
         </div>
@@ -437,8 +444,8 @@ function ModeCard({
 }) {
   if (!mode.built) {
     return (
-      <div className="block h-full p-6 opacity-50">
-        <ModeCardInner label={mode.label} blurb={mode.blurb}>
+      <div className="relative flex h-full flex-col rounded-(--radius-card) border border-line bg-muted p-6 shadow-card">
+        <ModeCardInner label={mode.label} blurb={mode.blurb} dim>
           <span className="utility-label text-xs text-info">Soon</span>
         </ModeCardInner>
       </div>
@@ -483,7 +490,7 @@ function ModeCard({
   return (
     <Link
       href={`/${mode.slug}/`}
-      className="group block h-full p-6 transition-colors hover:bg-muted focus-visible:bg-muted"
+      className="group relative flex h-full flex-col rounded-(--radius-card) border border-line bg-card p-6 shadow-card transition-[transform,box-shadow,border-color] duration-200 ease-[var(--ease-spring)] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:border-accent/40 focus-visible:shadow-card-hover"
     >
       <ModeCardInner label={mode.label} blurb={mode.blurb}>
         {tag}
@@ -496,18 +503,30 @@ function ModeCardInner({
   label,
   blurb,
   children,
+  dim = false,
 }: {
   label: string;
   blurb: string;
   children: React.ReactNode;
+  // Recessed "Soon" cards quiet their text a step instead of fading the
+  // whole card with opacity — keeps the fill a solid color.
+  dim?: boolean;
 }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="font-soft text-2xl font-bold text-ink">{label}</h3>
+        <h3
+          className={`font-soft text-2xl font-bold ${dim ? "text-ink-soft" : "text-ink"}`}
+        >
+          {label}
+        </h3>
         {children}
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-ink-soft">{blurb}</p>
+      <p
+        className={`mt-3 text-sm leading-relaxed ${dim ? "text-ink-faint" : "text-ink-soft"}`}
+      >
+        {blurb}
+      </p>
     </div>
   );
 }

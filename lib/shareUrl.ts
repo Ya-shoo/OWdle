@@ -143,13 +143,15 @@ export function decodeResults(code: string): DecodedResults | null {
 // Stable one-letter mode tags. These are URL surface area: once a code
 // is in the wild its letter can never be reassigned. "p" for splash
 // because "s" went to sound (and the public label is "Spotlight"
-// anyway); "m" reserved for the unshipped Map mode.
+// anyway); "e" reserved for the unshipped Melee mode ("m" already went
+// to Map); "m" reserved for the unshipped Map mode.
 const ROUND_MODE_CHAR: Record<ModeSlug, string> = {
   classic: "c",
   quote: "q",
   splash: "p",
   sound: "s",
   ability: "a",
+  melee: "e",
   map: "m",
 };
 

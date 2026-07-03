@@ -43,6 +43,7 @@ const REPO_ROOT = resolve(__dirname, "..");
 // (small, change rarely).
 const SYNC_DIRS = [
   "public/sounds",
+  "public/melee",
   "public/maps",
   "public/skins",
   "public/voicelines",

@@ -62,6 +62,12 @@ type ModeMetaInput = {
   slug: string;
   title: string;
   description: string;
+  // Optional keyword-rich override for the <title> tag + OG/Twitter title —
+  // what shows as the blue link in search results and on social cards.
+  // Falls back to `title`. Kept separate so the in-app breadcrumb and the
+  // JSON-LD `name` stay short ("Sound") while search sees the full phrase
+  // ("Overwatch Ability Sound Quiz").
+  seoTitle?: string;
 };
 
 // Per-mode OG images come from each route's own opengraph-image.tsx via
@@ -73,12 +79,16 @@ export function modeMetadata({
   slug,
   title,
   description,
+  seoTitle,
 }: ModeMetaInput): Metadata {
   const canonical = `/${slug}/`;
   const fullUrl = `${SITE_URL}${canonical}`;
-  const ogTitle = `${title} · ${SITE_NAME}`;
+  // Root layout applies the `%s · OWdle` title template, so this becomes
+  // e.g. "Overwatch Ability Sound Quiz · OWdle" in the <title> and SERP.
+  const headTitle = seoTitle ?? title;
+  const ogTitle = `${headTitle} · ${SITE_NAME}`;
   return {
-    title,
+    title: headTitle,
     description,
     alternates: { canonical },
     openGraph: {
