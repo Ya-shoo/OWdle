@@ -4,9 +4,9 @@
 // column records which site the submission came from so we can filter
 // per site when reading the feedback back via the CLI.
 //
-// Rate limit: per-IP via the same salted+bucketed hash used for votes,
-// enforced atomically with INSERT … SELECT … WHERE so concurrent requests
-// can't briefly exceed the cap. No PII is stored.
+// The submitter hash (salted+bucketed per-IP, same scheme as votes) is
+// still recorded so the Discord footer can attribute repeat submitters,
+// but feedback submissions are not rate limited. No PII is stored.
 import type { Handler } from "../_lib/types";
 import { voterHash } from "../_lib/types";
 
@@ -18,7 +18,6 @@ const SITE_URL = "https://playowdle.com";
 // notification reads as "this came from OWdle" at a glance even when
 // the channel is shared with Deadlockle alerts.
 const EMBED_COLOR = 0xff8847;
-const MAX_FEEDBACK_PER_SUBMITTER_PER_DAY = 5;
 const MAX_BODY_LEN = 150;
 // PostHog session IDs are UUIDv7 strings. The regex is loose on purpose —
 // PostHog occasionally rotates formats, so we accept any UUID-shape and
@@ -53,31 +52,13 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
   const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
   const hash = await voterHash(ip, PROJECT);
   const now = Math.floor(Date.now() / 1000);
-  const dayAgo = now - 86400;
 
-  const result = await env.DB.prepare(
+  await env.DB.prepare(
     `INSERT INTO feedback (body, source, submitter_hash, created_at)
-     SELECT ?, ?, ?, ?
-     WHERE (
-       SELECT COUNT(*) FROM feedback
-       WHERE submitter_hash = ? AND created_at > ?
-     ) < ?`,
+     VALUES (?, ?, ?, ?)`,
   )
-    .bind(
-      body,
-      PROJECT,
-      hash,
-      now,
-      hash,
-      dayAgo,
-      MAX_FEEDBACK_PER_SUBMITTER_PER_DAY,
-    )
+    .bind(body, PROJECT, hash, now)
     .run();
-
-  const meta = result.meta as { changes?: number } | undefined;
-  if (!meta?.changes) {
-    return json({ error: "rate_limited" }, 429);
-  }
 
   // Discord notification, sent in the background via waitUntil so the user
   // gets their response immediately. The replay link is deliberately NOT

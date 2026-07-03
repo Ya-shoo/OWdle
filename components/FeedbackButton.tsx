@@ -30,7 +30,7 @@ const MAX_LEN = 150;
 const POPUP_MS = 10000;
 const REFRESH_EVENT = "feedback:refresh";
 
-type Status = "idle" | "sending" | "sent" | "error" | "rate_limited";
+type Status = "idle" | "sending" | "sent" | "error";
 
 function readAllDone(): boolean {
   if (typeof window === "undefined") return false;
@@ -162,8 +162,6 @@ export function FeedbackButton() {
           setOpen(false);
           setStatus("idle");
         }, 1400);
-      } else if (res.status === 429) {
-        setStatus("rate_limited");
       } else {
         setStatus("error");
       }
@@ -291,7 +289,7 @@ export function FeedbackButton() {
             <div className="flex items-center justify-between gap-3">
               <span
                 className={`font-mono text-[10px] uppercase tracking-[0.22em] ${
-                  status === "error" || status === "rate_limited"
+                  status === "error"
                     ? "text-red-400"
                     : status === "sent"
                       ? "text-info"
@@ -300,11 +298,9 @@ export function FeedbackButton() {
               >
                 {status === "sent"
                   ? "Sent, thanks"
-                  : status === "rate_limited"
-                    ? "Too many. Try tomorrow"
-                    : status === "error"
-                      ? "Send failed. Try again"
-                      : `${trimmed.length}/${MAX_LEN}`}
+                  : status === "error"
+                    ? "Send failed. Try again"
+                    : `${trimmed.length}/${MAX_LEN}`}
               </span>
               <button
                 type="button"
