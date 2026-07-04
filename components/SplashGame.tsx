@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
-import { dayString, getSplashForDay, prettyDay } from "@/lib/daily";
+import {
+  dayString,
+  getSplashForDay,
+  getSplashOriginForDay,
+  getSpotlightPreview,
+  prettyDay,
+} from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import {
   trackBonusAnswered,
@@ -43,9 +49,11 @@ const MODE = "splash";
 const MAX_GUESSES = 5;
 
 // Crop window zoom level by guess count. Higher = more zoomed in (less
-// visible). Image is a square crop centered on the character (smartcrop),
-// so transformOrigin is always 50%/50% and high initial zoom lands
-// tightly on the face/torso.
+// visible). Image is a square crop centered on the character (smartcrop).
+// The zoom anchors on a per-day transform-origin (see
+// getSplashOriginForDay): horizontally centered, vertically randomized
+// within the middle third, so the tight initial crop lands on a fresh
+// focal point each day and zooms out from there.
 //
 // The curve is calibrated for a "full reveal" at position 8 even though
 // the player never reaches that during normal play (cap at 5). This
@@ -122,12 +130,18 @@ export function SplashGame() {
     );
   }
 
-  // Override path serves the hero's default splash with no skin variant.
-  // Daily path uses the full seeded picker (which may pick a skin).
+  // Override path previews the hero's legendary skin (matching the
+  // legendary-only daily), falling back to base art if it has none.
+  // Daily path uses the full seeded picker.
   const splash = overrideHero
-    ? { hero: overrideHero, imageUrl: overrideHero.splash_url ?? "", skin: null }
+    ? getSpotlightPreview(overrideHero)
     : getSplashForDay(day);
   const { hero: answer, imageUrl, skin } = splash;
+  // Per-day zoom focal point: centered horizontally, randomized within the
+  // middle third vertically. Seeded on day + image so it's stable across
+  // guesses/reloads (the crop only zooms out from this fixed anchor) yet
+  // varies per hero when previewing via the dev picker.
+  const origin = getSplashOriginForDay(day, imageUrl);
   const guessedHeroes = state.guesses
     .map((k) => HEROES_BY_KEY[k])
     .filter(Boolean);
@@ -246,6 +260,7 @@ export function SplashGame() {
         <SplashFrame
           imageUrl={imageUrl}
           zoom={zoom}
+          origin={origin}
           revealed={ended}
           heroName={answer.name}
         />
@@ -463,11 +478,13 @@ export function SplashGame() {
 function SplashFrame({
   imageUrl,
   zoom,
+  origin,
   revealed,
   heroName,
 }: {
   imageUrl: string;
   zoom: number;
+  origin: { x: number; y: number };
   revealed: boolean;
   heroName: string;
 }) {
@@ -488,7 +505,7 @@ function SplashFrame({
           className="block h-full w-full object-cover transition-transform duration-700 ease-out"
           style={{
             transform: `scale(${zoom})`,
-            transformOrigin: "50% 50%",
+            transformOrigin: `${origin.x}% ${origin.y}%`,
           }}
           loading="eager"
           decoding="async"

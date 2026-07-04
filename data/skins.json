@@ -5743,6 +5743,12 @@
   ],
   "sierra": [
     {
+      "key": "painter",
+      "name": "Painter",
+      "rarity": "legendary",
+      "file": "/skins/sierra/painter.jpg"
+    },
+    {
       "key": "classic",
       "name": "Classic",
       "rarity": "common",

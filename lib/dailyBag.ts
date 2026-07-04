@@ -31,6 +31,27 @@ const SPLASH_SKIN_PCT = 80;
 // already served don't shift retroactively.
 export const SPLASH_SKINS_ONLY_DAY = "2026-06-06";
 
+// Legendary-only cutover for Spotlight: from this Pacific puzzle day onward
+// the mode shows LEGENDARY skins only — no Epic recolors (which read as
+// near-identical to the base look) and no default splash art. The two
+// exception heroes below are the sole exemption. Days in
+// [SPLASH_SKINS_ONLY_DAY, this) keep the all-skins rotation so skins
+// already served don't shift retroactively. The hero pool is unchanged
+// (SKINS_SPLASH_POOL), so daily HERO answers are identical across this
+// cutover — only which skin is shown changes.
+//
+// Set to the current puzzle day (rolls 2:15am Pacific) so the rule is live
+// immediately rather than starting on the next daily.
+export const SPLASH_LEGENDARY_ONLY_DAY = "2026-07-03";
+
+// Heroes exempt from legendary-only: brand-new characters too skin-poor
+// for a legendary-only rotation to be fair. They rotate through their
+// legendary skin(s) AND their default "Classic" splash so they still
+// appear and stay recognizable. Everyone else is strictly legendary.
+// (Sierra: 1 legendary "Painter" + Classic. Shion: 1 legendary "Cyber
+// Biker" + Classic.)
+const SPLASH_BASE_ART_HEROES = new Set(["sierra", "shion"]);
+
 // One-time cutover bootstrap: the bag's epoch 0 generator sees the 5 legacy
 // puzzle days immediately before cutover as if they were prior slots, so the
 // first bag picks don't repeat heroes shown in the final week of the legacy
@@ -40,9 +61,11 @@ const CUTOVER_BOOTSTRAP_DAYS = 5;
 
 const ABILITY_POOL: Hero[] = ANSWER_POOL.filter((h) => h.abilities.length > 0);
 const SPLASH_POOL: Hero[] = ANSWER_POOL.filter((h) => h.splash_url != null);
-// Skins-only era pool: a hero must own at least one skin to be the daily
-// Spotlight answer. Currently excludes only sierra (no Epic/Legendary
-// skins in skins.json).
+// Skins-only / legendary-only era pool: a hero must own at least one skin
+// entry to be the daily Spotlight answer. Every answer-eligible hero
+// qualifies — the two legendary-poor new heroes (Sierra, Shion) are kept
+// in via their hand-added "common" default entry in skins.json, and are
+// exempted from legendary-only via SPLASH_BASE_ART_HEROES.
 const SKINS_SPLASH_POOL: Hero[] = ANSWER_POOL.filter(
   (h) => h.splash_url != null && h.skins.length > 0,
 );
@@ -70,6 +93,7 @@ function indexToDayString(idx: number): string {
 
 const BAG_CUTOVER_INDEX = dayStringToIndex(BAG_CUTOVER_DAY);
 const SPLASH_SKINS_ONLY_INDEX = dayStringToIndex(SPLASH_SKINS_ONLY_DAY);
+const SPLASH_LEGENDARY_ONLY_INDEX = dayStringToIndex(SPLASH_LEGENDARY_ONLY_DAY);
 
 export function usesBag(day: string): boolean {
   return dayStringToIndex(day) >= BAG_CUTOVER_INDEX;
@@ -431,6 +455,32 @@ function splashSkinOrder(epoch: number, hero: Hero): number[] {
   );
 }
 
+// Skin indices eligible for the legendary-only Spotlight era. Normally just
+// this hero's legendary skins; for the base-art exception heroes it also
+// includes their "common" default splash so it stays in the rotation.
+function legendaryEligibleSkinIndices(hero: Hero): number[] {
+  const allowCommon = SPLASH_BASE_ART_HEROES.has(hero.key);
+  const out: number[] = [];
+  hero.skins.forEach((s, i) => {
+    if (s.rarity === "legendary" || (allowCommon && s.rarity === "common")) {
+      out.push(i);
+    }
+  });
+  return out;
+}
+
+// Legendary-only counterpart to splashSkinOrder: a per-epoch seeded shuffle
+// over just the eligible (legendary, plus default for exception heroes)
+// skin indices. Separate seed namespace so it doesn't have to line up with
+// the all-skins order the pre-cutover era uses.
+function splashLegendaryOrder(epoch: number, hero: Hero): number[] {
+  const idxs = legendaryEligibleSkinIndices(hero);
+  if (idxs.length <= 1) return idxs;
+  return memoize(`splash:legendary:${epoch}:${hero.key}`, () =>
+    seededShuffle(`owdle:splash:legendary:e${epoch}:${hero.key}`, idxs),
+  );
+}
+
 // ─── Per-mode resolvers ────────────────────────────────────────────────
 
 export function bagClassicHero(day: string): Hero {
@@ -461,6 +511,26 @@ export function bagSplashPick(day: string): {
 } {
   const { epoch, slot } = getBagPosition(day);
   const dayIdx = dayStringToIndex(day);
+
+  // Legendary-only era: same hero list as the skins-only era (so answers
+  // don't shift), but the skin is drawn from the hero's LEGENDARY skins
+  // only. The two exception heroes also keep their default "Classic" art
+  // in the rotation via legendaryEligibleSkinIndices.
+  if (dayIdx >= SPLASH_LEGENDARY_ONLY_INDEX) {
+    const list = skinsSplashEpochList(epoch);
+    const hero = list[slot];
+    const order = splashLegendaryOrder(epoch, hero);
+    // Defensive: a pool hero with no eligible skin (shouldn't happen —
+    // every hero here has a legendary, and the exceptions have a common
+    // default) falls back to base splash art.
+    if (order.length === 0) return { hero, skinIndex: null };
+    const appearance = appearanceCountInEpoch(
+      list,
+      slot,
+      (h) => h.key === hero.key,
+    );
+    return { hero, skinIndex: order[(appearance - 1) % order.length] };
+  }
 
   // Skins-only era: every day is a skin. Hero comes from the dedicated
   // skins-capable list; the skin itself rotates through the same seeded

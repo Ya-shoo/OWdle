@@ -230,6 +230,42 @@ export function getSplashForDay(day: string): {
   return { hero, imageUrl: skin.file, skin };
 }
 
+// Dev-only preview image for the Spotlight hero picker. Mirrors the
+// legendary-only daily by showing the hero's first legendary skin
+// (skins.json is sorted legendary-first, so [0] of that filter is the
+// canonical one). Falls back to base splash art for heroes with no
+// legendary — off-pool picks, or anyone the roster hasn't scraped a
+// legendary for yet. Same return shape as getSplashForDay.
+export function getSpotlightPreview(hero: Hero): {
+  hero: Hero;
+  imageUrl: string;
+  skin: Skin | null;
+} {
+  const legendary = hero.skins.find((s) => s.rarity === "legendary");
+  if (legendary) return { hero, imageUrl: legendary.file, skin: legendary };
+  return { hero, imageUrl: hero.splash_url ?? "", skin: null };
+}
+
+// Splash mode zoom focal point (CSS transform-origin percentages). The
+// horizontal origin stays centered; the vertical origin is randomized
+// within the middle third of the frame (~33%–67%) so each day's deep
+// initial crop lands on a fresh spot — upper torso one day, waist the
+// next — instead of always the dead-center face. The crop only ever zooms
+// OUT from this fixed anchor, so the point must be stable across a
+// player's guesses and reloads: it's seeded on the day AND the image, so
+// the daily is deterministic while the dev hero picker still shows a
+// different origin per hero being previewed.
+const SPLASH_ORIGIN_MIN_Y = 100 / 3; // top edge of the middle third
+const SPLASH_ORIGIN_SPAN_Y = 100 / 3; // height of the middle third
+
+export function getSplashOriginForDay(
+  day: string,
+  imageUrl: string,
+): { x: number; y: number } {
+  const r = (fnv1a(`owdle:splash:origin:${day}:${imageUrl}`) % 1000) / 1000;
+  return { x: 50, y: SPLASH_ORIGIN_MIN_Y + r * SPLASH_ORIGIN_SPAN_Y };
+}
+
 export type ResolvedSoundClip = {
   hero: Hero;
   audioUrl: string;
