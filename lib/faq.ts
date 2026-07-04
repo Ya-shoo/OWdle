@@ -27,3 +27,27 @@ export const HOME_FAQ: FaqItem[] = [
     a: "A new puzzle goes up every day at 2:15am Pacific. Each mode has its own hero for the day and it stays the same for everybody until the next reset.",
   },
 ];
+
+// Melee bonus-mode FAQ. Same dual-use contract as HOME_FAQ: HomeFaq
+// renders it visibly on /melee/ (so the copy is crawlable and satisfies
+// Google's "FAQ must be visible" rule) while app/melee/page.tsx emits the
+// matching FAQPage JSON-LD from the same source. Copy targets the long-tail
+// query "guess that overwatch hero's melee sound"; casual, no em dashes.
+export const MELEE_FAQ: FaqItem[] = [
+  {
+    q: "What is the Overwatch melee sound quiz?",
+    a: "It's a daily bonus round on OWdle where you hear one Overwatch hero's melee swing and have to guess who it is. You get three tries, and the full source clip plays back once you solve it or run out.",
+  },
+  {
+    q: "How do you play Melee mode?",
+    a: "Hit play to hear the melee sound, type in the hero you think it belongs to, and you have three guesses. Every hero sounds a little different when they swing, so listen for the weight and pitch of the hit.",
+  },
+  {
+    q: "Is Melee part of the daily OWdle?",
+    a: "Melee is a bonus mode, so it sits outside the five daily modes and doesn't count toward your streak or rank. It's just an extra round to play, with a fresh hero every day.",
+  },
+  {
+    q: "Does the melee sound quiz have a new hero every day?",
+    a: "Yep. A new hero's melee sound goes up every day at 2:15am Pacific, the same reset as the daily OWdle puzzles, and everyone gets the same one that day.",
+  },
+];

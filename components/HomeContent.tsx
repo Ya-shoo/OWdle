@@ -8,6 +8,7 @@ import { loadModeState } from "@/lib/storage";
 import {
   BUILT_MODE_SLUGS,
   MODES,
+  PLAYABLE_MODE_SLUGS,
   type ModeDef,
   type ModeSlug,
 } from "@/lib/modes";
@@ -24,6 +25,15 @@ import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { modeAttempts } from "@/lib/tier";
 import { SiteGreeter } from "./SiteGreeter";
 import { HomeFaq } from "./HomeFaq";
+import { TryBonusRoundNudge } from "./TryBonusRoundNudge";
+
+// Home grid split (design decision: canonical daily stays exactly 5).
+//   • Daily grid — everything that isn't a bonus island: the 5 canonical
+//     modes + featured Map (greyed "Soon" while built:false).
+//   • Bonus section — tier:"bonus" only (Melee), its own labeled block so
+//     it reads as outside the daily rather than a 6th daily mode.
+const DAILY_MODES = MODES.filter((m) => m.tier !== "bonus");
+const BONUS_MODES = MODES.filter((m) => m.tier === "bonus");
 
 type Status = {
   won: boolean;
@@ -50,7 +60,11 @@ export function HomeContent() {
     const d = dayString();
     setDay(d);
     const map: StatusMap = {};
-    for (const slug of BUILT_MODE_SLUGS) {
+    // Load status for every playable mode (canonical + bonus Melee) so the
+    // bonus card can show its own ✓/Missed/Resume state. The daily rollup
+    // below (allDone, counts, share) still keys off BUILT_MODE_SLUGS only,
+    // so bonus play never affects "X / 5 done" or the streak.
+    for (const slug of PLAYABLE_MODE_SLUGS) {
       const st = loadModeState(slug, d);
       map[slug] = {
         won: st.won,
@@ -117,11 +131,13 @@ export function HomeContent() {
           </span>
         </div>
 
-        {/* Standalone mode cards: rounded, separated by air, each lifting
-            off the canvas with a lighter-navy fill + hairline border + a
-            tight contained shadow — no seam grid delineating them. */}
+        {/* Daily grid — the 5 canonical modes + featured Map (greyed
+            "Soon"). Standalone mode cards: rounded, separated by air, each
+            lifting off the canvas with a lighter-navy fill + hairline
+            border + a tight contained shadow — no seam grid delineating
+            them. */}
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {MODES.map((mode) => (
+          {DAILY_MODES.map((mode) => (
             <li key={mode.slug}>
               <ModeCard
                 mode={mode}
@@ -130,6 +146,28 @@ export function HomeContent() {
             </li>
           ))}
         </ul>
+
+        {/* Bonus modes — playable, shareable islands OUTSIDE the daily
+            set. Always visible for discovery; no streak/rank coupling and
+            not counted in the "X / 5 done" tally above. Self-hides until a
+            bonus mode is live. */}
+        {BONUS_MODES.length > 0 && (
+          <div className="mt-10">
+            <div className="mb-6 flex items-baseline justify-between">
+              <h2 className="utility-label text-sm text-info">Bonus modes</h2>
+            </div>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {BONUS_MODES.map((mode) => (
+                <li key={mode.slug}>
+                  <ModeCard
+                    mode={mode}
+                    status={mode.built ? statuses[mode.slug] : undefined}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       {/* Engagement strip: vote on next game + tip jar, each in its own
@@ -322,6 +360,7 @@ function DailyCompleteHero({
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           <StreakBadge variant="hero" />
+          <TryBonusRoundNudge />
         </div>
         {/* Copyable results text — LoLdle-style strings replace the
             image share here; the embedded /r/[code] link still unfurls

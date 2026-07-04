@@ -17,6 +17,7 @@ const MODE_LABEL: Record<StatsMode, string> = {
   ability: "Ability",
   splash: "Spotlight",
   sound: "Sound",
+  melee: "Melee",
 };
 
 export function ModeStatsLine({

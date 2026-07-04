@@ -45,7 +45,8 @@ type Handler = (ctx: HandlerCtx) => Promise<Response>;
 // Bump when the card DESIGN changes — stored renders are immortal, so
 // a stale revision would serve the old look forever. The bump makes
 // every code re-render (and re-store) under fresh keys.
-const RENDER_REV = "v1";
+// v2: added Melee round card (MODE_LABEL + SPRAY_FILE entries).
+const RENDER_REV = "v2";
 
 function r2Key(code: string): string {
   return `og-cache/owdle/${RENDER_REV}/${code}.png`;
@@ -61,6 +62,7 @@ const MODE_LABEL: Record<string, string> = {
   splash: "Spotlight",
   sound: "Sound",
   ability: "Ability",
+  melee: "Melee",
   map: "Map",
 };
 
@@ -697,6 +699,7 @@ const SPRAY_FILE: Record<string, string> = {
   splash: "/og-spray-splash.png", // Zenyatta Bathmaster
   sound: "/og-spray-sound.png", // Lúcio-Oh's cereal
   ability: "/og-spray-ability.png", // Jetpack Cat among the flowers
+  melee: "/og-spray-sound.png", // Reuses Sound's Lúcio-Oh's spray (bonus mode)
 };
 
 // Asset → data-URI cache. Bounded defensively; the spray set is small

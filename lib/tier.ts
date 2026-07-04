@@ -18,7 +18,7 @@
 // drift is handled — but the client-side total uses these constants to
 // validate inputs, so they need to stay in lockstep with the games.
 
-import type { ModeSlug } from "./modes";
+import { BUILT_MODE_SLUGS, type ModeSlug } from "./modes";
 
 // Hard cap per mode. Keep this in sync with each game's MAX_GUESSES:
 //   ClassicGame.tsx  → 8
@@ -32,8 +32,10 @@ export const CAPS: Record<ModeSlug, number> = {
   quote: 8,
   ability: 8,
   splash: 5,
-  // Melee and Map are built:false in lib/modes.ts so these entries are
-  // unused, but the record type requires them. Melee's real cap is 3
+  // Melee is a BONUS mode (built:true, tier:"bonus") and Map is featured
+  // WIP (built:false). Neither is in BUILT_MODE_SLUGS, so these caps never
+  // feed the daily rank total — dailyTotal iterates the canonical set. The
+  // record type still requires every slug. Melee's real cap is 3
   // (MeleeGame.tsx MAX_GUESSES); set Map's when it ships.
   melee: 3,
   map: 5,
@@ -114,8 +116,11 @@ export function dailyTotal(
   modes: Partial<Record<ModeSlug, ModeProgress>>,
 ): number {
   let total = 0;
-  for (const slug of Object.keys(CAPS) as ModeSlug[]) {
-    if (slug === "map") continue; // not in BUILT_MODE_SLUGS
+  // Canonical daily set only. BUILT_MODE_SLUGS excludes bonus (Melee) and
+  // featured (Map), so a bonus play can never inflate the total that
+  // drives the rank tier — this is the client half of keeping bonus out
+  // of rank (the server half filters mode IN (<canonical>)).
+  for (const slug of BUILT_MODE_SLUGS) {
     const st = modes[slug];
     total += modeAttempts(st);
     if (st && st.won !== true) total += LOSS_PENALTY;

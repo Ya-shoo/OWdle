@@ -13,12 +13,13 @@ export default function robots(): MetadataRoute.Robots {
       // discovery channel; _headers blocks cross-origin embedding but
       // leaves indexing open.
       //
-      // /map and /melee are unlisted WIP modes (lib/modes.ts: built:
-      // false), shown only as "Soon" teaser cards. Both routes are
-      // HARD-gated to 404 in prod (see each page.tsx `if (!IS_DEV)
+      // /melee is now a public BONUS mode (built:true) so it is indexable,
+      // in the sitemap, and NOT disallowed. /map stays an unlisted featured
+      // WIP mode (lib/modes.ts: built:false), shown only as a "Soon" teaser
+      // and HARD-gated to 404 in prod (app/map/page.tsx `if (!IS_DEV)
       // notFound()`), as is /labeler/*. These disallows are belt-and-
       // suspenders so nothing crawls them even if a gate is relaxed.
-      disallow: ["/labeler/", "/map/", "/melee/"],
+      disallow: ["/labeler/", "/map/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

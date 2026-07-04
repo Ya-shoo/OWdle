@@ -22,8 +22,26 @@
 
 import type { Env, Handler } from "../../_lib/types";
 
-type Mode = "classic" | "quote" | "ability" | "splash" | "sound";
-const MODES: Mode[] = ["classic", "quote", "ability", "splash", "sound"];
+// Per-mode buckets cover canonical + bonus (Melee) so each mode's own
+// solve rate is measurable via ModeStatsLine. This is SEPARATE from the
+// tier/rank distribution below, which is canonical-only (CANONICAL_MODES)
+// — adding Melee to buckets is safe; the rank allowlist keeps bonus plays
+// out of the daily total and the distinct-mode count.
+type Mode = "classic" | "quote" | "ability" | "splash" | "sound" | "melee";
+const MODES: Mode[] = [
+  "classic",
+  "quote",
+  "ability",
+  "splash",
+  "sound",
+  "melee",
+];
+
+// The canonical daily set (mirrors BUILT_MODE_SLUGS in lib/modes.ts). The
+// tier distribution and finish-rate denominator filter to these so bonus
+// modes like Melee can never enter the daily rank or the "committed to the
+// daily" starter count. Pre-quoted for direct HogQL interpolation.
+const CANONICAL_MODES_SQL = "'classic','quote','ability','splash','sound'";
 
 type ModeBucket = { won: number; lost: number; gaveUp: number; total: number };
 type DailyBucket = {
@@ -141,6 +159,10 @@ async function fetchFromPostHog(
     "  WHERE event = 'mode_started'",
     `    AND properties.daily_id = '${day}'`,
     "    AND properties.site = 'owdle'",
+    // Canonical-only: "committed to the daily" means ≥2 of the 5 daily
+    // modes started. A Melee (bonus) start must not count toward the
+    // finish-rate denominator, or bonus-curious visitors would deflate it.
+    `    AND properties.mode IN (${CANONICAL_MODES_SQL})`,
     "  GROUP BY distinct_id",
     "  HAVING count(DISTINCT properties.mode) >= 2",
     ")",
@@ -171,6 +193,11 @@ async function fetchFromPostHog(
     "  WHERE event = 'mode_completed'",
     `    AND properties.daily_id = '${day}'`,
     "    AND properties.site = 'owdle'",
+    // Canonical-only, two jobs in one filter: the sum must not include a
+    // Melee (bonus) completion, AND the distinct-mode count must stay 5
+    // for a player who ALSO played Melee — without this, their 6 distinct
+    // modes fail `= 5` and they silently drop out of the rank distribution.
+    `    AND properties.mode IN (${CANONICAL_MODES_SQL})`,
     "  GROUP BY distinct_id",
     "  HAVING count(DISTINCT properties.mode) = 5",
     ")",
@@ -264,6 +291,9 @@ function emptyModes(): Record<Mode, ModeBucket> {
     ability: { won: 0, lost: 0, gaveUp: 0, total: 0 },
     splash: { won: 0, lost: 0, gaveUp: 0, total: 0 },
     sound: { won: 0, lost: 0, gaveUp: 0, total: 0 },
+    // Bonus mode — its own solve-rate bucket. Kept out of the tier/rank
+    // query above but measurable here for ModeStatsLine on the Melee card.
+    melee: { won: 0, lost: 0, gaveUp: 0, total: 0 },
   };
 }
 

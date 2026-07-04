@@ -15,7 +15,16 @@
 import { useEffect, useState } from "react";
 import { dayString } from "./daily";
 
-export type StatsMode = "classic" | "quote" | "ability" | "splash" | "sound";
+// Canonical modes + bonus Melee — mirrors the server's per-mode buckets
+// in functions/api/stats/today.ts. Melee is measurable here (its own
+// win-rate line) but excluded from the daily rank distribution server-side.
+export type StatsMode =
+  | "classic"
+  | "quote"
+  | "ability"
+  | "splash"
+  | "sound"
+  | "melee";
 
 export type ModeBucket = {
   won: number;

@@ -14,6 +14,7 @@ import { DailyTextShare } from "./DailyTextShare";
 import { ShareButton } from "./ShareButton";
 import { type DailyModeResult } from "./ShareCard";
 import { dailyShareLinks } from "@/lib/shareLinks";
+import { TryBonusRoundNudge } from "./TryBonusRoundNudge";
 
 // Shown in place of the per-mode result card when the player finishes
 // their LAST mode of the day. Aggregates outcomes across every built
@@ -212,6 +213,15 @@ export function DailyCompleteResultCard({
         </div>
       </div>
     </motion.div>
+
+    {/* Bonus-round push — the daily set is done, so the most prominent
+        next action is a bonus island. Sits directly under the completion
+        card, ahead of the text-share + share button, so it reads as "what
+        to do next" rather than a footnote. Self-hides when no bonus mode
+        is live. */}
+    <div className="mx-auto mt-4 flex w-full max-w-lg justify-center">
+      <TryBonusRoundNudge variant="banner" />
+    </div>
 
     {/* Copyable results text — LoLdle-style strings replace the image
         share on this surface (zero-friction paste into Discord /

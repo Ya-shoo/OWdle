@@ -13,9 +13,18 @@ import {
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { audioBoostFor, loadVolume, saveVolume } from "@/lib/audio";
 import { media } from "@/lib/media";
+import {
+  trackGuessSubmitted,
+  trackModeCompleted,
+  trackModeStarted,
+} from "@/lib/tracking";
+import { roundShareLinks } from "@/lib/shareLinks";
+import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { HeroCombobox } from "./HeroCombobox";
 import { Brand } from "./Brand";
 import { NextModeCTA } from "./NextModeCTA";
+import { ShareButton } from "./ShareButton";
+import { ModeStatsLine } from "./ModeStatsLine";
 import { ScrollIntoViewOnMount } from "./ScrollIntoViewOnMount";
 import { GuessRemaining } from "./GuessRemaining";
 import { WaveformPlayer } from "./WaveformPlayer";
@@ -32,6 +41,9 @@ const MODE = "melee";
 const MAX_GUESSES = 3;
 
 export function MeleeGame() {
+  // Inbound share-link attribution — a Melee round /r/[code] link redirects
+  // here with ?c= appended so the visit closes the share funnel.
+  useShareLinkVisit("melee");
   const [day, setDay] = useState<string | null>(null);
   const [state, setState] = useState<ModeState | null>(null);
   // Dev-only view toggle (hides every dev panel when set to User) + a
@@ -63,6 +75,56 @@ export function MeleeGame() {
     }
   }, []);
 
+  // mode_started — once per Pacific day, skipped for dev overrides so test
+  // plays don't emit real analytics. Melee fires the SAME events every mode
+  // fires; keeping bonus play out of the daily rank is the server query's
+  // job (canonical mode allowlist), not a matter of firing fewer events.
+  useEffect(() => {
+    if (!day || isOverride) return;
+    const pick = getMeleeForDay(day);
+    trackModeStarted({ mode: MODE, dailyId: day, answerId: pick.hero.key });
+  }, [day, isOverride]);
+
+  // mode_completed — fires on the terminal transition (win or loss). The
+  // `lost` flag is persisted in handleGuess (see below), so this effect can
+  // observe a loss the same way SoundGame does. bonus:true marks the
+  // completion as OUTSIDE the canonical daily for dashboard segmentation.
+  const stateWon = state?.won === true;
+  const stateLost = state?.lost === true;
+  useEffect(() => {
+    if (!day || isOverride) return;
+    if (!stateWon && !stateLost) return;
+    const pick = getMeleeForDay(day);
+    trackModeCompleted({
+      mode: MODE,
+      dailyId: day,
+      outcome: stateWon ? "won" : "lost",
+      totalGuesses: state?.guesses.length ?? 0,
+      cap: MAX_GUESSES,
+      answerId: pick.hero.key,
+      bonus: true,
+    });
+  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+
+  // Warm the reveal MP4 the instant the round is won, so the <video> mounts
+  // from browser cache instead of a cold cross-origin fetch. Mirrors
+  // SoundGame's prefetch — Melee especially benefits because it mounts cold
+  // with no bonus round to buy warming time. Skipped during dev overrides
+  // (getMeleeForDay returns the DAILY hero, not the override). Deduped per
+  // clip; a miss just falls back to the cold fetch, so no regression.
+  const prefetchedVideoRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!day || !stateWon || isOverride) return;
+    const pick = getMeleeForDay(day);
+    if (!pick.videoUrl) return;
+    const src = media(pick.videoUrl);
+    if (prefetchedVideoRef.current === src) return;
+    prefetchedVideoRef.current = src;
+    void fetch(src, { mode: "no-cors" })
+      .then((r) => r.blob())
+      .catch(() => {});
+  }, [day, stateWon, isOverride]);
+
   if (!day || !state) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-16">
@@ -92,11 +154,23 @@ export function MeleeGame() {
 
   const handleGuess = (hero: Hero) => {
     if (reveal) return;
-    persist({
-      ...state,
-      guesses: [...state.guesses, hero.key],
-      won: hero.key === answer.key,
-    });
+    const nextGuesses = [...state.guesses, hero.key];
+    const won = hero.key === answer.key;
+    // Persist `lost` at the 3rd miss. Previously it was only derived at
+    // render and never written, which corrupted the loss reveal on reload,
+    // the loss analytics, and the home bonus-card's "Missed" status.
+    const lostNow = !won && nextGuesses.length >= MAX_GUESSES;
+    if (!isOverride) {
+      trackGuessSubmitted({
+        mode: MODE,
+        dailyId: day,
+        guessNumber: state.guesses.length + 1,
+        isCorrect: won,
+        guessId: hero.key,
+        answerId: answer.key,
+      });
+    }
+    persist({ ...state, guesses: nextGuesses, won, lost: lostNow });
   };
 
   const applyOverride = (heroKey: string | null) => {
@@ -123,7 +197,8 @@ export function MeleeGame() {
             Melee
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
-            Whose melee is this? Listen to the hit. Three guesses.
+            Guess the Overwatch hero from their melee sound. Listen to the hit.
+            Three guesses.
           </p>
         </div>
         <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">
@@ -222,10 +297,23 @@ export function MeleeGame() {
                       ? `in ${guessCount} ${guessCount === 1 ? "guess" : "guesses"}`
                       : `after ${guessCount} wrong ${guessCount === 1 ? "guess" : "guesses"}`}
                   </div>
+                  <ModeStatsLine mode="melee" />
                 </div>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <NextModeCTA current="melee" scrollIntoViewOnMount={false} />
+                <ShareButton
+                  {...roundShareLinks({
+                    day,
+                    slug: "melee",
+                    outcome: state.won ? "won" : "lost",
+                    guesses: guessCount,
+                  })}
+                  filename={`owdle-melee-${day}.png`}
+                  surface="round_result"
+                  mode="melee"
+                  dailyId={day}
+                />
               </div>
             </div>
           </motion.div>

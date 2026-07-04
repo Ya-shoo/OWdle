@@ -351,7 +351,10 @@ export function NextModeCTA({
     });
   };
 
-  const stripModes = MODES.filter((m) => m.built);
+  // Canonical-only: the progress track teaches the 5-mode DAILY structure,
+  // so bonus/featured modes (Melee) never appear as a node here even when
+  // built. Mirrors BUILT_MODE_SLUGS / nextUnfinishedMode's canonical scope.
+  const stripModes = MODES.filter((m) => m.built && m.tier === "canonical");
 
   return (
     <>

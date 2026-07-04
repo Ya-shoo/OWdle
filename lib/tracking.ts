@@ -10,7 +10,13 @@
 
 import posthog from "posthog-js";
 
-export type Mode = "classic" | "quote" | "sound" | "ability" | "splash";
+export type Mode =
+  | "classic"
+  | "quote"
+  | "sound"
+  | "ability"
+  | "splash"
+  | "melee";
 
 // Returns true if the event has already fired for this day; otherwise
 // records the marker and returns false. Markers are per Pacific puzzle
@@ -73,6 +79,11 @@ export function trackModeCompleted(opts: {
   // correctly. true / false / null (unanswered). Surfaces in the daily
   // tier-badge composite as a small sub-point credit.
   bonusCorrect?: boolean | null;
+  // True for BONUS modes (Melee) — completions OUTSIDE the canonical
+  // daily. Canonical modes send false. Lets dashboards segment daily vs
+  // bonus play; the rank query already excludes bonus by mode allowlist,
+  // so this is purely a segmentation dimension, not a scoring input.
+  bonus?: boolean;
   // Mode-specific extras. Null when not applicable to this mode.
   abilityIndex?: number | null;
   skinKey?: string | null;
@@ -88,6 +99,7 @@ export function trackModeCompleted(opts: {
     hints_used: opts.hintsUsed ?? 0,
     answer_id: opts.answerId,
     bonus_correct: opts.bonusCorrect ?? null,
+    bonus: opts.bonus ?? false,
     ability_index: opts.abilityIndex ?? null,
     skin_key: opts.skinKey ?? null,
     conversation_id: opts.conversationId ?? null,

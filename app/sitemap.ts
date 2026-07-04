@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { BUILT_MODE_SLUGS } from "@/lib/modes";
+import { PLAYABLE_MODE_SLUGS } from "@/lib/modes";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -13,7 +13,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 1,
     },
-    ...BUILT_MODE_SLUGS.map((slug) => ({
+    // Canonical daily modes + bonus Melee (PLAYABLE_MODE_SLUGS). Featured
+    // Map stays out while built:false. Melee joins here so search engines
+    // discover the new bonus page.
+    ...PLAYABLE_MODE_SLUGS.map((slug) => ({
       url: `${SITE_URL}/${slug}/`,
       lastModified,
       changeFrequency: "daily" as const,
