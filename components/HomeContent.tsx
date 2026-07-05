@@ -19,6 +19,7 @@ import { RequestNextGame } from "./RequestNextGame";
 import { StreakBadge } from "./StreakBadge";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
+import { TryWuWadleCard } from "./TryWuWadleCard";
 import { DailyTextShare } from "./DailyTextShare";
 import { type DailyModeResult } from "./ShareCard";
 import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
@@ -190,10 +191,13 @@ export function HomeContent() {
         </div>
       </section>
 
-      {/* Sister-site card — sits beneath the engagement strip as a softer
-          outbound suggestion once the primary asks have been made. */}
-      <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
+      {/* Sister-site cards — two small branded cross-promo cards, centered
+          side by side (stacking on mobile), a softer outbound suggestion
+          once the primary asks have been made. Each card is themed to its
+          destination's accent-on-dark, consistent across the network. */}
+      <section className="mx-auto flex max-w-3xl flex-wrap items-stretch justify-center gap-4 px-6 pb-12 pt-4">
         <TryDeadlockleCard />
+        <TryWuWadleCard />
       </section>
 
       {/* Indexable FAQ — target-keyword copy for search, collapsible so it

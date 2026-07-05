@@ -942,7 +942,7 @@ function SoundDailyComplete({
         day={day}
         summary={summary}
       />
-      <div className="mx-auto mt-8 mb-10 w-full max-w-lg">
+      <div className="mx-auto mt-8 mb-10 flex w-full max-w-lg justify-center">
         <TryDeadlockleCard />
       </div>
     </>

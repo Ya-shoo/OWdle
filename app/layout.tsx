@@ -4,6 +4,8 @@ import {
   IBM_Plex_Sans,
   IBM_Plex_Mono,
   Bricolage_Grotesque,
+  Cinzel,
+  Noto_Sans,
 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
@@ -51,6 +53,24 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
   weight: ["600", "700", "800"],
+});
+
+// Sister-site typefaces — loaded only so the cross-promo cards can render
+// each destination in its real display face: Cinzel is Deadlockle's, Noto
+// Sans is WuWadle's. Minimal weights; used solely by TryDeadlockleCard /
+// TryWuWadleCard, keep in lockstep with the sibling repos' layouts.
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["500", "700"],
+});
+
+const notoSans = Noto_Sans({
+  variable: "--font-noto-sans",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["500", "700"],
 });
 
 // Home <title> is tuned for search intent: it leads with the brand, then
@@ -113,7 +133,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${saira.variable} ${plexSans.variable} ${plexMono.variable} ${bricolage.variable} h-full antialiased`}
+      className={`${saira.variable} ${plexSans.variable} ${plexMono.variable} ${bricolage.variable} ${cinzel.variable} ${notoSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
