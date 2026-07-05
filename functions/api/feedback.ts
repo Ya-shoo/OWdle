@@ -70,6 +70,7 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
   // message to add the "Watch on PostHog" link once the recording lands.
   if (env.FEEDBACK_WEBHOOK_URL) {
     const webhookUrl = env.FEEDBACK_WEBHOOK_URL;
+    const location = geoLabel(request);
     const messagePayload = {
       embeds: [
         {
@@ -78,7 +79,11 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
           color: EMBED_COLOR,
           url: SITE_URL,
           timestamp: new Date().toISOString(),
-          footer: { text: `submitter ${hash.slice(0, 8)}` },
+          footer: {
+            text: location
+              ? `submitter ${hash.slice(0, 8)} · ${location}`
+              : `submitter ${hash.slice(0, 8)}`,
+          },
         },
       ],
     };
@@ -118,6 +123,38 @@ export const onRequestPost: Handler = async ({ request, env, waitUntil }) => {
 
   return json({ ok: true });
 };
+
+// Coarse visitor geolocation for the Discord footer. Cloudflare fills
+// request.cf on the edge (no extra lookup, and no new PII — it's the same
+// city/region/country Cloudflare already exposes to every Worker), so a note
+// can be read in context, e.g. a region-specific complaint. request.cf isn't
+// in our minimal Handler type, so it's read off a narrow cast. Returns null
+// when there's no usable country: local `wrangler dev`, "XX" = unknown, or
+// "T1" = Tor (surfaced explicitly rather than mapped to a bogus flag).
+interface CfGeo {
+  country?: string;
+  region?: string;
+}
+
+function geoLabel(request: Request): string | null {
+  const cf = (request as Request & { cf?: CfGeo }).cf;
+  const country = typeof cf?.country === "string" ? cf.country : null;
+  if (!country || country === "XX") return null;
+  if (country === "T1") return "🧅 Tor";
+  let countryName: string = country;
+  try {
+    countryName = new Intl.DisplayNames(["en"], { type: "region" }).of(country) ?? country;
+  } catch {
+    // Intl.DisplayNames missing or code unrecognized — keep the raw code.
+  }
+  // A→🇦 … Z→🇿: shift each ASCII letter to its regional-indicator symbol so
+  // "US" becomes 🇺🇸. Discord renders the pair as a flag on every platform.
+  const flag = /^[A-Z]{2}$/.test(country)
+    ? country.replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
+    : "";
+  const place = [cf?.region, countryName].filter(Boolean).join(", ");
+  return flag ? `${flag} ${place}` : place;
+}
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
