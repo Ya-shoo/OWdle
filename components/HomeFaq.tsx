@@ -24,9 +24,9 @@ export function HomeFaq({
       </div>
 
       <ul className="flex flex-col gap-px border border-line bg-line">
-        {items.map(({ q, a }, i) => (
+        {items.map(({ q, a }) => (
           <li key={q}>
-            <details className="group bg-canvas" open={i === 0}>
+            <details className="group bg-canvas">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-muted [&::-webkit-details-marker]:hidden">
                 <h3 className="font-soft text-lg font-semibold text-ink">
                   {q}
