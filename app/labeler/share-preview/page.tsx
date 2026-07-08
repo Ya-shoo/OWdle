@@ -20,6 +20,8 @@ import {
   type DailyModeResult,
 } from "@/components/ShareCard";
 import { DailyTextShare } from "@/components/DailyTextShare";
+import { ShareButton } from "@/components/ShareButton";
+import { dailyShareLinks } from "@/lib/shareLinks";
 
 const PREVIEW_SCALE = 0.42;
 const ROUND_MODES: ModeSlug[] = ["classic", "sound", "splash", "ability"];
@@ -624,6 +626,25 @@ export default function SharePreviewPage() {
             results={dailyResults}
             totalHints={hints}
             totalSkips={skips}
+            share={
+              <ShareButton
+                {...dailyShareLinks({
+                  day,
+                  // Preview results are always terminal (won/lost) — the
+                  // knob only flips outcomes, never leaves one pending.
+                  results: dailyResults as {
+                    slug: ModeSlug;
+                    outcome: "won" | "lost";
+                    guesses: number;
+                  }[],
+                  hints,
+                  skips,
+                })}
+                filename={`owdle-daily-${day}.png`}
+                surface="daily_complete"
+                dailyId={day}
+              />
+            }
           />
         </div>
       </section>

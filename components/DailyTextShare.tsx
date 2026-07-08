@@ -1,5 +1,6 @@
 "use client";
 
+import { ReactNode } from "react";
 import type { DailyModeResult } from "./ShareCard";
 import { TextShareBlock } from "./TextShareBlock";
 import { buildDailyShareText } from "@/lib/dailyShareText";
@@ -8,12 +9,15 @@ import { SITE_URL } from "@/lib/site";
 
 // Daily-summary text share. Builds the LoLdle-style mode-by-mode block
 // and the personalized /r/[code] unfurl link, then hands both to the
-// shared TextShareBlock for display + Copy / Share actions.
+// shared TextShareBlock for display + the Copy action. The surface's
+// link-first ShareButton passes through `share` into the block's
+// action row — one share affordance per surface, at the bottom.
 type Props = {
   day: string;
   results: DailyModeResult[];
   totalHints?: number;
   totalSkips?: number;
+  share?: ReactNode;
 };
 
 export function DailyTextShare({
@@ -21,6 +25,7 @@ export function DailyTextShare({
   results,
   totalHints = 0,
   totalSkips = 0,
+  share,
 }: Props) {
   // Personalized unfurl link — same /r/[code] route the image share
   // used. Filter pending entries (shouldn't exist post-completion but
@@ -49,5 +54,12 @@ export function DailyTextShare({
     url,
   });
 
-  return <TextShareBlock text={text} surface="daily_complete" dailyId={day} />;
+  return (
+    <TextShareBlock
+      text={text}
+      surface="daily_complete"
+      dailyId={day}
+      share={share}
+    />
+  );
 }

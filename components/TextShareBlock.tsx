@@ -4,21 +4,22 @@ import { ReactNode, useState } from "react";
 import { trackShareClicked } from "@/lib/tracking";
 
 // LoLdle-style copyable share block: the text itself, visible and
-// selectable, with explicit Copy / Share actions. Plain strings travel
+// selectable, with an explicit Copy action. Plain strings travel
 // friction-free into Discord / iMessage / group chats. Callers build
 // the text (daily summary, classic emoji grid, …) and this owns the
-// clipboard / native-share / X-intent plumbing + tracking.
+// clipboard plumbing + tracking.
 //
-// When a `share` node is passed, it renders IN PLACE of the block's
-// own native-share/X button — one share affordance per surface, and
-// it's the link-first ShareButton (carries the /r/[code] unfurl card).
-// Mirrors Deadlockle's one-button layout; surfaces not yet migrated
-// keep the built-in button by omitting the prop.
+// The block's own native-share/X-intent button was deliberately
+// removed: the link-first ShareButton (passed in via `share`) is THE
+// share affordance — one button per surface, and it carries the
+// /r/[code] unfurl card. Mirrors Deadlockle's one-button layout.
 type Props = {
   text: string;
   surface: "round_result" | "daily_complete";
   dailyId: string;
   mode?: Parameters<typeof trackShareClicked>[0]["mode"];
+  // The surface's link-first ShareButton, rendered beside Copy so the
+  // card ends on a single [Copy text] [Share] action row.
   share?: ReactNode;
 };
 
@@ -37,28 +38,6 @@ export function TextShareBlock({ text, surface, dailyId, mode, share }: Props) {
     }
   };
 
-  const shareText = async () => {
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ text });
-        trackShareClicked({ surface, method: "native", dailyId, mode });
-        return;
-      } catch (err) {
-        // Dismissing the sheet isn't a failure; anything else falls
-        // through to the X intent below.
-        if (err instanceof DOMException && err.name === "AbortError") {
-          return;
-        }
-      }
-    }
-    window.open(
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
-      "_blank",
-      "noopener",
-    );
-    trackShareClicked({ surface, method: "twitter_intent", dailyId, mode });
-  };
-
   return (
     <div className="w-full">
       {/* select-all so a tap/click selects the whole block for manual
@@ -73,20 +52,10 @@ export function TextShareBlock({ text, surface, dailyId, mode, share }: Props) {
           className="inline-flex items-center gap-2 rounded-full bg-info/15 px-5 py-3 text-info ring-1 ring-info/40 transition-all hover:bg-info/25 hover:ring-info active:scale-[0.98]"
         >
           <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-            {copied ? "Copied ✓" : share ? "Copy text" : "Copy"}
+            {copied ? "Copied ✓" : "Copy text"}
           </span>
         </button>
-        {share ?? (
-          <button
-            type="button"
-            onClick={shareText}
-            className="inline-flex items-center gap-2 rounded-full border border-line bg-inset/40 px-4 py-3 text-ink-soft transition-colors hover:border-info/60 hover:text-info active:scale-[0.98]"
-          >
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-              Share
-            </span>
-          </button>
-        )}
+        {share}
       </div>
     </div>
   );

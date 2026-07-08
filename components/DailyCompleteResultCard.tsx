@@ -226,31 +226,28 @@ export function DailyCompleteResultCard({
     {/* Copyable results text — LoLdle-style strings replace the image
         share on this surface (zero-friction paste into Discord /
         iMessage); the embedded /r/[code] link still unfurls the
-        per-player card image where chats render previews. */}
+        per-player card image where chats render previews. The
+        link-first ShareButton rides in the block's action row — ONE
+        share affordance per surface (mirrors Deadlockle's layout). */}
     <div className="mx-auto mt-4 w-full max-w-lg">
       <DailyTextShare
         day={day}
         results={results}
         totalHints={totalHints}
         totalSkips={totalSkips}
+        share={
+          shareLinks ? (
+            <ShareButton
+              url={shareLinks.url}
+              ogImageUrl={shareLinks.ogImageUrl}
+              filename={`owdle-daily-${day}.png`}
+              surface="daily_complete"
+              dailyId={day}
+            />
+          ) : undefined
+        }
       />
     </div>
-
-    {/* Link-first share button — ALONGSIDE the text summary, not
-        replacing it. Copies the bare /r/[code] link (unfurls into the
-        daily summary card); the modal's Download exports the
-        DailyShareCard render for places links don't unfurl. */}
-    {shareLinks && (
-      <div className="mx-auto mt-3 flex w-full max-w-lg items-center justify-center gap-3">
-        <ShareButton
-          url={shareLinks.url}
-          ogImageUrl={shareLinks.ogImageUrl}
-          filename={`owdle-daily-${day}.png`}
-          surface="daily_complete"
-          dailyId={day}
-        />
-      </div>
-    )}
 
     {/* Action row sits OUTSIDE the result card — navigation belongs
         below the card chrome. Same max-w as the card so it lines up. */}

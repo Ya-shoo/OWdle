@@ -21,7 +21,9 @@ import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { TryWuWadleCard } from "./TryWuWadleCard";
 import { DailyTextShare } from "./DailyTextShare";
+import { ShareButton } from "./ShareButton";
 import { type DailyModeResult } from "./ShareCard";
+import { dailyShareLinks } from "@/lib/shareLinks";
 import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { modeAttempts } from "@/lib/tier";
 import { SiteGreeter } from "./SiteGreeter";
@@ -322,6 +324,24 @@ function DailyCompleteHero({
     (sum, s) => sum + (statuses[s]?.skips ?? 0),
     0,
   );
+  // Personalized share links — bare /r/[code] for the button + the
+  // matching OG image for the modal preview. Pending entries shouldn't
+  // exist post-completion but the type allows them; filter defensively
+  // (same as DailyTextShare does for its embedded link).
+  const completedResults = results.filter((r) => r.outcome !== "pending") as {
+    slug: ModeSlug;
+    outcome: "won" | "lost";
+    guesses: number;
+  }[];
+  const shareLinks =
+    completedResults.length > 0
+      ? dailyShareLinks({
+          day,
+          results: completedResults,
+          hints: totalHints,
+          skips: totalSkips,
+        })
+      : null;
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -368,13 +388,26 @@ function DailyCompleteHero({
         </div>
         {/* Copyable results text — LoLdle-style strings replace the
             image share here; the embedded /r/[code] link still unfurls
-            the per-player card in chats that render previews. */}
+            the per-player card in chats that render previews. The
+            link-first ShareButton rides in the block's action row —
+            one share affordance, at the bottom. */}
         <div className="mt-4">
           <DailyTextShare
             day={day}
             results={results}
             totalHints={totalHints}
             totalSkips={totalSkips}
+            share={
+              shareLinks ? (
+                <ShareButton
+                  url={shareLinks.url}
+                  ogImageUrl={shareLinks.ogImageUrl}
+                  filename={`owdle-daily-${day}.png`}
+                  surface="daily_complete"
+                  dailyId={day}
+                />
+              ) : undefined
+            }
           />
         </div>
       </div>
