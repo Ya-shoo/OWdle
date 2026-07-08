@@ -52,6 +52,7 @@ next-env.d.ts
 # Local files in these directories are working state for capture /
 # labeling; canonical store is the R2 bucket synced via `npm run sync-to-r2`.
 /public/sounds/
+/public/melee/
 /public/maps/
 /public/skins/
 /public/voicelines/

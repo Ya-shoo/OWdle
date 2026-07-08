@@ -1,257 +1,257 @@
 {
   "ana": {
     "audioUrl": "/melee/ana.mp3?v=dbfd9507",
-    "videoUrl": "/melee/ana.mp4?v=4503f41e",
+    "videoUrl": "/melee/ana.mp4?v=9cae0a80",
     "duration": 4.18
   },
   "anran": {
     "audioUrl": "/melee/anran.mp3?v=5ed37083",
-    "videoUrl": "/melee/anran.mp4?v=28bd0ccc",
+    "videoUrl": "/melee/anran.mp4?v=53c09994",
     "duration": 5.09
   },
   "ashe": {
     "audioUrl": "/melee/ashe.mp3?v=a0416642",
-    "videoUrl": "/melee/ashe.mp4?v=cdabfadc",
+    "videoUrl": "/melee/ashe.mp4?v=3d8a1d77",
     "duration": 5.09
   },
   "baptiste": {
     "audioUrl": "/melee/baptiste.mp3?v=3b74b25d",
-    "videoUrl": "/melee/baptiste.mp4?v=78bdad1a",
+    "videoUrl": "/melee/baptiste.mp4?v=af217a78",
     "duration": 4.27
   },
   "bastion": {
     "audioUrl": "/melee/bastion.mp3?v=36894ca8",
-    "videoUrl": "/melee/bastion.mp4?v=8bcc0a75",
+    "videoUrl": "/melee/bastion.mp4?v=f41099d5",
     "duration": 4.42
   },
   "brigitte": {
     "audioUrl": "/melee/brigitte.mp3?v=0f6a11d5",
-    "videoUrl": "/melee/brigitte.mp4?v=9a1562bf",
+    "videoUrl": "/melee/brigitte.mp4?v=f63e5884",
     "duration": 4.9
   },
   "cassidy": {
     "audioUrl": "/melee/cassidy.mp3?v=acab334e",
-    "videoUrl": "/melee/cassidy.mp4?v=60afdef7",
+    "videoUrl": "/melee/cassidy.mp4?v=127307e4",
     "duration": 6.1
   },
   "domina": {
     "audioUrl": "/melee/domina.mp3?v=4ae53bd9",
-    "videoUrl": "/melee/domina.mp4?v=4a26a92e",
+    "videoUrl": "/melee/domina.mp4?v=3f74f85d",
     "duration": 4.39
   },
   "doomfist": {
     "audioUrl": "/melee/doomfist.mp3?v=e7d89034",
-    "videoUrl": "/melee/doomfist.mp4?v=18a79901",
+    "videoUrl": "/melee/doomfist.mp4?v=85d4d45d",
     "duration": 4.37
   },
   "dva": {
     "audioUrl": "/melee/dva.mp3?v=19e7b426",
-    "videoUrl": "/melee/dva.mp4?v=fa0781c6",
+    "videoUrl": "/melee/dva.mp4?v=6de9f9e8",
     "duration": 5.38
   },
   "echo": {
     "audioUrl": "/melee/echo.mp3?v=3bb3ec49",
-    "videoUrl": "/melee/echo.mp4?v=3c5dd49a",
+    "videoUrl": "/melee/echo.mp4?v=6ac3ff0f",
     "duration": 5.95
   },
   "emre": {
     "audioUrl": "/melee/emre.mp3?v=6d75091e",
-    "videoUrl": "/melee/emre.mp4?v=26e921fd",
+    "videoUrl": "/melee/emre.mp4?v=6da2ba4f",
     "duration": 6.41
   },
   "freja": {
     "audioUrl": "/melee/freja.mp3?v=e9f1d50e",
-    "videoUrl": "/melee/freja.mp4?v=3b9ed92a",
+    "videoUrl": "/melee/freja.mp4?v=38c62367",
     "duration": 3.38
   },
   "genji": {
     "audioUrl": "/melee/genji.mp3?v=f8e9c8b2",
-    "videoUrl": "/melee/genji.mp4?v=37583358",
+    "videoUrl": "/melee/genji.mp4?v=38b6124f",
     "duration": 5.38
   },
   "hanzo": {
     "audioUrl": "/melee/hanzo.mp3?v=784e32de",
-    "videoUrl": "/melee/hanzo.mp4?v=27b4dcbe",
+    "videoUrl": "/melee/hanzo.mp4?v=e976530c",
     "duration": 4.94
   },
   "hazard": {
     "audioUrl": "/melee/hazard.mp3?v=e3d61d20",
-    "videoUrl": "/melee/hazard.mp4?v=78f1a8b0",
+    "videoUrl": "/melee/hazard.mp4?v=965d413a",
     "duration": 4.7
   },
   "illari": {
     "audioUrl": "/melee/illari.mp3?v=05b550d7",
-    "videoUrl": "/melee/illari.mp4?v=c221927f",
+    "videoUrl": "/melee/illari.mp4?v=951cb552",
     "duration": 5.11
   },
   "jetpack-cat": {
     "audioUrl": "/melee/jetpack-cat.mp3?v=77b6f6d9",
-    "videoUrl": "/melee/jetpack-cat.mp4?v=c5c46ec4",
+    "videoUrl": "/melee/jetpack-cat.mp4?v=4b133b6a",
     "duration": 3.96
   },
   "junker-queen": {
     "audioUrl": "/melee/junker-queen.mp3?v=e60cda94",
-    "videoUrl": "/melee/junker-queen.mp4?v=e6afade8",
+    "videoUrl": "/melee/junker-queen.mp4?v=87be0198",
     "duration": 4.39
   },
   "junkrat": {
     "audioUrl": "/melee/junkrat.mp3?v=12e86b82",
-    "videoUrl": "/melee/junkrat.mp4?v=c05f9102",
+    "videoUrl": "/melee/junkrat.mp4?v=2ff1d147",
     "duration": 5.9
   },
   "juno": {
     "audioUrl": "/melee/juno.mp3?v=bbddd4ee",
-    "videoUrl": "/melee/juno.mp4?v=84315558",
+    "videoUrl": "/melee/juno.mp4?v=c2e3e9c7",
     "duration": 4.7
   },
   "kiriko": {
     "audioUrl": "/melee/kiriko.mp3?v=97d76970",
-    "videoUrl": "/melee/kiriko.mp4?v=01f12b12",
+    "videoUrl": "/melee/kiriko.mp4?v=d75a4640",
     "duration": 5.23
   },
   "lifeweaver": {
     "audioUrl": "/melee/lifeweaver.mp3?v=811d95ad",
-    "videoUrl": "/melee/lifeweaver.mp4?v=db44513c",
+    "videoUrl": "/melee/lifeweaver.mp4?v=95f464e7",
     "duration": 4.78
   },
   "lucio": {
     "audioUrl": "/melee/lucio.mp3?v=77519c95",
-    "videoUrl": "/melee/lucio.mp4?v=e4f44e5b",
+    "videoUrl": "/melee/lucio.mp4?v=9305c6c6",
     "duration": 5.35
   },
   "mauga": {
     "audioUrl": "/melee/mauga.mp3?v=3d4fa300",
-    "videoUrl": "/melee/mauga.mp4?v=48970917",
+    "videoUrl": "/melee/mauga.mp4?v=7ebfbffd",
     "duration": 4.54
   },
   "mei": {
     "audioUrl": "/melee/mei.mp3?v=ff2b815c",
-    "videoUrl": "/melee/mei.mp4?v=2748da23",
+    "videoUrl": "/melee/mei.mp4?v=9c9de81e",
     "duration": 4.87
   },
   "mercy": {
     "audioUrl": "/melee/mercy.mp3?v=bc6fc0a2",
-    "videoUrl": "/melee/mercy.mp4?v=2f6c0e83",
+    "videoUrl": "/melee/mercy.mp4?v=0b179623",
     "duration": 5.45
   },
   "mizuki": {
     "audioUrl": "/melee/mizuki.mp3?v=c1aef9e2",
-    "videoUrl": "/melee/mizuki.mp4?v=78512a13",
+    "videoUrl": "/melee/mizuki.mp4?v=11e73184",
     "duration": 5.04
   },
   "moira": {
     "audioUrl": "/melee/moira.mp3?v=952bc1fa",
-    "videoUrl": "/melee/moira.mp4?v=08bac6a3",
+    "videoUrl": "/melee/moira.mp4?v=f5936862",
     "duration": 5.28
   },
   "orisa": {
     "audioUrl": "/melee/orisa.mp3?v=4517abec",
-    "videoUrl": "/melee/orisa.mp4?v=9195dc75",
+    "videoUrl": "/melee/orisa.mp4?v=65d4dc70",
     "duration": 4.44
   },
   "pharah": {
     "audioUrl": "/melee/pharah.mp3?v=f30cc03e",
-    "videoUrl": "/melee/pharah.mp4?v=3923c07f",
+    "videoUrl": "/melee/pharah.mp4?v=f5942498",
     "duration": 4.97
   },
   "ramattra": {
     "audioUrl": "/melee/ramattra.mp3?v=807bc9a7",
-    "videoUrl": "/melee/ramattra.mp4?v=e379f280",
+    "videoUrl": "/melee/ramattra.mp4?v=66686faf",
     "duration": 4.82
   },
   "reaper": {
     "audioUrl": "/melee/reaper.mp3?v=de80e6e1",
-    "videoUrl": "/melee/reaper.mp4?v=34a491a6",
+    "videoUrl": "/melee/reaper.mp4?v=3cbbfdc0",
     "duration": 5.4
   },
   "reinhardt": {
     "audioUrl": "/melee/reinhardt.mp3?v=1f41e082",
-    "videoUrl": "/melee/reinhardt.mp4?v=1be50171",
+    "videoUrl": "/melee/reinhardt.mp4?v=0d57004e",
     "duration": 4.58
   },
   "roadhog": {
     "audioUrl": "/melee/roadhog.mp3?v=3a9bbf77",
-    "videoUrl": "/melee/roadhog.mp4?v=78826736",
+    "videoUrl": "/melee/roadhog.mp4?v=af369a87",
     "duration": 5.04
   },
   "shion": {
     "audioUrl": "/melee/shion.mp3?v=96c65ffd",
-    "videoUrl": "/melee/shion.mp4?v=4de2b2b6",
+    "videoUrl": "/melee/shion.mp4?v=f8a98e6f",
     "duration": 4.94
   },
   "sierra": {
     "audioUrl": "/melee/sierra.mp3?v=d933b160",
-    "videoUrl": "/melee/sierra.mp4?v=6f0b2543",
+    "videoUrl": "/melee/sierra.mp4?v=3b60d8d5",
     "duration": 5.54
   },
   "sigma": {
     "audioUrl": "/melee/sigma.mp3?v=d819903e",
-    "videoUrl": "/melee/sigma.mp4?v=3562369e",
+    "videoUrl": "/melee/sigma.mp4?v=c7dffcb8",
     "duration": 5.28
   },
   "sojourn": {
     "audioUrl": "/melee/sojourn.mp3?v=0d22f940",
-    "videoUrl": "/melee/sojourn.mp4?v=0595e973",
+    "videoUrl": "/melee/sojourn.mp4?v=c87ba180",
     "duration": 4.85
   },
   "soldier-76": {
     "audioUrl": "/melee/soldier-76.mp3?v=1edce905",
-    "videoUrl": "/melee/soldier-76.mp4?v=942df574",
+    "videoUrl": "/melee/soldier-76.mp4?v=c7114ce7",
     "duration": 4.99
   },
   "sombra": {
     "audioUrl": "/melee/sombra.mp3?v=4d62ed39",
-    "videoUrl": "/melee/sombra.mp4?v=5ad8fb26",
+    "videoUrl": "/melee/sombra.mp4?v=8130d6d1",
     "duration": 4.37
   },
   "symmetra": {
     "audioUrl": "/melee/symmetra.mp3?v=6d4be685",
-    "videoUrl": "/melee/symmetra.mp4?v=c43dde5c",
+    "videoUrl": "/melee/symmetra.mp4?v=a0e5d701",
     "duration": 6.46
   },
   "torbjorn": {
     "audioUrl": "/melee/torbjorn.mp3?v=816f5abd",
-    "videoUrl": "/melee/torbjorn.mp4?v=92d3a1f7",
+    "videoUrl": "/melee/torbjorn.mp4?v=f0b3b6e9",
     "duration": 4.87
   },
   "tracer": {
     "audioUrl": "/melee/tracer.mp3?v=292a6c6c",
-    "videoUrl": "/melee/tracer.mp4?v=a8365e5c",
+    "videoUrl": "/melee/tracer.mp4?v=dd94cadc",
     "duration": 5.06
   },
   "vendetta": {
     "audioUrl": "/melee/vendetta.mp3?v=7b5cadd1",
-    "videoUrl": "/melee/vendetta.mp4?v=ab61e10e",
+    "videoUrl": "/melee/vendetta.mp4?v=090bb14a",
     "duration": 4.49
   },
   "venture": {
     "audioUrl": "/melee/venture.mp3?v=7e1b6593",
-    "videoUrl": "/melee/venture.mp4?v=9b016158",
+    "videoUrl": "/melee/venture.mp4?v=aa537033",
     "duration": 5.83
   },
   "widowmaker": {
     "audioUrl": "/melee/widowmaker.mp3?v=25d31c40",
-    "videoUrl": "/melee/widowmaker.mp4?v=8a414d19",
+    "videoUrl": "/melee/widowmaker.mp4?v=8bf034da",
     "duration": 6.5
   },
   "wrecking-ball": {
     "audioUrl": "/melee/wrecking-ball.mp3?v=3d209c61",
-    "videoUrl": "/melee/wrecking-ball.mp4?v=d5ff6f61",
+    "videoUrl": "/melee/wrecking-ball.mp4?v=a23182f0",
     "duration": 4.39
   },
   "wuyang": {
     "audioUrl": "/melee/wuyang.mp3?v=e15a3db2",
-    "videoUrl": "/melee/wuyang.mp4?v=4a74b621",
+    "videoUrl": "/melee/wuyang.mp4?v=49e5d800",
     "duration": 4.54
   },
   "zarya": {
     "audioUrl": "/melee/zarya.mp3?v=c1f93cb2",
-    "videoUrl": "/melee/zarya.mp4?v=7a81aa65",
+    "videoUrl": "/melee/zarya.mp4?v=aebfce2c",
     "duration": 4.3
   },
   "zenyatta": {
     "audioUrl": "/melee/zenyatta.mp3?v=3637189d",
-    "videoUrl": "/melee/zenyatta.mp4?v=d001a283",
+    "videoUrl": "/melee/zenyatta.mp4?v=09de0b5c",
     "duration": 5.33
   }
 }

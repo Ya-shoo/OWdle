@@ -8,7 +8,15 @@
 // this closes the capture → export → sync loop so the data is ready when
 // the mode is.
 
-import { readdir, writeFile, access, readFile } from "node:fs/promises";
+import {
+  readdir,
+  writeFile,
+  access,
+  readFile,
+  rename,
+  stat,
+  unlink,
+} from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
@@ -25,6 +33,38 @@ const OUT_FILE = resolve(__dirname, "..", "data", "melee-clips.json");
 async function contentHash(path) {
   const buf = await readFile(path);
   return createHash("sha256").update(buf).digest("hex").slice(0, 8);
+}
+
+// The labeler exports the mp4s as raw game captures (1440p60 at ~100Mbps —
+// ~80MB for a 4s clip). Served as-is they stall the reveal player, so squash
+// anything oversized down to the Sound-reveal spec (720p, CRF 23, faststart;
+// same recipe as reencode-large-clips.sh) before hashing. Already-encoded
+// files sit around 1–2MB and skip this entirely.
+const REENCODE_THRESHOLD_BYTES = 10 * 1024 * 1024;
+
+async function reencodeInPlace(path) {
+  const tmp = `${path}.reencode.mp4`;
+  await new Promise((res, rej) => {
+    const proc = spawn(
+      ffmpegPath,
+      // prettier-ignore
+      [
+        "-hide_banner", "-loglevel", "error", "-y",
+        "-i", path,
+        "-c:v", "libx264", "-crf", "23", "-preset", "fast",
+        "-vf", "scale=-2:720",
+        "-c:a", "aac", "-b:a", "96k",
+        "-movflags", "+faststart",
+        tmp,
+      ],
+      { stdio: ["ignore", "ignore", "inherit"] },
+    );
+    proc.on("exit", (code) =>
+      code === 0 ? res() : rej(new Error(`ffmpeg exited ${code} for ${path}`)),
+    );
+    proc.on("error", rej);
+  });
+  await rename(tmp, path);
 }
 
 function probeDuration(path) {
@@ -74,6 +114,20 @@ async function main() {
     const mp3Path = resolve(MELEE_DIR, `${hero}.mp3`);
     const mp4Path = resolve(MELEE_DIR, `${hero}.mp4`);
     const hasMp4 = await fileExists(mp4Path);
+    if (hasMp4) {
+      const { size } = await stat(mp4Path);
+      if (size > REENCODE_THRESHOLD_BYTES) {
+        console.log(
+          `  ${hero}: raw capture (${(size / 1048576).toFixed(0)}MB) — re-encoding to 720p`,
+        );
+        try {
+          await reencodeInPlace(mp4Path);
+        } catch (e) {
+          console.warn(`  ${hero}: re-encode failed (${e.message}) — keeping original`);
+          await unlink(`${mp4Path}.reencode.mp4`).catch(() => {});
+        }
+      }
+    }
     const duration = await probeDuration(mp3Path);
     if (duration == null || duration < 0.1) {
       console.warn(`  skipping ${hero} — no usable duration`);
