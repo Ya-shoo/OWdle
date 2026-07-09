@@ -19,7 +19,7 @@ const META = {
   // melee sound" (breadcrumb + JSON-LD name stay the short "Melee").
   seoTitle: "Overwatch Melee Sound Quiz | Guess the Hero",
   description:
-    "Can you name that Overwatch hero from just their melee sound? Play the daily melee sound quiz: three guesses, a new hero every day.",
+    "Guess the Overwatch hero from their melee swing. Three guesses, a new hero every day. The daily Overwatch melee sound quiz.",
 };
 
 export const metadata = modeMetadata(META);

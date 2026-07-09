@@ -127,8 +127,8 @@ export function DailyCompleteResultCard({
       className={
         "result-card mx-auto w-full max-w-lg rounded-(--radius-card) border p-5 sm:p-6 " +
         (tone === "won"
-          ? "border-correct/40 bg-correct/10"
-          : "border-wrong/35 bg-wrong/10")
+          ? "border-line-correct bg-tint-correct"
+          : "border-line bg-tint-wrong")
       }
     >
       <div className="flex flex-col gap-5">
@@ -136,13 +136,13 @@ export function DailyCompleteResultCard({
         <div
           className={
             "flex items-baseline justify-between gap-3 border-b pb-3 " +
-            (tone === "won" ? "border-correct/25" : "border-wrong/25")
+            (tone === "won" ? "border-line-correct" : "border-line")
           }
         >
           <span
             className={
               "font-mono text-[10px] uppercase tracking-[0.22em] " +
-              (tone === "won" ? "text-correct" : "text-wrong")
+              (tone === "won" ? "text-correct" : "text-on-wrong")
             }
           >
             <span aria-hidden>✓</span> Daily Complete
@@ -159,7 +159,7 @@ export function DailyCompleteResultCard({
         {/* Headline stat band — total guesses + streak share one
             horizontal row inside a single divider band. Saves the ~80px
             the streak's own band variant used to claim below. */}
-        <div className="grid grid-cols-2 items-center gap-3 border-y border-line/60 py-3">
+        <div className="grid grid-cols-2 items-center gap-3 border-y border-line py-3">
           <div className="flex flex-col items-center gap-1 text-center">
             <span className="font-display text-3xl font-extrabold tabular-nums leading-none text-accent-soft sm:text-4xl">
               {totalGuesses}
@@ -172,7 +172,7 @@ export function DailyCompleteResultCard({
               {lostCount > 0 && (
                 <>
                   <span className="text-ink-faint"> · </span>
-                  <span className="text-wrong">{lostCount}l</span>
+                  <span className="text-on-wrong">{lostCount}l</span>
                 </>
               )}
               <span className="text-ink-faint"> · </span>
@@ -202,7 +202,7 @@ export function DailyCompleteResultCard({
             the card after the headline stat, since "when's the next
             one?" is the player's most natural next thought once they're
             done with today. */}
-        <div className="flex flex-col items-center gap-1 border-t border-line/60 pt-3">
+        <div className="flex flex-col items-center gap-1 border-t border-line pt-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
             Next puzzle in
           </span>
@@ -277,11 +277,9 @@ function ModeChip({
       className={
         "flex items-center justify-between gap-1.5 rounded-(--radius-card) border px-2.5 py-1.5 " +
         (won
-          ? "border-correct/30 bg-correct/5"
-          : lost
-            ? "border-wrong/30 bg-wrong/5"
-            : "border-line bg-inset/40") +
-        (highlight ? " ring-1 ring-info/45" : "")
+          ? "border-line-correct bg-inset"
+          : "border-line bg-inset") +
+        (highlight ? " ring-1 ring-line-info" : "")
       }
     >
       <div className="flex min-w-0 items-center gap-1.5">
@@ -289,7 +287,7 @@ function ModeChip({
           aria-hidden
           className={
             "font-display text-sm leading-none " +
-            (won ? "text-correct" : lost ? "text-wrong" : "text-ink-faint")
+            (won ? "text-correct" : lost ? "text-on-wrong" : "text-ink-faint")
           }
         >
           {won ? "✓" : lost ? "✕" : "—"}
@@ -301,7 +299,7 @@ function ModeChip({
       <span
         className={
           "shrink-0 font-mono text-[10px] tabular-nums uppercase tracking-[0.14em] " +
-          (won ? "text-correct" : lost ? "text-wrong" : "text-ink-faint")
+          (won ? "text-correct" : lost ? "text-on-wrong" : "text-ink-faint")
         }
       >
         {result.outcome === "pending" ? "—" : result.guesses}

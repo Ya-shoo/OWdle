@@ -19,7 +19,10 @@ export default function robots(): MetadataRoute.Robots {
       // and HARD-gated to 404 in prod (app/map/page.tsx `if (!IS_DEV)
       // notFound()`), as is /labeler/*. These disallows are belt-and-
       // suspenders so nothing crawls them even if a gate is relaxed.
-      disallow: ["/labeler/", "/map/"],
+      // /archive/* is a private client-only retention surface (per-mode
+      // replay of past dailies). noindex on each route + absent from the
+      // sitemap; disallowed here as belt-and-suspenders.
+      disallow: ["/labeler/", "/map/", "/archive/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

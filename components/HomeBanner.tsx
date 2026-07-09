@@ -21,9 +21,13 @@ const FADE_MS = 1400;
 // Ken Burns drift on each frame to add motion. Sits behind the headline; a
 // strong gradient at the bottom keeps text legibility intact.
 //
+// `dim` drops the whole banner to backdrop luminance for content-dense
+// hero states (the daily-complete summary spans the section's full height,
+// so the default reading-band scrim isn't enough on bright frames).
+//
 // SSR uses STATIC_BANNERS so the first paint already shows an image; once
 // the client mounts and `day` is known, we swap to the day-seeded order.
-export function HomeBanner() {
+export function HomeBanner({ dim = false }: { dim?: boolean }) {
   const [day, setDay] = useState<string | null>(null);
   const [idx, setIdx] = useState(0);
 
@@ -91,6 +95,25 @@ export function HomeBanner() {
         style={{
           background:
             "linear-gradient(to bottom, rgba(10,14,20,0.55) 0%, rgba(10,14,20,0.04) 32%, rgba(10,14,20,0.10) 58%, rgba(10,14,20,0.24) 76%, rgba(10,14,20,0.48) 89%, rgba(10,14,20,0.80) 96%, var(--bg-base) 100%)",
+        }}
+      />
+
+      {/* Dim veil — near-uniform second layer stacked over the reading-band
+          scrim above. The daily-complete hero fills the section top to
+          bottom with stats, streak chrome, and the share block, all styled
+          for the flat dark canvas; this veil pulls even the brightest
+          frames down to roughly canvas luminance so those pieces stay
+          legible while the art keeps drifting behind as a mood layer.
+          Opacity-transitions (gradients can't crossfade) because `dim`
+          flips true only after the client reads localStorage. */}
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
+          dim ? "opacity-100" : "opacity-0"
+        }`}
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(10,14,20,0.80) 0%, rgba(10,14,20,0.70) 40%, rgba(10,14,20,0.70) 68%, rgba(10,14,20,0.80) 90%, rgba(10,14,20,0.88) 100%)",
         }}
       />
     </div>

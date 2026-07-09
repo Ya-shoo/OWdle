@@ -50,6 +50,7 @@ Key engine files: `lib/modes.ts` · `lib/daily.ts` + `lib/dailyBag.ts` · `lib/s
 - Cross-site architecture, registries & procedures → the **`dailydles` skill**
 
 ## Conventions
+- **Solid surfaces only — never translucent/low-opacity fills.** Card and button bodies use the fully-opaque surface tokens (`bg-card` / `bg-muted` / `bg-inset` / `bg-surface`); tinted state cards mix a solid color (e.g. `color-mix(... , var(--bg-*))`), they do NOT alpha a color over the canvas. Do not write `bg-accent/10`, `bg-correct/10`, `border-accent/40`, etc. as a fill — a fill must be opaque (see the `--bg-card` note in `app/globals.css`: "never a translucent wash"). Alpha is fine ONLY for shadows/glows and gradient scrims, never for a surface. Borders should be a solid token (`border-line` / `border-edge`).
 - Media URLs resolve at the render boundary — always `media(path)` from `lib/media.ts`, never a bare R2 host in stored data.
 - PostHog event/prop names are **network-identical across all three sites** (`site` super-property splits them; here `"owdle"`). Never rename on one side only.
 - Keep share machinery (`lib/shareUrl.ts`, `functions/og`, `functions/r`) in lockstep with the siblings; bump `RENDER_REV` in `functions/og/r/[code].tsx` on any card-design change.

@@ -7,10 +7,10 @@
 :root {
   /* Surfaces, borders, and the "dark text on bright chip" mirror colors
      are theme-scoped: the default values here are the canonical blue OW
-     palette, and [data-theme="warm"] / [data-theme="green"] selectors
-     below swap them. The data-theme attribute is set by a tiny inline
-     script in the layout, before the stylesheet paints, so a fresh load
-     lands on the right theme without a flash. */
+     palette, and the [data-theme="<holiday>"] selectors below swap them
+     during their date window. The data-theme attribute is set by a tiny
+     inline script in the layout, before the stylesheet paints, so a fresh
+     load lands on the right theme without a flash. */
   --bg-base: #0a0e14;
   --bg-surface: #11161f;
   --bg-muted: #1a2030;
@@ -23,6 +23,42 @@
      the mix resolves against whichever muted/border those set, so one line
      covers every rotation + holiday theme. */
   --bg-card: color-mix(in oklab, var(--bg-muted), var(--border-default) 80%);
+  /* tinted state surfaces + matching outlines — a state color mixed into an
+     OPAQUE base, per the solid-surfaces rule: tinted cards/buttons are solid
+     mixes, never an alpha wash over the canvas. Like --bg-card these are
+     mixes of live tokens (not per-theme hardcodes), so every rotation +
+     holiday palette derives its own tints for free and none of this needs
+     re-declaring in the [data-theme] blocks. -strong is the hover/emphasis
+     step of the same tint. Surfaced in @theme as bg-tint-* / border-line-*. */
+  --bg-tint-accent: color-mix(in oklab, var(--accent) 12%, var(--bg-surface));
+  --bg-tint-accent-strong: color-mix(
+    in oklab,
+    var(--accent) 18%,
+    var(--bg-surface)
+  );
+  --bg-tint-info: color-mix(in oklab, var(--info) 8%, var(--bg-surface));
+  --bg-tint-correct: color-mix(
+    in oklab,
+    var(--tile-correct) 12%,
+    var(--bg-surface)
+  );
+  --bg-tint-correct-strong: color-mix(
+    in oklab,
+    var(--tile-correct) 18%,
+    var(--bg-surface)
+  );
+  --bg-tint-wrong: color-mix(
+    in oklab,
+    var(--tile-wrong) 45%,
+    var(--bg-surface)
+  );
+  --border-tint-accent: color-mix(in oklab, var(--accent) 50%, var(--bg-surface));
+  --border-tint-info: color-mix(in oklab, var(--info) 32%, var(--bg-surface));
+  --border-tint-correct: color-mix(
+    in oklab,
+    var(--tile-correct) 45%,
+    var(--bg-surface)
+  );
   /* foreground */
   --fg-default: #f5efe6;
   --fg-muted: #b1a99d;
@@ -91,6 +127,15 @@
   --color-ink-faint: var(--fg-subtle);
   --color-line: var(--border-default);
   --color-edge: var(--border-strong);
+  --color-line-accent: var(--border-tint-accent);
+  --color-line-info: var(--border-tint-info);
+  --color-line-correct: var(--border-tint-correct);
+  --color-tint-accent: var(--bg-tint-accent);
+  --color-tint-accent-strong: var(--bg-tint-accent-strong);
+  --color-tint-info: var(--bg-tint-info);
+  --color-tint-correct: var(--bg-tint-correct);
+  --color-tint-correct-strong: var(--bg-tint-correct-strong);
+  --color-tint-wrong: var(--bg-tint-wrong);
   --color-hairline: var(--hairline);
   --color-accent: var(--accent);
   --color-on-accent: var(--accent-fg);
@@ -115,56 +160,22 @@
   --shadow-card-hover: var(--elevation-card-hover);
 }
 
-/* ---------- theme rotation ----------
-   Three palettes rotate on a 3-day cycle, set on <html> by an inline
-   script in app/layout.tsx before paint. Default (:root, no attribute)
-   is the original blue OW palette so SSR HTML and JS-disabled clients
-   land somewhere sane. Each block only overrides what differs from blue:
-   the four surface tokens, the border, the warm/cool fg-subtle nudge,
-   the on-dark mirror tokens (so chip text matches the base), the
-   tile-wrong pair, and the bottom-right radial in the bg pattern. */
+/* ---------- base palette ----------
+   Blue is the only base palette, set on <html> by an inline script in
+   app/layout.tsx before paint. Default (:root, no attribute) is the
+   same blue OW palette so SSR HTML and JS-disabled clients land
+   somewhere sane. Holiday palettes below take precedence during their
+   date window. */
 
 [data-theme="blue"] {
   /* Blue's surfaces are a near-neutral navy, so the muted→border card mix
      lands on gray slate rather than reading blue. Pin the card fill to a
      saturated navy at the same lightness the mix gives the other themes.
-     (Only blue needs this — warm/green/holidays derive a good card straight
-     from their own tinted tokens.) The inline theme script always sets
-     data-theme="blue" for the base rotation, so this selector reliably
+     (Only blue needs this — the holiday palettes derive a good card
+     straight from their own tinted tokens.) The inline theme script
+     always sets data-theme="blue" for the base, so this selector reliably
      matches even though blue's other tokens live in :root. */
   --bg-card: #20335c;
-}
-
-[data-theme="warm"] {
-  --bg-base: #120e0a;
-  --bg-surface: #1a1410;
-  --bg-muted: #2a2218;
-  --bg-inset: #181109;
-  --fg-subtle: #7a7163;
-  --border-default: #3a2e1f;
-  --accent-fg: #120e0a;
-  --info-on: #120e0a;
-  --tile-correct-fg: #120e0a;
-  --tile-partial-fg: #120e0a;
-  --tile-far-fg: #120e0a;
-  --tile-wrong: #2a2218;
-  --tile-wrong-fg: #8b8579;
-}
-
-[data-theme="green"] {
-  --bg-base: #0a120c;
-  --bg-surface: #121c14;
-  --bg-muted: #1a2820;
-  --bg-inset: #0e160f;
-  --fg-subtle: #6b7d6e;
-  --border-default: #1f3a25;
-  --accent-fg: #0a120c;
-  --info-on: #0a120c;
-  --tile-correct-fg: #0a120c;
-  --tile-partial-fg: #0a120c;
-  --tile-far-fg: #0a120c;
-  --tile-wrong: #1a2820;
-  --tile-wrong-fg: #8b958f;
 }
 
 /* ---------- holiday palettes ----------

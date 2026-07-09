@@ -61,7 +61,7 @@ const MODE_SECTIONS: {
         <p>
           The icon hides behind a grid of nine tiles. One is uncovered at
           the start, and every wrong guess uncovers another. You have
-          eight attempts to name the hero who owns it.
+          eight attempts to guess the hero who owns it.
         </p>
       </>
     ),
@@ -76,7 +76,7 @@ const MODE_SECTIONS: {
         <p>
           A small crop of a hero splash or skin that zooms out a step with
           each wrong guess. You have five attempts across a pool that covers
-          base portraits and over a thousand curated skins.
+          base portraits and over a thousand hero skins.
         </p>
       </>
     ),

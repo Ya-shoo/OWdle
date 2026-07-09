@@ -225,7 +225,7 @@ export function SplashGame() {
             Spotlight
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
-            Identify the hero from a cropped sliver. Each wrong guess zooms
+            Guess the hero from a cropped sliver. Each wrong guess zooms
             out.
           </p>
         </div>

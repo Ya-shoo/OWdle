@@ -1,8 +1,8 @@
 "use client";
 
 // Dev-only floating chip that lets you preview every surface palette —
-// the three rotating ones (blue / warm / green) plus the seven holiday
-// themes — without waiting for the calendar. Tree-shaken from prod via
+// the blue base plus the seven holiday themes — without waiting for the
+// calendar. Tree-shaken from prod via
 // the build-time NODE_ENV constant: the body returns null and the
 // import is dropped from the bundle.
 //
@@ -12,7 +12,7 @@
 //   - Click a chip to override data-theme on <html> and persist.
 //   - "auto" clears the override and snaps to whatever lib/theme's
 //     pickTheme() would pick right now (holiday window first, otherwise
-//     the 3-day rotation).
+//     the blue base).
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";

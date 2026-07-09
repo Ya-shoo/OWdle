@@ -29,6 +29,7 @@ import { modeAttempts } from "@/lib/tier";
 import { SiteGreeter } from "./SiteGreeter";
 import { HomeFaq } from "./HomeFaq";
 import { TryBonusRoundNudge } from "./TryBonusRoundNudge";
+import { ArchiveCta } from "./ArchiveCta";
 
 // Home grid split (design decision: canonical daily stays exactly 5).
 //   • Daily grid — everything that isn't a bonus island: the 5 canonical
@@ -107,7 +108,10 @@ export function HomeContent() {
     <main className="flex-1">
       <SiteGreeter />
       <section className="relative isolate flex min-h-[min(72vh,720px)] items-end overflow-hidden">
-        <HomeBanner />
+        {/* Completed state swaps in the content-dense summary hero, which
+            spans the banner's bright middle band — dim the art so it stays
+            a backdrop instead of fighting the text. */}
+        <HomeBanner dim={allDone} />
         <div className="relative mx-auto w-full max-w-6xl px-6 pb-14 pt-24 sm:pb-20 sm:pt-32">
           {allDone ? (
             <DailyCompleteHero
@@ -150,6 +154,14 @@ export function HomeContent() {
           ))}
         </ul>
 
+        {/* Archive entry — replay past days of the daily modes. A proper
+            button (not a mono afterthought) so the retention hook — replay a
+            missed day, redeem a red day to green — reads as a real
+            destination. Centered under the grid for visibility. */}
+        <div className="mt-8 flex justify-center">
+          <ArchiveCta />
+        </div>
+
         {/* Bonus modes — playable, shareable islands OUTSIDE the daily
             set. Always visible for discovery; no streak/rank coupling and
             not counted in the "X / 5 done" tally above. Self-hides until a
@@ -172,6 +184,13 @@ export function HomeContent() {
           </div>
         )}
       </section>
+
+      {/* FAQ sits directly under the modes so the top of the page stays
+          pure game content. The vote-on-next-game widget, tip jar, and
+          cross-promo cards below read as network/operator signals, so
+          they're demoted beneath the FAQ instead of filling the prime slot
+          right after the modes grid. */}
+      <HomeFaq />
 
       {/* Engagement strip: vote on next game + tip jar, each in its own
           panel instead of two halves split by hairlines. Dark `bg-muted`
@@ -201,10 +220,6 @@ export function HomeContent() {
         <TryDeadlockleCard />
         <TryWuWadleCard />
       </section>
-
-      {/* Indexable FAQ — target-keyword copy for search, collapsible so it
-          stays out of the way for players who don't need it. */}
-      <HomeFaq />
 
       {/* Attribution footer is rendered site-wide by SiteFooter in the
           root layout. */}
@@ -566,7 +581,7 @@ function ModeCard({
   return (
     <Link
       href={`/${mode.slug}/`}
-      className="group relative flex h-full flex-col rounded-(--radius-card) border border-line bg-card p-6 shadow-card transition-[transform,box-shadow,border-color] duration-200 ease-[var(--ease-spring)] hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:border-accent/40 focus-visible:shadow-card-hover"
+      className="group relative flex h-full flex-col rounded-(--radius-card) border border-line bg-card p-6 shadow-card transition-[transform,box-shadow] duration-200 ease-[var(--ease-spring)] hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:scale-[1.02] focus-visible:shadow-card-hover"
     >
       <ModeCardInner label={mode.label} blurb={mode.blurb}>
         {tag}

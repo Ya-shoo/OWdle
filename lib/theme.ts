@@ -1,13 +1,14 @@
-// Surface palette selection. Three palettes rotate on a 3-day cycle
-// (blue → warm → green); seven holiday palettes auto-activate during
-// their date window and take precedence over the rotation.
+// Surface palette selection. The base palette is the blue OW theme;
+// seven holiday palettes auto-activate during their date window and
+// take precedence over it. (The base is kept as an array so extra
+// rotating palettes can be reintroduced without reworking the picker.)
 //
 // The inline script in app/layout.tsx runs the same logic in vanilla JS
 // before paint so the right data-theme is set without a flash. Keep
 // THEME_INLINE_SCRIPT in lock-step with pickTheme() — any holiday
 // window change must land in both.
 
-export const ROTATING_THEMES = ["blue", "warm", "green"] as const;
+export const ROTATING_THEMES = ["blue"] as const;
 export const HOLIDAY_THEMES = [
   "christmas",
   "newyears",
@@ -27,8 +28,6 @@ export type Theme = (typeof ALL_THEMES)[number];
 // adding a holiday is a one-file change.
 export const THEME_LABEL: Record<Theme, string> = {
   blue: "B",
-  warm: "W",
-  green: "G",
   christmas: "Xm",
   newyears: "NY",
   valentines: "Vl",
@@ -39,9 +38,7 @@ export const THEME_LABEL: Record<Theme, string> = {
 };
 
 export const THEME_TITLE: Record<Theme, string> = {
-  blue: "Blue (rotation)",
-  warm: "Warm (rotation)",
-  green: "Green (rotation)",
+  blue: "Blue (base)",
   christmas: "Christmas (Dec 1–25)",
   newyears: "New Year's (Dec 31 – Jan 2)",
   valentines: "Valentine's (Feb 12–14)",
@@ -93,7 +90,7 @@ export const THEME_INLINE_SCRIPT =
   "else if(m===7&&day>=1&&day<=4)t='july4';" +
   "else if(m===10&&day>=17)t='halloween';" +
   "else if(m===11&&day>=22&&day<=28)t='thanksgiving';" +
-  "else{var r=['blue','warm','green'],d=Math.floor(Date.now()/86400000);" +
+  "else{var r=['blue'],d=Math.floor(Date.now()/86400000);" +
   "t=r[((Math.floor(d/3)%r.length)+r.length)%r.length];}" +
   "document.documentElement.setAttribute('data-theme',t);" +
   "})();";

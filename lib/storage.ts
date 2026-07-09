@@ -27,6 +27,13 @@ export type ModeState = {
   // reload. Pre-Phase-3 saves omit this; the renderer falls back to
   // appending hints at the end of the timeline.
   hintOrder?: number[];
+  // Archive mode only: the answer hero key, stamped at first play. The
+  // daily never sets this (today's answer is stable within a day). Archive
+  // replays PAST days whose answer is re-derived from the daily bag, which
+  // reshuffles if ANSWER_POOL changes (a hero ships / gets completed) —
+  // pinning the answer here keeps a replayed round stable across such a
+  // change instead of silently swapping the hero under a stored result.
+  answerKey?: string;
   // Post-win bonus round (Sound: which ability was the clip? Splash:
   // which skin is this?). Optional; only those modes read/write this.
   bonus?: {
@@ -107,6 +114,8 @@ export function loadModeState(mode: string, day: string): ModeState {
       gaveUp: parsed.gaveUp,
       hintsUsed: Array.isArray(parsed.hintsUsed) ? parsed.hintsUsed : undefined,
       hintOrder: normalizeHintOrder(parsed.hintsUsed, parsed.hintOrder),
+      answerKey:
+        typeof parsed.answerKey === "string" ? parsed.answerKey : undefined,
       bonus: parsed.bonus,
     };
   } catch {
@@ -152,6 +161,12 @@ export function isFirstDay(today: string): boolean {
     for (let i = 0; i < window.localStorage.length; i++) {
       const k = window.localStorage.key(i);
       if (!k || !k.startsWith("owdle.")) continue;
+      // Archive keys (owdle.archive.<mode>.<day>) are a returning-player
+      // feature that replays PAST days, so they're day-suffixed with dates
+      // < today by design. They must NOT count as "prior play" here, or a
+      // brand-new user whose first action is an archive round would be
+      // mislabeled a returning player and miss the first-day nudges.
+      if (k.startsWith("owdle.archive.")) continue;
       const m = /(\d{4}-\d{2}-\d{2})$/.exec(k);
       if (m && m[1] < today) return false;
     }

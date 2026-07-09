@@ -228,7 +228,7 @@ export function AbilityGame() {
             Ability
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
-            Whose ability is this? More of the icon reveals with each guess.
+            An ability icon, revealed a little more with every miss. Guess the hero it belongs to.
           </p>
         </div>
         <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">

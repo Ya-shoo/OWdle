@@ -8,7 +8,7 @@ const META = {
   title: "Sound",
   seoTitle: "Overwatch Ability Sound Quiz",
   description:
-    "Can you name the Overwatch hero from just an ability sound? Each miss plays a little more. New audio puzzle, fresh hero every day.",
+    "Guess the Overwatch hero from one ability sound. Each wrong guess plays a longer clip. New audio puzzle, fresh hero every day.",
 };
 
 export const metadata = modeMetadata(META);

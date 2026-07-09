@@ -118,6 +118,37 @@ export function trackModeCompleted(opts: {
   );
 }
 
+// Archive mode: a past daily replayed from /archive/<mode>. Fired once per
+// completed archive round, on the terminal transition (won/lost) — driven
+// from the guess/hint handler, NOT an effect, so a reload or resume of an
+// already-finished round never re-fires, while a fresh Play Again → finish
+// does. Deliberately NOT deduped per day: replays are the point, and a
+// later `outcome:"won"` after an earlier loss IS the redemption signal.
+//
+// There is intentionally NO archive_started counterpart, and the daily
+// funnel events (mode_started / mode_completed) must NEVER fire from archive
+// play — the daily funnel stays pristine. Prop names are network-identical
+// across sites (see the file header): document this so the siblings mirror
+// it if/when they add archives.
+export function trackArchiveRoundCompleted(opts: {
+  mode: Mode;
+  // The past Pacific puzzle day being replayed (YYYY-MM-DD), NOT the
+  // current daily_id — kept a distinct prop so archive play never pollutes
+  // daily_id-keyed funnels.
+  day: string;
+  outcome: "won" | "lost";
+  guesses: number;
+  hints: number;
+}): void {
+  posthog.capture("archive_round_completed", {
+    mode: opts.mode,
+    day: opts.day,
+    outcome: opts.outcome,
+    guesses: opts.guesses,
+    hints: opts.hints,
+  });
+}
+
 export function trackHintUsed(opts: {
   mode: Mode;
   dailyId: string;

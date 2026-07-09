@@ -7,7 +7,7 @@ const META = {
   slug: "ability",
   title: "Ability",
   description:
-    "Whose Overwatch ability is this? An ability icon is gradually revealed with each guess. Daily Overwatch ability quiz: name the hero from their kit.",
+    "An Overwatch ability icon, revealed a little more with every miss. Guess the hero from their kit. A daily Overwatch ability quiz.",
 };
 
 export const metadata = modeMetadata(META);

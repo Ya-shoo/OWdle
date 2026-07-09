@@ -32,14 +32,14 @@ export const MODES: ModeDef[] = [
   {
     slug: "classic",
     label: "Classic",
-    blurb: "Type a hero, get attribute match tiles. Eight categories.",
+    blurb: "Guess the hero from eight attribute tiles. Colored by closeness.",
     built: true,
     tier: "canonical",
   },
   {
     slug: "sound",
     label: "Sound",
-    blurb: "A snippet of a hero's ability sound — each miss plays more.",
+    blurb: "Guess the hero from an ability sound. Each miss plays more.",
     built: true,
     tier: "canonical",
   },
@@ -53,14 +53,14 @@ export const MODES: ModeDef[] = [
   {
     slug: "splash",
     label: "Spotlight",
-    blurb: "A cropped sliver of skin art. It zooms out as you guess.",
+    blurb: "Guess the hero from a cropped sliver of skin art. It zooms out with each miss.",
     built: true,
     tier: "canonical",
   },
   {
     slug: "ability",
     label: "Ability",
-    blurb: "An ability icon, gradually revealed. Which hero?",
+    blurb: "Guess the hero from a hidden ability icon. It uncovers tile by tile.",
     built: true,
     tier: "canonical",
   },
@@ -71,7 +71,7 @@ export const MODES: ModeDef[] = [
     // rank. Surfaces in its own "Bonus modes" home section, not the grid.
     slug: "melee",
     label: "Melee",
-    blurb: "A hero's melee sound. Name them in three guesses.",
+    blurb: "Guess the hero from one melee swing. Three tries.",
     built: true,
     tier: "bonus",
   },
