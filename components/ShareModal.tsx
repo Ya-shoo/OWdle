@@ -119,7 +119,7 @@ export function ShareModal({
           setFallbackPreviewUrl(createdUrl);
         } catch {
           if (cancelled) return;
-          setActionError("Preview failed — Copy link still works.");
+          setActionError("Preview failed. Copy link still works.");
         }
       });
     });
@@ -324,7 +324,7 @@ export function ShareModal({
               (ogStatus === "none" && !fallbackPreviewUrl)) && (
               <div className="absolute inset-0 flex items-center justify-center px-6 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
                 {ogStatus === "error"
-                  ? "Preview unavailable — the link still unfurls when pasted"
+                  ? "Preview unavailable. The link still unfurls when pasted"
                   : "Rendering…"}
               </div>
             )}

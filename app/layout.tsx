@@ -77,7 +77,7 @@ const notoSans = Noto_Sans({
 // the highest-volume phrases players actually type ("Overwatch Wordle",
 // "guess the hero"), while staying under ~60 chars so Google doesn't clip
 // it. Sub-pages fall back to the `%s · OWdle` template defined below.
-const homeTitle = `${SITE_NAME} — The Daily Overwatch Wordle Game | Guess the Hero`;
+const homeTitle = `${SITE_NAME}: The Daily Overwatch Wordle Game | Guess the Hero`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -1166,7 +1166,7 @@ export function MapGame() {
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
                   {selectedMap == null
                     ? "Pick a map above to drop a pin"
-                    : "This map isn't calibrated yet — submitting this counts as a wrong-map guess"}
+                    : "This map isn't calibrated yet, so submitting this counts as a wrong-map guess"}
                 </p>
               </div>
             )}
@@ -2595,7 +2595,7 @@ function MapVerdictBadge(props: {
         <span className="font-mono text-[11px] uppercase tracking-[0.16em]">
           {guessedLabel ? (
             <>
-              you picked <strong>{guessedLabel}</strong> — it was{" "}
+              you picked <strong>{guessedLabel}</strong>. it was{" "}
               <strong>{actualLabel}</strong>
             </>
           ) : (

@@ -99,7 +99,7 @@ export function ArchiveGrid({ mode }: { mode: "classic" }) {
           <span className="opacity-0">loading</span>
         ) : perfectWeek ? (
           <span className="text-correct">
-            <span aria-hidden>✓</span> Perfect week — every day solved
+            <span aria-hidden>✓</span> Perfect week: every day solved
           </span>
         ) : (
           <span className="text-ink-faint">
@@ -165,7 +165,7 @@ function ArchiveCell({
   return (
     <Link
       href={href}
-      aria-label={`${weekday} ${date}${isToday ? " (today)" : ""} — ${status}`}
+      aria-label={`${weekday} ${date}${isToday ? " (today)" : ""}: ${status}`}
       className="group flex flex-col items-center gap-1.5 outline-none"
     >
       <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink-faint sm:text-[10px]">

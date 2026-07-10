@@ -229,8 +229,8 @@ export const onRequestGet: Handler = async ({ params, request, waitUntil }) => {
 
     const title =
       wonCount === total
-        ? `OWdle — swept all ${total} modes in ${totalGuesses} guesses`
-        : `OWdle — ${wonCount}/${total} modes in ${totalGuesses} guesses`;
+        ? `OWdle: swept all ${total} modes in ${totalGuesses} guesses`
+        : `OWdle: ${wonCount}/${total} modes in ${totalGuesses} guesses`;
     const description = `OWdle daily for ${dateLabel}. Click to play today's puzzles.`;
 
     const html = shareShellHtml({
@@ -258,10 +258,10 @@ export const onRequestGet: Handler = async ({ params, request, waitUntil }) => {
     const dateLabel = formatDate(round.date);
     const title =
       round.outcome === "won"
-        ? `OWdle ${label} — solved in ${round.guesses} ${
+        ? `OWdle ${label}: solved in ${round.guesses} ${
             round.guesses === 1 ? "guess" : "guesses"
           }`
-        : `OWdle ${label} — missed it`;
+        : `OWdle ${label}: missed it`;
     const description = `OWdle ${label} for ${dateLabel}. ${
       round.outcome === "won" ? "Can you beat it?" : "Can you solve it?"
     } Click to play.`;

@@ -53,7 +53,7 @@ export function ArchiveHub() {
           Archive
         </h1>
         <p className="mt-4 max-w-lg text-ink-soft">
-          Replay past daily puzzles. Catch up on a day you missed — or turn a
+          Replay past daily puzzles. Catch up on a day you missed, or turn a
           loss into a win. Archive play is just for you; it never touches your
           streak.
         </p>

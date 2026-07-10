@@ -105,7 +105,7 @@ export function ClassicArchivePlay({ day }: { day: string }) {
               )}
               {redeemedLiveLoss && (
                 <div className="mt-1 text-sm text-correct">
-                  Turned a red day green — your record for this day now shows a
+                  Turned a red day green. Your record for this day now shows a
                   win.
                 </div>
               )}
@@ -189,7 +189,7 @@ function ArchiveBanner() {
         ↺
       </span>
       <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-soft">
-        Archive mode — your daily record won&apos;t be overwritten.
+        Archive mode: your daily record won&apos;t be overwritten.
       </p>
     </div>
   );
@@ -260,7 +260,7 @@ function ArchiveOutcomeActions({
           </Link>
         ) : (
           <span className="inline-flex items-center px-1 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
-            Last unsolved day — win it to catch up
+            Last unsolved day. Win it to catch up
           </span>
         )}
       </div>

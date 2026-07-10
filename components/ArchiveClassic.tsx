@@ -40,7 +40,7 @@ export function ArchiveClassic() {
         </h1>
         <p className="mt-3 max-w-md text-ink-soft">
           Replay any of the past week&apos;s puzzles. Missed a day, or lost
-          one? Fill it in — it won&apos;t touch today&apos;s streak.
+          one? Fill it in. It won&apos;t touch today&apos;s streak.
         </p>
       </header>
 

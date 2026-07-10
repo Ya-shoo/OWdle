@@ -196,7 +196,7 @@ export const onRequestGet: Handler = async (ctx) => {
     // isolate, CPU-limit kill) once got edge-cached under the
     // canonical URL and served a dead unfurl until expiry. no-store
     // keeps errors self-healing on the next request.
-    return new Response("Card render failed — retry shortly.", {
+    return new Response("Card render failed. Retry shortly.", {
       status: 503,
       headers: { "cache-control": "no-store", "retry-after": "5" },
     });

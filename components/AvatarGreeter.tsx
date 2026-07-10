@@ -234,7 +234,7 @@ export function AvatarGreeter({
         onClick={dismiss}
         tabIndex={mascotShown ? 0 : -1}
         aria-hidden={!mascotShown}
-        aria-label="Site mascot — replay the wave and show the latest update"
+        aria-label="Site mascot: replay the wave and show the latest update"
         className={`block origin-top-right rounded-[2rem] outline-none transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] focus-visible:ring-2 focus-visible:ring-accent ${
           mascotShown
             ? "pointer-events-auto translate-x-0 translate-y-0 scale-100 opacity-100"

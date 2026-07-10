@@ -340,8 +340,8 @@ export function MeleeGame() {
       {state.guesses.length === 0 && !reveal && (
         <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-            Tap the waveform to hear the melee. You get {MAX_GUESSES} guesses —
-            the source clip reveals when you solve it or run out.
+            Tap the waveform to hear the melee. You get {MAX_GUESSES} guesses.
+            The source clip reveals when you solve it or run out.
           </p>
         </div>
       )}

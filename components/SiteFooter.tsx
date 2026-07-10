@@ -25,7 +25,7 @@ export function SiteFooter() {
           (CC-BY-SA), Blizzard press kit.{" "}
           <span className="text-ink-soft">
             OWdle claims no ownership whatsoever of any assets used on
-            this site — Overwatch and all related characters, artwork,
+            this site. Overwatch and all related characters, artwork,
             audio, and other assets are © and ™ Blizzard Entertainment,
             Inc., and all rights remain with their respective owners.
           </span>{" "}

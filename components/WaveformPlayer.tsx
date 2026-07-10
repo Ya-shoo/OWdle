@@ -1078,7 +1078,7 @@ export function WaveformPlayer({
   );
 
   let barAriaLabel: string;
-  if (loadError) barAriaLabel = "Audio failed to load — tap to retry";
+  if (loadError) barAriaLabel = "Audio failed to load. Tap to retry";
   else if (variant === "melee")
     barAriaLabel = playing ? "Playing melee clip" : "Play melee clip";
   else if (playing) barAriaLabel = "Playing snippet";

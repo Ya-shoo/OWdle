@@ -450,11 +450,11 @@ export function NextModeCTA({
             const label =
               m.label +
               (outcome === "won"
-                ? " — solved"
+                ? ": solved"
                 : outcome === "lost"
-                  ? " — missed"
+                  ? ": missed"
                   : isNext
-                    ? " — up next"
+                    ? ": up next"
                     : "");
             const inner = (
               <>

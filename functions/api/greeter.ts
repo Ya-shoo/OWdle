@@ -61,7 +61,7 @@ const DISCORD_API = "https://discord.com/api/v10";
 const FALLBACK: Announcement = {
   id: "greeter-fallback",
   title: "Hey, welcome! 👋",
-  body: "A fresh Overwatch puzzle drops every day — good luck!",
+  body: "A fresh Overwatch puzzle drops every day. Good luck!",
 };
 
 export const onRequestGet: Handler = async ({ request, env, waitUntil }) => {

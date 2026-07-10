@@ -15,7 +15,7 @@ export const metadata = {
     slug: "map",
     title: "Map",
     description:
-      "Daily Overwatch GeoGuessr. Five POVs, five guesses — pick the map, drop a pin where the screenshot was taken.",
+      "Daily Overwatch GeoGuessr. Five POVs, five guesses. Pick the map, drop a pin where the screenshot was taken.",
   }),
   robots: { index: false, follow: false },
 };

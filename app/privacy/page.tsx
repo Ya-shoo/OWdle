@@ -5,7 +5,7 @@ const LAST_UPDATED = "July 2, 2026";
 const PRIVACY_EMAIL = "privacy@playowdle.com";
 
 const PAGE_DESCRIPTION =
-  "How OWdle handles user data — the analytics, cookies, and advertising used, and the privacy rights available under GDPR and CCPA.";
+  "How OWdle handles user data: the analytics, cookies, and advertising used, and the privacy rights available under GDPR and CCPA.";
 
 export const metadata = modeMetadata({
   slug: "privacy",

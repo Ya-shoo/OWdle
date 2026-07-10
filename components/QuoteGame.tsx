@@ -419,8 +419,8 @@ export function QuoteGame() {
             onSelect={(hero) => handleGuess(hero, activeTarget)}
             placeholder={
               activeTarget === 0
-                ? "Guess Speaker A — enter a hero…"
-                : "Guess Speaker B — enter a hero…"
+                ? "Guess Speaker A: enter a hero…"
+                : "Guess Speaker B: enter a hero…"
             }
           />
         </div>
