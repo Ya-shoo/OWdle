@@ -31,8 +31,36 @@ export function bannerVariants(file: string): BannerVariants {
   };
 }
 
-const KEY_ART: Banner[] = (bannersData.keyArt as Banner[]) ?? [];
-const MAPS: Banner[] = (bannersData.maps as Banner[]) ?? [];
+// Hand-picked home-page rotation, curated 2026-07-09 via the banner-lineup
+// picker. data/banners.json stays the FULL catalog — MapGame's per-map
+// preview art reads it directly and scripts/build-banners.mjs regenerates
+// it wholesale — so the lineup is trimmed here at the rotation boundary
+// instead of in the manifest. To restore a stashed banner, add its key
+// back; to stash one, remove it.
+const ROTATION_KEY_ART = new Set([
+  "comic-crossroads",
+  "story-signs-of-life",
+  "story-thoughtless-gods",
+]);
+const ROTATION_MAPS = new Set([
+  "arena-victoriae",
+  "black-forest",
+  "busan",
+  "dorado",
+  "ecopoint-antarctica",
+  "hanamura",
+  "horizon",
+  "junkertown",
+  "kings-row",
+  "route-66",
+]);
+
+const KEY_ART: Banner[] = ((bannersData.keyArt as Banner[]) ?? []).filter(
+  (b) => ROTATION_KEY_ART.has(b.key),
+);
+const MAPS: Banner[] = ((bannersData.maps as Banner[]) ?? []).filter((b) =>
+  ROTATION_MAPS.has(b.key),
+);
 
 // Weight key art more heavily than map screenshots — the user explicitly
 // wanted the home page to lean into the marketing-style art that headlines

@@ -13,13 +13,13 @@ import { media } from "@/lib/media";
 
 const MOBILE_BREAKPOINT = "(max-width: 767px)";
 
-const ROTATE_MS = 10000;
+const ROTATE_MS = 5 * 60 * 1000;
 const FADE_MS = 1400;
 
 // Full-bleed backdrop for the hero section. Crossfades through a
-// date-seeded sequence of Overwatch key art + map screenshots, with a slow
-// Ken Burns drift on each frame to add motion. Sits behind the headline; a
-// strong gradient at the bottom keeps text legibility intact.
+// date-seeded sequence of Overwatch key art + map screenshots; each frame
+// holds still (no Ken Burns drift). Sits behind the headline; a strong
+// gradient at the bottom keeps text legibility intact.
 //
 // `dim` drops the whole banner to backdrop luminance for content-dense
 // hero states (the daily-complete summary spans the section's full height,
@@ -66,20 +66,7 @@ export function HomeBanner({ dim = false }: { dim?: boolean }) {
             transition={{ duration: FADE_MS / 1000, ease: "easeOut" }}
             className="absolute inset-0"
           >
-            {/* Inner wrapper handles the Ken Burns drift independently from
-                the crossfade, so the next image starts its own zoom from
-                neutral instead of inheriting the previous frame's transform. */}
-            <motion.div
-              initial={{ scale: 1.04 }}
-              animate={{ scale: 1.12 }}
-              transition={{
-                duration: (ROTATE_MS + FADE_MS) / 1000,
-                ease: "linear",
-              }}
-              className="absolute inset-0"
-            >
-              <BannerPicture banner={current} />
-            </motion.div>
+            <BannerPicture banner={current} />
           </motion.div>
         </AnimatePresence>
       )}
@@ -103,7 +90,7 @@ export function HomeBanner({ dim = false }: { dim?: boolean }) {
           bottom with stats, streak chrome, and the share block, all styled
           for the flat dark canvas; this veil pulls even the brightest
           frames down to roughly canvas luminance so those pieces stay
-          legible while the art keeps drifting behind as a mood layer.
+          legible while the art keeps rotating behind as a mood layer.
           Opacity-transitions (gradients can't crossfade) because `dim`
           flips true only after the client reads localStorage. */}
       <div

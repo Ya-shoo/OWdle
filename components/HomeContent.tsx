@@ -15,7 +15,6 @@ import {
 import { Brand } from "./Brand";
 import { HomeBanner } from "./HomeBanner";
 import { NextResetCountdown } from "./NextResetCountdown";
-import { MakerNote } from "./MakerNote";
 import { StreakBadge } from "./StreakBadge";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
@@ -27,7 +26,6 @@ import { dailyShareLinks } from "@/lib/shareLinks";
 import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { modeAttempts } from "@/lib/tier";
 import { SiteGreeter } from "./SiteGreeter";
-import { HomeFaq } from "./HomeFaq";
 import { TryBonusRoundNudge } from "./TryBonusRoundNudge";
 import { ArchiveCta } from "./ArchiveCta";
 
@@ -107,12 +105,15 @@ export function HomeContent() {
   return (
     <main className="flex-1">
       <SiteGreeter />
-      <section className="relative isolate flex min-h-[min(72vh,720px)] items-end overflow-hidden">
+      <section className="relative isolate flex min-h-[min(72vh,720px)] items-start overflow-hidden">
         {/* Completed state swaps in the content-dense summary hero, which
             spans the banner's bright middle band — dim the art so it stays
             a backdrop instead of fighting the text. */}
         <HomeBanner dim={allDone} />
-        <div className="relative mx-auto w-full max-w-6xl px-6 pb-14 pt-24 sm:pb-20 sm:pt-32">
+        {/* Hero copy anchors top-left of the max-w-6xl working area (which
+            sits inside the ad-rail gutters), so the banner reads as a full
+            backdrop with the content tucked into the corner. */}
+        <div className="relative mx-auto w-full max-w-6xl px-6 pb-16 pt-24 sm:pb-24 sm:pt-48">
           {allDone ? (
             <DailyCompleteHero
               day={day}
@@ -185,31 +186,22 @@ export function HomeContent() {
         )}
       </section>
 
-      {/* From-the-maker note — the homepage's primary "fan, not operator"
-          signal. A first-time visitor meets the human (who built OWdle and
-          why, in Yush's own voice) right after the modes and before the FAQ,
-          so the page leads with game + fan content before any asks. Shares
-          the FAQ's max-w-3xl column so the two read as one content band. */}
-      <section className="mx-auto max-w-3xl px-6 pb-10 pt-6">
-        <MakerNote />
-      </section>
-
-      {/* FAQ sits under the maker note so the top of the page stays game +
-          fan content. The support panel and cross-promo cards below read as
-          softer network/operator signals, so they're demoted beneath it.
-          (The "which game next" vote moved off the homepage entirely to
-          /whats-next.) */}
-      <HomeFaq />
+      {/* Maker note pulled from the homepage for now (kept in
+          components/MakerNote.tsx for easy re-add). The FAQ + its FAQPage
+          JSON-LD moved to /whats-next alongside the roadmap vote, so the
+          homepage runs straight from the modes into the support / network
+          strip below. */}
 
       {/* Support panel — the tip jar, now centered on its own where the
           vote widget + tip jar two-column strip used to sit (the "which game
-          next" vote moved to /whats-next). Dark `bg-muted` fill, a step
-          darker than the navy mode cards above (same surface as the
-          sister-site cards below) so it sits deep in the board's dark
-          palette. max-w-lg keeps it about the width its column had before, so
-          centering reads as deliberate rather than a stretched half-panel. */}
+          next" vote moved to /whats-next). Inverted "paper" card: solid soft
+          blue-white with no outline, the same light-card treatment as the
+          sister-site cards below, so the one personal/human panel pops off
+          the dark board. max-w-lg keeps it about the width its column had
+          before, so centering reads as deliberate rather than a stretched
+          half-panel. */}
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
-        <div className="mx-auto max-w-lg rounded-(--radius-card) border border-line bg-muted p-6 shadow-card sm:p-8">
+        <div className="mx-auto max-w-lg rounded-(--radius-card) bg-[#e1e6f3] p-6 shadow-card sm:p-8">
           <SupportLinks />
         </div>
       </section>
@@ -260,26 +252,36 @@ export function HomeContent() {
 function DefaultHero({ day }: { day: string | null }) {
   return (
     <div>
-      {/* Date + countdown line sits directly on the panning Ken Burns
-          banner, so the shadow handles bright frames (key art with
-          orange/yellow highlights) without dimming on dark frames. */}
-      <div
-        style={{
-          textShadow: "1px 1px 2px rgba(0,0,0,0.25)",
-        }}
-      >
-        <p className="font-mono text-sm uppercase tracking-[0.22em] text-info">
-          <span suppressHydrationWarning>
-            {day ? prettyDay(day) : "Today"}
+      {/* Date + countdown as two solid chips — never translucent text laid
+          straight on the banner. A saturated blue "Daily · <date>" tag pairs
+          with a dark card carrying the live "Next <countdown>" timer; both
+          are fully opaque and shadow-lifted so they read as real tags on any
+          banner frame, bright or dark. */}
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="inline-flex -skew-x-12 items-center border border-info bg-info px-5 py-2 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.45)]">
+          <span
+            suppressHydrationWarning
+            className="skew-x-12 font-mono text-xs font-bold uppercase tracking-[0.16em] text-on-info"
+          >
+            Daily · {day ? prettyDay(day) : "Today"}
           </span>
-        </p>
-        <p className="mt-2 font-mono text-sm uppercase tracking-[0.22em] text-ink-faint">
-          Daily · <NextResetCountdown />
-        </p>
+        </span>
+        <span className="inline-flex -skew-x-12 items-center border border-line bg-card px-5 py-2 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.45)]">
+          <NextResetCountdown
+            label="Next "
+            className="skew-x-12 font-mono text-xs font-bold uppercase tracking-[0.16em]"
+          />
+        </span>
       </div>
       <Brand as="h1" size="2xl" className="mt-6 leading-[0.95]" />
-      <p className="mt-6 max-w-xl text-lg text-ink-soft">
-        Your daily Overwatch guessing game
+      <p
+        className="mt-6 max-w-xl text-lg font-bold text-ink"
+        style={{
+          textShadow:
+            "0 0 1px rgba(0,0,0,0.85), 0 0 2px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5)",
+        }}
+      >
+        The daily Overwatch guessing game
       </p>
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <BeginButton />
@@ -532,7 +534,7 @@ function CompleteBadge({
         >
           Daily complete
         </motion.div>
-        <div className="mt-3 h-px w-10 bg-correct/45" />
+        <div className="mt-3 h-px w-10 bg-correct" />
         <motion.div
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
