@@ -21,6 +21,12 @@ const FADE_MS = 1400;
 // holds still (no Ken Burns drift). Sits behind the headline; a strong
 // gradient at the bottom keeps text legibility intact.
 //
+// The frame on screen is a function of the wall clock, not time-on-page:
+// the index is the current 5-minute window since epoch, mod the sequence.
+// A refresh (or a first-time visit) lands mid-rotation wherever the clock
+// says, instead of restarting at frame 0, and everyone sees the same frame
+// at the same moment.
+//
 // `dim` drops the whole banner to backdrop luminance for content-dense
 // hero states (the daily-complete summary spans the section's full height,
 // so the default reading-band scrim isn't enough on bright frames).
@@ -29,10 +35,37 @@ const FADE_MS = 1400;
 // the client mounts and `day` is known, we swap to the day-seeded order.
 export function HomeBanner({ dim = false }: { dim?: boolean }) {
   const [day, setDay] = useState<string | null>(null);
-  const [idx, setIdx] = useState(0);
+  // null until mounted — the prerendered HTML shows sequence[0], so the
+  // clock-derived slot can only kick in client-side.
+  const [slot, setSlot] = useState<number | null>(null);
 
   useEffect(() => {
     setDay(dayString());
+  }, []);
+
+  useEffect(() => {
+    const sync = () => setSlot(Math.floor(Date.now() / ROTATE_MS));
+    sync();
+    // Re-arm a timeout aligned to the next window boundary rather than a
+    // free-running interval; recomputing from the clock on each fire (and
+    // whenever the tab is foregrounded) keeps the slot honest through
+    // background-tab timer throttling and laptop sleep.
+    let t: ReturnType<typeof setTimeout>;
+    const arm = () => {
+      t = setTimeout(() => {
+        sync();
+        arm();
+      }, ROTATE_MS - (Date.now() % ROTATE_MS) + 50);
+    };
+    arm();
+    const onVisibility = () => {
+      if (!document.hidden) sync();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      clearTimeout(t);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   const sequence = useMemo<Banner[]>(
@@ -40,16 +73,8 @@ export function HomeBanner({ dim = false }: { dim?: boolean }) {
     [day],
   );
 
-  useEffect(() => {
-    if (sequence.length < 2) return;
-    const t = setInterval(
-      () => setIdx((i) => (i + 1) % sequence.length),
-      ROTATE_MS,
-    );
-    return () => clearInterval(t);
-  }, [sequence.length]);
-
-  const current = sequence[idx % Math.max(1, sequence.length)];
+  const idx = slot === null ? 0 : slot % Math.max(1, sequence.length);
+  const current = sequence[idx];
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-canvas">
