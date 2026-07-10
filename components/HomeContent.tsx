@@ -15,7 +15,7 @@ import {
 import { Brand } from "./Brand";
 import { HomeBanner } from "./HomeBanner";
 import { NextResetCountdown } from "./NextResetCountdown";
-import { RequestNextGame } from "./RequestNextGame";
+import { MakerNote } from "./MakerNote";
 import { StreakBadge } from "./StreakBadge";
 import { SupportLinks } from "./SupportLinks";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
@@ -185,40 +185,70 @@ export function HomeContent() {
         )}
       </section>
 
-      {/* FAQ sits directly under the modes so the top of the page stays
-          pure game content. The vote-on-next-game widget, tip jar, and
-          cross-promo cards below read as network/operator signals, so
-          they're demoted beneath the FAQ instead of filling the prime slot
-          right after the modes grid. */}
+      {/* From-the-maker note — the homepage's primary "fan, not operator"
+          signal. A first-time visitor meets the human (who built OWdle and
+          why, in Yush's own voice) right after the modes and before the FAQ,
+          so the page leads with game + fan content before any asks. Shares
+          the FAQ's max-w-3xl column so the two read as one content band. */}
+      <section className="mx-auto max-w-3xl px-6 pb-10 pt-6">
+        <MakerNote />
+      </section>
+
+      {/* FAQ sits under the maker note so the top of the page stays game +
+          fan content. The support panel and cross-promo cards below read as
+          softer network/operator signals, so they're demoted beneath it.
+          (The "which game next" vote moved off the homepage entirely to
+          /whats-next.) */}
       <HomeFaq />
 
-      {/* Engagement strip: vote on next game + tip jar, each in its own
-          panel instead of two halves split by hairlines. Dark `bg-muted`
-          fill — a step darker than the navy mode cards above (same surface as
-          the sister-site card below) so the strip sits deep in the board's
-          dark palette rather than inverting to a competing light tier. All
-          children are token-driven (text-ink, bg-inset, border-line, …), so
-          they read correctly on the dark surface with no per-child styling.
-          54/46 keeps the interactive vote column slightly wider; they stack
-          on mobile with the same gap as the modes grid. */}
+      {/* Support panel — the tip jar, now centered on its own where the
+          vote widget + tip jar two-column strip used to sit (the "which game
+          next" vote moved to /whats-next). Dark `bg-muted` fill, a step
+          darker than the navy mode cards above (same surface as the
+          sister-site cards below) so it sits deep in the board's dark
+          palette. max-w-lg keeps it about the width its column had before, so
+          centering reads as deliberate rather than a stretched half-panel. */}
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
-        <div className="grid gap-4 md:grid-cols-[54fr_46fr]">
-          <div className="rounded-(--radius-card) border border-line bg-muted p-6 shadow-card sm:p-8">
-            <RequestNextGame />
-          </div>
-          <div className="rounded-(--radius-card) border border-line bg-muted p-6 shadow-card sm:p-8">
-            <SupportLinks />
-          </div>
+        <div className="mx-auto max-w-lg rounded-(--radius-card) border border-line bg-muted p-6 shadow-card sm:p-8">
+          <SupportLinks />
         </div>
       </section>
 
       {/* Sister-site cards — two small branded cross-promo cards, centered
           side by side (stacking on mobile), a softer outbound suggestion
           once the primary asks have been made. Each card is themed to its
-          destination's accent-on-dark, consistent across the network. */}
-      <section className="mx-auto flex max-w-3xl flex-wrap items-stretch justify-center gap-4 px-6 pb-12 pt-4">
-        <TryDeadlockleCard />
-        <TryWuWadleCard />
+          destination's accent-on-dark, consistent across the network. Below
+          them, a quiet centered "What's next?" link is the only remaining
+          entry to the roadmap vote (now at /whats-next) — kept deliberately
+          low-key so it doesn't re-introduce the "portfolio operator" read on
+          the homepage. */}
+      <section className="mx-auto max-w-3xl px-6 pb-12 pt-4">
+        <div className="flex flex-wrap items-stretch justify-center gap-4">
+          <TryDeadlockleCard />
+          <TryWuWadleCard />
+        </div>
+        <div className="mt-6 flex justify-center">
+          <Link
+            href="/whats-next/"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint transition-colors hover:text-info"
+          >
+            What&rsquo;s next?
+            <svg
+              aria-hidden
+              width="14"
+              height="10"
+              viewBox="0 0 14 10"
+            >
+              <path
+                d="M0 5 L12 5 M8 1 L13 5 L8 9"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="square"
+              />
+            </svg>
+          </Link>
+        </div>
       </section>
 
       {/* Attribution footer is rendered site-wide by SiteFooter in the
@@ -388,7 +418,7 @@ function DailyCompleteHero({
             </>
           ) : (
             <>
-              You finished today's set —{" "}
+              You finished today's set:{" "}
               <span className="text-correct">{wonCount} won</span>,{" "}
               <span className="text-wrong">{lostCount} missed</span>,{" "}
               <span className="text-ink">{totalGuesses}</span> guesses total.

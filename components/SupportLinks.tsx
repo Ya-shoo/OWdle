@@ -1,9 +1,10 @@
 "use client";
 
-// Tip-jar panel that pairs with RequestNextGame in the engagement strip.
-// Stacks vertically inside its column: heading + copy on top, Ko-fi
-// profile preview + tip button + share link below. The Ko-fi action opens
-// an in-page modal containing Ko-fi's official panel iframe — see KofiModal.
+// Tip-jar panel. Sits centered on the homepage below the FAQ (the vote
+// widget it used to pair with moved to /whats-next). Stacks vertically:
+// heading + copy on top, Ko-fi profile preview + tip button + share link
+// below. The Ko-fi action opens an in-page modal containing Ko-fi's
+// official panel iframe — see KofiModal.
 import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL } from "@/lib/site";
 import { trackShareClicked } from "@/lib/tracking";
 import { KofiModal } from "./KofiModal";
