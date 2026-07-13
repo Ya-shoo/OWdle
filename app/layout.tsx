@@ -117,6 +117,13 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+  // Site-ownership token for the alldle.net game-directory listing. Renders
+  // <meta name="alldle-verify" content="…"> via Next's metadata API.
+  verification: {
+    other: {
+      "alldle-verify": "BlBuuflcX2b65wWTUC7iJvwcaQQKLx4y",
+    },
+  },
 };
 
 export const viewport: Viewport = {
