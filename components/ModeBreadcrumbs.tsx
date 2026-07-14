@@ -10,7 +10,7 @@ export function ModeBreadcrumbs({ label }: { label: string }) {
       aria-label="Breadcrumb"
       className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:pt-8"
     >
-      <ol className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-faint">
+      <ol className="utility-label flex items-center gap-2 text-[11px] text-ink-faint">
         <li>
           <Link
             href="/"

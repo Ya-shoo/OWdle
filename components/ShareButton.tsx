@@ -133,8 +133,8 @@ export function ShareButton({
   // hosts (home hero).
   const btnClass =
     variant === "primary"
-      ? "group inline-flex items-center gap-2 rounded-full bg-info px-5 py-3 text-on-info shadow-[0_2px_6px_-1px_rgba(0,0,0,0.3),0_0_4px_-1px_var(--info)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] hover:brightness-110 hover:shadow-[0_3px_8px_-2px_rgba(0,0,0,0.4),0_0_6px_-2px_var(--info)] active:scale-[0.98] disabled:opacity-50"
-      : "group inline-flex items-center gap-2 rounded-full border border-edge bg-muted px-4 py-2 text-ink transition-all hover:border-info hover:text-info active:scale-[0.98] disabled:opacity-50";
+      ? "group inline-flex items-center gap-2 bg-info px-5 py-3 text-on-info shadow-[0_2px_6px_-1px_rgba(0,0,0,0.3),0_0_4px_-1px_var(--info)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.05] hover:brightness-110 hover:shadow-[0_3px_8px_-2px_rgba(0,0,0,0.4),0_0_6px_-2px_var(--info)] active:scale-[0.98] disabled:opacity-50"
+      : "group inline-flex items-center gap-2 border border-edge bg-muted px-4 py-2 text-ink transition-all hover:border-info hover:text-info active:scale-[0.98] disabled:opacity-50";
 
   return (
     <>
@@ -145,7 +145,7 @@ export function ShareButton({
         className={btnClass}
       >
         <ShareGlyph />
-        <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
+        <span className="utility-label text-[11px]">
           {label}
         </span>
       </button>
@@ -159,7 +159,7 @@ export function ShareButton({
           type="button"
           onClick={() => setModalOpen(true)}
           aria-label="Preview card or save image"
-          className="inline-flex items-center justify-center rounded-full border border-edge bg-muted p-3 text-ink-soft transition-all hover:border-info hover:text-info active:scale-[0.98]"
+          className="inline-flex items-center justify-center border border-edge bg-muted p-3 text-ink-soft transition-all hover:border-info hover:text-info active:scale-[0.98]"
         >
           <ImageGlyph />
         </button>

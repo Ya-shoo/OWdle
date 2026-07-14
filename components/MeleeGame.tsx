@@ -11,7 +11,7 @@ import {
   resolveMeleeClip,
 } from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
-import { audioBoostFor, loadVolume, saveVolume } from "@/lib/audio";
+import { MELEE_AUDIO_BOOST, loadVolume, saveVolume } from "@/lib/audio";
 import { media } from "@/lib/media";
 import {
   trackGuessSubmitted,
@@ -128,7 +128,7 @@ export function MeleeGame() {
   if (!day || !state) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-16">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-ink-faint">
+        <div className="utility-label text-xs text-ink-faint">
           Loading…
         </div>
       </main>
@@ -190,10 +190,10 @@ export function MeleeGame() {
     <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:py-16">
       <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-info">
+          <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline text-5xl text-ink sm:text-6xl">
+          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
             Melee
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
@@ -201,7 +201,7 @@ export function MeleeGame() {
             Three guesses.
           </p>
         </div>
-        <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">
+        <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
           <span className="mt-1 text-info">melee mode</span>
         </div>
@@ -228,14 +228,14 @@ export function MeleeGame() {
           <MeleeRevealPlayer
             videoUrl={videoUrl}
             posterUrl={answer.portrait}
-            boost={audioBoostFor(answer)}
+            boost={MELEE_AUDIO_BOOST}
           />
         ) : (
           <WaveformPlayer
             variant="melee"
             audioUrl={audioUrl}
             revealDuration={playDuration}
-            boost={audioBoostFor(answer)}
+            boost={MELEE_AUDIO_BOOST}
           />
         )}
       </div>
@@ -245,7 +245,7 @@ export function MeleeGame() {
         <div className="mb-6 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <GuessRemaining used={guessCount} cap={MAX_GUESSES} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <span className="utility-label text-[10px] text-ink-faint">
               full clip · {MAX_GUESSES} guesses
             </span>
           </div>
@@ -267,8 +267,8 @@ export function MeleeGame() {
             className={clsx(
               "result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border p-4 sm:p-5",
               state.won
-                ? "border-correct/40 bg-correct/10"
-                : "border-far/40 bg-far/10",
+                ? "border-correct bg-win"
+                : "border-loss-edge bg-loss",
             )}
           >
             <div className="flex flex-col gap-5">
@@ -282,17 +282,17 @@ export function MeleeGame() {
                 <div className="flex-1">
                   <div
                     className={clsx(
-                      "font-mono text-[10px] uppercase tracking-[0.2em]",
+                      "utility-label text-[10px]",
                       state.won ? "text-info" : "text-far",
                     )}
                   >
                     {state.won ? "Solved" : "Out of guesses"}
                   </div>
-                  <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                  <div className="mt-1 font-display text-2xl font-bold text-ink sm:text-3xl">
                     {answer.name}
                     <span className="ml-2 text-ink-soft">· Melee</span>
                   </div>
-                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                  <div className="mt-1 utility-label text-xs text-ink-faint">
                     {state.won
                       ? `in ${guessCount} ${guessCount === 1 ? "guess" : "guesses"}`
                       : `after ${guessCount} wrong ${guessCount === 1 ? "guess" : "guesses"}`}
@@ -338,8 +338,8 @@ export function MeleeGame() {
       </div>
 
       {state.guesses.length === 0 && !reveal && (
-        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-muted p-8 text-center">
+          <p className="utility-label text-xs text-ink-faint">
             Tap the waveform to hear the melee. You get {MAX_GUESSES} guesses.
             The source clip reveals when you solve it or run out.
           </p>
@@ -369,8 +369,8 @@ function MeleeGuessCard({
       className={clsx(
         "tile-shape mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 border px-5 py-6",
         isCorrect
-          ? "border-correct/40 bg-correct/15"
-          : "border-far/40 bg-far/15",
+          ? "border-correct bg-card"
+          : "border-far bg-card",
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -381,7 +381,7 @@ function MeleeGuessCard({
         height={112}
         className="h-24 w-24 rounded-(--radius-card) bg-muted object-cover sm:h-28 sm:w-28"
       />
-      <div className="font-display text-2xl uppercase tracking-wide text-ink sm:text-3xl">
+      <div className="font-display text-2xl uppercase tracking-wide font-bold text-ink sm:text-3xl">
         {hero.name}
       </div>
     </motion.div>
@@ -468,7 +468,7 @@ function MeleeRevealPlayer({
           }
         />
         {errored && (
-          <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-(--radius-card) border border-line bg-inset/60 p-6 text-center">
+          <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-(--radius-card) border border-line bg-muted p-6 text-center">
             {posterUrl && (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
@@ -477,13 +477,13 @@ function MeleeRevealPlayer({
                 className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover"
               />
             )}
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <div className="utility-label text-[10px] text-ink-faint">
               Reveal clip didn&apos;t load
             </div>
             <button
               type="button"
               onClick={handleRetry}
-              className="rounded-(--radius-card) border border-line bg-inset/60 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:border-accent/60 hover:text-accent"
+              className="rounded-(--radius-card) border border-line bg-muted px-4 py-2 utility-label text-[10px] text-ink-soft transition-colors hover:border-edge hover:text-accent"
             >
               ⟳ Retry
             </button>
@@ -511,7 +511,7 @@ function MeleeRevealPlayer({
       <div className="mt-3 flex justify-center">
         <VolumeSlider value={volume} onChange={handleVolumeChange} />
       </div>
-      <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+      <p className="mt-2 text-center utility-label text-[10px] text-info">
         Source clip · full melee audio + video
       </p>
     </div>

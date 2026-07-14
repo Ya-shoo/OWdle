@@ -7,7 +7,6 @@ import {
   SITE_NAME,
   SITE_URL,
 } from "@/lib/site";
-import { HOME_FAQ } from "@/lib/faq";
 
 // SSR's deterministic first frame is STATIC_BANNERS[0] (the highest-weighted
 // key art entry). Preloading its mobile + desktop AVIFs lets the browser kick
@@ -100,20 +99,6 @@ const jsonLd = {
         name: mode.label,
         description: mode.blurb,
         ...(mode.built ? { url: `${SITE_URL}/${mode.slug}/` } : {}),
-      })),
-    },
-    {
-      // Mirrors the visible collapsible FAQ rendered by components/HomeFaq
-      // (both read lib/faq HOME_FAQ) so the structured data and on-page copy
-      // stay identical. Gives search engines an explicit Q&A pass over the
-      // target keywords that the canvas-heavy game frame can't expose.
-      "@type": "FAQPage",
-      "@id": `${SITE_URL}/#faq`,
-      isPartOf: { "@id": `${SITE_URL}/#website` },
-      mainEntity: HOME_FAQ.map(({ q, a }) => ({
-        "@type": "Question",
-        name: q,
-        acceptedAnswer: { "@type": "Answer", text: a },
       })),
     },
   ],

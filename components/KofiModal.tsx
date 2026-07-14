@@ -73,7 +73,7 @@ export function KofiModal({ username }: Props) {
         className="m-auto w-[min(440px,92vw)] max-h-[90vh] max-w-[92vw] border border-line bg-surface p-0 text-ink backdrop:bg-black/70 backdrop:backdrop-blur-sm"
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          <p className="utility-label text-[10px] text-info">
             Tip on Ko-fi
           </p>
           <button
@@ -88,7 +88,7 @@ export function KofiModal({ username }: Props) {
 
         <div className="relative h-[680px] max-h-[78vh]">
           {hasOpened && !loaded ? (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface utility-label text-[11px] text-ink-faint">
               Loading Ko-fi…
             </div>
           ) : null}

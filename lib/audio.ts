@@ -65,3 +65,17 @@ export function audioBoostFor(hero: {
 }): number {
   return HERO_AUDIO_BOOST[hero.key] ?? ROLE_AUDIO_BOOST[hero.role];
 }
+
+// Melee mode uses a FLAT boost, not the per-role one above. The role/hero
+// boosts compensate for the Sound catalog's uneven in-game mastering, but
+// every Melee clip is loudness-normalized to the same target
+// (scripts/build-melee-clips.mjs), so role compensation is moot — and
+// worse, it left damage clips (boost 1) playing at only ~75% of file level
+// at the default 0.75 slider while tank/support (boost 1.6) reached full.
+// A flat 1.6 lifts the whole roster to full file level by the default
+// slider position (0.75 * 1.6 = 1.2, clamped to 1). Since playback volume
+// is clamped to [0, 1] this can't amplify past the clip's native level, so
+// there's no clipping risk (see WaveformPlayer / MeleeRevealPlayer). This
+// is why Melee wasn't just quiet in the source — it was also being turned
+// down on playback for two-thirds of the cast.
+export const MELEE_AUDIO_BOOST = 1.6;

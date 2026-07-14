@@ -12,28 +12,34 @@ export function ModeFooterNav({ current }: { current: ModeSlug }) {
   return (
     <section className="mt-16 border-t border-line sm:mt-24">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-        <h2 className="font-mono text-xs uppercase tracking-[0.22em] text-info">
+        <h2 className="utility-label text-xs text-info">
           Modes
         </h2>
-        <ul className="mt-6 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+        {/* Seam-grid effect via per-item rings instead of painting the ul
+            with bg-line: with 5 siblings in a 4-col grid the old
+            ul-background trick filled the row's empty cells with a giant
+            line-colored rectangle. Rings only draw where items exist. */}
+        <ul className="mt-6 grid gap-px sm:grid-cols-2 lg:grid-cols-4">
           {siblings.map((m) => (
-            <li key={m.slug} className="group bg-canvas">
+            <li key={m.slug} className="group bg-canvas ring-1 ring-line">
               <Link
                 href={`/${m.slug}/`}
                 className="flex h-full flex-col gap-3 p-5 transition-colors hover:bg-inset"
               >
-                <div className="font-display text-xl text-ink">{m.label}</div>
+                <div className="font-display text-xl font-extrabold uppercase tracking-[0.02em] text-ink">
+                  {m.label}
+                </div>
                 <p className="text-sm leading-relaxed text-ink-soft">
                   {m.blurb}
                 </p>
-                <span className="mt-auto inline-flex items-center font-mono text-[11px] uppercase tracking-[0.2em] text-accent-soft transition-colors group-hover:text-accent">
+                <span className="utility-label mt-auto inline-flex items-center text-[11px] text-accent-soft transition-colors group-hover:text-accent">
                   Play →
                 </span>
               </Link>
             </li>
           ))}
         </ul>
-        <div className="mt-8 flex justify-end font-mono text-xs uppercase tracking-[0.2em]">
+        <div className="utility-label mt-8 flex justify-end text-xs">
           <Link
             href="/how-to-play/"
             className="text-ink-faint transition-colors hover:text-accent"

@@ -30,9 +30,17 @@ import {
 const WON_FILL = "color-mix(in oklab, var(--color-correct) 60%, var(--color-wrong))";
 const LOST_FILL = "color-mix(in oklab, var(--color-far) 52%, var(--color-wrong))";
 
+// Modes with a live archive route (/archive/<slug>). Widen as each mode's
+// archive ships. The grid + cells are otherwise mode-agnostic — the slug only
+// drives the fill lookup and the replay hrefs.
+export type ArchiveModeSlug = "classic" | "sound";
+
 type Cell = DayFill & { isToday: boolean };
 
-function useArchiveCells(mode: string): { cells: Cell[]; mounted: boolean } {
+function useArchiveCells(mode: ArchiveModeSlug): {
+  cells: Cell[];
+  mounted: boolean;
+} {
   // localStorage is client-only; compute after mount so the static-export
   // prerender (all-"none") doesn't fight hydration. Recomputes on mount and
   // whenever the route re-renders this component (e.g. returning from a
@@ -78,7 +86,7 @@ function cellLabel(day: string): { weekday: string; date: string } {
   };
 }
 
-export function ArchiveGrid({ mode }: { mode: "classic" }) {
+export function ArchiveGrid({ mode }: { mode: ArchiveModeSlug }) {
   const { cells, mounted } = useArchiveCells(mode);
   const wonCount = cells.filter((c) => c.outcome === "won").length;
   const perfectWeek = mounted && wonCount === cells.length;
@@ -94,7 +102,7 @@ export function ArchiveGrid({ mode }: { mode: "classic" }) {
       {/* Quiet tally — reinforces the "fill the week" goal without a streak
           number (the green run is the visual streak). Flips to a celebration
           when every day in the window is green. */}
-      <p className="text-center font-mono text-[11px] uppercase tracking-[0.22em]">
+      <p className="text-center utility-label text-[11px]">
         {!mounted ? (
           <span className="opacity-0">loading</span>
         ) : perfectWeek ? (
@@ -118,14 +126,14 @@ function ArchiveCell({
   index,
 }: {
   cell: Cell;
-  mode: "classic";
+  mode: ArchiveModeSlug;
   index: number;
 }) {
   const { weekday, date } = cellLabel(cell.day);
   const { outcome, isToday, inProgress } = cell;
 
   // Today is played on the live mode page, never replayed in the archive.
-  const href = isToday ? "/classic/" : `/archive/${mode}/?d=${cell.day}`;
+  const href = isToday ? `/${mode}/` : `/archive/${mode}/?d=${cell.day}`;
 
   const glyph =
     outcome === "won" ? (
@@ -146,7 +154,7 @@ function ArchiveCell({
   const emptyTile =
     outcome === "none"
       ? inProgress
-        ? "border border-line-accent bg-inset"
+        ? "border border-accent bg-inset"
         : "border border-line bg-inset"
       : "";
   const ring = isToday
@@ -168,7 +176,7 @@ function ArchiveCell({
       aria-label={`${weekday} ${date}${isToday ? " (today)" : ""}: ${status}`}
       className="group flex flex-col items-center gap-1.5 outline-none"
     >
-      <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink-faint sm:text-[10px]">
+      <span className="utility-label text-[9px] text-ink-faint sm:text-[10px]">
         {weekday}
       </span>
       <motion.span
@@ -193,7 +201,7 @@ function ArchiveCell({
         {isToday && outcome === "none" && (
           <span
             aria-hidden
-            className="font-mono text-[8px] uppercase tracking-[0.1em] text-accent sm:text-[9px]"
+            className="utility-label text-[8px] text-accent sm:text-[9px]"
           >
             Today
           </span>

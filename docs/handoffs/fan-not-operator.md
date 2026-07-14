@@ -1,6 +1,6 @@
 # Handoff — Make OWdle read as "fan-made," not "operator-run"
 
-**Status:** in progress · **Owner:** Yash · **Updated:** 2026-07-09
+**Status:** P0 + P1 + P3 shipped locally — awaiting maker-note copy sign-off, then deploy · **Owner:** Yash · **Updated:** 2026-07-09
 **Addresses:** the *"you're showing the backstage, and it reads as operator, not fan"* giveaway from the "does the site feel AI-made?" audit.
 
 ---
@@ -30,8 +30,23 @@ This isn't about polish (the site is well-built). It's about **authenticity posi
 
 ## Already done
 
-- **Demoted the engagement strip below the FAQ** (2026-07-08). `HomeContent.tsx` L188–193: the FAQ now sits directly under the modes grid, so the vote widget + tip jar + sister cards no longer occupy the prime slot right after the modes. Reversible.
-  Current homepage order: **Hero → Modes → FAQ → [vote + tip strip] → sister cards → footer.**
+- **Demoted the engagement strip below the FAQ** (2026-07-08). `HomeContent.tsx`: the FAQ now sits directly under the modes grid, so the vote widget + tip jar + sister cards no longer occupy the prime slot right after the modes. Reversible.
+  Homepage order after this step: **Hero → Modes → FAQ → [vote + tip strip] → sister cards → footer.**
+
+- **Pulled the vote widget off the homepage + surfaced the maker (2026-07-09).** One pass covering P0 + P1 + P3:
+  - **P0 — vote widget removed from the homepage.** Yash chose "remove entirely." The "which game next" vote (`RequestNextGame`) now lives on a new opt-in page **`/whats-next`** (`app/whats-next/page.tsx`, uses `modeMetadata` + `ModeBreadcrumbs`, not in the sitemap — matches the `/privacy` precedent). The only homepage entry point is a quiet, centered mono link **"What's next? →"** under the sister-site cards. The `RequestNextGame` component itself is untouched (still cross-site lockstep) — only its *placement* on OWdle diverges. Backend Functions (`/api/vote|search|leaderboard`) unchanged.
+  - **P1 — real maker note shipped.** New `components/MakerNote.tsx`, placed right after the modes grid and before the FAQ (shares the FAQ's `max-w-3xl` column). Copy is Yash's real origin story: playing since **Season 9 / Mauga**, dying to ults he couldn't hear (D.Va bomb, RIP-Tire), **Sound was the first mode he built and still his favorite**, made it for himself + friends. The one inline link points "Sound" → `/sound/`. Casual "hi, I'm Yush" voice. **Copy still open to Yash's final tweak.**
+  - **P3 — light touch on money/network.** Tip jar kept ("Support me :D") but now a single **centered** `max-w-lg` panel where the 2-col vote+tip strip was. Sister cards kept as-is (light touch).
+  - Verified in-browser (homepage + `/whats-next`) and `tsc --noEmit` clean. **NOT deployed.**
+  - **New homepage order: Hero → Modes → Maker note → FAQ → Support (centered) → Sister cards + "What's next?" link → footer.**
+  - Note: a separate session is prototyping the **P2** "mission-briefing / Overwatch-style mode grid" hero+grid redesign (`owdle-workshop-language.html` mockup). These structural changes are orthogonal to it.
+
+- **Follow-up same day — pulled the maker note + moved the FAQ off the homepage (2026-07-09).** Per Yash ("remove the FAQ section entirely or move it to where the vote games page would be. also for now remove the hi im yush section"):
+  - **Maker note removed from the homepage "for now."** `<MakerNote />` is no longer rendered in `HomeContent.tsx` (its import + `HomeFaq` import dropped), but `components/MakerNote.tsx` is **kept intact** for an easy re-add.
+  - **FAQ relocated homepage → `/whats-next`.** `<HomeFaq />` now renders on `/whats-next` **below** the vote widget, and its **FAQPage JSON-LD moved with it** — out of `app/page.tsx`'s `@graph` (its `HOME_FAQ` import dropped), into a new `@graph` on `app/whats-next/page.tsx` alongside a BreadcrumbList — so schema and visible copy stay together (Google requirement). Homepage `@graph` no longer has a FAQPage node.
+  - **Current homepage order: Hero → Modes → Support (centered) → Sister cards + "What's next?" link → footer.** No maker note, no FAQ — that below-the-fold space is now free for the P2 redesign.
+  - **SEO note:** the homepage loses its visible keyword-rich FAQ text + FAQPage schema; both now live on the low-traffic, non-sitemap `/whats-next`. FAQ rich results are largely deprecated so the SERP hit is small, but if homepage topical coverage matters, `/how-to-play` is a more natural home than `/whats-next`. Fully reversible.
+  - Re-verified in-browser (both pages) + `tsc --noEmit` clean. The 2 eslint errors in `HomeContent.tsx` (`set-state-in-effect` L63, `no-unescaped-entities` L409) are **pre-existing**, not from this work.
 
 ---
 
@@ -76,11 +91,16 @@ Below the hero banner the page is currently theme-neutral (could be any game). A
 - **Deploy only on explicit "deploy."** Everything here ships local-first; wait for the word.
 - **Copy conventions:** "Guess the [Overwatch] hero" (Quote keeps "Identify both speakers"); em dashes + stray hyphens sparse.
 
-## Open questions for Yash
+## Open questions for Yash — RESOLVED 2026-07-09
 
-1. **Vote widget** — A, B, or C?
-2. **Maker note** — are you an OW player, and what's the honest origin story you're comfortable putting on the site?
-3. **Monetization** — how far to demote the tip jar / ads vs. keeping revenue visible?
+1. ~~**Vote widget** — A, B, or C?~~ → **Removed from homepage entirely** → new `/whats-next` page, quiet link under the sister cards.
+2. ~~**Maker note** — OW player? origin story?~~ → **Yes.** Real story supplied (Season 9/Mauga, sound-driven, Sound-mode origin) and shipped in `MakerNote.tsx`. Final copy tweak still welcome.
+3. ~~**Monetization** — how far to demote?~~ → **Light touch.** Tip jar centered but kept; sister cards unchanged.
+
+Still open:
+- **Maker-note copy sign-off** — read `MakerNote.tsx` and adjust wording/voice if wanted.
+- **P2 fan texture / Overwatch-style mode grid** — the Workshop language's **Phase 1 is BUILT locally (2026-07-12)** in this same working tree: Saira Condensed display promotion, `Plate` chips (hero date/NEXT + card win/miss states), payload-run header tracker (replaces the five dots), gold-at-3 streak flame, borderless home cards, mono-eyebrow retirement across user-facing chrome. Yash's scope cuts: NO hazard stripes, chamfer stays game-tile-only, no card outlines, wordmark hero kept. Victory/Defeat splash wording still undecided (Phase 3). See `project_owdle_design_language` memory + the Workshop artifact.
+- **Deploy** — everything is local-first; ship on Yash's explicit "deploy."
 
 ## Definition of done
 

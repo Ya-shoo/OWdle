@@ -81,7 +81,7 @@ export function AttributeTile({
         tooltip && "cursor-pointer",
       )}
     >
-      <div className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-70">
+      <div className="utility-label text-[9px] opacity-70">
         {result.label}
       </div>
       <div className="mt-1 flex items-center gap-1 font-display text-sm leading-tight sm:text-base">

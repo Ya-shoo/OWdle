@@ -45,7 +45,7 @@ export function DailyStatsBand() {
   if (!finish && !sweepReady) return null;
 
   return (
-    <div className="mt-3 flex flex-col items-center gap-1 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+    <div className="utility-label mt-3 flex flex-col items-center gap-1 text-center text-[10px] text-info">
       {finish && (
         <p>{finish.percent}% of starters finished today&apos;s set</p>
       )}

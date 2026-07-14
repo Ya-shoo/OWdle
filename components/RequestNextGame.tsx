@@ -307,7 +307,7 @@ export function RequestNextGame() {
     <div ref={wrapRef} className="flex h-full flex-col">
       {submitted ? (
           <>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-correct">
+            <p className="utility-label text-[10px] text-correct">
               ✓ Vote recorded
             </p>
             <h3 className="mt-2 font-soft text-xl font-bold text-ink sm:text-2xl">
@@ -320,7 +320,7 @@ export function RequestNextGame() {
               Vote for another below.
             </p>
             {refreshIn ? (
-              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+              <p className="mt-3 utility-label text-[10px] text-ink-faint">
                 Vote again in{" "}
                 <span className="tabular-nums text-info">{refreshIn}</span>
               </p>
@@ -329,7 +329,7 @@ export function RequestNextGame() {
               <button
                 type="button"
                 onClick={reset}
-                className="inline-flex items-center gap-2 border border-line bg-canvas px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink transition-colors hover:border-edge hover:text-accent-soft"
+                className="inline-flex items-center gap-2 border border-line bg-canvas px-4 py-2 utility-label text-[11px] text-ink transition-colors hover:border-edge hover:text-accent-soft"
               >
                 Vote again →
               </button>
@@ -337,14 +337,14 @@ export function RequestNextGame() {
           </>
         ) : (
           <>
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+            <p className="utility-label text-[10px] text-info">
               Request the next game
             </p>
             <h3 className="mt-1.5 font-soft text-lg font-bold text-ink sm:text-xl">
               Which game should I work on next?
             </h3>
             {refreshIn ? (
-              <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+              <p className="mt-1.5 utility-label text-[10px] text-ink-faint">
                 Vote again in{" "}
                 <span className="tabular-nums text-info">{refreshIn}</span>
               </p>
@@ -396,13 +396,13 @@ export function RequestNextGame() {
                   <button
                     type="button"
                     onClick={reset}
-                    className="border-l border-line px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft transition-colors hover:text-ink"
+                    className="border-l border-line px-3 utility-label text-[10px] text-ink-soft transition-colors hover:text-ink"
                     aria-label="Clear selection"
                   >
                     ×
                   </button>
                 ) : searching ? (
-                  <span className="flex items-center px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                  <span className="flex items-center px-3 utility-label text-[10px] text-ink-faint">
                     …
                   </span>
                 ) : null}
@@ -469,7 +469,7 @@ export function RequestNextGame() {
                           <span className="block truncate text-sm text-ink">
                             {r.name}
                           </span>
-                          <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+                          <span className="block utility-label text-[10px] text-ink-faint">
                             {year(r.released) ?? "—"}
                             {already ? " · already voted" : ""}
                           </span>
@@ -481,14 +481,14 @@ export function RequestNextGame() {
               ) : null}
 
               {open && !selected && !searching && query.trim().length >= 2 && results.length === 0 ? (
-                <div className="absolute z-30 mt-px w-full border border-line bg-surface px-3 py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+                <div className="absolute z-30 mt-px w-full border border-line bg-surface px-3 py-3 utility-label text-[11px] text-ink-faint">
                   No matches.
                 </div>
               ) : null}
             </div>
 
             {status.tag === "error" ? (
-              <p className="mt-2 text-right font-mono text-[10px] uppercase tracking-[0.2em] text-far">
+              <p className="mt-2 text-right utility-label text-[10px] text-far">
                 {status.message}
               </p>
             ) : null}
@@ -508,11 +508,11 @@ export function RequestNextGame() {
 function Leaderboard({ data }: { data: LeaderEntry[] | null }) {
   return (
     <div className="mt-4 border-t border-line pt-3">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+      <p className="utility-label text-[10px] text-info">
         Current top picks
       </p>
       {data === null ? (
-        <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+        <p className="mt-2 utility-label text-[11px] text-ink-faint">
           Loading…
         </p>
       ) : data.length === 0 ? (

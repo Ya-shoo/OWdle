@@ -24,10 +24,11 @@ import { NextResetCountdown } from "./NextResetCountdown";
 //      and name. The whole card is the tap-through button.
 //   2. Auto-advance strip (first-day players only — see below).
 //   3. Progress track — every built mode as a glyph node on a hairline
-//      rail: green ✓ badge when won, red ✕ when lost, accent glow on
-//      the recommended next mode, muted for the rest. Each node links
-//      to its mode, so the track doubles as quick nav while teaching
-//      the five-game daily structure at the exact moment one fills in.
+//      rail: green ✓ badge when won, red ✕ when lost, muted for the
+//      rest. Display-only — it teaches the five-game daily structure at
+//      the moment one fills in, while the "Up next" card above owns the
+//      next-mode nav, so the track doesn't compete with it (or the
+//      jump-to-any-mode footer grid rendered lower on the page).
 //
 // Routing rule: walk canonical play order, skip already-finished modes
 // (won or gave up), and recommend the first remaining one. When everything
@@ -371,13 +372,13 @@ export function NextModeCTA({
         <Link
           href={`/${next.slug}/`}
           onClick={makeNavClick(next.slug)}
-          className="group flex w-full items-center gap-3 rounded-(--radius-card) border border-accent/50 bg-accent/10 p-3 pr-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.35)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent hover:bg-accent/15 active:scale-[0.99]"
+          className="group flex w-full items-center gap-3 rounded-(--radius-card) border border-edge bg-card p-3 pr-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.35)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent-soft active:scale-[0.99]"
         >
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent shadow-[0_0_10px_-2px_var(--accent)]">
             <ModeGlyph slug={next.slug} className="h-6 w-6" />
           </span>
           <span className="flex min-w-0 flex-1 flex-col gap-1 text-left">
-            <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-accent-soft">
+            <span className="utility-label text-[9px] text-accent-soft">
               Up next
             </span>
             <span className="font-display text-xl font-bold uppercase leading-none tracking-wide text-ink">
@@ -411,7 +412,7 @@ export function NextModeCTA({
             <button
               type="button"
               onClick={() => doCancel("stay")}
-              className="shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint underline-offset-4 transition-colors hover:text-ink hover:underline"
+              className="shrink-0 utility-label text-[10px] text-ink-faint underline-offset-4 transition-colors hover:text-ink hover:underline"
             >
               stay here
             </button>
@@ -428,19 +429,16 @@ export function NextModeCTA({
           />
           {stripModes.map((m) => {
             const outcome = init.status.get(m.slug) ?? "open";
-            const isNext = m.slug === next.slug;
-            const isCurrent = m.slug === current;
             const nodeClass =
-              // group/node scopes the hover so each node only reveals its
-              // own label; the scale pop carries the label up with it.
-              "group/node relative z-10 flex h-10 w-10 items-center justify-center rounded-full border bg-canvas transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.2] " +
+              // group/node scopes the hover so each node reveals only its
+              // own label. Display-only: the track shows progress (✓/✕/open)
+              // while the "Up next" card above owns the actual next-mode nav.
+              "group/node relative z-10 flex h-10 w-10 items-center justify-center rounded-full border bg-canvas " +
               (outcome === "won"
-                ? "border-correct/60 text-correct"
+                ? "border-correct text-correct"
                 : outcome === "lost"
-                  ? "border-wrong/50 text-wrong"
-                  : isNext
-                    ? "border-accent text-accent shadow-[0_0_10px_-2px_var(--accent)]"
-                    : "border-line text-ink-faint hover:border-edge hover:text-ink-soft");
+                  ? "border-line text-on-wrong"
+                  : "border-line text-ink-faint");
             const badge =
               outcome === "won" ? (
                 <NodeBadge kind="won" />
@@ -453,34 +451,16 @@ export function NextModeCTA({
                 ? ": solved"
                 : outcome === "lost"
                   ? ": missed"
-                  : isNext
-                    ? ": up next"
-                    : "");
-            const inner = (
-              <>
+                  : "");
+            return (
+              <span key={m.slug} className={nodeClass} aria-label={label}>
                 <ModeGlyph slug={m.slug} className="h-5 w-5" />
                 {badge}
-                {/* Hover/focus label — names the mode without waiting on
-                    the native title-tooltip delay. */}
-                <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm border border-line bg-canvas px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.18em] text-ink opacity-0 transition-opacity duration-150 group-hover/node:opacity-100 group-focus-visible/node:opacity-100">
+                {/* Hover label — names the mode on hover. */}
+                <span className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm border border-line bg-canvas px-1.5 py-0.5 utility-label text-[9px] text-ink opacity-0 transition-opacity duration-150 group-hover/node:opacity-100">
                   {m.label}
                 </span>
-              </>
-            );
-            return isCurrent ? (
-              <span key={m.slug} className={nodeClass} aria-label={label}>
-                {inner}
               </span>
-            ) : (
-              <Link
-                key={m.slug}
-                href={`/${m.slug}/`}
-                onClick={makeNavClick(m.slug)}
-                className={nodeClass}
-                aria-label={label}
-              >
-                {inner}
-              </Link>
             );
           })}
         </div>
@@ -500,7 +480,7 @@ export function NextModeCTA({
       transition={{ duration: 0.45, delay: 0.35 }}
       className="order-last flex w-full flex-col items-center gap-1 pt-2"
     >
-      <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
+      <span className="utility-label text-[10px] text-info">
         Next puzzle in
       </span>
       <NextResetCountdown

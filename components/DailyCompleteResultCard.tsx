@@ -127,27 +127,26 @@ export function DailyCompleteResultCard({
       className={
         "result-card mx-auto w-full max-w-lg rounded-(--radius-card) border p-5 sm:p-6 " +
         (tone === "won"
-          ? "border-line-correct bg-tint-correct"
-          : "border-line bg-tint-wrong")
+          ? "border-correct bg-win"
+          : "border-loss-edge bg-loss")
       }
     >
       <div className="flex flex-col gap-5">
         {/* Eyebrow row — daily-complete badge + date. */}
         <div
           className={
-            "flex items-baseline justify-between gap-3 border-b pb-3 " +
-            (tone === "won" ? "border-line-correct" : "border-line")
+            "flex items-baseline justify-between gap-3 border-b border-line pb-3"
           }
         >
           <span
             className={
-              "font-mono text-[10px] uppercase tracking-[0.22em] " +
+              "utility-label text-[10px] " +
               (tone === "won" ? "text-correct" : "text-on-wrong")
             }
           >
             <span aria-hidden>✓</span> Daily Complete
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+          <span className="utility-label text-[10px] text-ink-faint">
             {prettyDay(day)}
           </span>
         </div>
@@ -164,10 +163,10 @@ export function DailyCompleteResultCard({
             <span className="font-display text-3xl font-extrabold tabular-nums leading-none text-accent-soft sm:text-4xl">
               {totalGuesses}
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink-faint">
+            <span className="utility-label text-[10px] text-ink-faint">
               Total guesses
             </span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.18em]">
+            <span className="utility-label text-[9px]">
               <span className="text-correct">{wonCount}w</span>
               {lostCount > 0 && (
                 <>
@@ -203,7 +202,7 @@ export function DailyCompleteResultCard({
             one?" is the player's most natural next thought once they're
             done with today. */}
         <div className="flex flex-col items-center gap-1 border-t border-line pt-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
+          <span className="utility-label text-[10px] text-info">
             Next puzzle in
           </span>
           <NextResetCountdown
@@ -254,7 +253,7 @@ export function DailyCompleteResultCard({
     <div className="mx-auto mt-4 flex w-full max-w-lg flex-wrap items-center justify-between gap-3 px-1">
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-info underline-offset-4 hover:underline"
+        className="inline-flex items-center gap-1.5 utility-label text-[11px] text-info underline-offset-4 hover:underline"
       >
         ← Home
       </Link>
@@ -277,9 +276,9 @@ function ModeChip({
       className={
         "flex items-center justify-between gap-1.5 rounded-(--radius-card) border px-2.5 py-1.5 " +
         (won
-          ? "border-line-correct bg-inset"
+          ? "border-correct bg-inset"
           : "border-line bg-inset") +
-        (highlight ? " ring-1 ring-line-info" : "")
+        (highlight ? " ring-1 ring-info" : "")
       }
     >
       <div className="flex min-w-0 items-center gap-1.5">
@@ -298,7 +297,7 @@ function ModeChip({
       </div>
       <span
         className={
-          "shrink-0 font-mono text-[10px] tabular-nums uppercase tracking-[0.14em] " +
+          "shrink-0 utility-label text-[10px] tabular-nums " +
           (won ? "text-correct" : lost ? "text-on-wrong" : "text-ink-faint")
         }
       >

@@ -123,7 +123,7 @@ export function SplashGame() {
   if (!day || !state) {
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-ink-faint">
+        <div className="utility-label text-xs text-ink-faint">
           Loading…
         </div>
       </main>
@@ -218,10 +218,10 @@ export function SplashGame() {
     <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:py-16">
       <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-info">
+          <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline text-5xl text-ink sm:text-6xl">
+          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
             Spotlight
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
@@ -229,9 +229,8 @@ export function SplashGame() {
             out.
           </p>
         </div>
-        <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">
+        <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
-          <span className="mt-1 text-info">spotlight mode</span>
         </div>
       </header>
 
@@ -282,7 +281,7 @@ export function SplashGame() {
         <div className="mb-6 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <GuessRemaining used={state.guesses.length} cap={MAX_GUESSES} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <span className="utility-label text-[10px] text-ink-faint">
               zoom {zoom.toFixed(zoom < 2 ? 2 : 1)}×
             </span>
           </div>
@@ -316,7 +315,7 @@ export function SplashGame() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct bg-win p-4 sm:p-5"
             >
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -327,17 +326,17 @@ export function SplashGame() {
                     className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                   />
                   <div className="flex-1">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                    <div className="utility-label text-[10px] text-info">
                       Solved
                     </div>
-                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                    <div className="mt-1 font-display text-2xl font-bold text-ink sm:text-3xl">
                       {answer.name}{" "}
                       <span className="text-ink-soft">
                         in {state.guesses.length}
                       </span>
                     </div>
                     {skinRevealed && (
-                      <div className="mt-2 flex items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] sm:justify-start">
+                      <div className="mt-2 flex items-center justify-center gap-2 utility-label text-[11px] sm:justify-start">
                         <span
                           className={
                             skinRevealed.rarity === "legendary"
@@ -418,11 +417,11 @@ export function SplashGame() {
                   className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                 />
                 <div className="flex-1">
-                  <div className="font-display text-2xl text-ink sm:text-3xl">
+                  <div className="font-display text-2xl font-bold text-ink sm:text-3xl">
                     {answer.name}
                   </div>
                   {skin && (
-                    <div className="mt-2 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em]">
+                    <div className="mt-2 flex items-center gap-2 utility-label text-[11px]">
                       <span
                         className={
                           skin.rarity === "legendary"
@@ -436,7 +435,7 @@ export function SplashGame() {
                       <span className="text-ink">{skin.name}</span>
                     </div>
                   )}
-                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                  <div className="mt-1 utility-label text-xs text-ink-faint">
                     after {state.guesses.length} wrong{" "}
                     {state.guesses.length === 1 ? "guess" : "guesses"}
                   </div>
@@ -463,14 +462,6 @@ export function SplashGame() {
           })}
         </AnimatePresence>
       </div>
-
-      {state.guesses.length === 0 && !ended && (
-        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-            Look closely. You only get {MAX_GUESSES} guesses.
-          </p>
-        </div>
-      )}
     </main>
   );
 }
@@ -549,17 +540,17 @@ function SplashDailyComplete({
         className="h-14 w-14 rounded-(--radius-card) bg-muted object-cover sm:h-16 sm:w-16"
       />
       <div className="min-w-0 flex-1">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+        <div className="utility-label text-[10px] text-info">
           Spotlight {outcome === "won" ? "Solved" : "Missed"}
         </div>
-        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+        <div className="mt-0.5 truncate font-display text-xl font-bold text-ink sm:text-2xl">
           {answer.name}
           {outcome === "won" && (
             <span className="text-ink-soft"> in {guesses}</span>
           )}
         </div>
         {skin && (
-          <div className="mt-0.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
+          <div className="mt-0.5 flex items-center gap-2 utility-label text-[10px]">
             <span
               className={
                 skin.rarity === "legendary"

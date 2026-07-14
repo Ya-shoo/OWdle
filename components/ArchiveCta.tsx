@@ -43,7 +43,7 @@ export function ArchiveCta({
         <span className="font-display text-base font-bold uppercase leading-none tracking-wide text-ink">
           Archive
         </span>
-        <span className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+        <span className="utility-label mt-1 text-[10px] text-ink-faint">
           {subline}
         </span>
       </span>

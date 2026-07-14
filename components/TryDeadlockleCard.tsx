@@ -31,7 +31,7 @@ export function TryDeadlockleCard({ compact = false }: { compact?: boolean }) {
         <div className="relative flex flex-col gap-3">
           <div className="flex-1">
             <p className="utility-label text-[10px] text-info">Sister site</p>
-            <h3 className="mt-1 font-display text-xl text-ink">
+            <h3 className="mt-1 font-display text-xl font-bold text-ink">
               Play{" "}
               <span style={{ color: "#d6a05c" }}>
                 Deadlock<span style={{ color: "#e9c694" }}>le</span>

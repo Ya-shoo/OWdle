@@ -27,13 +27,22 @@ export type ModeState = {
   // reload. Pre-Phase-3 saves omit this; the renderer falls back to
   // appending hints at the end of the timeline.
   hintOrder?: number[];
-  // Archive mode only: the answer hero key, stamped at first play. The
-  // daily never sets this (today's answer is stable within a day). Archive
-  // replays PAST days whose answer is re-derived from the daily bag, which
-  // reshuffles if ANSWER_POOL changes (a hero ships / gets completed) —
-  // pinning the answer here keeps a replayed round stable across such a
-  // change instead of silently swapping the hero under a stored result.
+  // The answer hero key, stamped at first play. Archive replays PAST days
+  // whose answer is re-derived from the daily bag, which reshuffles if
+  // ANSWER_POOL changes (a hero ships / gets completed) — pinning the answer
+  // here keeps a replayed round stable across such a change instead of
+  // silently swapping the hero under a stored result. The Sound daily also
+  // stamps it on saved states so its reload rotation-guard can tell a genuine
+  // mid-day seed rotation from an ordinary same-day loss (which must survive
+  // reload); the other daily modes leave it unset.
   answerKey?: string;
+  // Sound archive only: the clip slug, stamped alongside answerKey. Sound's
+  // clue is a specific (hero, clip) pair — the bonus options and reveal
+  // video are keyed to the clip — so pinning the hero isn't enough. The
+  // sound daily bag can reshuffle a hero's clip order (a new clip ships)
+  // and shift which hero a past day lands on; stamping the slug too keeps a
+  // replayed Sound round on the exact clip the player first heard.
+  answerClip?: string;
   // Post-win bonus round (Sound: which ability was the clip? Splash:
   // which skin is this?). Optional; only those modes read/write this.
   bonus?: {
@@ -116,6 +125,8 @@ export function loadModeState(mode: string, day: string): ModeState {
       hintOrder: normalizeHintOrder(parsed.hintsUsed, parsed.hintOrder),
       answerKey:
         typeof parsed.answerKey === "string" ? parsed.answerKey : undefined,
+      answerClip:
+        typeof parsed.answerClip === "string" ? parsed.answerClip : undefined,
       bonus: parsed.bonus,
     };
   } catch {

@@ -170,7 +170,7 @@ export function QuoteGame() {
   if (!day || !state) {
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-ink-faint">
+        <div className="utility-label text-xs text-ink-faint">
           Loading…
         </div>
       </main>
@@ -326,10 +326,10 @@ export function QuoteGame() {
     <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:py-16">
       <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-info">
+          <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline text-5xl text-ink sm:text-6xl">
+          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
             Quote
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
@@ -337,9 +337,8 @@ export function QuoteGame() {
             More dialogue is revealed as you go.
           </p>
         </div>
-        <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">
+        <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
-          <span className="mt-1 text-info">conversation mode</span>
         </div>
       </header>
 
@@ -380,11 +379,11 @@ export function QuoteGame() {
       {!ended && (
         <div className="mb-6 space-y-3">
           {bonusActive && bonusMissingSpeaker && (
-            <div className="flex items-center justify-between gap-3 border border-accent/60 bg-accent/10 px-3 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
+            <div className="flex items-center justify-between gap-3 border border-edge bg-card px-3 py-2.5 utility-label text-[10px] text-accent">
               <span>
                 Last-life bonus · one more shot at {bonusMissingSpeaker.name}
               </span>
-              <span className="text-accent/80">earned by clutch</span>
+              <span className="text-accent-soft">earned by clutch</span>
             </div>
           )}
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -392,7 +391,7 @@ export function QuoteGame() {
               used={bonusActive ? MAX_GUESSES : state.guesses.length}
               cap={bonusActive ? MAX_GUESSES + 1 : MAX_GUESSES}
             />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <span className="utility-label text-[10px] text-ink-faint">
               {(aRevealed ? 1 : 0) + (bRevealed ? 1 : 0)} / 2 found
               {guessesUntilNextAudio !== null && (
                 <>
@@ -450,7 +449,7 @@ export function QuoteGame() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct bg-win p-4 sm:p-5"
             >
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -469,10 +468,10 @@ export function QuoteGame() {
                     />
                   </div>
                   <div className="flex-1">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                    <div className="utility-label text-[10px] text-info">
                       Solved
                     </div>
-                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                    <div className="mt-1 font-display text-2xl font-bold text-ink sm:text-3xl">
                       {speakerA.name} & {speakerB.name}{" "}
                       <span className="text-ink-soft">
                         in {aGuessCount} - {bGuessCount}
@@ -555,10 +554,10 @@ export function QuoteGame() {
                   />
                 </div>
                 <div className="flex-1">
-                  <div className="font-display text-2xl text-ink sm:text-3xl">
+                  <div className="font-display text-2xl font-bold text-ink sm:text-3xl">
                     {speakerA.name} & {speakerB.name}
                   </div>
-                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                  <div className="mt-1 utility-label text-xs text-ink-faint">
                     {aRevealed && !bRevealed && (
                       <>caught Speaker A · missed Speaker B</>
                     )}
@@ -596,16 +595,6 @@ export function QuoteGame() {
           })}
         </AnimatePresence>
       </div>
-
-      {state.guesses.length === 0 && !ended && (
-        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-            Pick which speaker you&apos;re guessing, then enter a hero. Each
-            guess reveals more dialogue. Audio hints unlock at guess 5 and
-            guess 7. You have {MAX_GUESSES} guesses total.
-          </p>
-        </div>
-      )}
     </main>
   );
 }
@@ -629,7 +618,7 @@ function SpeakerToggle({
     <div
       role="tablist"
       aria-label="Choose which speaker to guess"
-      className="grid grid-cols-2 gap-1 rounded-(--radius-card) border border-line bg-inset/60 p-1"
+      className="grid grid-cols-2 gap-1 rounded-(--radius-card) border border-line bg-inset p-1"
     >
       <SpeakerSegment
         target={0}
@@ -677,8 +666,8 @@ function SpeakerSegment({
       : "text-accent-soft";
   const activeBg =
     tone === "info"
-      ? "bg-info/15 ring-1 ring-info/40"
-      : "bg-accent-soft/15 ring-1 ring-accent-soft/40";
+      ? "bg-info text-on-info"
+      : "bg-accent-soft text-on-accent";
 
   return (
     <button
@@ -688,12 +677,12 @@ function SpeakerSegment({
       disabled={revealed}
       onClick={onClick}
       className={clsx(
-        "flex min-h-[44px] items-center justify-center gap-2 rounded-(--radius-card) px-3 py-2 text-center font-mono text-[11px] uppercase tracking-[0.22em] transition-colors",
+        "flex min-h-[44px] items-center justify-center gap-2 rounded-(--radius-card) px-3 py-2 text-center utility-label text-[11px] transition-colors",
         revealed
-          ? "bg-correct/15 text-correct ring-1 ring-correct/40 cursor-default"
+          ? "bg-correct text-on-correct cursor-default"
           : active
-            ? clsx(activeBg, baseTone)
-            : clsx("bg-transparent text-ink-soft hover:bg-muted/40", baseTone),
+            ? activeBg
+            : clsx("bg-transparent hover:bg-muted", baseTone),
       )}
     >
       {revealed ? (
@@ -783,10 +772,10 @@ function ConversationCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="tile-shape relative w-full min-w-0 max-w-2xl overflow-hidden border border-line bg-muted/40 px-7 py-10 shadow-2xl shadow-black/10 sm:px-12 sm:py-14"
+      className="tile-shape relative w-full min-w-0 max-w-2xl overflow-hidden border border-line bg-muted px-7 py-10 shadow-2xl shadow-black/10 sm:px-12 sm:py-14"
     >
       {conversation.context && (
-        <p className="mb-7 font-mono text-[10px] uppercase tracking-[0.24em] text-info">
+        <p className="mb-7 utility-label text-[10px] text-info">
           {conversation.context}
         </p>
       )}
@@ -852,7 +841,7 @@ function ConversationLineRow({
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="mb-1.5 flex items-center justify-between gap-3">
-        <p className="font-mono text-[10px] uppercase tracking-[0.24em]">
+        <p className="utility-label text-[10px]">
           {revealed ? (
             <span className="text-correct">{speakerHero.name}</span>
           ) : (
@@ -879,7 +868,7 @@ function ConversationLineRow({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="font-display text-xl leading-snug text-ink sm:text-2xl [overflow-wrap:anywhere]"
+            className="font-soft text-xl leading-snug text-ink sm:text-2xl [overflow-wrap:anywhere]"
           >
             “{text}”
           </motion.p>
@@ -889,7 +878,7 @@ function ConversationLineRow({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="font-display text-xl leading-snug text-ink-faint sm:text-2xl select-none [overflow-wrap:anywhere]"
+            className="font-soft text-xl leading-snug text-ink-faint sm:text-2xl select-none [overflow-wrap:anywhere]"
             aria-hidden
           >
             {redactedFor(text)}
@@ -915,8 +904,8 @@ function LineAudioButton({
 }) {
   const toneClass =
     tone === "info"
-      ? "border-info/40 bg-info/10 text-info hover:bg-info/15"
-      : "border-accent-soft/50 bg-accent-soft/10 text-accent-soft hover:bg-accent-soft/15";
+      ? "border-line bg-muted text-info hover:border-info"
+      : "border-line bg-muted text-accent-soft hover:border-accent-soft";
   // A faint breathing halo once the round is over, hinting the line is
   // replayable. Suppressed while this line is actively playing (the active
   // icon already signals state) and offset per line so they don't strobe
@@ -1004,11 +993,11 @@ function ConversationGuessRow({
   // answers "which speaker was this guess for?".
   const speakerChip = isCorrect
     ? isA
-      ? "bg-info/25 text-info ring-info/70"
-      : "bg-accent-soft/25 text-accent-soft ring-accent-soft/70"
+      ? "bg-info text-on-info ring-info"
+      : "bg-accent-soft text-on-accent ring-accent-soft"
     : isA
-      ? "bg-info/15 text-info ring-info/45"
-      : "bg-accent-soft/15 text-accent-soft ring-accent-soft/45";
+      ? "bg-muted text-info ring-line"
+      : "bg-muted text-accent-soft ring-line";
   const results = compareHero(guess, speaker);
 
   const affiliationTooltip: TileTooltip | null = guess.affiliation_explanation
@@ -1040,7 +1029,7 @@ function ConversationGuessRow({
           <div className="truncate font-display text-base font-medium text-ink">
             {guess.name}
           </div>
-          <div className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+          <div className="truncate utility-label text-[10px] text-ink-faint">
             {guess.role} · {guess.subrole ?? "—"}
           </div>
         </div>
@@ -1106,10 +1095,10 @@ function QuoteDailyComplete({
         />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+        <div className="utility-label text-[10px] text-info">
           Quote {outcome === "won" ? "Solved" : "Missed"}
         </div>
-        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+        <div className="mt-0.5 truncate font-display text-xl font-bold text-ink sm:text-2xl">
           {speakerA.name} &amp; {speakerB.name}
           {outcome === "won" && (
             <span className="text-ink-soft">

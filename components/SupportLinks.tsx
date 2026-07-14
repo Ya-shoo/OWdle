@@ -137,7 +137,7 @@ export function SupportLinks() {
               method: "twitter_intent",
             });
           }}
-          className="-mt-1 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-[#4a5b74] transition-colors hover:text-[#1d7ab0]"
+          className="-mt-1 inline-flex items-center gap-1.5 utility-label text-[11px] text-[#4a5b74] transition-colors hover:text-[#1d7ab0]"
         >
           <ShareMark />
           Share on X

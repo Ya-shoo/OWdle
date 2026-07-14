@@ -42,16 +42,16 @@ export function TextShareBlock({ text, surface, dailyId, mode, share }: Props) {
     <div className="w-full">
       {/* select-all so a tap/click selects the whole block for manual
           copying even if the clipboard API is unavailable. */}
-      <div className="select-all whitespace-pre-line rounded-(--radius-card) border border-line bg-inset/40 px-4 py-4 text-center font-mono text-[13px] leading-relaxed text-ink">
+      <div className="select-all whitespace-pre-line rounded-(--radius-card) border border-line bg-inset px-4 py-4 text-center font-mono text-[13px] leading-relaxed text-ink">
         {text}
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
         <button
           type="button"
           onClick={copy}
-          className="inline-flex items-center gap-2 rounded-full bg-info/15 px-5 py-3 text-info ring-1 ring-info/40 transition-all hover:bg-info/25 hover:ring-info active:scale-[0.98]"
+          className="inline-flex items-center gap-2 border border-line bg-muted px-5 py-3 text-info transition-all hover:border-info active:scale-[0.98]"
         >
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
+          <span className="utility-label text-[11px]">
             {copied ? "Copied ✓" : "Copy text"}
           </span>
         </button>

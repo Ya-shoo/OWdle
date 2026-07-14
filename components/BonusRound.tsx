@@ -52,18 +52,18 @@ export function BonusRound({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.15 }}
-      className="rounded-(--radius-card) border border-line bg-inset/40 p-5 sm:p-6"
+      className="rounded-(--radius-card) border border-line bg-card p-5 sm:p-6"
     >
       <div className="mb-4 flex items-baseline justify-between">
         <p
           className={clsx(
-            "font-mono text-[10px] uppercase tracking-[0.24em]",
+            "utility-label text-[10px]",
             eyebrowColor,
           )}
         >
           {eyebrowText}
         </p>
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+        <p className="utility-label text-[10px] text-ink-faint">
           {answered ? "Answer revealed below" : "Pick the ability"}
         </p>
       </div>
@@ -146,19 +146,19 @@ function BonusOptionCard({
       className={clsx(
         "tile-shape group relative flex flex-col items-center gap-2 p-3 text-center transition-all",
         showAsRight
-          ? "border-2 border-correct bg-correct/20 shadow-[inset_0_0_0_1px_var(--tile-correct)]"
+          ? "border-2 border-correct bg-muted"
           : showAsWrong
-            ? "border-2 border-far bg-far/15"
+            ? "border-2 border-far bg-muted"
             : isPicked
-              ? "border border-accent bg-accent/10"
-              : "border border-line bg-muted/40 hover:border-accent/60 hover:bg-accent/5",
+              ? "border border-accent bg-muted"
+              : "border border-line bg-muted hover:border-edge",
         dimmed && "opacity-40",
         disabled && "cursor-default",
       )}
     >
       <div
         className={clsx(
-          "tile-shape relative flex items-center justify-center bg-canvas/60",
+          "tile-shape relative flex items-center justify-center bg-canvas",
           "h-14 w-14 sm:h-16 sm:w-16",
         )}
       >
@@ -171,7 +171,7 @@ function BonusOptionCard({
           />
         ) : (
           <span
-            className="font-display text-2xl text-accent-soft"
+            className="font-display text-2xl font-bold text-accent-soft"
             aria-hidden
           >
             {fallbackLetter}

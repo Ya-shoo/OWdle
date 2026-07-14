@@ -22,7 +22,10 @@ export function Brand({
   return (
     <Tag
       className={clsx(
-        "font-display display-headline tracking-tight",
+        // Saira Condensed carries the wordmark now — no negative tracking
+        // (condensed faces close up on their own; tight tracking clogs the
+        // counters at display sizes).
+        "font-display display-headline",
         sizeClasses,
         className,
       )}

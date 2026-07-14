@@ -49,11 +49,14 @@ export function TryBonusRoundNudge({
     );
   }
 
+  // Solid-accent pill matching the primary CTAs — full orange fill with dark
+  // on-accent text, a soft accent glow, and a tactile hover. Reads as a real
+  // "next thing to do" beside the streak chip, not a quiet dark link.
   return (
     <Link
       href={`/${FIRST_BONUS.slug}/`}
       className={
-        "group inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent transition-colors hover:border-accent hover:bg-accent/15 " +
+        "group inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 utility-label text-[11px] text-on-accent shadow-[0_2px_10px_-2px_rgba(0,0,0,0.45),0_0_10px_-3px_var(--accent)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-accent-soft hover:scale-[1.03] active:scale-[0.98] " +
         className
       }
     >

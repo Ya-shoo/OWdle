@@ -153,7 +153,7 @@ export default function HowToPlayPage() {
             <p className="font-mono text-xs uppercase tracking-[0.22em] text-info">
               Guide · Daily Overwatch Quiz
             </p>
-            <h1 className="mt-5 font-display display-headline text-5xl leading-[0.95] text-ink sm:text-6xl">
+            <h1 className="mt-5 font-display display-headline uppercase text-5xl leading-[0.95] text-ink sm:text-6xl">
               How to play <span className="text-accent">OWdle</span>
             </h1>
           </div>
@@ -212,7 +212,7 @@ export default function HowToPlayPage() {
           </div>
         </section>
 
-        <section className="mt-14 border-t border-line bg-inset/40 sm:mt-16">
+        <section className="mt-14 border-t border-line bg-inset sm:mt-16">
           <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-5 gap-y-3 px-6 py-7">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-info">
               Ready?

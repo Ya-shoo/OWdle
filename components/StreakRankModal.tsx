@@ -84,7 +84,7 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
 
         <div className="relative flex flex-col items-center gap-3 px-6 pb-6 pt-7 text-center">
           <span
-            className="font-mono text-[10px] uppercase tracking-[0.28em]"
+            className="utility-label text-[10px]"
             style={{ color: accent }}
           >
             New streak rank
@@ -117,7 +117,7 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
             OWdle streak holders.
           </p>
 
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+          <p className="utility-label text-[10px] text-ink-faint">
             <span className="tabular-nums text-accent">{streak}</span>-day streak
             {" · "}top{" "}
             <span className="tabular-nums text-accent-soft">{pct}</span>%
@@ -139,7 +139,7 @@ export function StreakRankModal({ tier, streak, onClose }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint transition-colors hover:text-ink-soft"
+              className="utility-label text-[10px] text-ink-faint transition-colors hover:text-ink-soft"
             >
               Keep it going
             </button>

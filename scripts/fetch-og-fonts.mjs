@@ -27,6 +27,9 @@ const FONTS = [
   { family: "Bricolage Grotesque", weight: 500, out: "bricolage-500.ttf" },
   { family: "IBM Plex Mono", weight: 500, out: "plex-mono-500.ttf" },
   { family: "Saira Condensed", weight: 500, out: "saira-condensed-500.ttf" },
+  // 800 carries the OWdle wordmark on the share cards (the brand face, per
+  // components/Brand.tsx). Bricolage 800 still sets the big result numbers.
+  { family: "Saira Condensed", weight: 800, out: "saira-condensed-800.ttf" },
 ];
 
 // The css2 endpoint serves TTF (not woff2) to legacy user agents —

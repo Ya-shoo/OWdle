@@ -23,42 +23,12 @@
      the mix resolves against whichever muted/border those set, so one line
      covers every rotation + holiday theme. */
   --bg-card: color-mix(in oklab, var(--bg-muted), var(--border-default) 80%);
-  /* tinted state surfaces + matching outlines — a state color mixed into an
-     OPAQUE base, per the solid-surfaces rule: tinted cards/buttons are solid
-     mixes, never an alpha wash over the canvas. Like --bg-card these are
-     mixes of live tokens (not per-theme hardcodes), so every rotation +
-     holiday palette derives its own tints for free and none of this needs
-     re-declaring in the [data-theme] blocks. -strong is the hover/emphasis
-     step of the same tint. Surfaced in @theme as bg-tint-* / border-line-*. */
-  --bg-tint-accent: color-mix(in oklab, var(--accent) 12%, var(--bg-surface));
-  --bg-tint-accent-strong: color-mix(
-    in oklab,
-    var(--accent) 18%,
-    var(--bg-surface)
-  );
-  --bg-tint-info: color-mix(in oklab, var(--info) 8%, var(--bg-surface));
-  --bg-tint-correct: color-mix(
-    in oklab,
-    var(--tile-correct) 12%,
-    var(--bg-surface)
-  );
-  --bg-tint-correct-strong: color-mix(
-    in oklab,
-    var(--tile-correct) 18%,
-    var(--bg-surface)
-  );
-  --bg-tint-wrong: color-mix(
-    in oklab,
-    var(--tile-wrong) 45%,
-    var(--bg-surface)
-  );
-  --border-tint-accent: color-mix(in oklab, var(--accent) 50%, var(--bg-surface));
-  --border-tint-info: color-mix(in oklab, var(--info) 32%, var(--bg-surface));
-  --border-tint-correct: color-mix(
-    in oklab,
-    var(--tile-correct) 45%,
-    var(--bg-surface)
-  );
+  /* NOTE: there are deliberately NO "tinted surface" tokens. A tinted card
+     body reads as a translucent wash even when the color is fully opaque,
+     and that look is banned (see AGENTS.md "solid surfaces"). State is
+     carried by a full-strength border (border-correct / border-edge), a
+     saturated chip (bg-accent / bg-info + text-on-*), or colored text on
+     a plain bg-card / bg-muted panel. */
   /* foreground */
   --fg-default: #f5efe6;
   --fg-muted: #b1a99d;
@@ -71,6 +41,11 @@
   --accent: #f26522;
   --accent-fg: #0a0e14;
   --accent-soft: #ffa466;
+  /* legendary gold — EARNED states only: wins, streak on fire, delivered
+     payload, rank. Never on anything interactive (orange acts, gold
+     rewards). Constant across holiday palettes, same as the accent. */
+  --gold: #f9a31c;
+  --gold-fg: #191104;
   /* secondary accent (signature OW blue — info, eyebrows, soon-tags) */
   --info: #2d9cdb;
   --info-on: #0a0e14;
@@ -83,8 +58,22 @@
   --tile-far-fg: #0a0e14;
   --tile-wrong: #1a2030;
   --tile-wrong-fg: #8b95a8;
-  /* fonts */
-  --theme-font-display: var(--font-bricolage);
+  /* result-card state surfaces — the ONE deliberate exception to the
+     "plain bg-card body, state on the border only" rule. The end-of-round
+     win/loss cards carry the outcome in the body itself: a deep saturated
+     green for a win, a soft muted red for a loss. Both are FULL-STRENGTH
+     SOLID fills (never an alpha tint), so the "nothing looks translucent"
+     rule still holds. win/loss = green/red are semantic constants like the
+     accent, so they live only here — no per-theme overrides. */
+  --bg-win: #16402a;
+  --bg-loss: #40222a;
+  --border-loss: #9c4652;
+  /* fonts — the display voice is Saira Condensed (the Workshop language:
+     tall, technical, real lowercase for the wordmark). Bricolage stays
+     loaded but is demoted to the SOFT voice only (greeter, maker note,
+     FAQ warmth) + the share-card surfaces that must keep parity with the
+     deployed OG renderer until the Phase-4 share-card pass. */
+  --theme-font-display: var(--font-saira);
   --theme-font-body: var(--font-plex-sans);
   --theme-font-mono: var(--font-plex-mono);
   --theme-font-soft: var(--font-bricolage);
@@ -101,15 +90,15 @@
     0 100%,
     0 8px
   );
-  /* elevation — dark-theme card lift. OWdle is a near-black board, so a
-     borderless shadow (the sisters' light-theme trick) barely registers;
-     these tight, slightly darker shadows pair with a hairline border + a
-     lighter-navy fill to let a mode card read as its own raised object on
-     the canvas. Surfaced as shadow-card / shadow-card-hover below. */
-  --elevation-card: 0 1px 2px rgba(0, 0, 0, 0.28),
-    0 2px 5px rgba(0, 0, 0, 0.2);
-  --elevation-card-hover: 0 2px 5px rgba(0, 0, 0, 0.34),
-    0 8px 18px rgba(0, 0, 0, 0.28);
+  /* elevation — dark-theme card lift. Home mode cards are BORDERLESS
+     (Yash: no outlines on cards), so the shadow carries the entire edge
+     definition on the near-black canvas: a tight contact line plus a
+     deeper ambient falloff, both a step darker than the old border-paired
+     values. Surfaced as shadow-card / shadow-card-hover below. */
+  --elevation-card: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.32);
+  --elevation-card-hover: 0 2px 5px rgba(0, 0, 0, 0.45),
+    0 12px 26px rgba(0, 0, 0, 0.38);
   /* motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -127,19 +116,12 @@
   --color-ink-faint: var(--fg-subtle);
   --color-line: var(--border-default);
   --color-edge: var(--border-strong);
-  --color-line-accent: var(--border-tint-accent);
-  --color-line-info: var(--border-tint-info);
-  --color-line-correct: var(--border-tint-correct);
-  --color-tint-accent: var(--bg-tint-accent);
-  --color-tint-accent-strong: var(--bg-tint-accent-strong);
-  --color-tint-info: var(--bg-tint-info);
-  --color-tint-correct: var(--bg-tint-correct);
-  --color-tint-correct-strong: var(--bg-tint-correct-strong);
-  --color-tint-wrong: var(--bg-tint-wrong);
   --color-hairline: var(--hairline);
   --color-accent: var(--accent);
   --color-on-accent: var(--accent-fg);
   --color-accent-soft: var(--accent-soft);
+  --color-gold: var(--gold);
+  --color-on-gold: var(--gold-fg);
   --color-info: var(--info);
   --color-on-info: var(--info-on);
   --color-correct: var(--tile-correct);
@@ -150,6 +132,9 @@
   --color-on-far: var(--tile-far-fg);
   --color-wrong: var(--tile-wrong);
   --color-on-wrong: var(--tile-wrong-fg);
+  --color-win: var(--bg-win);
+  --color-loss: var(--bg-loss);
+  --color-loss-edge: var(--border-loss);
   --font-display: var(--theme-font-display);
   --font-sans: var(--theme-font-body);
   --font-mono: var(--theme-font-mono);
@@ -387,19 +372,21 @@ footer {
 }
 
 .display-headline {
-  letter-spacing: -0.01em;
-  font-weight: 700;
+  letter-spacing: 0;
+  font-weight: 800;
 }
 
-/* Soft utility label — small functional text (counters, status pills,
-   section eyebrows). Bricolage instead of mono so it warms in with the
-   rest of the type system, but kept small + lightly tracked so it still
-   reads as a label rather than body copy. No uppercase: that's where the
-   old mono+caps treatment got rigid. */
+/* Utility label — small functional text (counters, status tags, section
+   labels). The Workshop voice: Saira Condensed bold caps with a modest
+   track, like the game client's own chip labels. This replaces BOTH the
+   old tracked-out mono eyebrows and the Bricolage soft label: mono is
+   reserved for aligned digits (countdowns), Bricolage for the soft voice
+   (greeter / maker note). Tabular figures so inline counts don't jitter. */
 .utility-label {
   font-family: var(--theme-font-display), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   font-feature-settings: "tnum";
 }
 
@@ -560,36 +547,6 @@ select {
   box-shadow:
     0 0 0 1px var(--accent),
     0 0 10px rgba(242, 101, 34, 0.55);
-}
-
-/* ---------- Begin CTA hover halo ----------
-   The Ken Burns banner continuously pans warm/light tones behind the
-   button. A static blurred halo can read as "fading away" once the
-   eye adapts to the new background, so the outer bloom gets a slow
-   gentle pulse while hovered to keep it perceptually present. A
-   crisper inner glow layer is paired with it for a hard-edged
-   presence cue that doesn't blend into bright banner content. */
-
-@keyframes begin-glow-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.07);
-  }
-}
-
-.begin-cta:hover .begin-halo,
-.begin-cta:focus-visible .begin-halo {
-  animation: begin-glow-pulse 2.4s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .begin-cta:hover .begin-halo,
-  .begin-cta:focus-visible .begin-halo {
-    animation: none;
-  }
 }
 
 /* ---------- Quote replay cue ----------

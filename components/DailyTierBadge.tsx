@@ -107,10 +107,10 @@ export function DailyTierBadge() {
 
   return (
     <div
-      className="relative flex flex-col items-center gap-2 border-y border-accent/25 py-4"
+      className="relative flex flex-col items-center gap-2 border-y border-line py-4"
       aria-label={`Daily rank: ${TIER_LABEL[tier]}, top ${topPercent}%`}
     >
-      <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
+      <span className="utility-label text-[10px] text-info">
         Daily Rank
       </span>
       <img
@@ -123,7 +123,7 @@ export function DailyTierBadge() {
       <span className="font-display text-2xl font-bold uppercase tracking-wide leading-none text-accent">
         {TIER_LABEL[tier]}
       </span>
-      <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink-faint">
+      <span className="utility-label text-[10px] text-ink-faint">
         Top <span className="tabular-nums text-accent-soft">{topPercent}%</span>
         {" "}of today&apos;s finishers
       </span>

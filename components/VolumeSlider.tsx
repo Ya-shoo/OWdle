@@ -30,7 +30,7 @@ export function VolumeSlider({ value, onChange, label = "Volume" }: Props) {
         onClick={toggleMute}
         aria-label={muted ? "Unmute" : "Mute"}
         aria-pressed={muted}
-        className="grid h-7 w-7 shrink-0 place-items-center rounded-(--radius-card) border border-line bg-inset/40 text-ink-soft transition-colors hover:border-accent/60 hover:text-accent focus-visible:border-accent focus-visible:text-accent"
+        className="grid h-7 w-7 shrink-0 place-items-center rounded-(--radius-card) border border-line bg-muted text-ink-soft transition-colors hover:border-edge hover:text-accent focus-visible:border-accent focus-visible:text-accent"
       >
         <SpeakerIcon muted={muted} level={value} />
       </button>
@@ -51,7 +51,7 @@ export function VolumeSlider({ value, onChange, label = "Volume" }: Props) {
         />
       </div>
 
-      <span className="w-10 shrink-0 text-right font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft tabular-nums">
+      <span className="w-10 shrink-0 text-right utility-label text-[10px] text-ink-soft tabular-nums">
         {pct}
         <span className="text-ink-faint">%</span>
       </span>

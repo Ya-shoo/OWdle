@@ -53,10 +53,10 @@ export function GuessRemaining({
   }[tone];
 
   const toneRing = {
-    info: "border-info/60",
-    partial: "border-partial/70",
-    accent: "border-accent/70",
-    far: "border-far/70",
+    info: "border-info",
+    partial: "border-partial",
+    accent: "border-accent",
+    far: "border-far",
   }[tone];
 
   return (
@@ -83,7 +83,7 @@ export function GuessRemaining({
         <span className="font-display text-2xl font-bold leading-none tabular-nums sm:text-3xl">
           {remaining}
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] opacity-70">
+        <span className="utility-label text-[10px] opacity-70">
           left
         </span>
       </span>

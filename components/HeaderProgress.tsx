@@ -23,11 +23,12 @@ const DOT_POP_MS = 700;
 // completion before fading back out.
 const COUNTER_FLASH_MS = 2500;
 
-// Tiny daily-progress indicator on the right side of the header. One
-// dot per built mode: green when won, bright red when lost (cap hit
-// without a solve), neutral hairline when not yet finished. The compact
-// "X / N" readout summarizes completed modes (won + lost) for
-// at-a-glance scoring.
+// Daily-progress indicator on the right side of the header, drawn as a
+// payload escort run (the Workshop language): one checkpoint diamond per
+// built mode — gold when won, red ✕ when lost (cap hit without a solve),
+// hollow when open — with a tiny payload cart that rolls one stop per
+// completion. The compact "X / N" readout summarizes completed modes
+// (won + lost) for at-a-glance scoring.
 //
 // The Header is rendered at the layout level and doesn't re-mount during
 // in-app navigation, so we subscribe to the same `feedback:refresh`
@@ -117,7 +118,7 @@ export function HeaderProgress() {
       <div
         aria-hidden
         className="flex items-center gap-1.5 opacity-0"
-        style={{ minWidth: BUILT_MODE_SLUGS.length * 14 }}
+        style={{ minWidth: 150 }}
       />
     );
   }
@@ -126,6 +127,15 @@ export function HeaderProgress() {
   const lostCount = statuses.filter((s) => s === "lost").length;
   const doneCount = wonCount + lostCount;
   const total = statuses.length;
+  const delivered = doneCount === total;
+
+  // Payload position. Checkpoints sit at i/(total-1) along the rail; after
+  // k completions the cart has rolled to the k-th checkpoint. Completion
+  // count (not per-mode index) drives it, so out-of-order play still reads
+  // as overall escort progress while each diamond keeps its own mode's
+  // won/lost color.
+  const cartPct =
+    doneCount === 0 ? 0 : ((doneCount - 1) / (total - 1)) * 100;
 
   const title = `${wonCount} won · ${lostCount} lost · ${total - doneCount} left`;
 
@@ -138,7 +148,7 @@ export function HeaderProgress() {
       <StreakRankBadge />
       {/* Mobile twin of the counter — mounts only during the flash
           window so phones (where the readout is normally hidden) see the
-          tally tick up at the moment a dot fills, then fade away. */}
+          tally tick up at the moment a checkpoint fills, then fade away. */}
       <AnimatePresence>
         {flash && (
           <motion.span
@@ -146,7 +156,7 @@ export function HeaderProgress() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent-soft sm:hidden"
+            className="utility-label text-[10px] text-accent-soft sm:hidden"
           >
             {doneCount} / {total}
           </motion.span>
@@ -154,45 +164,76 @@ export function HeaderProgress() {
       </AnimatePresence>
       <span
         className={
-          "hidden font-mono text-[10px] uppercase tracking-[0.2em] sm:inline " +
+          "utility-label hidden text-[10px] sm:inline " +
           (flash ? "counter-tick text-accent-soft" : "text-info")
         }
       >
         {doneCount} / {total}
       </span>
-      <div className="flex items-center gap-1.5">
+      {/* The payload run — the daily is an escort mission. One checkpoint
+          diamond per canonical mode (gold when won, red ✕ when lost,
+          hollow when open); the cart advances one stop per completion and
+          the cleared rail lights up behind it — gold once all five are
+          delivered, orange while the run is live. */}
+      <div className="relative h-3.5 w-[108px] sm:w-[140px]">
+        <span className="absolute left-0 right-0 top-1/2 h-[2px] -translate-y-1/2 bg-line" />
+        <span
+          className={
+            "absolute left-0 top-1/2 h-[2px] -translate-y-1/2 transition-[width] duration-700 ease-[var(--ease-out)] " +
+            (delivered ? "bg-gold" : "bg-accent")
+          }
+          style={{ width: doneCount === 0 ? 0 : `${cartPct}%` }}
+        />
         {statuses.map((status, i) => (
           <span
             key={i}
             className={
-              "flex items-center justify-center" +
+              "absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center" +
               (i === justDone ? " dot-pop" : "")
             }
+            style={{ left: `${(i / (total - 1)) * 100}%` }}
           >
             {status === "lost" ? (
-              <svg
-                viewBox="0 0 8 8"
-                aria-hidden
-                className="h-2 w-2 text-far"
-              >
+              <svg viewBox="0 0 8 8" aria-hidden className="h-2 w-2 text-far">
                 <path
                   d="M1.5 1.5 L6.5 6.5 M6.5 1.5 L1.5 6.5"
                   stroke="currentColor"
-                  strokeWidth="1.5"
+                  strokeWidth="1.8"
                   strokeLinecap="round"
                 />
               </svg>
+            ) : status === "won" ? (
+              <span className="h-2 w-2 rotate-45 bg-gold" />
             ) : (
-              <span
-                className={
-                  status === "won"
-                    ? "h-1.5 w-1.5 rounded-full bg-correct"
-                    : "h-1.5 w-1.5 rounded-full bg-line"
-                }
-              />
+              <span className="h-2 w-2 rotate-45 border-[1.5px] border-line bg-canvas" />
             )}
           </span>
         ))}
+        {/* The cart itself — rides ABOVE the rail (wheels kissing the line)
+            so the checkpoint it's parked on stays visible beneath it, one
+            stop per completed mode. Hidden until the first completion so a
+            fresh day reads as "five empty checkpoints", not "a cart parked
+            on an empty one". */}
+        {doneCount > 0 && (
+          <span
+            aria-hidden
+            className="absolute -top-[5px] -translate-x-1/2 transition-[left] duration-700 ease-[var(--ease-out)]"
+            style={{ left: `${cartPct}%` }}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14">
+              <rect
+                x="2"
+                y="3.5"
+                width="10"
+                height="5.5"
+                fill={delivered ? "var(--gold)" : "var(--accent)"}
+              />
+              <rect x="4" y="5" width="6" height="2.5" fill="var(--bg-base)" />
+              <circle cx="4.5" cy="10.5" r="1.4" fill="var(--fg-subtle)" />
+              <circle cx="9.5" cy="10.5" r="1.4" fill="var(--fg-subtle)" />
+            </svg>
+          </span>
+        )}
       </div>
     </div>
   );

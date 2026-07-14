@@ -5,25 +5,25 @@ import { useSearchParams } from "next/navigation";
 import { dayString } from "@/lib/daily";
 import { archiveWindow } from "@/lib/archive";
 import { ArchiveGrid } from "./ArchiveGrid";
-import { ClassicArchivePlay } from "./ClassicArchivePlay";
+import { SoundArchivePlay } from "./SoundArchivePlay";
 
-// Param-switched archive surface for Classic. ?d=<YYYY-MM-DD> renders that
-// day's replay; anything else renders the week grid. Reading useSearchParams
-// forces this subtree to client-render, so the page wraps it in <Suspense>
-// (required for the static-export build — see the page).
+// Param-switched archive surface for Sound. ?d=<YYYY-MM-DD> renders that day's
+// replay; anything else renders the week grid. Reading useSearchParams forces
+// this subtree to client-render, so the page wraps it in <Suspense> (required
+// for the static-export build — see the page). Mirrors ArchiveClassic.
 //
-// Validation is strict-by-membership: a `d` is only accepted if it's an
-// actual PAST day in the current rolling window. That rejects malformed,
-// out-of-range, and future dates, and excludes today (played live on
-// /classic, never replayed here) — all without a separate format regex.
-export function ArchiveClassic() {
+// Validation is strict-by-membership: a `d` is only accepted if it's an actual
+// PAST day in the current rolling window. That rejects malformed, out-of-range,
+// and future dates, and excludes today (played live on /sound, never replayed
+// here) — all without a separate format regex.
+export function ArchiveSound() {
   const params = useSearchParams();
   const d = params.get("d");
   const today = dayString();
   const isReplayable = !!d && d !== today && archiveWindow(today).includes(d);
 
   if (isReplayable) {
-    return <ClassicArchivePlay day={d} />;
+    return <SoundArchivePlay day={d} />;
   }
 
   return (
@@ -36,15 +36,15 @@ export function ArchiveClassic() {
           <span aria-hidden>←</span> All archives
         </Link>
         <h1 className="mt-4 font-display display-headline uppercase text-4xl text-ink sm:text-5xl">
-          Classic archive
+          Sound archive
         </h1>
         <p className="mt-3 max-w-md text-ink-soft">
-          Replay any of the past week&apos;s puzzles. Missed a day, or lost
-          one? Fill it in. It won&apos;t touch today&apos;s streak.
+          Replay any of the past week&apos;s clips. Missed a day, or lost one?
+          Fill it in. It won&apos;t touch today&apos;s streak.
         </p>
       </header>
 
-      <ArchiveGrid mode="classic" />
+      <ArchiveGrid mode="sound" />
     </div>
   );
 }

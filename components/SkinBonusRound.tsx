@@ -62,18 +62,18 @@ export function SkinBonusRound({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.15 }}
-      className="rounded-(--radius-card) border border-line bg-inset/40 p-5 text-center sm:p-6"
+      className="rounded-(--radius-card) border border-line bg-card p-5 text-center sm:p-6"
     >
       <p
         className={clsx(
-          "font-mono text-[10px] uppercase tracking-[0.24em]",
+          "utility-label text-[10px]",
           eyebrowColor,
         )}
       >
         {eyebrowText}
       </p>
 
-      <p className="mx-auto mt-2 mb-5 max-w-md font-display text-2xl leading-snug text-ink sm:text-3xl">
+      <p className="mx-auto mt-2 mb-5 max-w-md font-soft text-2xl leading-snug text-ink sm:text-3xl">
         {answered
           ? saved!.correct
             ? `It's the ${correctSkin?.name ?? "right"} skin!`
@@ -82,7 +82,7 @@ export function SkinBonusRound({
       </p>
 
       {answered ? (
-        <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em]">
+        <div className="flex flex-wrap items-center justify-center gap-2 utility-label text-[11px]">
           {correctSkin && (
             <>
               <span
@@ -252,7 +252,7 @@ function SkinGuessInput({
                   }}
                   className={clsx(
                     "flex cursor-pointer items-center justify-between gap-3 px-4 py-3 transition-colors sm:py-2.5",
-                    active ? "bg-muted" : "hover:bg-muted/60",
+                    active ? "bg-muted" : "hover:bg-muted",
                   )}
                 >
                   <span className="truncate font-medium text-ink">
@@ -260,7 +260,7 @@ function SkinGuessInput({
                   </span>
                   <span
                     className={clsx(
-                      "shrink-0 font-mono text-[10px] uppercase tracking-[0.18em]",
+                      "shrink-0 utility-label text-[10px]",
                       skin.rarity === "legendary"
                         ? "text-accent-soft"
                         : "text-info",
@@ -280,10 +280,10 @@ function SkinGuessInput({
         onClick={submit}
         disabled={!query.trim()}
         className={clsx(
-          "rounded-(--radius-card) border px-10 py-3 font-mono text-xs uppercase tracking-[0.24em] transition-all",
+          "rounded-(--radius-card) border px-10 py-3 utility-label text-xs transition-all",
           query.trim()
-            ? "border-accent bg-accent/10 text-accent hover:bg-accent/20 active:scale-[0.98]"
-            : "cursor-not-allowed border-line/60 bg-inset/30 text-ink-faint",
+            ? "border-accent bg-accent text-on-accent hover:bg-accent-soft active:scale-[0.98]"
+            : "cursor-not-allowed border-line bg-muted text-ink-faint",
         )}
       >
         Guess

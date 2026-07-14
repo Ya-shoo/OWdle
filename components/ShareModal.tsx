@@ -273,7 +273,7 @@ export function ShareModal({
         style={{ borderRadius: 14 }}
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          <p className="utility-label text-[10px] text-info">
             Share your result
           </p>
           <button
@@ -316,13 +316,13 @@ export function ShareModal({
               />
             ) : null}
             {ogStatus === "loading" && (
-              <div className="absolute inset-0 flex items-center justify-center font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+              <div className="absolute inset-0 flex items-center justify-center utility-label text-[10px] text-ink-faint">
                 Rendering preview…
               </div>
             )}
             {(ogStatus === "error" ||
               (ogStatus === "none" && !fallbackPreviewUrl)) && (
-              <div className="absolute inset-0 flex items-center justify-center px-6 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              <div className="absolute inset-0 flex items-center justify-center px-6 text-center utility-label text-[10px] text-ink-faint">
                 {ogStatus === "error"
                   ? "Preview unavailable. The link still unfurls when pasted"
                   : "Rendering…"}
@@ -331,7 +331,7 @@ export function ShareModal({
           </div>
 
           {/* Link readout — shows exactly what lands on the clipboard. */}
-          <div className="flex items-center gap-2 rounded-(--radius-card) border border-line bg-inset/60 px-3 py-2">
+          <div className="flex items-center gap-2 rounded-(--radius-card) border border-line bg-inset px-3 py-2">
             <code className="min-w-0 flex-1 truncate font-mono text-[12px] text-ink-soft">
               {url}
             </code>
@@ -343,7 +343,7 @@ export function ShareModal({
             onClick={handleCopyLink}
             className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-info px-5 py-3.5 text-on-info shadow-[0_2px_6px_-1px_rgba(0,0,0,0.3),0_0_4px_-1px_var(--info)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:brightness-110 active:scale-[0.99]"
           >
-            <span className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.22em]">
+            <span className="inline-flex items-center gap-2 utility-label text-[12px]">
               <LinkGlyph />
               Copy link
             </span>
@@ -355,7 +355,7 @@ export function ShareModal({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute inset-0 flex items-center justify-center gap-2 bg-info font-mono text-[12px] uppercase tracking-[0.22em]"
+                  className="absolute inset-0 flex items-center justify-center gap-2 bg-info utility-label text-[12px]"
                 >
                   <CheckGlyph />
                   Link copied
@@ -370,7 +370,7 @@ export function ShareModal({
             type="button"
             onClick={handleDownload}
             disabled={downloadBusy}
-            className="relative mx-auto inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint transition-colors hover:text-info disabled:opacity-50"
+            className="relative mx-auto inline-flex items-center gap-2 utility-label text-[10px] text-ink-faint transition-colors hover:text-info disabled:opacity-50"
           >
             <DownloadGlyph />
             {confirmed === "download"
@@ -381,7 +381,7 @@ export function ShareModal({
           </button>
 
           {actionError && (
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-wrong">
+            <p className="utility-label text-[10px] text-wrong">
               {actionError}
             </p>
           )}

@@ -187,11 +187,11 @@ export function FeedbackButton() {
         onClick={openDialog}
         aria-label={allDone ? "Send feedback. You finished every mode today" : "Send feedback"}
         className={clsx(
-          "fixed z-40 hidden items-center gap-2 backdrop-blur-sm transition-all md:inline-flex md:right-5",
+          "fixed z-40 hidden items-center gap-2 transition-all md:inline-flex md:right-5",
           isMapRoute ? "md:top-5" : "md:bottom-5",
           allDone
-            ? "border-2 border-correct bg-correct/15 px-5 py-3 font-mono text-xs uppercase tracking-[0.22em] text-correct shadow-[0_0_28px_-6px_var(--correct,#7fdc92)] hover:bg-correct/25"
-            : "border border-edge bg-surface/95 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-ink shadow-[0_4px_12px_rgba(0,0,0,0.35)] hover:border-info hover:text-info",
+            ? "utility-label border-2 border-correct bg-correct px-5 py-3 text-xs text-on-correct shadow-[0_0_28px_-6px_var(--correct,#7fdc92)] hover:brightness-110"
+            : "utility-label border border-edge bg-card px-4 py-2.5 text-[11px] text-ink shadow-[0_4px_12px_rgba(0,0,0,0.35)] hover:border-info hover:text-info",
         )}
       >
         {allDone ? <PingDot /> : null}
@@ -206,7 +206,7 @@ export function FeedbackButton() {
           type="button"
           onClick={openDialog}
           aria-label="Send feedback"
-          className="inline-flex items-center gap-2 border border-edge bg-surface/90 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-soft transition-colors hover:border-info hover:text-info"
+          className="utility-label inline-flex items-center gap-2 border border-edge bg-card px-4 py-2.5 text-[11px] text-ink-soft transition-colors hover:border-info hover:text-info"
         >
           <SpeechMark />
           Feedback
@@ -221,14 +221,14 @@ export function FeedbackButton() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-correct/60 bg-surface/95 px-4 py-3 shadow-[0_-6px_24px_rgba(0,0,0,0.55)] backdrop-blur-sm md:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-correct bg-surface px-4 py-3 shadow-[0_-6px_24px_rgba(0,0,0,0.55)] md:hidden"
           style={{ animation: "fb-slide-up 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both" }}
         >
           <div className="flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={openDialog}
-              className="inline-flex flex-1 items-center justify-center gap-2 border border-correct bg-correct/15 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.22em] text-correct"
+              className="utility-label inline-flex flex-1 items-center justify-center gap-2 border border-correct bg-correct px-4 py-2.5 text-[11px] text-on-correct"
             >
               <PingDot />
               <SpeechMark />
@@ -254,7 +254,7 @@ export function FeedbackButton() {
         className="m-auto w-[min(440px,92vw)] max-w-[92vw] border border-line bg-surface p-0 text-ink backdrop:bg-black/70 backdrop:backdrop-blur-sm"
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          <p className="utility-label text-[10px] text-info">
             Send feedback
           </p>
           <button
@@ -283,12 +283,12 @@ export function FeedbackButton() {
               rows={4}
               disabled={status === "sending" || status === "sent"}
               placeholder="Type your feedback…"
-              className="w-full resize-none border border-line bg-inset/60 p-3 font-sans text-base text-ink placeholder:text-ink-faint focus:border-info focus:outline-none disabled:opacity-60"
+              className="w-full resize-none border border-line bg-inset p-3 font-sans text-base text-ink placeholder:text-ink-faint focus:border-info focus:outline-none disabled:opacity-60"
             />
 
             <div className="flex items-center justify-between gap-3">
               <span
-                className={`font-mono text-[10px] uppercase tracking-[0.22em] ${
+                className={`utility-label text-[10px] ${
                   status === "error"
                     ? "text-red-400"
                     : status === "sent"
@@ -306,7 +306,7 @@ export function FeedbackButton() {
                 type="button"
                 onClick={submit}
                 disabled={!canSend}
-                className="border border-line bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink transition-colors hover:border-info hover:text-info disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
+                className="border border-line bg-surface px-4 py-2 utility-label text-[10px] text-ink transition-colors hover:border-info hover:text-info disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:hover:text-ink"
               >
                 {status === "sending" ? "Sending…" : "Send"}
               </button>

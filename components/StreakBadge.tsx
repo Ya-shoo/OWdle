@@ -34,10 +34,27 @@ function useStreak(): StreakState | null {
   return state;
 }
 
-// Streak-specific: fill is hardcoded fire-red rather than currentColor so
-// the flame keeps its identity even when the surrounding text color
-// shifts between accent (active streak) and ink-faint (zero state).
-function FlameIcon({ size = 14 }: { size?: number }) {
+// "On fire" threshold — the game's own on-fire meter logic applied to
+// streaks. Below it the flame burns ember-red; from here up the flame and
+// count go legendary gold (gold is EARNED, never interactive).
+const ON_FIRE_AT = 3;
+
+// Streak-specific: fill is tone-driven rather than currentColor so the
+// flame keeps its identity even when the surrounding text color shifts.
+// steel = no streak yet, ember = warming up (1-2), gold = on fire (3+).
+function FlameIcon({
+  size = 14,
+  tone = "ember",
+}: {
+  size?: number;
+  tone?: "steel" | "ember" | "gold";
+}) {
+  const fill =
+    tone === "gold"
+      ? "var(--gold)"
+      : tone === "steel"
+        ? "var(--fg-subtle)"
+        : "#ef4444";
   return (
     <svg
       viewBox="0 0 24 24"
@@ -45,7 +62,7 @@ function FlameIcon({ size = 14 }: { size?: number }) {
       height={size}
       aria-hidden
       className="shrink-0"
-      fill="#ef4444"
+      fill={fill}
     >
       <path d="M13.5 1.5c0 3 1.5 4 3 6s2 4 2 6c0 4-3 7-6.5 7s-6.5-3-6.5-7c0-2 1-3.5 2-4.5 0 2 1 2.5 2 1.5 0-1.5 0-3 1-4.5 1-1.5 2-2.5 3-5z" />
     </svg>
@@ -86,21 +103,25 @@ export function StreakBadge({ variant }: { variant: Variant }) {
           title="Finish every mode today to start a streak"
           aria-label="No active streak. Finish every mode today to start one."
         >
-          <FlameIcon size={18} />
+          <FlameIcon size={18} tone="steel" />
           <span className="font-sans text-lg font-bold tabular-nums">0</span>
         </span>
       );
     }
-    const title = `${streak.current}-day streak${
+    const lit = streak.current >= ON_FIRE_AT;
+    const title = `${streak.current}-day streak${lit ? " · on fire" : ""}${
       streak.longest > streak.current ? ` (best: ${streak.longest})` : ""
     }`;
     return (
       <span
-        className="inline-flex items-center gap-1.5 leading-none text-accent"
+        className={
+          "inline-flex items-center gap-1.5 leading-none " +
+          (lit ? "text-gold" : "text-accent")
+        }
         title={title}
         aria-label={title}
       >
-        <FlameIcon size={18} />
+        <FlameIcon size={18} tone={lit ? "gold" : "ember"} />
         <span className="font-sans text-lg font-bold tabular-nums">
           {streak.current}
         </span>
@@ -110,23 +131,27 @@ export function StreakBadge({ variant }: { variant: Variant }) {
 
   // Past the header branch, streak is guaranteed non-null with current > 0.
   if (!streak) return null;
-  const title = `${streak.current}-day streak${
+  const lit = streak.current >= ON_FIRE_AT;
+  const title = `${streak.current}-day streak${lit ? " · on fire" : ""}${
     streak.longest > streak.current ? ` (best: ${streak.longest})` : ""
   }`;
 
   if (variant === "hero") {
     return (
       <div
-        className="mt-6 inline-flex items-center gap-3 border border-accent/40 bg-accent/5 px-4 py-2.5 text-accent"
+        className={
+          "inline-flex items-center gap-3 border border-line bg-card px-4 py-2.5 " +
+          (lit ? "text-gold" : "text-accent")
+        }
         aria-label={title}
       >
-        <FlameIcon size={20} />
+        <FlameIcon size={20} tone={lit ? "gold" : "ember"} />
         <div className="text-left leading-none">
           <div className="font-sans text-lg font-semibold">
             <span className="tabular-nums">{streak.current}</span>-day streak
           </div>
           {streak.longest > streak.current && (
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <div className="utility-label mt-1 text-[10px] text-ink-faint">
               Best: <span className="tabular-nums">{streak.longest}</span>
             </div>
           )}
@@ -145,20 +170,24 @@ export function StreakBadge({ variant }: { variant: Variant }) {
         className="flex flex-col items-center gap-1 text-center"
         aria-label={title}
       >
-        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink-faint">
+        <span className="utility-label text-[10px] text-ink-faint">
           Streak
         </span>
-        <div className="flex items-baseline gap-2 text-accent">
-          <FlameIcon size={20} />
+        <div
+          className={
+            "flex items-baseline gap-2 " + (lit ? "text-gold" : "text-accent")
+          }
+        >
+          <FlameIcon size={20} tone={lit ? "gold" : "ember"} />
           <span className="font-display text-3xl font-extrabold tabular-nums leading-none sm:text-4xl">
             {streak.current}
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+          <span className="utility-label text-[10px] text-ink-faint">
             {streak.current === 1 ? "day" : "days"}
           </span>
         </div>
         {streak.longest > streak.current && (
-          <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-ink-faint">
+          <span className="utility-label text-[9px] text-ink-faint">
             Best: <span className="tabular-nums">{streak.longest}</span>
           </span>
         )}
@@ -172,23 +201,25 @@ export function StreakBadge({ variant }: { variant: Variant }) {
   // panel's green completion chrome.
   return (
     <div
-      className="relative flex flex-col items-center gap-2 border-y border-accent/25 py-3"
+      className="relative flex flex-col items-center gap-2 border-y border-line py-3"
       aria-label={title}
     >
-      <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-info">
-        Streak
-      </span>
-      <div className="flex items-baseline gap-3 text-accent">
-        <FlameIcon size={22} />
+      <span className="utility-label text-[10px] text-info">Streak</span>
+      <div
+        className={
+          "flex items-baseline gap-3 " + (lit ? "text-gold" : "text-accent")
+        }
+      >
+        <FlameIcon size={22} tone={lit ? "gold" : "ember"} />
         <span className="font-sans text-3xl font-bold tabular-nums leading-none">
           {streak.current}
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-faint">
+        <span className="utility-label text-[10px] text-ink-faint">
           {streak.current === 1 ? "day" : "days"}
         </span>
       </div>
       {streak.longest > streak.current && (
-        <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">
+        <span className="utility-label text-[9px] text-ink-faint">
           Best: <span className="tabular-nums">{streak.longest}</span>
         </span>
       )}

@@ -382,22 +382,19 @@ export function ClassicBoard({
       </div>
 
       {state.guesses.length === 0 && !ended && (
-        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset p-6 sm:p-8">
-          <p className="text-center font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-            Start by typing a hero name above.
-          </p>
+        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-muted p-6 sm:p-8">
           {/* First-guess legend — surfaces the tile-color semantics inline
               so first-time players don't have to detour to /how-to-play to
               interpret their first row of feedback. */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-line pt-4">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <span className="utility-label text-[10px] text-ink-faint">
               Tiles mean
             </span>
             <LegendChip color="correct" label="Match" />
             <LegendChip color="partial" label="Close" />
             <LegendChip color="far" label="Far" />
             <LegendChip color="wrong" label="Miss" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+            <span className="utility-label text-[10px] text-ink-faint">
               ↑ ↓ point toward the answer
             </span>
           </div>
@@ -461,7 +458,7 @@ function HintButton({
 }) {
   if (hintsRemaining <= 0) {
     return (
-      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+      <span className="utility-label text-[10px] text-ink-faint">
         Hints used
       </span>
     );
@@ -473,7 +470,7 @@ function HintButton({
       <button
         type="button"
         disabled
-        className="inline-flex cursor-not-allowed items-center gap-2 rounded-(--radius-card) border border-line bg-inset px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint"
+        className="inline-flex cursor-not-allowed items-center gap-2 rounded-(--radius-card) border border-line bg-muted px-3 py-1.5 utility-label text-[10px] text-ink-faint"
         title="Hint locked on your last guess."
       >
         <span aria-hidden className="grayscale">
@@ -491,7 +488,7 @@ function HintButton({
     const toSafety = Math.max(0, effectiveRemaining - 2);
     const need = Math.min(toThreshold, toSafety);
     return (
-      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+      <span className="utility-label text-[10px] text-ink-faint">
         Hint in {need} {need === 1 ? "guess" : "guesses"}
       </span>
     );
@@ -501,7 +498,7 @@ function HintButton({
       type="button"
       onClick={onClick}
       disabled={!canHint}
-      className="inline-flex items-center gap-2 rounded-(--radius-card) border border-line-accent bg-tint-accent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent transition-colors hover:bg-tint-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
+      className="inline-flex items-center gap-2 rounded-(--radius-card) border border-line bg-card px-3 py-1.5 utility-label text-[10px] text-accent transition-colors hover:border-edge disabled:cursor-not-allowed disabled:opacity-50"
       title={`${hintsRemaining} ${hintsRemaining === 1 ? "hint" : "hints"} remaining. Reveals one attribute and consumes one of your guesses.`}
     >
       <span aria-hidden>💡</span>
@@ -533,10 +530,10 @@ function HintGuessRow({
       initial={isLatest ? { opacity: 0, y: -12 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-col gap-3 rounded-(--radius-card) outline outline-2 outline-line-accent outline-offset-2 md:flex-row md:items-stretch md:gap-2"
+      className="flex flex-col gap-3 rounded-(--radius-card) outline outline-2 outline-accent outline-offset-2 md:flex-row md:items-stretch md:gap-2"
     >
       <div className="flex items-center gap-3 md:w-44 md:shrink-0 md:gap-3">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-(--radius-card) bg-tint-accent-strong text-accent ring-1 ring-line-accent">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-(--radius-card) bg-accent text-on-accent">
           <span aria-hidden className="text-2xl">
             💡
           </span>
@@ -545,7 +542,7 @@ function HintGuessRow({
           <div className="truncate font-display text-base font-bold uppercase tracking-wide text-accent">
             Hint
           </div>
-          <div className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+          <div className="truncate utility-label text-[10px] text-ink-faint">
             {meta?.label ?? attr} revealed
           </div>
         </div>
@@ -575,7 +572,7 @@ function HintGuessRow({
                 }}
                 className="tile-shape relative flex min-h-[72px] flex-col items-center justify-center bg-correct px-2 py-2 text-center text-on-correct sm:min-h-[80px]"
               >
-                <div className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-70">
+                <div className="utility-label text-[9px] opacity-70">
                   {a.label}
                 </div>
                 <div className="mt-1 flex items-center gap-1 font-display text-sm leading-tight sm:text-base">
@@ -587,7 +584,7 @@ function HintGuessRow({
           return (
             <div
               key={a.key}
-              className="tile-shape relative flex min-h-[72px] flex-col items-center justify-center border border-dashed border-line bg-inset px-2 py-2 text-center text-ink-faint sm:min-h-[80px]"
+              className="tile-shape relative flex min-h-[72px] flex-col items-center justify-center border border-dashed border-line bg-muted px-2 py-2 text-center text-ink-faint sm:min-h-[80px]"
               aria-hidden
             >
               <span className="font-display text-base leading-none">—</span>
@@ -651,7 +648,7 @@ function LegendChip({
         aria-hidden
         className={`tile-shape inline-block h-3 w-3 ${swatch}`}
       />
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft">
+      <span className="utility-label text-[10px] text-ink-soft">
         {label}
       </span>
     </span>

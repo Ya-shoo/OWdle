@@ -28,6 +28,7 @@ import { modeAttempts } from "@/lib/tier";
 import { SiteGreeter } from "./SiteGreeter";
 import { TryBonusRoundNudge } from "./TryBonusRoundNudge";
 import { ArchiveCta } from "./ArchiveCta";
+import { Plate } from "./Plate";
 
 // Home grid split (design decision: canonical daily stays exactly 5).
 //   • Daily grid — everything that isn't a bonus island: the 5 canonical
@@ -141,8 +142,8 @@ export function HomeContent() {
 
         {/* Daily grid — the 5 canonical modes + featured Map (greyed
             "Soon"). Standalone mode cards: rounded, separated by air, each
-            lifting off the canvas with a lighter-navy fill + hairline
-            border + a tight contained shadow — no seam grid delineating
+            lifting off the canvas with a lighter-navy fill + shadow only —
+            no outlines (Yash: borderless cards), no seam grid delineating
             them. */}
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {DAILY_MODES.map((mode) => (
@@ -222,7 +223,7 @@ export function HomeContent() {
         <div className="mt-6 flex justify-center">
           <Link
             href="/whats-next/"
-            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint transition-colors hover:text-info"
+            className="utility-label inline-flex items-center gap-2 text-[11px] text-ink-faint transition-colors hover:text-info"
           >
             What&rsquo;s next?
             <svg
@@ -252,26 +253,21 @@ export function HomeContent() {
 function DefaultHero({ day }: { day: string | null }) {
   return (
     <div>
-      {/* Date + countdown as two solid chips — never translucent text laid
-          straight on the banner. A saturated blue "Daily · <date>" tag pairs
-          with a dark card carrying the live "Next <countdown>" timer; both
-          are fully opaque and shadow-lifted so they read as real tags on any
+      {/* Date + countdown as two solid plates — never translucent text laid
+          straight on the banner. The saturated orange "Daily · <date>" plate
+          pairs with a steel plate carrying the live "Next <countdown>"
+          timer (the pairing Yash approved from the Workshop mock); both are
+          fully opaque and shadow-lifted so they read as real tags on any
           banner frame, bright or dark. */}
       <div className="flex flex-wrap items-center gap-3">
-        <span className="inline-flex -skew-x-12 items-center border border-info bg-info px-5 py-2 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.45)]">
-          <span
-            suppressHydrationWarning
-            className="skew-x-12 font-mono text-xs font-bold uppercase tracking-[0.16em] text-on-info"
-          >
+        <Plate tone="accent" size="lg">
+          <span suppressHydrationWarning>
             Daily · {day ? prettyDay(day) : "Today"}
           </span>
-        </span>
-        <span className="inline-flex -skew-x-12 items-center border border-line bg-card px-5 py-2 shadow-[0_2px_6px_-1px_rgba(0,0,0,0.45)]">
-          <NextResetCountdown
-            label="Next "
-            className="skew-x-12 font-mono text-xs font-bold uppercase tracking-[0.16em]"
-          />
-        </span>
+        </Plate>
+        <Plate tone="steel" size="lg">
+          <NextResetCountdown label="Next " />
+        </Plate>
       </div>
       <Brand as="h1" size="2xl" className="mt-6 leading-[0.95]" />
       <p
@@ -287,7 +283,7 @@ function DefaultHero({ day }: { day: string | null }) {
         <BeginButton />
         <Link
           href="/how-to-play/"
-          className="font-mono text-xs font-medium uppercase tracking-[0.22em] text-accent-soft transition-colors hover:text-accent"
+          className="utility-label text-xs text-accent-soft transition-colors hover:text-accent"
           style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.4)" }}
         >
           How to play →
@@ -301,35 +297,29 @@ function DefaultHero({ day }: { day: string | null }) {
 // the sequential progression. Always points at Classic — the modes grid
 // below carries the per-mode entry points for returning users. Body is
 // solid OW orange with dark ink so the eye snaps to it immediately even
-// against the warm tones the banner pans through.
+// against the warm tones the banner rotates through.
+//
+// Shape: the same −10° plate geometry as the hero chips above it (the
+// Workshop language — pills are retired). Content counter-skews +4° so
+// the label keeps the subtle forward lean. Hover grows the button toward
+// you (no Y-lift); active dips for a press-down feel.
 function BeginButton() {
   return (
-    <Link
-      href="/classic/"
-      className="begin-cta group relative inline-flex"
-      aria-label="Begin"
-    >
-      {/* button body — solid accent pill. Dark cast shadow underneath
-          for tactility; the orange rim is kept tight so it hugs the
-          edge rather than blooming outward. Hover scales the button up
-          (no Y-lift) so the affordance is "growth toward you" rather
-          than "lift off the page". Active dips below rest for a click
-          press-down feel. */}
-      <span
-        className="relative inline-flex items-center gap-4 rounded-full bg-accent px-7 py-5 font-display text-lg font-bold uppercase tracking-[0.18em] text-on-accent shadow-[0_2px_6px_-1px_rgba(0,0,0,0.4),0_0_4px_-1px_var(--accent)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-hover:bg-accent-soft group-hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.45),0_0_6px_-2px_var(--accent)] group-active:scale-[0.98] group-active:shadow-[0_1px_3px_-1px_rgba(0,0,0,0.35),0_0_2px_-1px_var(--accent)]"
-      >
-        {/* leading triangle — dark, matches label */}
-        <svg
-          aria-hidden
-          width="10"
-          height="12"
-          viewBox="0 0 10 12"
-          className="shrink-0 text-on-accent"
-        >
-          <polygon points="0,0 10,6 0,12" fill="currentColor" />
-        </svg>
-
-        <span>Begin</span>
+    <Link href="/classic/" className="group inline-flex" aria-label="Begin">
+      <span className="inline-flex -skew-x-[10deg] items-center bg-accent px-9 py-4 shadow-[0_3px_10px_-2px_rgba(0,0,0,0.5)] transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-hover:bg-accent-soft group-hover:shadow-[0_5px_14px_-2px_rgba(0,0,0,0.5)] group-active:scale-[0.98] group-active:shadow-[0_2px_5px_-1px_rgba(0,0,0,0.4)]">
+        <span className="inline-flex skew-x-[4deg] items-center gap-3.5 font-display text-xl font-extrabold uppercase tracking-[0.05em] text-on-accent">
+          {/* leading triangle — dark, matches label */}
+          <svg
+            aria-hidden
+            width="11"
+            height="13"
+            viewBox="0 0 10 12"
+            className="shrink-0"
+          >
+            <polygon points="0,0 10,6 0,12" fill="currentColor" />
+          </svg>
+          <span>Begin</span>
+        </span>
       </span>
     </Link>
   );
@@ -394,17 +384,17 @@ function DailyCompleteHero({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col items-center gap-10 sm:flex-row sm:items-center sm:gap-14"
+      className="flex flex-col items-center gap-10 sm:flex-row sm:items-center sm:justify-center sm:gap-14"
     >
-      <CompleteBadge count={count} totalGuesses={totalGuesses} />
-      <div className="flex-1 text-center sm:text-left">
+      <CompleteBadge count={count} wonCount={wonCount} totalGuesses={totalGuesses} />
+      <div className="text-center sm:w-[32rem] sm:text-left">
         <p
-          className="utility-label text-sm text-correct"
+          className={`utility-label text-sm ${sweep ? "text-correct" : "text-ink-soft"}`}
           style={{
             textShadow: "1px 1px 2px rgba(0,0,0,0.25)",
           }}
         >
-          <span aria-hidden>✓</span> Daily complete · {prettyDay(day)}
+          {prettyDay(day)}
           <span className="text-ink-faint"> · </span>
           <NextResetCountdown />
         </p>
@@ -415,8 +405,6 @@ function DailyCompleteHero({
               You swept all <span className="text-ink">{count}</span> modes
               today in{" "}
               <span className="text-ink">{totalGuesses}</span> total guesses.
-              New puzzles arrive at{" "}
-              <span className="text-ink">2:15am Pacific</span>.
             </>
           ) : (
             <>
@@ -424,12 +412,10 @@ function DailyCompleteHero({
               <span className="text-correct">{wonCount} won</span>,{" "}
               <span className="text-wrong">{lostCount} missed</span>,{" "}
               <span className="text-ink">{totalGuesses}</span> guesses total.
-              New puzzles arrive at{" "}
-              <span className="text-ink">2:15am Pacific</span>.
             </>
           )}
         </p>
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           <StreakBadge variant="hero" />
           <TryBonusRoundNudge />
         </div>
@@ -438,7 +424,7 @@ function DailyCompleteHero({
             the per-player card in chats that render previews. The
             link-first ShareButton rides in the block's action row —
             one share affordance, at the bottom. */}
-        <div className="mt-4">
+        <div className="mt-4 max-w-lg mx-auto sm:mx-0">
           <DailyTextShare
             day={day}
             results={results}
@@ -464,11 +450,14 @@ function DailyCompleteHero({
 
 function CompleteBadge({
   count,
+  wonCount,
   totalGuesses,
 }: {
   count: number;
+  wonCount: number;
   totalGuesses: number;
 }) {
+  const sweep = wonCount === count;
   return (
     <motion.div
       initial={{ scale: 0.78, opacity: 0, rotate: -8 }}
@@ -478,7 +467,7 @@ function CompleteBadge({
         delay: 0.1,
         ease: [0.34, 1.56, 0.64, 1],
       }}
-      className="relative shrink-0"
+      className={`relative shrink-0 ${sweep ? "text-correct" : "text-info"}`}
       style={{ width: 220, height: 252 }}
     >
       {/* Hexagonal frame — flat fill + sharp stroke */}
@@ -490,15 +479,17 @@ function CompleteBadge({
         {/* fill + sharp stroke */}
         <polygon
           points="110,4 215,63 215,189 110,248 5,189 5,63"
-          fill="rgba(74,222,128,0.12)"
-          stroke="var(--tile-correct)"
+          fill="currentColor"
+          fillOpacity={0.12}
+          stroke="currentColor"
           strokeWidth="1.75"
         />
         {/* inner hairline to suggest a double-rim */}
         <polygon
           points="110,16 203,68 203,184 110,236 17,184 17,68"
           fill="none"
-          stroke="rgba(74,222,128,0.35)"
+          stroke="currentColor"
+          strokeOpacity={0.35}
           strokeWidth="0.9"
         />
       </svg>
@@ -515,7 +506,7 @@ function CompleteBadge({
           }}
           aria-hidden
         >
-          <svg width="56" height="56" viewBox="0 0 56 56" className="text-correct">
+          <svg width="56" height="56" viewBox="0 0 56 56">
             <path
               d="M10 28 L24 42 L46 16"
               fill="none"
@@ -534,14 +525,14 @@ function CompleteBadge({
         >
           Daily complete
         </motion.div>
-        <div className="mt-3 h-px w-10 bg-correct" />
+        <div className="mt-3 h-px w-10 bg-current" />
         <motion.div
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.78 }}
-          className="mt-3 font-soft text-5xl font-extrabold leading-none text-correct"
+          className="mt-3 font-soft text-5xl font-extrabold leading-none"
         >
-          {count}
+          {wonCount}
           <span className="text-ink-soft">/</span>
           {count}
         </motion.div>
@@ -567,7 +558,7 @@ function ModeCard({
 }) {
   if (!mode.built) {
     return (
-      <div className="relative flex h-full flex-col rounded-(--radius-card) border border-line bg-muted p-6 shadow-card">
+      <div className="relative flex h-full flex-col rounded-(--radius-card) bg-muted p-6 shadow-card">
         <ModeCardInner label={mode.label} blurb={mode.blurb} dim>
           <span className="utility-label text-xs text-info">Soon</span>
         </ModeCardInner>
@@ -575,19 +566,22 @@ function ModeCard({
     );
   }
 
+  // Status chip logic — final states earn a solid plate (green for a win,
+  // red for a miss: plates mark OUTCOMES); live states stay quiet text
+  // labels so the only plates on the grid are earned ones.
   let tag: React.ReactNode;
   if (status?.won) {
     tag = (
-      <span className="utility-label text-xs text-correct">
+      <Plate tone="correct" size="sm" lift={false}>
         <span aria-hidden>✓</span> in {status.guesses}
-      </span>
+      </Plate>
     );
   } else if (status?.lost) {
     // Cap-hit loss — answer was revealed, no recovery.
     tag = (
-      <span className="utility-label text-xs text-wrong">
+      <Plate tone="far" size="sm" lift={false}>
         <span aria-hidden>✕</span> Missed
-      </span>
+      </Plate>
     );
   } else if (status?.gaveUp) {
     // Legacy Sound mode "Show answer" path. Same finished vibe as lost
@@ -601,7 +595,7 @@ function ModeCard({
   } else if (status && status.guesses > 0) {
     tag = (
       <span className="utility-label text-xs text-info">
-        {status.guesses} {status.guesses === 1 ? "guess" : "guesses"} · Resume →
+        {status.guesses} in · Resume →
       </span>
     );
   } else {
@@ -613,7 +607,7 @@ function ModeCard({
   return (
     <Link
       href={`/${mode.slug}/`}
-      className="group relative flex h-full flex-col rounded-(--radius-card) border border-line bg-card p-6 shadow-card transition-[transform,box-shadow] duration-200 ease-[var(--ease-spring)] hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:scale-[1.02] focus-visible:shadow-card-hover"
+      className="group relative flex h-full flex-col rounded-(--radius-card) bg-card p-6 shadow-card transition-[transform,box-shadow] duration-200 ease-[var(--ease-spring)] hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-card-hover focus-visible:-translate-y-0.5 focus-visible:scale-[1.02] focus-visible:shadow-card-hover"
     >
       <ModeCardInner label={mode.label} blurb={mode.blurb}>
         {tag}
@@ -639,7 +633,7 @@ function ModeCardInner({
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-3">
         <h3
-          className={`font-soft text-2xl font-bold ${dim ? "text-ink-soft" : "text-ink"}`}
+          className={`font-display text-2xl font-extrabold uppercase tracking-[0.02em] ${dim ? "text-ink-soft" : "text-ink"}`}
         >
           {label}
         </h3>

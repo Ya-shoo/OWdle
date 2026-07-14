@@ -24,11 +24,14 @@ import {
   SITE_URL,
 } from "@/lib/site";
 
+// Display voice (the Workshop language): tall condensed caps for the
+// wordmark, headings, plates, and utility labels. 800/900 carry the
+// wordmark + headline weight; 600/700 carry labels and chips.
 const saira = Saira_Condensed({
   variable: "--font-saira",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700", "800", "900"],
 });
 
 const plexSans = IBM_Plex_Sans({
@@ -45,9 +48,9 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
 });
 
-// Soft accent face — used sparingly for warm headline moments
-// (engagement cards, daily-complete celebration). Keeps the rest of the
-// page structural so this lands as warmth rather than inconsistency.
+// Soft accent face — the warm voice only (greeter, maker note, FAQ) plus
+// the share-card surfaces, which must keep visual parity with the deployed
+// OG renderer until the share-card design pass. No longer the display font.
 const bricolage = Bricolage_Grotesque({
   variable: "--font-bricolage",
   subsets: ["latin"],

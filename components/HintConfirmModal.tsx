@@ -92,7 +92,7 @@ export function HintConfirmModal({
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <p
                 id="hint-confirm-title"
-                className="font-mono text-[10px] uppercase tracking-[0.22em] text-info"
+                className="utility-label text-[10px] text-info"
               >
                 Reveal a hint?
               </p>
@@ -112,7 +112,7 @@ export function HintConfirmModal({
                 <span className="text-ink">costs you one guess.</span>
               </p>
 
-              <div className="rounded-(--radius-card) border border-line/60 bg-inset/40 px-3 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+              <div className="rounded-(--radius-card) border border-line bg-inset px-3 py-2.5 utility-label text-[10px] text-ink-faint">
                 <div className="flex items-center justify-between">
                   <span>Guesses remaining</span>
                   <span className="text-ink">
@@ -132,7 +132,7 @@ export function HintConfirmModal({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="border border-line bg-surface px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft transition-colors hover:border-ink hover:text-ink"
+                  className="border border-line bg-surface px-4 py-2 utility-label text-[10px] text-ink-soft transition-colors hover:border-ink hover:text-ink"
                 >
                   Cancel
                 </button>
@@ -140,14 +140,14 @@ export function HintConfirmModal({
                   type="button"
                   ref={confirmRef}
                   onClick={onConfirm}
-                  className="border border-accent bg-accent px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-on-accent transition-opacity hover:opacity-90"
+                  className="border border-accent bg-accent px-4 py-2 utility-label text-[10px] text-on-accent transition-opacity hover:opacity-90"
                 >
                   Reveal hint
                 </button>
               </div>
 
               {effectiveRemaining <= 2 && (
-                <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink-faint">
+                <p className="utility-label text-[9px] text-ink-faint">
                   Only {effectiveRemaining} {guessWord} left.
                 </p>
               )}

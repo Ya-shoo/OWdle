@@ -84,15 +84,13 @@ export function GreeterPoll({
               disabled={busy}
               onClick={() => vote(o.value)}
               className={`relative overflow-hidden rounded-lg border px-2.5 py-1.5 text-left text-[11px] outline-none transition-colors focus-visible:ring-1 focus-visible:ring-accent disabled:opacity-70 ${
-                mine
-                  ? "border-accent"
-                  : "border-canvas/25 hover:border-accent hover:bg-canvas/10"
+                mine ? "border-accent" : "border-canvas hover:border-accent"
               }`}
             >
               {showResults && (
                 <span
                   aria-hidden
-                  className={`absolute inset-y-0 left-0 ${mine ? "bg-accent/30" : "bg-canvas/12"}`}
+                  className={`absolute bottom-0 left-0 h-1 ${mine ? "bg-accent" : "bg-canvas"}`}
                   style={{ width: `${pct}%` }}
                 />
               )}

@@ -149,13 +149,13 @@ export function StreakRankPill({
       onClick={onClick}
       title={`${streak}-day streak · Streak Rank: ${label} · tap to share`}
       aria-label={`${streak} day streak. Streak rank: ${label}. Open to share.`}
-      className="hidden items-center gap-2 rounded-full border border-accent/40 bg-accent/5 px-2.5 py-1 text-accent transition-colors hover:border-accent hover:bg-accent/10 sm:inline-flex"
+      className="hidden items-center gap-2 rounded-full border border-line bg-card px-2.5 py-1 text-accent transition-colors hover:border-edge sm:inline-flex"
     >
       <FlamePip size={16} />
       <span className="font-sans text-sm font-bold tabular-nums leading-none">
         {streak}
       </span>
-      <span aria-hidden className="h-3.5 w-px bg-accent/30" />
+      <span aria-hidden className="h-3.5 w-px bg-line" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`/ranks/${tier}.png`}
@@ -165,7 +165,7 @@ export function StreakRankPill({
         style={{ width: 22, height: 22 }}
         className="object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]"
       />
-      <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em]">
+      <span className="utility-label text-[10px]">
         {label}
       </span>
     </button>

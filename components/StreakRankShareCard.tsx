@@ -17,8 +17,11 @@ import {
 const CARD_SIZE = 1080;
 const SITE = "playowdle.com";
 
+// Pinned to Bricolage (NOT --theme-font-display, which is now Saira) for
+// parity with the deployed OG renderer's self-hosted title font. Re-point
+// in the share-card design pass (with a RENDER_REV bump).
 const FONT_DISPLAY =
-  "var(--theme-font-display, 'Bricolage Grotesque'), system-ui, sans-serif";
+  "var(--font-bricolage, 'Bricolage Grotesque'), system-ui, sans-serif";
 const FONT_MONO =
   "var(--theme-font-mono, 'IBM Plex Mono'), ui-monospace, monospace";
 const FONT_STRUCT =

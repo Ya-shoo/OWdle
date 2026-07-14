@@ -148,7 +148,7 @@ export function ShareAnnounceModal() {
         style={{ borderRadius: 14, background: "#11161f" }}
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+          <p className="utility-label text-[10px] text-info">
             <span className="mr-2 rounded-full bg-info px-2 py-0.5 text-on-info">
               New
             </span>
@@ -191,7 +191,7 @@ export function ShareAnnounceModal() {
           <button
             type="button"
             onClick={dismiss}
-            className="inline-flex w-full items-center justify-center rounded-full bg-info px-5 py-3 font-mono text-[12px] uppercase tracking-[0.22em] text-on-info transition-all hover:brightness-110 active:scale-[0.99]"
+            className="utility-label inline-flex w-full items-center justify-center bg-info px-5 py-3 text-[12px] text-on-info transition-all hover:brightness-110 active:scale-[0.99]"
           >
             Got it
           </button>

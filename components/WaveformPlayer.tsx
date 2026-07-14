@@ -1097,7 +1097,7 @@ export function WaveformPlayer({
         type="button"
         onClick={handleBarClick}
         whileTap={{ scale: 0.99 }}
-        className="group relative w-full cursor-pointer overflow-hidden rounded-(--radius-card) border border-line bg-inset/40 px-4 py-5 transition-colors hover:border-accent/50 hover:bg-inset/70 focus-visible:border-accent focus-visible:outline-none sm:px-6 sm:py-6"
+        className="group relative w-full cursor-pointer overflow-hidden rounded-(--radius-card) border border-line bg-muted px-4 py-5 transition-colors hover:border-edge focus-visible:border-accent focus-visible:outline-none sm:px-6 sm:py-6"
         aria-label={barAriaLabel}
       >
         {loadError ? (
@@ -1115,7 +1115,7 @@ export function WaveformPlayer({
                 strokeLinejoin="round"
               />
             </svg>
-            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-soft">
+            <div className="utility-label text-[10px] text-ink-soft">
               Couldn&apos;t load audio · tap to retry
             </div>
           </div>
@@ -1132,7 +1132,7 @@ export function WaveformPlayer({
                 className="pointer-events-none absolute inset-0 flex items-center justify-center"
                 aria-hidden
               >
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                <div className="utility-label text-[10px] text-ink-faint">
                   Loading audio…
                 </div>
               </div>
@@ -1242,7 +1242,7 @@ export function WaveformPlayer({
                 className="pointer-events-none absolute inset-0 flex items-center justify-center"
                 aria-hidden
               >
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                <div className="utility-label text-[10px] text-ink-faint">
                   Loading audio…
                 </div>
               </div>
@@ -1253,7 +1253,7 @@ export function WaveformPlayer({
 
       <VolumeSlider value={volume} onChange={handleVolumeChange} />
 
-      <div className="flex items-baseline gap-2 font-mono text-[10px] uppercase tracking-[0.24em]">
+      <div className="flex items-baseline gap-2 utility-label text-[10px]">
         {variant === "melee" ? (
           // The whole clip is always playable in melee — no reveal ladder —
           // so just surface its length rather than "X of Y".
@@ -1280,7 +1280,7 @@ export function WaveformPlayer({
         )}
       </div>
       {playError && (
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-far">
+        <p className="utility-label text-[10px] text-far">
           {playError}
         </p>
       )}

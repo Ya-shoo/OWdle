@@ -151,7 +151,7 @@ export function HeroCombobox({
                 }}
                 className={clsx(
                   "flex cursor-pointer items-center gap-3 px-3 py-3 transition-colors sm:py-2",
-                  active ? "bg-muted" : "hover:bg-muted/60",
+                  active ? "bg-muted" : "hover:bg-muted",
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -165,7 +165,7 @@ export function HeroCombobox({
                 />
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-medium text-ink">{hero.name}</div>
-                  <div className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+                  <div className="truncate utility-label text-[10px] text-ink-faint">
                     {hero.role}
                   </div>
                 </div>

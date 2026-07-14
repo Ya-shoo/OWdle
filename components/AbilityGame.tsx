@@ -159,7 +159,7 @@ export function AbilityGame() {
   if (!day || !state) {
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="font-mono text-xs uppercase tracking-[0.2em] text-ink-faint">
+        <div className="utility-label text-xs text-ink-faint">
           Loading…
         </div>
       </main>
@@ -221,19 +221,18 @@ export function AbilityGame() {
     <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:py-16">
       <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-info">
+          <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline text-5xl text-ink sm:text-6xl">
+          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
             Ability
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
             An ability icon, revealed a little more with every miss. Guess the hero it belongs to.
           </p>
         </div>
-        <div className="hidden flex-col items-end font-mono text-xs uppercase tracking-[0.2em] text-ink-faint sm:flex">
+        <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
-          <span className="mt-1 text-info">ability mode</span>
         </div>
       </header>
 
@@ -274,7 +273,7 @@ export function AbilityGame() {
         <div className="mb-6 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <GuessRemaining used={state.guesses.length} cap={MAX_GUESSES} />
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+            <span className="utility-label text-[10px] text-ink-faint">
               {cellsRevealed} / {TOTAL_CELLS} tiles
             </span>
           </div>
@@ -308,7 +307,7 @@ export function AbilityGame() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct/40 bg-correct/10 p-4 sm:p-5"
+              className="result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border border-correct bg-win p-4 sm:p-5"
             >
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
@@ -319,10 +318,10 @@ export function AbilityGame() {
                     className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                   />
                   <div className="flex-1">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+                    <div className="utility-label text-[10px] text-info">
                       Solved
                     </div>
-                    <div className="mt-1 font-display text-2xl text-ink sm:text-3xl">
+                    <div className="mt-1 font-display text-2xl font-bold text-ink sm:text-3xl">
                       {answer.name}'s{" "}
                       <span className="italic">{ability.name}</span>{" "}
                       <span className="text-ink-soft">
@@ -396,10 +395,10 @@ export function AbilityGame() {
                   className="h-16 w-16 rounded-(--radius-card) bg-muted object-cover sm:h-20 sm:w-20"
                 />
                 <div className="flex-1">
-                  <div className="font-display text-2xl text-ink sm:text-3xl">
+                  <div className="font-display text-2xl font-bold text-ink sm:text-3xl">
                     {answer.name}'s <span className="italic">{ability.name}</span>
                   </div>
-                  <div className="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
+                  <div className="mt-1 utility-label text-xs text-ink-faint">
                     after {state.guesses.length} wrong{" "}
                     {state.guesses.length === 1 ? "guess" : "guesses"}
                   </div>
@@ -427,15 +426,6 @@ export function AbilityGame() {
           })}
         </AnimatePresence>
       </div>
-
-      {state.guesses.length === 0 && !ended && (
-        <div className="mt-10 rounded-(--radius-card) border border-dashed border-line bg-inset/40 p-8 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-ink-faint">
-            One tile is showing. Type a hero to reveal more. You get{" "}
-            {MAX_GUESSES} guesses.
-          </p>
-        </div>
-      )}
     </main>
   );
 }
@@ -453,23 +443,23 @@ function HardModeToggle({
       onClick={onToggle}
       aria-pressed={on}
       className={clsx(
-        "tile-shape group inline-flex items-center gap-2.5 border px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.22em] transition-colors",
+        "tile-shape group inline-flex items-center gap-2.5 border px-3.5 py-2 utility-label text-[10px] transition-colors",
         on
-          ? "border-accent/60 bg-accent/15 text-accent-soft hover:bg-accent/25"
-          : "border-line bg-muted/40 text-ink-faint hover:border-accent/40 hover:text-ink",
+          ? "border-edge bg-card text-accent-soft hover:border-accent-soft"
+          : "border-line bg-muted text-ink-faint hover:border-edge hover:text-ink",
       )}
     >
       <span
         aria-hidden
         className={clsx(
           "inline-flex h-4 w-7 items-center rounded-full border transition-colors",
-          on ? "border-accent bg-accent/40" : "border-line bg-muted",
+          on ? "border-accent bg-accent" : "border-line bg-muted",
         )}
       >
         <span
           className={clsx(
             "h-3 w-3 rounded-full transition-transform",
-            on ? "translate-x-3 bg-accent" : "translate-x-0.5 bg-ink-faint",
+            on ? "translate-x-3 bg-canvas" : "translate-x-0.5 bg-ink-faint",
           )}
         />
       </span>
@@ -504,8 +494,8 @@ function GuessCard({
       className={clsx(
         "tile-shape mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 border px-5 py-6",
         isCorrect
-          ? "border-correct/40 bg-correct/15"
-          : "border-far/40 bg-far/15",
+          ? "border-correct bg-card"
+          : "border-far bg-card",
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -516,7 +506,7 @@ function GuessCard({
         height={112}
         className="h-24 w-24 rounded-(--radius-card) bg-muted object-cover sm:h-28 sm:w-28"
       />
-      <div className="font-display text-2xl uppercase tracking-wide text-ink sm:text-3xl">
+      <div className="font-display text-2xl uppercase tracking-wide font-bold text-ink sm:text-3xl">
         {hero.name}
       </div>
     </motion.div>
@@ -549,7 +539,7 @@ function AbilityArtCard({
   return (
     <div className="flex flex-col items-center gap-5">
       <div
-        className="relative tile-shape border border-line bg-muted/40 p-4 shadow-2xl shadow-black/10 sm:p-5"
+        className="relative tile-shape border border-line bg-muted p-4 shadow-2xl shadow-black/10 sm:p-5"
         style={{ width: 240, height: 240 }}
       >
         <div className="relative h-full w-full">
@@ -591,8 +581,8 @@ function AbilityArtCard({
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   className={`bg-muted ${
-                    !isLastCol ? "border-r border-line/70" : ""
-                  } ${!isLastRow ? "border-b border-line/70" : ""}`}
+                    !isLastCol ? "border-r border-line" : ""
+                  } ${!isLastRow ? "border-b border-line" : ""}`}
                 />
               );
             })}
@@ -606,10 +596,10 @@ function AbilityArtCard({
           transition={{ duration: 0.4, delay: 0.2 }}
           className="text-center"
         >
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-info">
+          <p className="utility-label text-[10px] text-info">
             Ability
           </p>
-          <p className="mt-1 font-display text-2xl text-ink">{ability.name}</p>
+          <p className="mt-1 font-display text-2xl font-bold text-ink">{ability.name}</p>
           {ability.description && (
             <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">
               {ability.description}
@@ -644,10 +634,10 @@ function AbilityDailyComplete({
         className="h-14 w-14 rounded-(--radius-card) bg-muted object-cover sm:h-16 sm:w-16"
       />
       <div className="min-w-0 flex-1">
-        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-info">
+        <div className="utility-label text-[10px] text-info">
           Ability {outcome === "won" ? "Solved" : "Missed"}
         </div>
-        <div className="mt-0.5 truncate font-display text-xl text-ink sm:text-2xl">
+        <div className="mt-0.5 truncate font-display text-xl font-bold text-ink sm:text-2xl">
           {answer.name}&apos;s <span className="italic">{abilityName}</span>
           {outcome === "won" && (
             <span className="text-ink-soft"> in {guesses}</span>

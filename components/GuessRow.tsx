@@ -45,7 +45,7 @@ export function GuessRow({
         // stays a clean ~14px (16px - 2px outline) and the outline
         // never overlaps adjacent rows.
         matchAll &&
-          "rounded-(--radius-card) outline outline-2 outline-correct/50 outline-offset-2",
+          "rounded-(--radius-card) outline outline-2 outline-correct outline-offset-2",
       )}
     >
       {/* Hero portrait + name */}
@@ -62,7 +62,7 @@ export function GuessRow({
           <div className="truncate font-display text-base font-medium text-ink">
             {guess.name}
           </div>
-          <div className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint">
+          <div className="truncate utility-label text-[10px] text-ink-faint">
             {guess.role} · {guess.subrole ?? "—"}
           </div>
         </div>

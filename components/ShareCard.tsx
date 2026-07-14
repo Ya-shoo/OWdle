@@ -78,8 +78,16 @@ const CHIP_COLOR: Record<ModeSlug, string> = {
   map: "#3ecfbf", // teal (reserved for map mode)
 };
 
+// The WORDMARK uses the Saira brand face (FONT_BRAND), matching the OG
+// renderer's v3 switch (functions/og/r/[code].tsx — the wordmark moved to
+// Saira with a RENDER_REV bump). The big result NUMBERS stay on Bricolage
+// (FONT_DISPLAY), exactly as the OG card does, so the two keep pixel
+// parity. Move FONT_DISPLAY to Saira too only if the OG headline numbers
+// follow (bump RENDER_REV together).
+const FONT_BRAND =
+  "var(--theme-font-display, 'Saira Condensed'), system-ui, sans-serif";
 const FONT_DISPLAY =
-  "var(--theme-font-display, 'Bricolage Grotesque'), system-ui, sans-serif";
+  "var(--font-bricolage, 'Bricolage Grotesque'), system-ui, sans-serif";
 const FONT_MONO =
   "var(--theme-font-mono, 'IBM Plex Mono'), ui-monospace, monospace";
 const FONT_STRUCT =
@@ -518,10 +526,11 @@ function BrandPlate() {
           transform: PLATE_UNSKEW,
           display: "flex",
           alignItems: "baseline",
-          fontFamily: FONT_DISPLAY,
+          // Saira brand face; no negative tracking on the condensed caps.
+          fontFamily: FONT_BRAND,
           fontSize: 84,
           fontWeight: 800,
-          letterSpacing: "-0.02em",
+          letterSpacing: 0,
           lineHeight: 1,
           color: "#f5efe6",
         }}

@@ -46,7 +46,8 @@ type Handler = (ctx: HandlerCtx) => Promise<Response>;
 // a stale revision would serve the old look forever. The bump makes
 // every code re-render (and re-store) under fresh keys.
 // v2: added Melee round card (MODE_LABEL + SPRAY_FILE entries).
-const RENDER_REV = "v2";
+// v3: OWdle wordmark switched to the Saira Condensed brand face.
+const RENDER_REV = "v3";
 
 function r2Key(code: string): string {
   return `og-cache/owdle/${RENDER_REV}/${code}.png`;
@@ -92,6 +93,8 @@ const FONT_FILES = {
   bricolageMedium: "bricolage-500.ttf",
   plexMono: "plex-mono-500.ttf",
   sairaMedium: "saira-condensed-500.ttf",
+  // Brand face for the OWdle wordmark (see components/Brand.tsx). 800 weight.
+  sairaBold: "saira-condensed-800.ttf",
 } as const;
 
 const fontCache = new Map<string, ArrayBuffer>();
@@ -227,12 +230,13 @@ const handleOg: Handler = async ({ params, request }) => {
   // NEW glyph, add it to that script's SUBSET and regenerate, or it
   // draws as tofu. (✓/✕ are inline SVG paths, not text.)
   const fontOrigin = new URL(request.url).origin;
-  const [bricolageBold, bricolageMedium, plexMono, sairaMedium] =
+  const [bricolageBold, bricolageMedium, plexMono, sairaMedium, sairaBold] =
     await Promise.all([
       loadStaticFont(fontOrigin, FONT_FILES.bricolageBold),
       loadStaticFont(fontOrigin, FONT_FILES.bricolageMedium),
       loadStaticFont(fontOrigin, FONT_FILES.plexMono),
       loadStaticFont(fontOrigin, FONT_FILES.sairaMedium),
+      loadStaticFont(fontOrigin, FONT_FILES.sairaBold),
     ]);
 
   // Tally chips that flank the total-guesses number. Hints + missed
@@ -322,11 +326,14 @@ const handleOg: Handler = async ({ params, request }) => {
           <div
             style={{
               display: "flex",
-              fontFamily: "Bricolage Grotesque",
+              // OWdle wordmark in the Saira Condensed brand face (matches
+              // components/Brand.tsx). Condensed caps carry their own rhythm,
+              // so no negative tracking — tight tracking clogs the counters.
+              fontFamily: "Saira Condensed",
               fontWeight: 800,
               fontSize: 140,
               lineHeight: 0.9,
-              letterSpacing: "-0.02em",
+              letterSpacing: 0,
             }}
           >
             <span style={{ color: "#f5efe6" }}>OW</span>
@@ -564,6 +571,7 @@ const handleOg: Handler = async ({ params, request }) => {
         { name: "Bricolage Grotesque", data: bricolageMedium, weight: 500 },
         { name: "IBM Plex Mono", data: plexMono, weight: 500 },
         { name: "Saira Condensed", data: sairaMedium, weight: 500 },
+        { name: "Saira Condensed", data: sairaBold, weight: 800 },
       ],
     },
   );
@@ -754,11 +762,13 @@ async function renderRoundOg(
 
   // Self-hosted subsets (see loadStaticFont + scripts/fetch-og-fonts.mjs
   // for the glyph-coverage coupling).
-  const [bricolageBold, bricolageMedium, plexMono] = await Promise.all([
-    loadStaticFont(origin, FONT_FILES.bricolageBold),
-    loadStaticFont(origin, FONT_FILES.bricolageMedium),
-    loadStaticFont(origin, FONT_FILES.plexMono),
-  ]);
+  const [bricolageBold, bricolageMedium, plexMono, sairaBold] =
+    await Promise.all([
+      loadStaticFont(origin, FONT_FILES.bricolageBold),
+      loadStaticFont(origin, FONT_FILES.bricolageMedium),
+      loadStaticFont(origin, FONT_FILES.plexMono),
+      loadStaticFont(origin, FONT_FILES.sairaBold),
+    ]);
 
   const res = new ImageResponse(
     (
@@ -792,11 +802,14 @@ async function renderRoundOg(
           <div
             style={{
               display: "flex",
-              fontFamily: "Bricolage Grotesque",
+              // OWdle wordmark in the Saira Condensed brand face (matches
+              // components/Brand.tsx). Condensed caps carry their own rhythm,
+              // so no negative tracking — tight tracking clogs the counters.
+              fontFamily: "Saira Condensed",
               fontWeight: 800,
               fontSize: 140,
               lineHeight: 0.9,
-              letterSpacing: "-0.02em",
+              letterSpacing: 0,
             }}
           >
             <span style={{ color: "#f5efe6" }}>OW</span>
@@ -1015,6 +1028,7 @@ async function renderRoundOg(
         { name: "Bricolage Grotesque", data: bricolageBold, weight: 800 },
         { name: "Bricolage Grotesque", data: bricolageMedium, weight: 500 },
         { name: "IBM Plex Mono", data: plexMono, weight: 500 },
+        { name: "Saira Condensed", data: sairaBold, weight: 800 },
       ],
     },
   );

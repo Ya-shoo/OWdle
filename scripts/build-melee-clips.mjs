@@ -42,6 +42,20 @@ async function contentHash(path) {
 // files sit around 1–2MB and skip this entirely.
 const REENCODE_THRESHOLD_BYTES = 10 * 1024 * 1024;
 
+// Loudness target. Melee hits are mastered extremely quiet in-game — raw
+// captures land around -28 to -43 LUFS integrated, ~17-32 dB below the
+// target, which reads as "always too quiet" and can't be rescued by the
+// in-app volume boost (playback volume clamps at the clip's native
+// level). Normalize every clip with the same loudnorm engine the Sound
+// catalog uses (scripts/normalize-sounds.mjs) but at a HOTTER -11 LUFS
+// target: a melee clip is a brief percussive hit surrounded by quiet
+// ambient, so its integrated loudness reads low for a given perceived
+// level and needs a hotter target to feel as loud as sustained voice/
+// ability clips. Keep this in lockstep with scripts/fix-quiet-melee-
+// clips.mjs. The -1.5 dBTP ceiling still caps the impact, so nothing
+// clips. Idempotent: re-running on a normalized file is a near no-op.
+const LOUDNORM = "loudnorm=I=-11:TP=-1.5:LRA=7:linear=false";
+
 async function reencodeInPlace(path) {
   const tmp = `${path}.reencode.mp4`;
   await new Promise((res, rej) => {
@@ -61,6 +75,41 @@ async function reencodeInPlace(path) {
     );
     proc.on("exit", (code) =>
       code === 0 ? res() : rej(new Error(`ffmpeg exited ${code} for ${path}`)),
+    );
+    proc.on("error", rej);
+  });
+  await rename(tmp, path);
+}
+
+// Loudness-normalize a clip in place with the shared LOUDNORM filter.
+// Handles both the .mp3 (guessing phase) and the .mp4 reveal — the mp4
+// keeps its video stream (-c:v copy) and only its audio track is lifted.
+async function normalizeAudioInPlace(path) {
+  const isMp4 = path.endsWith(".mp4");
+  const tmp = `${path}.norm.${isMp4 ? "mp4" : "mp3"}`;
+  const args = isMp4
+    ? // prettier-ignore
+      [
+        "-hide_banner", "-loglevel", "error", "-y",
+        "-i", path,
+        "-c:v", "copy",
+        "-af", LOUDNORM, "-ar", "48000",
+        "-c:a", "aac", "-b:a", "128k",
+        "-movflags", "+faststart",
+        tmp,
+      ]
+    : // prettier-ignore
+      [
+        "-hide_banner", "-loglevel", "error", "-y",
+        "-i", path,
+        "-af", LOUDNORM, "-ar", "48000",
+        "-c:a", "libmp3lame", "-q:a", "2",
+        tmp,
+      ];
+  await new Promise((res, rej) => {
+    const proc = spawn(ffmpegPath, args, { stdio: ["ignore", "ignore", "inherit"] });
+    proc.on("exit", (code) =>
+      code === 0 ? res() : rej(new Error(`loudnorm exited ${code} for ${path}`)),
     );
     proc.on("error", rej);
   });
@@ -127,6 +176,16 @@ async function main() {
           await unlink(`${mp4Path}.reencode.mp4`).catch(() => {});
         }
       }
+    }
+    // Lift levels to the Sound-catalog target so melee isn't inaudibly
+    // quiet. Runs before hashing so the content hash reflects the shipped
+    // (normalized) bytes. A failure here keeps the original level rather
+    // than dropping the hero entirely.
+    try {
+      await normalizeAudioInPlace(mp3Path);
+      if (hasMp4) await normalizeAudioInPlace(mp4Path);
+    } catch (e) {
+      console.warn(`  ${hero}: loudnorm failed (${e.message}) — keeping original level`);
     }
     const duration = await probeDuration(mp3Path);
     if (duration == null || duration < 0.1) {

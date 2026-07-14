@@ -34,7 +34,7 @@ export function ModeStatsLine({
     <p
       className={
         className ??
-        "mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-faint"
+        "utility-label mt-1 text-[10px] text-ink-faint"
       }
     >
       {win.percent}% solved today&apos;s {MODE_LABEL[mode]}
