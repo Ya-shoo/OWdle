@@ -219,7 +219,15 @@ export function useSoundRound(opts: {
     [state?.guesses],
   );
 
-  if (!day || !clip || !state) return null;
+  // Hold at the loading state until the hydrated `state` matches the current
+  // `day`. On an archive next-day navigation the same instance gets the new
+  // day's `clip` one render before the hydration effect above swaps `state` —
+  // for that paint `state` is the previous round's terminal state while `clip`
+  // is already the new day's, which would flash the next day's reveal (source
+  // video + hero). Both loadModeState and freshState stamp `state.day`, so this
+  // is "has hydration caught up to the current day yet." See ClassicBoard for
+  // the full write-up of the flash.
+  if (!day || !clip || !state || state.day !== day) return null;
 
   const answer = clip.hero;
   const heroGuessKeys = state.guesses.filter((k) => HEROES_BY_KEY[k]);

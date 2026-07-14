@@ -182,7 +182,17 @@ export function useClassicRound(opts: {
     return entries;
   }, [state?.guesses, state?.hintsUsed, state?.hintOrder]);
 
-  if (!day || !answer || !state) return null;
+  // Hold at the loading state (return null) until the hydrated `state` matches
+  // the current `day`. On an archive next-day navigation the SAME component
+  // instance receives the new day's `answer` one render BEFORE the hydration
+  // effect above swaps `state` to the new day's — so for that single paint
+  // `state` is the PREVIOUS round's terminal (won/lost) state while `answer` is
+  // already the new day's hero. Rendering the reveal in that window flashes the
+  // next day's solution (the reported archive "solution flashes for a sec"
+  // bug). loadModeState/freshRound always stamp `state.day` to the day they
+  // were built for, so this comparison is exactly "has the effect caught up to
+  // the current day yet."
+  if (!day || !answer || !state || state.day !== day) return null;
 
   const hintsUsed: AttrKey[] = (state.hintsUsed ?? []) as AttrKey[];
   const effectiveUsed = state.guesses.length + hintsUsed.length;
