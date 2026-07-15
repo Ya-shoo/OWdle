@@ -8,11 +8,19 @@ import {
 import { CONVERSATIONS, type Conversation } from "./conversations";
 import {
   usesBag,
+  usesRotationV2,
   bagClassicHero,
   bagAbilityPick,
   bagSplashPick,
   bagSoundPick,
   bagQuoteConversation,
+  bagClassicHeroV2,
+  bagAbilityPickV2,
+  bagSplashPickV2,
+  bagSoundPickV2,
+  bagQuoteConversationV2,
+  CLASSIC_PINS,
+  SPLASH_PINS,
 } from "./dailyBag";
 import sfxData from "@/data/sfx.json";
 import soundClipsData from "@/data/sound-clips.json";
@@ -115,14 +123,10 @@ function fnv1a(s: string): number {
   return h >>> 0;
 }
 
-// Manual day -> hero pins for Classic, applied BEFORE the daily bag/hash.
-// Spotlights a specific hero on a specific Pacific puzzle day (e.g. a new
-// hero's launch). Only the named day is affected — the bag is not reshuffled,
-// so every other day's answer is unchanged; the bag's own pick for a pinned
-// day simply isn't shown that day. Key must be a valid hero key in heroes.json.
-const CLASSIC_PINS: Record<string, string> = {
-  "2026-06-18": "shion", // Shion launch spotlight
-};
+// Manual day -> hero pins for Classic (CLASSIC_PINS) and Splash (SPLASH_PINS)
+// live in dailyBag.ts so the v2 builders can honor them in the cooldown too.
+// Applied BEFORE the daily bag/hash: only the named day is affected, every
+// other day is unchanged. Key must be a valid hero key in heroes.json.
 
 export function getHeroForDay(day: string): Hero {
   if (ANSWER_POOL.length === 0) {
@@ -130,6 +134,7 @@ export function getHeroForDay(day: string): Hero {
   }
   const pinned = CLASSIC_PINS[day];
   if (pinned && HEROES_BY_KEY[pinned]) return HEROES_BY_KEY[pinned];
+  if (usesRotationV2(day)) return bagClassicHeroV2(day);
   if (usesBag(day)) return bagClassicHero(day);
   const idx = fnv1a(`owdle:classic:${day}`) % ANSWER_POOL.length;
   return ANSWER_POOL[idx];
@@ -172,6 +177,10 @@ export function getAbilityForDay(day: string): {
   if (ABILITY_POOL.length === 0) {
     throw new Error("ABILITY_POOL is empty");
   }
+  if (usesRotationV2(day)) {
+    const { hero, abilityIndex } = bagAbilityPickV2(day);
+    return { hero, ability: hero.abilities[abilityIndex], abilityIndex };
+  }
   if (usesBag(day)) {
     const { hero, abilityIndex } = bagAbilityPick(day);
     return { hero, ability: hero.abilities[abilityIndex], abilityIndex };
@@ -181,14 +190,6 @@ export function getAbilityForDay(day: string): {
   const abIdx = fnv1a(`owdle:ability:${day}:idx`) % hero.abilities.length;
   return { hero, ability: hero.abilities[abIdx], abilityIndex: abIdx };
 }
-
-// Manual day -> (hero, skin) pins for Splash, applied BEFORE the daily bag.
-// Spotlights a specific hero + skin on a specific Pacific puzzle day without
-// reshuffling the bag (every other day is unchanged). `skin` is a skin key
-// from skins.json; the named skin drives both the art and the post-win bonus.
-const SPLASH_PINS: Record<string, { hero: string; skin: string }> = {
-  "2026-06-19": { hero: "shion", skin: "cyber-biker" }, // Shion launch spotlight
-};
 
 // Splash mode picks a hero and one of that hero's skin variants
 // (Epic/Legendary). Since SPLASH_SKINS_ONLY_DAY (see dailyBag.ts) every
@@ -208,6 +209,14 @@ export function getSplashForDay(day: string): {
     const hero = HEROES_BY_KEY[pin.hero];
     const skin = hero?.skins.find((s) => s.key === pin.skin);
     if (hero && skin) return { hero, imageUrl: skin.file, skin };
+  }
+  if (usesRotationV2(day)) {
+    const { hero, skinIndex } = bagSplashPickV2(day);
+    if (skinIndex == null) {
+      return { hero, imageUrl: hero.splash_url!, skin: null };
+    }
+    const skin = hero.skins[skinIndex];
+    return { hero, imageUrl: skin.file, skin };
   }
   if (usesBag(day)) {
     const { hero, skinIndex } = bagSplashPick(day);
@@ -283,6 +292,12 @@ export type ResolvedSoundClip = {
 };
 
 export function getSoundForDay(day: string): ResolvedSoundClip {
+  if (usesRotationV2(day)) {
+    const { heroKey, clipSlug } = bagSoundPickV2(day);
+    const resolved = resolveLabeledSoundClip(heroKey, clipSlug);
+    if (resolved) return resolved;
+    // Fall through if the labeled-clip data has shifted since boot (rare).
+  }
   if (usesBag(day)) {
     const { heroKey, clipSlug } = bagSoundPick(day);
     const resolved = resolveLabeledSoundClip(heroKey, clipSlug);
@@ -522,6 +537,16 @@ export function getConversationForDay(day: string): {
 } {
   if (CONVERSATION_POOL.length === 0) {
     throw new Error("CONVERSATION_POOL is empty");
+  }
+  if (usesRotationV2(day)) {
+    const conv = bagQuoteConversationV2(day);
+    return {
+      conversation: conv,
+      speakers: [
+        HEROES_BY_KEY[conv.speakers[0]]!,
+        HEROES_BY_KEY[conv.speakers[1]]!,
+      ],
+    };
   }
   if (usesBag(day)) {
     const conv = bagQuoteConversation(day);

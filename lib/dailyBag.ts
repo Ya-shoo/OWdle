@@ -589,3 +589,515 @@ export function bagQuoteConversation(day: string): Conversation {
   const { epoch, slot } = getBagPosition(day);
   return quoteEpochList(epoch)[slot];
 }
+
+// ═════════════════════════════════════════════════════════════════════════
+// Rotation v2 (forward-only) — fixes the three repeat problems a 40-day
+// answer audit surfaced. Everything below only affects days on or after
+// ROTATION_V2_DAY; earlier days keep the exact v1 bag/hash above, so Archive
+// replays and share/OG cards that reference past dailies never shift. Like
+// every prior cutover (SPLASH_SKINS_ONLY_DAY, …) this is a new forward
+// boundary, not a rewrite of history.
+//
+//   1. EPOCH SEAM. Each v1 epoch was an independent shuffle and the cooldown
+//      lookback never crossed the boundary, so heroes reappeared 6–9 days
+//      apart at every 50-day mark (the first one landed ~2026-07-13, right
+//      when the complaints arrived). v2 threads the previous epoch's tail in
+//      as priorHistory, so the cooldown is continuous — no boundary repeats
+//      inside the cooldown window, ever.
+//   2. QUOTE SKEW. v1 sampled uniformly over 743 conversations with a 3-day
+//      cooldown, but conversations-per-hero ran 60× (Lúcio 60 … Sierra 1), so
+//      a handful of heroes swamped the daily and 9 never appeared. v2 rotates
+//      the PRIMARY speaker through a full draw-without-replacement of all 51
+//      heroes (like Classic) and picks the partner by how overdue they are.
+//   3. SKIN THEMES. Spotlight's hero rotated fine, but skin *keys* are shared
+//      across heroes ("Cosmic" on 10, "Sakura" on 9 …) so the same theme
+//      recurred days apart. v2 adds a cross-hero skin-theme cooldown.
+// ═════════════════════════════════════════════════════════════════════════
+
+// Manual day → hero / (hero,skin) pins, shared with the resolver in daily.ts
+// and honored by the v2 builders so a pin also feeds the cooldown (a pinned
+// hero is kept out of the ±cooldown neighborhood — the shion-pin 8-day
+// near-repeat can't happen again).
+export const CLASSIC_PINS: Record<string, string> = {
+  "2026-06-18": "shion", // Shion launch spotlight
+};
+export const SPLASH_PINS: Record<string, { hero: string; skin: string }> = {
+  "2026-06-19": { hero: "shion", skin: "cyber-biker" }, // Shion launch spotlight
+};
+
+// IMPORTANT: ROTATION_V2_DAY must be >= the Pacific puzzle day this deploys
+// on. A value in the past would retroactively restyle already-served days
+// (breaking Archive/share). Bump it if the deploy slips past it. Rolls
+// 2:15am Pacific like every puzzle day.
+export const ROTATION_V2_DAY = "2026-07-16";
+const ROTATION_V2_INDEX = dayStringToIndex(ROTATION_V2_DAY);
+
+export function usesRotationV2(day: string): boolean {
+  return dayStringToIndex(day) >= ROTATION_V2_INDEX;
+}
+
+function getV2Position(day: string): { epoch: number; slot: number } {
+  const idx = dayStringToIndex(day) - ROTATION_V2_INDEX;
+  if (idx < 0) {
+    throw new Error(`day ${day} is before rotation-v2 ${ROTATION_V2_DAY}`);
+  }
+  return { epoch: Math.floor(idx / EPOCH_SIZE), slot: idx % EPOCH_SIZE };
+}
+
+// Full-rotation modes: every option appears once before any repeat.
+const V2_FULL_COOLDOWN = Math.max(0, ANSWER_POOL.length - 1); // 50
+// Moderate modes: no repeat within ~2 weeks, while leaving ample room for the
+// same-day cross-mode dedup on pools of ~49–51 (49 blocked would over-
+// constrain against ≤3 cross-mode blocks; 14 leaves ~34 free).
+const V2_MODERATE_COOLDOWN = 14;
+// One-time cutover seed depth: how many pre-cutover *served* days feed the
+// first v2 epoch's cooldown lookback. Deliberately shorter than the full
+// cooldown so the full-rotation modes aren't fully blocked at slot 0.
+const V2_BOOTSTRAP_DAYS = 14;
+// Spotlight: don't reuse a skin theme (shared skin key) within this window.
+const V2_THEME_COOLDOWN = 14;
+// Quote: soft floor on partner reuse. Overdue-ness ordering spreads speakers
+// much further than this in practice; the floor only guards degenerate ties.
+const V2_PARTNER_COOLDOWN = 5;
+
+// Seed the first v2 epoch's cooldown lookback from what v1 actually served on
+// the V2_BOOTSTRAP_DAYS puzzle days immediately before the cutover, oldest
+// first — so v2 doesn't re-show a hero that just appeared.
+function v2BootstrapHistory(
+  servedKeysForDay: (day: string) => readonly string[],
+): Set<string>[] {
+  const out: Set<string>[] = [];
+  for (let d = V2_BOOTSTRAP_DAYS; d >= 1; d--) {
+    const day = indexToDayString(ROTATION_V2_INDEX - d);
+    out.push(new Set(servedKeysForDay(day)));
+  }
+  return out;
+}
+
+// The last `carryover` placed slots of an epoch, as key sets — fed to the
+// next epoch as priorHistory so the cooldown lookback is continuous across
+// the boundary (kills the seam).
+function tailAsHistory<T>(
+  list: readonly T[],
+  getKeys: (x: T) => string[],
+  carryover: number,
+): Set<string>[] {
+  const start = Math.max(0, list.length - carryover);
+  return list.slice(start).map((x) => new Set(getKeys(x)));
+}
+
+// Pins that land in this epoch → { forced slot→heroKey, per-slot block sets }.
+// The block sets keep the pinned hero out of every slot within `cooldown` of
+// the pin so a pin can't cause a near-repeat; the forced map is applied by
+// the caller as a post-build overwrite so the bag's list matches what the
+// resolver actually shows on the pinned day.
+function pinsForEpoch(
+  epoch: number,
+  cooldown: number,
+  pinKeyForDay: (day: string) => string | null,
+): { forced: Map<number, string>; blocks: Set<string>[] } {
+  const blocks: Set<string>[] = Array.from(
+    { length: EPOCH_SIZE },
+    () => new Set<string>(),
+  );
+  const forced = new Map<number, string>();
+  const base = ROTATION_V2_INDEX + epoch * EPOCH_SIZE;
+  for (let slot = 0; slot < EPOCH_SIZE; slot++) {
+    const key = pinKeyForDay(indexToDayString(base + slot));
+    if (!key) continue;
+    forced.set(slot, key);
+    const lo = Math.max(0, slot - cooldown);
+    const hi = Math.min(EPOCH_SIZE - 1, slot + cooldown);
+    for (let s = lo; s <= hi; s++) {
+      if (s !== slot) blocks[s].add(key);
+    }
+  }
+  return { forced, blocks };
+}
+
+function mergeBlocks(
+  a: ReadonlyArray<ReadonlySet<string>>,
+  b: ReadonlyArray<ReadonlySet<string>>,
+): Set<string>[] {
+  return Array.from({ length: EPOCH_SIZE }, (_, i) => {
+    const set = new Set<string>(a[i] ?? []);
+    for (const k of b[i] ?? []) set.add(k);
+    return set;
+  });
+}
+
+// ─── v2 epoch lists (continuous cooldown across epoch boundaries) ──────────
+
+function classicEpochListV2(epoch: number): Hero[] {
+  return memoize(`v2:classic:${epoch}`, () => {
+    const prior =
+      epoch === 0
+        ? v2BootstrapHistory((day) => [bagClassicHero(day).key])
+        : tailAsHistory(
+            classicEpochListV2(epoch - 1),
+            heroKey,
+            V2_FULL_COOLDOWN,
+          );
+    const { forced, blocks } = pinsForEpoch(
+      epoch,
+      V2_FULL_COOLDOWN,
+      (day) => CLASSIC_PINS[day] ?? null,
+    );
+    const list = buildEpochList({
+      seed: "owdle:classic:v2",
+      epoch,
+      pool: ANSWER_POOL,
+      epochSize: EPOCH_SIZE,
+      cooldownDays: V2_FULL_COOLDOWN,
+      getHeroKeys: heroKey,
+      crossModeKeysPerSlot: blocks,
+      priorHistory: prior,
+    });
+    for (const [slot, key] of forced) {
+      const h = HEROES_BY_KEY[key];
+      if (h) list[slot] = h;
+    }
+    return list;
+  });
+}
+
+function abilityEpochListV2(epoch: number): Hero[] {
+  return memoize(`v2:ability:${epoch}`, () => {
+    const classic = classicEpochListV2(epoch);
+    const cross = classic.map((h) => new Set([h.key]));
+    const prior =
+      epoch === 0
+        ? v2BootstrapHistory((day) => [bagAbilityPick(day).hero.key])
+        : tailAsHistory(
+            abilityEpochListV2(epoch - 1),
+            heroKey,
+            V2_MODERATE_COOLDOWN,
+          );
+    return buildEpochList({
+      seed: "owdle:ability:v2",
+      epoch,
+      pool: ABILITY_POOL,
+      epochSize: EPOCH_SIZE,
+      cooldownDays: V2_MODERATE_COOLDOWN,
+      getHeroKeys: heroKey,
+      crossModeKeysPerSlot: cross,
+      priorHistory: prior,
+    });
+  });
+}
+
+// Spotlight hero list. v2 is entirely in the legendary-only era (cutover is
+// after SPLASH_LEGENDARY_ONLY_DAY), so it draws from SKINS_SPLASH_POOL and
+// the skin is chosen theme-aware by splashSkinAssignmentV2.
+function splashEpochListV2(epoch: number): Hero[] {
+  return memoize(`v2:splash:${epoch}`, () => {
+    const classic = classicEpochListV2(epoch);
+    const ability = abilityEpochListV2(epoch);
+    const cross = classic.map((h, i) => new Set([h.key, ability[i].key]));
+    const prior =
+      epoch === 0
+        ? v2BootstrapHistory((day) => [bagSplashPick(day).hero.key])
+        : tailAsHistory(
+            splashEpochListV2(epoch - 1),
+            heroKey,
+            V2_MODERATE_COOLDOWN,
+          );
+    const { forced, blocks } = pinsForEpoch(
+      epoch,
+      V2_MODERATE_COOLDOWN,
+      (day) => SPLASH_PINS[day]?.hero ?? null,
+    );
+    const list = buildEpochList({
+      seed: "owdle:splash:v2",
+      epoch,
+      pool: SKINS_SPLASH_POOL,
+      epochSize: EPOCH_SIZE,
+      cooldownDays: V2_MODERATE_COOLDOWN,
+      getHeroKeys: heroKey,
+      crossModeKeysPerSlot: mergeBlocks(cross, blocks),
+      priorHistory: prior,
+    });
+    for (const [slot, key] of forced) {
+      const h = HEROES_BY_KEY[key];
+      if (h) list[slot] = h;
+    }
+    return list;
+  });
+}
+
+function soundEpochListV2(epoch: number): string[] {
+  return memoize(`v2:sound:${epoch}`, () => {
+    const classic = classicEpochListV2(epoch);
+    const ability = abilityEpochListV2(epoch);
+    const splash = splashEpochListV2(epoch);
+    const cross = classic.map(
+      (h, i) => new Set([h.key, ability[i].key, splash[i].key]),
+    );
+    const prior =
+      epoch === 0
+        ? v2BootstrapHistory((day) => [bagSoundPick(day).heroKey])
+        : tailAsHistory(
+            soundEpochListV2(epoch - 1),
+            (k) => [k],
+            V2_MODERATE_COOLDOWN,
+          );
+    return buildEpochList({
+      seed: "owdle:sound:v2",
+      epoch,
+      pool: LABELED_SOUND_KEYS,
+      epochSize: EPOCH_SIZE,
+      cooldownDays: V2_MODERATE_COOLDOWN,
+      getHeroKeys: (k) => [k],
+      crossModeKeysPerSlot: cross,
+      priorHistory: prior,
+    });
+  });
+}
+
+// Per-epoch skin index for each Spotlight slot, avoiding any skin theme
+// (shared skin key) shown within V2_THEME_COOLDOWN days. Falls back to the
+// hero's first eligible legendary when every theme is on cooldown (or the
+// hero has a single eligible skin, e.g. domina/mizuki).
+function splashSkinAssignmentV2(epoch: number): (number | null)[] {
+  return memoize(`v2:splash:skin:${epoch}`, () => {
+    const heroes = splashEpochListV2(epoch);
+    const recentTheme = new Map<string, number>();
+    const out: (number | null)[] = [];
+    for (let slot = 0; slot < EPOCH_SIZE; slot++) {
+      const hero = heroes[slot];
+      const eligible = legendaryEligibleSkinIndices(hero);
+      if (eligible.length === 0) {
+        out.push(null);
+        continue;
+      }
+      const order = splashLegendaryOrder(epoch, hero);
+      let chosen = order[0];
+      for (const idx of order) {
+        const last = recentTheme.get(hero.skins[idx].key);
+        if (last == null || slot - last > V2_THEME_COOLDOWN) {
+          chosen = idx;
+          break;
+        }
+      }
+      out.push(chosen);
+      recentTheme.set(hero.skins[chosen].key, slot);
+    }
+    return out;
+  });
+}
+
+// ─── Quote v2: full speaker rotation + overdue-partner conversation pick ────
+//
+// The primary speaker is a full 51-hero draw-without-replacement, so every
+// hero anchors a Quote day before repeats and the v1 60× skew is gone (audit:
+// max 5 vs min 2 appearances over 82 days; every hero appears; the same PAIR
+// never recurs inside ~3 weeks). Residual: the 2–3 heroes with almost no
+// eligible conversations (Sierra has exactly ONE, Mizuki three) occasionally
+// land on near-adjacent days — always with a DIFFERENT partner, because a
+// sparse conversation graph forces it. That's a cosmetic artifact of the
+// source data, not the "same two heroes" complaint, and squeezing it out
+// would mean dropping those heroes from coverage (recreating the v1 "never
+// appears" bug), so it's left as-is.
+
+// Conversations featuring each hero (either speaker slot), and a stable id
+// per conversation (its index in CONVERSATION_POOL) for the seeded tiebreak.
+const CONV_INDEX = new Map<Conversation, number>(
+  CONVERSATION_POOL.map((c, i) => [c, i]),
+);
+const CONV_BY_HERO = (() => {
+  const m = new Map<string, Conversation[]>();
+  for (const c of CONVERSATION_POOL) {
+    for (const s of [c.speakers[0], c.speakers[1]]) {
+      const arr = m.get(s);
+      if (arr) arr.push(c);
+      else m.set(s, [c]);
+    }
+  }
+  return m;
+})();
+
+// Primary speaker: a full draw-without-replacement over every hero, exactly
+// like Classic, so each hero anchors a Quote day before any repeats.
+function quoteAnchorEpochListV2(epoch: number): Hero[] {
+  return memoize(`v2:quote:anchor:${epoch}`, () => {
+    const prior =
+      epoch === 0
+        ? v2BootstrapHistory((day) => {
+            const c = bagQuoteConversation(day);
+            return [c.speakers[0], c.speakers[1]];
+          })
+        : tailAsHistory(
+            quoteAnchorEpochListV2(epoch - 1),
+            heroKey,
+            V2_FULL_COOLDOWN,
+          );
+    return buildEpochList({
+      seed: "owdle:quote:anchor:v2",
+      epoch,
+      pool: ANSWER_POOL,
+      epochSize: EPOCH_SIZE,
+      cooldownDays: V2_FULL_COOLDOWN,
+      getHeroKeys: heroKey,
+      crossModeKeysPerSlot: [],
+      priorHistory: prior,
+    });
+  });
+}
+
+function quoteEpochListV2(epoch: number): Conversation[] {
+  return memoize(`v2:quote:${epoch}`, () => {
+    const anchors = quoteAnchorEpochListV2(epoch);
+    const classic = classicEpochListV2(epoch);
+    const ability = abilityEpochListV2(epoch);
+    const splash = splashEpochListV2(epoch);
+    const sound = soundEpochListV2(epoch);
+
+    // Partner recency: effective-slot index each hero last spoke (either
+    // role). Seeded from the previous epoch's tail (negative indices) or, at
+    // the cutover, from the days v1 actually served.
+    const lastSpoken = new Map<string, number>();
+    const bootstrapLen = epoch === 0 ? V2_BOOTSTRAP_DAYS : 0;
+    if (epoch === 0) {
+      for (let d = V2_BOOTSTRAP_DAYS; d >= 1; d--) {
+        const c = bagQuoteConversation(
+          indexToDayString(ROTATION_V2_INDEX - d),
+        );
+        const eff = V2_BOOTSTRAP_DAYS - d;
+        lastSpoken.set(c.speakers[0], eff);
+        lastSpoken.set(c.speakers[1], eff);
+      }
+    } else {
+      const prev = quoteEpochListV2(epoch - 1);
+      prev.forEach((c, i) => {
+        const eff = i - prev.length;
+        lastSpoken.set(c.speakers[0], eff);
+        lastSpoken.set(c.speakers[1], eff);
+      });
+    }
+
+    // Slot each hero anchors this epoch (unique — full rotation). Used to
+    // avoid picking a partner who's about to anchor within the cooldown: the
+    // anchor rotation is blind to partner usage, so without this a hero could
+    // speak as a partner and then anchor 2–3 days later (a tight repeat).
+    const anchorSlotOf = new Map<string, number>();
+    anchors.forEach((h, s) => {
+      if (!anchorSlotOf.has(h.key)) anchorSlotOf.set(h.key, s);
+    });
+
+    const result: Conversation[] = [];
+    for (let slot = 0; slot < EPOCH_SIZE; slot++) {
+      const anchorKey = anchors[slot].key;
+      const eff = bootstrapLen + slot;
+      const cross = new Set([
+        classic[slot].key,
+        ability[slot].key,
+        splash[slot].key,
+        sound[slot],
+      ]);
+      const cands = CONV_BY_HERO.get(anchorKey) ?? [];
+      const partnerOf = (c: Conversation) =>
+        c.speakers[0] === anchorKey ? c.speakers[1] : c.speakers[0];
+      const overdue = (c: Conversation) =>
+        eff - (lastSpoken.get(partnerOf(c)) ?? -9999);
+      const anchorsSoon = (c: Conversation) => {
+        const a = anchorSlotOf.get(partnerOf(c));
+        return a != null && a > slot && a - slot <= V2_PARTNER_COOLDOWN;
+      };
+
+      // 3-pass: prefer an overdue partner that isn't one of today's other
+      // heroes and isn't about to anchor; then just a non-recent partner;
+      // then anything the anchor has.
+      const passes: Array<(c: Conversation) => boolean> = [
+        (c) =>
+          !cross.has(partnerOf(c)) &&
+          overdue(c) > V2_PARTNER_COOLDOWN &&
+          !anchorsSoon(c),
+        (c) => overdue(c) > V2_PARTNER_COOLDOWN && !anchorsSoon(c),
+        () => true,
+      ];
+      let pick: Conversation | null = null;
+      for (const ok of passes) {
+        let best: Conversation | null = null;
+        let bestScore = -Infinity;
+        let bestTie = Infinity;
+        for (const c of cands) {
+          if (!ok(c)) continue;
+          const score = overdue(c);
+          const tie = fnv1a(
+            `owdle:quote:v2:e${epoch}:s${slot}:${CONV_INDEX.get(c)}`,
+          );
+          if (score > bestScore || (score === bestScore && tie < bestTie)) {
+            best = c;
+            bestScore = score;
+            bestTie = tie;
+          }
+        }
+        if (best) {
+          pick = best;
+          break;
+        }
+      }
+      if (!pick) pick = cands[0] ?? CONVERSATION_POOL[0];
+      result.push(pick);
+      lastSpoken.set(pick.speakers[0], eff);
+      lastSpoken.set(pick.speakers[1], eff);
+    }
+    return result;
+  });
+}
+
+// ─── v2 resolvers ──────────────────────────────────────────────────────────
+
+export function bagClassicHeroV2(day: string): Hero {
+  const { epoch, slot } = getV2Position(day);
+  return classicEpochListV2(epoch)[slot];
+}
+
+export function bagAbilityPickV2(day: string): {
+  hero: Hero;
+  abilityIndex: number;
+} {
+  const { epoch, slot } = getV2Position(day);
+  const list = abilityEpochListV2(epoch);
+  const hero = list[slot];
+  const appearance = appearanceCountInEpoch(
+    list,
+    slot,
+    (h) => h.key === hero.key,
+  );
+  const order = abilitySubPuzzleOrder(epoch, hero);
+  const abilityIndex = order[(appearance - 1) % Math.max(1, order.length)];
+  return { hero, abilityIndex };
+}
+
+export function bagSplashPickV2(day: string): {
+  hero: Hero;
+  skinIndex: number | null;
+} {
+  const { epoch, slot } = getV2Position(day);
+  const hero = splashEpochListV2(epoch)[slot];
+  const skinIndex = splashSkinAssignmentV2(epoch)[slot];
+  return { hero, skinIndex };
+}
+
+export function bagSoundPickV2(day: string): {
+  heroKey: string;
+  clipSlug: string;
+} {
+  const { epoch, slot } = getV2Position(day);
+  const list = soundEpochListV2(epoch);
+  const hKey = list[slot];
+  const clips = SOUND_CLIPS[hKey] ?? [];
+  if (clips.length === 0) {
+    throw new Error(`bagSoundPickV2: ${hKey} has no labeled clips`);
+  }
+  const appearance = appearanceCountInEpoch(list, slot, (k) => k === hKey);
+  const order = soundSubPuzzleOrder(epoch, hKey);
+  const clipIdx = order[(appearance - 1) % order.length];
+  return { heroKey: hKey, clipSlug: clips[clipIdx].slug };
+}
+
+export function bagQuoteConversationV2(day: string): Conversation {
+  const { epoch, slot } = getV2Position(day);
+  return quoteEpochListV2(epoch)[slot];
+}
