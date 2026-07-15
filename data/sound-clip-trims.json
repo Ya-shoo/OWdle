@@ -42,6 +42,9 @@
   "baptiste": {
     "amplification-matrix": {
       "startOffset": 0.4549
+    },
+    "regenerative-burst": {
+      "startOffset": 1.052
     }
   },
   "reaper": {
