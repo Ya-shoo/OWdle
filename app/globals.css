@@ -310,6 +310,22 @@ img {
   -webkit-user-drag: none;
   user-select: none;
   -webkit-user-select: none;
+  /* iOS long-press otherwise opens a callout preview of the FULL source
+     file, which defeats every crop/blur/mask we paint over an answer. */
+  -webkit-touch-callout: none;
+}
+
+/* Puzzle art: any image whose answer is hidden behind a crop, zoom, blur
+   or mask overlay (Spotlight/Mugshot/Banner crops, Ability grid, Item
+   blur). The element is decorative — its frame carries role="img" and the
+   aria-label — so make it fully inert. pointer-events:none is what closes
+   the leak: a drag or long-press that starts ON the image gets a
+   browser-generated preview of the unmodified source, showing the whole
+   picture. The img rule above isn't enough on its own — Firefox ignores
+   -webkit-user-drag entirely. Pair with draggable={false} on the element. */
+.puzzle-art {
+  pointer-events: none;
+  -webkit-touch-callout: none;
 }
 
 /* ---------- dev-ui scope (everything under /labeler) ----------

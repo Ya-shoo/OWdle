@@ -546,7 +546,8 @@ function AbilityArtCard({
           <motion.img
             src={ability.icon}
             alt={revealedHero ? ability.name : "Mystery ability"}
-            className="absolute inset-0 h-full w-full object-contain"
+            className="puzzle-art absolute inset-0 h-full w-full object-contain"
+            draggable={false}
             loading="eager"
             decoding="async"
             initial={false}

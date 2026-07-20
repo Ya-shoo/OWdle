@@ -493,7 +493,8 @@ function SplashFrame({
         <img
           src={media(imageUrl)}
           alt=""
-          className="block h-full w-full object-cover transition-transform duration-700 ease-out"
+          className="puzzle-art block h-full w-full object-cover transition-transform duration-700 ease-out"
+          draggable={false}
           style={{
             transform: `scale(${zoom})`,
             transformOrigin: `${origin.x}% ${origin.y}%`,
