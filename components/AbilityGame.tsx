@@ -476,6 +476,11 @@ function HardModeToggle({
   );
 }
 
+// Portrait + name history card. Borderless with the app's standard
+// rounded-card corners; state lives in the body FILL (the sanctioned
+// result-card exception applied to a guess card): a solid bg-loss red for a
+// wrong hero, navy bg-card for the correct one — which, since the winning
+// guess also lands in history here, stays navy.
 function GuessCard({
   hero,
   isLatest,
@@ -492,10 +497,8 @@ function GuessCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       className={clsx(
-        "tile-shape mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 border px-5 py-6",
-        isCorrect
-          ? "border-correct bg-card"
-          : "border-far bg-card",
+        "mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 rounded-(--radius-card) px-5 py-6",
+        isCorrect ? "bg-card" : "bg-loss",
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}

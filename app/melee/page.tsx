@@ -8,7 +8,7 @@ import { modeJsonLd, modeMetadata, SITE_URL } from "@/lib/site";
 // Melee — a BONUS mode: a real, indexable, individually shareable page
 // that lives OUTSIDE the canonical five-mode daily (tier:"bonus" in
 // lib/modes.ts keeps it out of streak/rank/day-complete). Identify the
-// hero from their melee sound in three guesses; the source MP4 reveals at
+// hero from their melee sound in five guesses; the source MP4 reveals at
 // the end. No dev gate — this ships publicly, so it's a normal mode route
 // with breadcrumbs, footer nav, and structured data like the daily modes.
 
@@ -19,7 +19,7 @@ const META = {
   // melee sound" (breadcrumb + JSON-LD name stay the short "Melee").
   seoTitle: "Overwatch Melee Sound Quiz | Guess the Hero",
   description:
-    "Guess the Overwatch hero from their melee swing. Three guesses, a new hero every day. The daily Overwatch melee sound quiz.",
+    "Guess the Overwatch hero from their melee swing. Five guesses, a new hero every day. The daily Overwatch melee sound quiz.",
 };
 
 export const metadata = modeMetadata(META);

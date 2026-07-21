@@ -36,11 +36,11 @@ export const HOME_FAQ: FaqItem[] = [
 export const MELEE_FAQ: FaqItem[] = [
   {
     q: "What is the Overwatch melee sound quiz?",
-    a: "It's a daily bonus round on OWdle where you hear one Overwatch hero's melee swing and have to guess who it is. You get three tries, and the full source clip plays back once you solve it or run out.",
+    a: "It's a daily bonus round on OWdle where you hear one Overwatch hero's melee swing and have to guess who it is. You get five tries, and the full source clip plays back once you solve it or run out.",
   },
   {
     q: "How do you play Melee mode?",
-    a: "Hit play to hear the melee sound, type in the hero you think it belongs to, and you have three guesses. Every hero sounds a little different when they swing, so listen for the weight and pitch of the hit.",
+    a: "Hit play to hear the melee sound, type in the hero you think it belongs to, and you have five guesses. Every hero sounds a little different when they swing, so listen for the weight and pitch of the hit. Each guess also shows that hero's role, and it turns green when the role matches the day's hero, so a miss still helps you narrow things down.",
   },
   {
     q: "Is Melee part of the daily OWdle?",

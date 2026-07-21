@@ -35,9 +35,9 @@ export const CAPS: Record<ModeSlug, number> = {
   // Melee is a BONUS mode (built:true, tier:"bonus") and Map is featured
   // WIP (built:false). Neither is in BUILT_MODE_SLUGS, so these caps never
   // feed the daily rank total — dailyTotal iterates the canonical set. The
-  // record type still requires every slug. Melee's real cap is 3
+  // record type still requires every slug. Melee's real cap is 5
   // (MeleeGame.tsx MAX_GUESSES); set Map's when it ships.
-  melee: 3,
+  melee: 5,
   map: 5,
 };
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import clsx from "clsx";
-import { HEROES, HEROES_BY_KEY, type Hero } from "@/lib/heroes";
+import { HEROES, HEROES_BY_KEY, type Hero, type Role } from "@/lib/heroes";
 import {
   dayString,
   getMeleeForDay,
@@ -35,10 +35,11 @@ import { DevMeleePicker } from "./DevMeleePicker";
 const IS_DEV = process.env.NODE_ENV !== "production";
 
 const MODE = "melee";
-// Three chances, then the answer (and its source clip) are revealed. The
-// whole melee sound is playable from the first tap — the pressure here is
-// the tight guess cap, not a lengthening snippet like Sound mode.
-const MAX_GUESSES = 3;
+// Five chances, then the answer (and its source clip) are revealed. The
+// whole melee sound is playable from the first tap; every miss also scores
+// the guessed hero's ROLE against the answer, so that role feedback carries
+// the hint work rather than a lengthening snippet like Sound mode.
+const MAX_GUESSES = 5;
 
 export function MeleeGame() {
   // Inbound share-link attribution — a Melee round /r/[code] link redirects
@@ -198,7 +199,7 @@ export function MeleeGame() {
           </h1>
           <p className="mt-3 max-w-md text-ink-soft">
             Guess the Overwatch hero from their melee sound. Listen to the hit.
-            Three guesses.
+            Five guesses.
           </p>
         </div>
         <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
@@ -265,7 +266,7 @@ export function MeleeGame() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className={clsx(
-              "result-card mx-auto mb-8 w-full max-w-md rounded-(--radius-card) border p-4 sm:p-5",
+              "result-card mx-auto mb-8 w-full max-w-xs rounded-(--radius-card) border p-4 sm:p-5",
               state.won
                 ? "border-correct bg-win"
                 : "border-loss-edge bg-loss",
@@ -329,6 +330,7 @@ export function MeleeGame() {
               <MeleeGuessCard
                 key={hero.key}
                 hero={hero}
+                answerRole={answer.role}
                 isCorrect={hero.key === answer.key}
                 isLatest={isLatest}
               />
@@ -349,14 +351,22 @@ export function MeleeGame() {
   );
 }
 
-// Portrait + name card, right or wrong — no attribute breakdown. Matches
-// Ability mode's guess card so the two icon/audio modes read the same.
+// Portrait + name card, right or wrong. Beyond the hero identity it
+// carries a ROLE chip: the guessed hero's role scored against the answer's,
+// which is the miss's hint — narrow the pool by role even when the hero is
+// wrong. Borderless with the app's standard rounded-card corners; state
+// lives in the body FILL (the sanctioned result-card exception applied to a
+// guess card): a solid bg-loss red for a wrong hero, navy bg-card for the
+// correct one. The role chip sits on top of either — a green chip on the red
+// body is exactly the "right role, wrong hero" tell.
 function MeleeGuessCard({
   hero,
+  answerRole,
   isCorrect,
   isLatest,
 }: {
   hero: Hero;
+  answerRole: Role;
   isCorrect: boolean;
   isLatest: boolean;
 }) {
@@ -367,10 +377,8 @@ function MeleeGuessCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       className={clsx(
-        "tile-shape mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 border px-5 py-6",
-        isCorrect
-          ? "border-correct bg-card"
-          : "border-far bg-card",
+        "mx-auto flex w-full max-w-xs flex-col items-center justify-center gap-3 rounded-(--radius-card) px-5 py-6",
+        isCorrect ? "bg-card" : "bg-loss",
       )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -384,7 +392,80 @@ function MeleeGuessCard({
       <div className="font-display text-2xl uppercase tracking-wide font-bold text-ink sm:text-3xl">
         {hero.name}
       </div>
+      {/* Role verdict — solid green when the guessed hero shares the answer's
+          role, dark navy otherwise (never a translucent tint; the fill IS the
+          signal). Only the latest card animates, matching the card body. */}
+      <RoleChip
+        role={hero.role}
+        match={hero.role === answerRole}
+        animate={isLatest}
+      />
     </motion.div>
+  );
+}
+
+// Solid role chip beneath the name. Reuses the canonical status fills from
+// AttributeTile (bg-correct / bg-wrong) so a role match reads identically to
+// a correct attribute tile. For the latest guess it flips in like a Classic
+// tile — rotateX + a beat's delay after the card lands; earlier cards render
+// it flat since the card itself only animates when latest.
+function RoleChip({
+  role,
+  match,
+  animate,
+}: {
+  role: Role;
+  match: boolean;
+  animate: boolean;
+}) {
+  const label = role.charAt(0).toUpperCase() + role.slice(1);
+  return (
+    <motion.div
+      initial={animate ? { rotateX: -90, opacity: 0 } : false}
+      animate={{ rotateX: 0, opacity: 1 }}
+      transition={
+        animate
+          ? { duration: 0.35, delay: 0.15, ease: [0.22, 1, 0.36, 1] }
+          : { duration: 0 }
+      }
+      style={{ transformOrigin: "top center" }}
+      className={clsx(
+        "tile-shape inline-flex items-center gap-1.5 px-3 py-1.5 utility-label text-[10px]",
+        match ? "bg-correct text-on-correct" : "bg-wrong text-on-wrong",
+      )}
+    >
+      <RoleGlyph role={role} />
+      {label}
+    </motion.div>
+  );
+}
+
+// Tiny Overwatch-flavored role glyph. fill-current so it inherits the chip's
+// text-on-* color; aria-hidden since the adjacent label carries the meaning.
+// Shapes echo the in-game role icons: tank = shield, damage = crosshair,
+// support = plus/cross.
+function RoleGlyph({ role }: { role: Role }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={14}
+      height={14}
+      aria-hidden
+      className="fill-current"
+    >
+      {role === "tank" && (
+        // Shield outline.
+        <path d="M12 2 4 5v6c0 4.4 3.1 8.3 8 11 4.9-2.7 8-6.6 8-11V5l-8-3Zm0 2.3 6 2.2v4.5c0 3.3-2.2 6.4-6 8.7-3.8-2.3-6-5.4-6-8.7V6.5l6-2.2Z" />
+      )}
+      {role === "damage" && (
+        // Crosshair — ring plus four ticks.
+        <path d="M11 2h2v4h-2V2Zm0 16h2v4h-2v-4ZM2 11h4v2H2v-2Zm16 0h4v2h-4v-2Zm-6-6a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z" />
+      )}
+      {role === "support" && (
+        // Rounded plus / cross.
+        <path d="M10 3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v6h6a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-6v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-6H4a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1h6V3Z" />
+      )}
+    </svg>
   );
 }
 
