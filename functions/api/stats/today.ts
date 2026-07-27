@@ -145,6 +145,21 @@ async function fetchFromPostHog(
   // as "hide the panel". `toDate(properties.daily_id) = toDate('${day}')`
   // compares the Pacific calendar dates and is the correct filter. Do NOT
   // revert to bare string equality.
+  //
+  // Timestamp window: the daily_id filter above is the precise selector, but
+  // an event scan with NO `timestamp` predicate is expensive enough that
+  // PostHog's /query/ endpoint runs it asynchronously and returns a job
+  // placeholder with no `results` array on the first response. hogql() reads
+  // that as zero rows (results ?? []), so every bucket came back empty and
+  // the panel silently hid even though the query is correct. Bounding the
+  // scan to a few days around the puzzle day keeps it synchronous and cheap.
+  // A puzzle day's completions all land within this window (the daily rolls
+  // at 2:15am Pacific, so the ±1/+2 day span comfortably covers UTC skew).
+  const dayWindow = [
+    `  AND timestamp >= toDate('${day}') - INTERVAL 1 DAY`,
+    `  AND timestamp < toDate('${day}') + INTERVAL 2 DAY`,
+  ];
+
   const modeQuery = [
     "SELECT",
     "  properties.mode AS mode,",
@@ -154,6 +169,7 @@ async function fetchFromPostHog(
     "FROM events",
     "WHERE event = 'mode_completed'",
     `  AND toDate(properties.daily_id) = toDate('${day}')`,
+    ...dayWindow,
     "  AND properties.site = 'owdle'",
     "GROUP BY mode, outcome",
   ].join("\n");
@@ -165,6 +181,7 @@ async function fetchFromPostHog(
     "FROM events",
     "WHERE event = 'daily_completed'",
     `  AND toDate(properties.daily_id) = toDate('${day}')`,
+    ...dayWindow,
     "  AND properties.site = 'owdle'",
   ].join("\n");
 
@@ -178,6 +195,7 @@ async function fetchFromPostHog(
     "  FROM events",
     "  WHERE event = 'mode_started'",
     `    AND toDate(properties.daily_id) = toDate('${day}')`,
+    ...dayWindow,
     "    AND properties.site = 'owdle'",
     // Canonical-only: "committed to the daily" means ≥2 of the 5 daily
     // modes started. A Melee (bonus) start must not count toward the
@@ -212,6 +230,7 @@ async function fetchFromPostHog(
     "  FROM events",
     "  WHERE event = 'mode_completed'",
     `    AND toDate(properties.daily_id) = toDate('${day}')`,
+    ...dayWindow,
     "    AND properties.site = 'owdle'",
     // Canonical-only, two jobs in one filter: the sum must not include a
     // Melee (bonus) completion, AND the distinct-mode count must stay 5
@@ -235,6 +254,25 @@ async function fetchFromPostHog(
     hogql(endpoint, key, startersQuery),
     hogql(endpoint, key, tierQuery),
   ]);
+
+  // Observability: if the mode query comes back with no rows, log the shape
+  // of the response so a silent empty panel is diagnosable from Pages logs.
+  // A missing `results` key means PostHog ran the query async and returned a
+  // job placeholder; an empty `results` array means the query genuinely
+  // matched nothing (bad day param, wrong site, or no data yet).
+  if (!Array.isArray(modeRes.results) || modeRes.results.length === 0) {
+    console.warn(
+      "stats/today: empty mode results",
+      JSON.stringify({
+        day,
+        projectId,
+        modeResultKeys: modeRes ? Object.keys(modeRes) : null,
+        modeRowCount: Array.isArray(modeRes.results)
+          ? modeRes.results.length
+          : "no-results-key",
+      }),
+    );
+  }
 
   const modes = emptyModes();
   for (const row of modeRes.results ?? []) {
