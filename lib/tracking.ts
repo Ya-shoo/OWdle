@@ -4,9 +4,14 @@
 //
 // Idempotency: the *_started, mode_completed, and daily_completed helpers
 // guard against duplicate fires within the same Pacific puzzle day by
-// stashing a marker in localStorage. guess_submitted and hint_used are
-// fired from user-interaction handlers (not effects) so they don't need
-// the same protection.
+// stashing a marker in localStorage. hint_used is fired from
+// user-interaction handlers (not effects) so it doesn't need the same
+// protection.
+//
+// There is deliberately NO per-guess event. guess_submitted was retired
+// 2026-07 (it alone was ~31% of the shared project's PostHog event budget);
+// the full ordered guess sequence now ships as the `guess_ids` array prop
+// on mode_completed instead. Query it with arrayJoin(guess_ids).
 
 import posthog from "posthog-js";
 
@@ -49,24 +54,6 @@ export function trackModeStarted(opts: {
   });
 }
 
-export function trackGuessSubmitted(opts: {
-  mode: Mode;
-  dailyId: string;
-  guessNumber: number;
-  isCorrect: boolean;
-  guessId: string;
-  answerId: string;
-}): void {
-  posthog.capture("guess_submitted", {
-    mode: opts.mode,
-    daily_id: opts.dailyId,
-    guess_number: opts.guessNumber,
-    is_correct: opts.isCorrect,
-    guess_id: opts.guessId,
-    answer_id: opts.answerId,
-  });
-}
-
 export function trackModeCompleted(opts: {
   mode: Mode;
   dailyId: string;
@@ -75,6 +62,14 @@ export function trackModeCompleted(opts: {
   cap: number;
   hintsUsed?: number;
   answerId: string;
+  // The full ordered guess sequence — position = guess number, element =
+  // the guessed id in the retired guess_submitted event's guess_id
+  // encoding (hero key; Sound skips are the SKIP_MARKER sentinel; Quote
+  // entries are "<heroKey>@<target>"). Correctness stays derivable:
+  // outcome "won" means the final element landed. Classic hint spends
+  // are NOT in here — hints_used counts them and hint_used carries
+  // their positions.
+  guessIds: string[];
   // Classic-only: whether the player answered the bonus question
   // correctly. true / false / null (unanswered). Surfaces in the daily
   // tier-badge composite as a small sub-point credit.
@@ -98,6 +93,7 @@ export function trackModeCompleted(opts: {
     cap: opts.cap,
     hints_used: opts.hintsUsed ?? 0,
     answer_id: opts.answerId,
+    guess_ids: opts.guessIds,
     bonus_correct: opts.bonusCorrect ?? null,
     bonus: opts.bonus ?? false,
     ability_index: opts.abilityIndex ?? null,

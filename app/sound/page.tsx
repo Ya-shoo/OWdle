@@ -1,7 +1,10 @@
 import { SoundGame } from "@/components/SoundGame";
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { ModeFooterNav } from "@/components/ModeFooterNav";
-import { modeJsonLd, modeMetadata } from "@/lib/site";
+import { HomeFaq } from "@/components/HomeFaq";
+import { ModeStatsPanel } from "@/components/ModeStatsPanel";
+import { SOUND_FAQ } from "@/lib/faq";
+import { faqJsonLd, modeJsonLd, modeMetadata } from "@/lib/site";
 
 const META = {
   slug: "sound",
@@ -14,6 +17,7 @@ const META = {
 export const metadata = modeMetadata(META);
 
 const jsonLd = modeJsonLd(META);
+const faqLd = faqJsonLd(META.slug, SOUND_FAQ);
 
 export default function SoundPage() {
   return (
@@ -24,8 +28,16 @@ export default function SoundPage() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <ModeBreadcrumbs label={META.title} />
       <SoundGame />
+      <ModeStatsPanel mode="sound" />
+      <HomeFaq items={SOUND_FAQ} heading="Sound mode: frequently asked questions" />
       <ModeFooterNav current="sound" />
     </>
   );

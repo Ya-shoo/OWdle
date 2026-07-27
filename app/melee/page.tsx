@@ -2,6 +2,7 @@ import { MeleeGame } from "@/components/MeleeGame";
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { ModeFooterNav } from "@/components/ModeFooterNav";
 import { HomeFaq } from "@/components/HomeFaq";
+import { ModeStatsPanel } from "@/components/ModeStatsPanel";
 import { MELEE_FAQ } from "@/lib/faq";
 import { modeJsonLd, modeMetadata, SITE_URL } from "@/lib/site";
 
@@ -57,6 +58,7 @@ export default function MeleePage() {
       />
       <ModeBreadcrumbs label={META.title} />
       <MeleeGame />
+      <ModeStatsPanel mode="melee" />
       <HomeFaq items={MELEE_FAQ} heading="Melee mode: frequently asked questions" />
       <ModeFooterNav current="melee" />
     </>

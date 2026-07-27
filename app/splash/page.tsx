@@ -1,7 +1,10 @@
 import { SplashGame } from "@/components/SplashGame";
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { ModeFooterNav } from "@/components/ModeFooterNav";
-import { modeJsonLd, modeMetadata } from "@/lib/site";
+import { HomeFaq } from "@/components/HomeFaq";
+import { ModeStatsPanel } from "@/components/ModeStatsPanel";
+import { SPLASH_FAQ } from "@/lib/faq";
+import { faqJsonLd, modeJsonLd, modeMetadata } from "@/lib/site";
 
 const META = {
   slug: "splash",
@@ -13,6 +16,7 @@ const META = {
 export const metadata = modeMetadata(META);
 
 const jsonLd = modeJsonLd(META);
+const faqLd = faqJsonLd(META.slug, SPLASH_FAQ);
 
 export default function SplashPage() {
   return (
@@ -23,8 +27,16 @@ export default function SplashPage() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <ModeBreadcrumbs label={META.title} />
       <SplashGame />
+      <ModeStatsPanel mode="splash" />
+      <HomeFaq items={SPLASH_FAQ} heading="Spotlight mode: frequently asked questions" />
       <ModeFooterNav current="splash" />
     </>
   );

@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import type { FaqItem } from "./faq";
 
 export const SITE_URL = "https://playowdle.com";
 export const SITE_NAME = "OWdle";
+
+// Public contact address, surfaced on /contact/ and in the footer. Defaults
+// to the same mailbox /privacy/ already publishes, so it is known-working.
+// Swap here and both surfaces follow.
+export const CONTACT_EMAIL = "privacy@playowdle.com";
 export const SITE_TAGLINE = "the daily Overwatch quiz";
 
 // Google Analytics 4 measurement ID for playowdle.com. Non-secret — it ships
@@ -47,7 +53,7 @@ export const ADSENSE_CLIENT: string = "ca-pub-2123726970271006";
 export const ADSENSE_APPROVED: boolean = false;
 
 export const SITE_DEFAULT_DESCRIPTION =
-  "OWdle is the daily Overwatch guessing game. Guess the hero from attribute tiles, ability icons, voice lines, and splash art. New puzzle every day at 2:15am Pacific Time.";
+  "OWdle is the daily Overwatch guessing game. Guess the hero from attribute tiles, ability icons, ability sounds, and splash art. New puzzle every day at 2:15am Pacific Time.";
 
 // Support/tip links for the home-page engagement section. Yash to update
 // the Ko-fi handle once an account exists. SHARE_TEXT is consumed by the
@@ -74,7 +80,7 @@ export const SITE_KEYWORDS = [
   "Overwatch trivia",
   "Overwatch ability quiz",
   "Overwatch splash art quiz",
-  "Overwatch voice line quiz",
+  "Overwatch ability sound quiz",
 ];
 
 type ModeMetaInput = {
@@ -198,5 +204,25 @@ export function modeJsonLd({ slug, title, description }: ModeMetaInput) {
         ],
       },
     ],
+  };
+}
+
+// FAQPage structured data for a mode page. Built from the SAME FaqItem[] the
+// page renders visibly through <HomeFaq items={...}/>, which is what keeps
+// the markup compliant with Google's "structured data must match on-page
+// content" rule. Pages emit this as a second <script> alongside modeJsonLd
+// rather than folding it into that @graph, so a mode without an FAQ simply
+// omits the tag.
+export function faqJsonLd(slug: string, items: FaqItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${SITE_URL}/${slug}/#faq`,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    mainEntity: items.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
   };
 }

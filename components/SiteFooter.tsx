@@ -37,13 +37,49 @@ export function SiteFooter() {
           >
             Privacy
           </Link>
+          {" · "}
+          <Link
+            href="/contact/"
+            className="underline-offset-2 transition-colors hover:text-accent hover:underline"
+          >
+            Contact
+          </Link>
         </div>
-        <Link
-          href="/how-to-play/"
-          className="utility-label text-accent-soft transition-colors hover:text-accent"
+        {/* Quiet secondary nav — the deliberately low-key entry to the
+            About + Guides sub-pages (kept off the homepage body so they
+            don't compete with the modes). How to play keeps its accent as
+            the primary next step; About/Guides stay faint. */}
+        {/* pr on wide screens keeps the last link clear of the fixed
+            bottom-right Feedback button, which otherwise overlaps it. */}
+        <nav
+          aria-label="Secondary"
+          className="flex flex-wrap items-center gap-x-4 gap-y-2 whitespace-nowrap sm:pr-32"
         >
-          How to play →
-        </Link>
+          <Link
+            href="/about/"
+            className="utility-label text-ink-faint transition-colors hover:text-accent"
+          >
+            About
+          </Link>
+          <Link
+            href="/guides/"
+            className="utility-label text-ink-faint transition-colors hover:text-accent"
+          >
+            Guides
+          </Link>
+          <Link
+            href="/heroes/"
+            className="utility-label text-ink-faint transition-colors hover:text-accent"
+          >
+            Heroes
+          </Link>
+          <Link
+            href="/how-to-play/"
+            className="utility-label text-accent-soft transition-colors hover:text-accent"
+          >
+            How to play →
+          </Link>
+        </nav>
       </div>
     </footer>
   );

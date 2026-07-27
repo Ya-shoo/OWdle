@@ -28,5 +28,40 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    // Reference content. /heroes/ is a full server-rendered attribute table
+    // for the whole roster, so it ranks above the other utility pages.
+    {
+      url: `${SITE_URL}/heroes/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    // The Archive HUB only. Its per-mode replay routes stay noindex and
+    // disallowed (see app/robots.ts) because they render a client-only shell.
+    {
+      url: `${SITE_URL}/archive/`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.6,
+    },
+    // Minor utility pages, low priority.
+    {
+      url: `${SITE_URL}/guides/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${SITE_URL}/about/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${SITE_URL}/contact/`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
   ];
 }

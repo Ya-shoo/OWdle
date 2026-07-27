@@ -131,11 +131,10 @@ function freshState(day: string): ModeState {
 //     daily seed rotated under it (win: stale last-guess; loss: answerKey
 //     mismatch) — preserving SoundGame's pre-existing rotation-reset intent
 //     without discarding an ordinary same-day loss on reload.
-//   - onGuessSubmitted fires per guess/skip (hero:null = skip); onTerminal
-//     fires once, from the action that ends the round (never a resume/reload),
-//     so the archive can record a completion without an effect that would
-//     double-fire on hydration. The daily leaves onTerminal off and keeps its
-//     own mode_completed effect.
+//   - onTerminal fires once, from the action that ends the round (never a
+//     resume/reload), so the archive can record a completion without an
+//     effect that would double-fire on hydration. The daily leaves
+//     onTerminal off and keeps its own mode_completed effect.
 // Returns null until the day, clip, and hydrated state are all ready.
 export function useSoundRound(opts: {
   day: string | null;
@@ -148,11 +147,6 @@ export function useSoundRound(opts: {
   // clip's own persisted trim offsets — the production + archive path.
   activeStart?: number | null;
   activeEnd?: number | null;
-  onGuessSubmitted?: (o: {
-    guessNumber: number;
-    isCorrect: boolean;
-    hero: Hero | null;
-  }) => void;
   onTerminal?: (o: {
     outcome: "won" | "lost";
     turnsUsed: number;
@@ -297,21 +291,11 @@ export function useSoundRound(opts: {
 
   const handleGuess = (hero: Hero) => {
     if (ended) return;
-    opts.onGuessSubmitted?.({
-      guessNumber: state.guesses.length + 1,
-      isCorrect: hero.key === answer.key,
-      hero,
-    });
     finishGuess([...state.guesses, hero.key], hero);
   };
 
   const handleSkip = () => {
     if (ended || skipLocked) return;
-    opts.onGuessSubmitted?.({
-      guessNumber: state.guesses.length + 1,
-      isCorrect: false,
-      hero: null,
-    });
     finishGuess([...state.guesses, SKIP_MARKER], null);
   };
 

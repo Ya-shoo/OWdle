@@ -7,7 +7,6 @@ import { type Hero } from "@/lib/heroes";
 import { dayString, getHeroForDay, prettyDay } from "@/lib/daily";
 import { isDailyComplete } from "@/lib/storage";
 import {
-  trackGuessSubmitted,
   trackHintUsed,
   trackModeCompleted,
   trackModeStarted,
@@ -28,6 +27,12 @@ import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import { ClassicBoard, MAX_GUESSES, useClassicRound } from "./ClassicBoard";
 import { ArchiveCta } from "./ArchiveCta";
+import {
+  MODE_INTRO,
+  ModeBodySpacer,
+  ModeIntro,
+  ModeLoading,
+} from "./ModeIntro";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -54,19 +59,6 @@ export function ClassicGame() {
     storageMode: "classic",
     // Dev override plays a throwaway round — no writes to the real daily key.
     persist: !isOverride,
-    onGuessSubmitted: isOverride
-      ? undefined
-      : ({ guessNumber, isCorrect, hero }) => {
-          if (!day || !answer) return;
-          trackGuessSubmitted({
-            mode: "classic",
-            dailyId: day,
-            guessNumber,
-            isCorrect,
-            guessId: hero.key,
-            answerId: answer.key,
-          });
-        },
     onHintUsed: isOverride
       ? undefined
       : ({ hintIndex, atGuessNumber, attr }) => {
@@ -111,24 +103,19 @@ export function ClassicGame() {
       hintsUsed: hintsLen,
       bonusCorrect: round?.state.bonus?.correct ?? null,
       answerId: ans.key,
+      guessIds: round?.state.guesses ?? [],
     });
   }, [
     day,
     isOverride,
     won,
     lost,
-    round?.state.guesses.length,
+    round?.state.guesses,
     round?.state.hintsUsed?.length,
   ]);
 
   if (!round) {
-    return (
-      <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="utility-label text-xs text-ink-faint">
-          Loading…
-        </div>
-      </main>
-    );
+    return <ModeLoading {...MODE_INTRO.classic} />;
   }
 
   const { answer: hero, state, effectiveUsed, hintsUsed } = round;
@@ -300,12 +287,7 @@ export function ClassicGame() {
           <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(round.day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
-            Classic
-          </h1>
-          <p className="mt-3 max-w-md text-ink-soft">
-            Type a hero. Match the eight attributes.
-          </p>
+          <ModeIntro {...MODE_INTRO.classic} />
         </div>
         <div className="flex flex-col items-start gap-3 sm:items-end">
           <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
@@ -343,6 +325,7 @@ export function ClassicGame() {
       )}
 
       <ClassicBoard round={round} reveal={reveal} />
+    <ModeBodySpacer guesses={state.guesses.length} />
     </main>
   );
 }

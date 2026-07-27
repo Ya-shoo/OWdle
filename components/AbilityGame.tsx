@@ -16,11 +16,7 @@ import {
   shuffleOrder,
 } from "@/lib/daily";
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
-import {
-  trackGuessSubmitted,
-  trackModeCompleted,
-  trackModeStarted,
-} from "@/lib/tracking";
+import { trackModeCompleted, trackModeStarted } from "@/lib/tracking";
 import { HeroCombobox } from "./HeroCombobox";
 import { Brand } from "./Brand";
 import { NextModeCTA } from "./NextModeCTA";
@@ -37,6 +33,12 @@ import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
+import {
+  MODE_INTRO,
+  ModeBodySpacer,
+  ModeIntro,
+  ModeLoading,
+} from "./ModeIntro";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -141,8 +143,9 @@ export function AbilityGame() {
       cap: MAX_GUESSES,
       answerId: pick.hero.key,
       abilityIndex: pick.abilityIndex,
+      guessIds: state?.guesses ?? [],
     });
-  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+  }, [day, isOverride, stateWon, stateLost, state?.guesses]);
 
   const toggleHardMode = () => {
     setHardMode((prev) => {
@@ -157,13 +160,7 @@ export function AbilityGame() {
   };
 
   if (!day || !state) {
-    return (
-      <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="utility-label text-xs text-ink-faint">
-          Loading…
-        </div>
-      </main>
-    );
+    return <ModeLoading {...MODE_INTRO.ability} />;
   }
 
   const dailyPick = getAbilityForDay(day);
@@ -188,16 +185,6 @@ export function AbilityGame() {
     const newGuesses = [...state.guesses, hero.key];
     const won = hero.key === answer.key;
     const nextLost = !won && newGuesses.length >= MAX_GUESSES;
-    if (!isOverride) {
-      trackGuessSubmitted({
-        mode: "ability",
-        dailyId: day,
-        guessNumber: newGuesses.length,
-        isCorrect: won,
-        guessId: hero.key,
-        answerId: answer.key,
-      });
-    }
     const next: ModeState = {
       ...state,
       guesses: newGuesses,
@@ -224,12 +211,7 @@ export function AbilityGame() {
           <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
-            Ability
-          </h1>
-          <p className="mt-3 max-w-md text-ink-soft">
-            An ability icon, revealed a little more with every miss. Guess the hero it belongs to.
-          </p>
+          <ModeIntro {...MODE_INTRO.ability} />
         </div>
         <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
@@ -426,6 +408,7 @@ export function AbilityGame() {
           })}
         </AnimatePresence>
       </div>
+    <ModeBodySpacer guesses={state.guesses.length} />
     </main>
   );
 }

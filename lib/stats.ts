@@ -31,6 +31,9 @@ export type ModeBucket = {
   lost: number;
   gaveUp: number;
   total: number;
+  // Mean guesses among players who solved this mode today. Server-supplied
+  // (functions/api/stats/today.ts); absent until the first win lands.
+  avgGuessesWon?: number;
 };
 
 export type DailyBucket = {
@@ -64,6 +67,43 @@ const MIN_SAMPLE = 10;
 let cached: StatsResponse | null = null;
 let inflight: Promise<StatsResponse | null> | null = null;
 
+// Dev-only stand-in for /api/stats/today, which is a Cloudflare Pages
+// Function and therefore absent under `next dev` (same reason votes,
+// feedback, trims, palettes and og each get a helper server). Without it
+// ModeStatsPanel correctly hides itself locally and there's no way to see
+// the panel while working on it.
+//
+// Shapes are taken from real 07-23→26 numbers so the panel lays out at a
+// realistic width. `process.env.NODE_ENV` is inlined at build time, so this
+// whole branch is dead-code-eliminated from production bundles.
+const IS_DEV = process.env.NODE_ENV !== "production";
+
+function devMockStats(day: string): StatsResponse {
+  const rows: [StatsMode, number, number, number][] = [
+    ["classic", 1841, 24, 3.3],
+    ["quote", 1520, 83, 4.4],
+    ["ability", 1284, 333, 3.8],
+    ["splash", 1602, 21, 3.0],
+    ["sound", 1671, 41, 2.4],
+    ["melee", 1116, 220, 2.2],
+  ];
+  const modes = {} as Record<StatsMode, ModeBucket>;
+  for (const [mode, won, lost, avg] of rows) {
+    modes[mode] = {
+      won,
+      lost,
+      gaveUp: 0,
+      total: won + lost,
+      avgGuessesWon: avg,
+    };
+  }
+  return {
+    day,
+    modes,
+    daily: { finishers: 434, sweepers: 180, starters_ge2: 602 },
+  };
+}
+
 async function fetchStats(day: string): Promise<StatsResponse | null> {
   if (cached && cached.day === day) return cached;
   if (inflight) return inflight;
@@ -72,11 +112,21 @@ async function fetchStats(day: string): Promise<StatsResponse | null> {
       const res = await fetch(
         `/api/stats/today?day=${encodeURIComponent(day)}`,
       );
-      if (!res.ok) return null;
+      if (!res.ok) {
+        if (IS_DEV) {
+          cached = devMockStats(day);
+          return cached;
+        }
+        return null;
+      }
       const parsed = (await res.json()) as StatsResponse;
       cached = parsed;
       return parsed;
     } catch {
+      if (IS_DEV) {
+        cached = devMockStats(day);
+        return cached;
+      }
       return null;
     } finally {
       inflight = null;
@@ -118,6 +168,29 @@ export function modeWinPercent(
   return {
     percent: Math.round((bucket.won / bucket.total) * 100),
     total: bucket.total,
+  };
+}
+
+// Everything the per-mode "how everyone did today" panel needs, in one
+// call. Returns null under MIN_SAMPLE so the panel hides entirely rather
+// than publishing a percentage derived from three players.
+export function modeDayStats(
+  stats: StatsResponse | null,
+  mode: StatsMode,
+): {
+  percent: number;
+  total: number;
+  won: number;
+  avgGuessesWon: number | null;
+} | null {
+  if (!stats) return null;
+  const bucket = stats.modes[mode];
+  if (!bucket || bucket.total < MIN_SAMPLE) return null;
+  return {
+    percent: Math.round((bucket.won / bucket.total) * 100),
+    total: bucket.total,
+    won: bucket.won,
+    avgGuessesWon: bucket.avgGuessesWon ?? null,
   };
 }
 

@@ -11,11 +11,7 @@ import {
   type ResolvedSoundClip,
 } from "@/lib/daily";
 import { isDailyComplete } from "@/lib/storage";
-import {
-  trackGuessSubmitted,
-  trackModeCompleted,
-  trackModeStarted,
-} from "@/lib/tracking";
+import { trackModeCompleted, trackModeStarted } from "@/lib/tracking";
 import { Brand } from "./Brand";
 import { NextModeCTA } from "./NextModeCTA";
 import { DevSoundPicker } from "./DevSoundPicker";
@@ -31,8 +27,14 @@ import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { DailyCompleteResultCard } from "./DailyCompleteResultCard";
 import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
-import { MAX_GUESSES, SKIP_MARKER, SoundBoard, useSoundRound } from "./SoundBoard";
+import { MAX_GUESSES, SoundBoard, useSoundRound } from "./SoundBoard";
 import { ArchiveCta } from "./ArchiveCta";
+import {
+  MODE_INTRO,
+  ModeBodySpacer,
+  ModeIntro,
+  ModeLoading,
+} from "./ModeIntro";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -123,21 +125,6 @@ export function SoundGame() {
     stampAnswer: !isOverride,
     activeStart,
     activeEnd,
-    onGuessSubmitted: isOverride
-      ? undefined
-      : ({ guessNumber, isCorrect, hero }) => {
-          if (!day || !resolved) return;
-          trackGuessSubmitted({
-            mode: "sound",
-            dailyId: day,
-            guessNumber,
-            isCorrect,
-            // hero:null is a skip — recorded with the skip sentinel so the
-            // guess funnel still counts the burned turn.
-            guessId: hero ? hero.key : SKIP_MARKER,
-            answerId: resolved.hero.key,
-          });
-        },
   });
 
   // mode_started — once per day, skip dev overrides.
@@ -156,7 +143,7 @@ export function SoundGame() {
   const rWon = round?.won === true;
   const rLost = round?.state.lost === true;
   const rGaveUp = round?.state.gaveUp === true;
-  const rGuessCount = round?.state.guesses.length ?? 0;
+  const rGuesses = round?.state.guesses;
   useEffect(() => {
     if (!day || isOverride) return;
     if (!rWon && !rLost && !rGaveUp) return;
@@ -166,11 +153,14 @@ export function SoundGame() {
       mode: "sound",
       dailyId: day,
       outcome,
-      totalGuesses: rGuessCount,
+      totalGuesses: rGuesses?.length ?? 0,
       cap: MAX_GUESSES,
       answerId: pick.hero.key,
+      // Skips ride along as SKIP_MARKER entries — guesses[] stores them
+      // inline, so the burned turns stay visible in the sequence.
+      guessIds: rGuesses ?? [],
     });
-  }, [day, isOverride, rWon, rLost, rGaveUp, rGuessCount]);
+  }, [day, isOverride, rWon, rLost, rGaveUp, rGuesses]);
 
   const applyOverride = (clip: ResolvedSoundClip | null) => {
     // Setting overrideClip flips the resolved clip and the persist flag; the
@@ -214,11 +204,7 @@ export function SoundGame() {
   };
 
   if (!round) {
-    return (
-      <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="utility-label text-xs text-ink-faint">Loading…</div>
-      </main>
-    );
+    return <ModeLoading {...MODE_INTRO.sound} />;
   }
 
   const { clip, answer, turnsUsed, skipsUsed, heroGuessKeys, bonusPending } =
@@ -404,12 +390,7 @@ export function SoundGame() {
           <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(round.day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
-            Sound
-          </h1>
-          <p className="mt-3 max-w-md text-ink-soft">
-            Listen to the ability sound. Each wrong guess extends the clip.
-          </p>
+          <ModeIntro {...MODE_INTRO.sound} />
         </div>
         <div className="flex flex-col items-start gap-3 sm:items-end">
           <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
@@ -460,6 +441,7 @@ export function SoundGame() {
         onAudioMetadata={IS_DEV ? handleAudioMetadata : undefined}
         mediaFooter={mediaFooter}
       />
+    <ModeBodySpacer guesses={turnsUsed} />
     </main>
   );
 }

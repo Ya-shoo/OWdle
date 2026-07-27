@@ -13,7 +13,6 @@ import {
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import {
   trackBonusAnswered,
-  trackGuessSubmitted,
   trackModeCompleted,
   trackModeStarted,
 } from "@/lib/tracking";
@@ -37,6 +36,12 @@ import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import type { Skin } from "@/lib/heroes";
+import {
+  MODE_INTRO,
+  ModeBodySpacer,
+  ModeIntro,
+  ModeLoading,
+} from "./ModeIntro";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -111,8 +116,9 @@ export function SplashGame() {
       cap: MAX_GUESSES,
       answerId: pick.hero.key,
       skinKey: pick.skin?.key ?? null,
+      guessIds: state?.guesses ?? [],
     });
-  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+  }, [day, isOverride, stateWon, stateLost, state?.guesses]);
 
   const applyOverride = (hero: Hero | null) => {
     setOverrideHero(hero);
@@ -121,13 +127,7 @@ export function SplashGame() {
   };
 
   if (!day || !state) {
-    return (
-      <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="utility-label text-xs text-ink-faint">
-          Loading…
-        </div>
-      </main>
-    );
+    return <ModeLoading {...MODE_INTRO.splash} />;
   }
 
   // Override path previews the hero's legendary skin (matching the
@@ -172,16 +172,6 @@ export function SplashGame() {
     const newGuesses = [...state.guesses, hero.key];
     const won = hero.key === answer.key;
     const nextLost = !won && newGuesses.length >= MAX_GUESSES;
-    if (!isOverride) {
-      trackGuessSubmitted({
-        mode: "splash",
-        dailyId: day,
-        guessNumber: newGuesses.length,
-        isCorrect: won,
-        guessId: hero.key,
-        answerId: answer.key,
-      });
-    }
     const next: ModeState = {
       ...state,
       guesses: newGuesses,
@@ -221,13 +211,7 @@ export function SplashGame() {
           <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
-            Spotlight
-          </h1>
-          <p className="mt-3 max-w-md text-ink-soft">
-            Guess the hero from a cropped sliver. Each wrong guess zooms
-            out.
-          </p>
+          <ModeIntro {...MODE_INTRO.splash} />
         </div>
         <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
@@ -462,6 +446,7 @@ export function SplashGame() {
           })}
         </AnimatePresence>
       </div>
+    <ModeBodySpacer guesses={state.guesses.length} />
     </main>
   );
 }

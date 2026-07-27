@@ -88,7 +88,7 @@ function freshRound(day: string): ClassicState {
 //   - `persist:false` runs a throwaway round (the daily dev override) —
 //     no storage writes, and the round re-inits empty whenever the answer
 //     changes.
-//   - onGuessSubmitted/onHintUsed fire per action; onTerminal fires once,
+//   - onHintUsed fires per action; onTerminal fires once,
 //     from the action that ends the round (never from a resume/reload), so
 //     the caller can record a completion without an effect that would
 //     double-fire on hydration.
@@ -104,11 +104,6 @@ export function useClassicRound(opts: {
   // later. The daily leaves this off (today's answer is stable intraday),
   // keeping its stored shape unchanged.
   stampAnswerKey?: boolean;
-  onGuessSubmitted?: (o: {
-    guessNumber: number;
-    isCorrect: boolean;
-    hero: Hero;
-  }) => void;
   onHintUsed?: (o: {
     hintIndex: number;
     atGuessNumber: number;
@@ -212,11 +207,6 @@ export function useClassicRound(opts: {
     const won = hero.key === answer.key;
     const newEffective = newGuesses.length + hintsUsed.length;
     const lost = !won && newEffective >= MAX_GUESSES;
-    opts.onGuessSubmitted?.({
-      guessNumber: newGuesses.length,
-      isCorrect: won,
-      hero,
-    });
     persistState({ ...state, guesses: newGuesses, won, lost });
     if (won || lost) {
       opts.onTerminal?.({

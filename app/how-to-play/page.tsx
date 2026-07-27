@@ -85,13 +85,13 @@ const MODE_SECTIONS: {
     slug: "sound",
     num: "05",
     label: "Sound",
-    lede: "A voice line clip that grows longer with each miss.",
+    lede: "An ability sound clip that grows longer with each miss.",
     body: (
       <>
         <p>
-          You hear a fragment of a voice line, often under a second, that
-          grows longer with each wrong guess. You have eight attempts, and
-          dialogue plays in its original language so accents are fair clues.
+          You hear a fragment of one of the hero&rsquo;s ability sounds,
+          often under a second, that grows longer with each wrong guess.
+          You have eight attempts.
         </p>
       </>
     ),

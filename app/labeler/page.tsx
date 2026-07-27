@@ -173,7 +173,7 @@ const GROUPS: Group[] = [
       { href: "/quote/", label: "Quote", description: "Identify both speakers." },
       { href: "/ability/", label: "Ability", description: "Reveal-the-ability puzzle." },
       { href: "/splash/", label: "Spotlight", description: "Sliver of splash art." },
-      { href: "/sound/", label: "Sound", description: "Voice line / SFX puzzle." },
+      { href: "/sound/", label: "Sound", description: "Ability sound puzzle." },
       { href: "/map/", label: "Map", description: "Overwatch GeoGuessr (WIP)." },
     ],
   },

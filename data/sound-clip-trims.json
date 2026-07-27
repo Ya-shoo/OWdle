@@ -31,7 +31,7 @@
   },
   "sierra": {
     "tracking-shot": {
-      "startOffset": 0.0717
+      "startOffset": 0.1727
     }
   },
   "domina": {
@@ -50,6 +50,31 @@
   "reaper": {
     "death-blossom": {
       "startOffset": 0.5713
+    }
+  },
+  "tracer": {
+    "blink": {
+      "startOffset": 0.2472
+    }
+  },
+  "junkrat": {
+    "rip-tire": {
+      "startOffset": 0.1971
+    }
+  },
+  "dva": {
+    "self-destruct": {
+      "startOffset": 0.1974
+    }
+  },
+  "genji": {
+    "deflect": {
+      "startOffset": 0.3473
+    }
+  },
+  "emre": {
+    "siphon-blaster": {
+      "startOffset": 0.0681
     }
   }
 }

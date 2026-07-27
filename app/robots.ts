@@ -19,10 +19,14 @@ export default function robots(): MetadataRoute.Robots {
       // and HARD-gated to 404 in prod (app/map/page.tsx `if (!IS_DEV)
       // notFound()`), as is /labeler/*. These disallows are belt-and-
       // suspenders so nothing crawls them even if a gate is relaxed.
-      // /archive/* is a private client-only retention surface (per-mode
-      // replay of past dailies). noindex on each route + absent from the
-      // sitemap; disallowed here as belt-and-suspenders.
-      disallow: ["/labeler/", "/map/", "/archive/"],
+      // The /archive/ HUB is crawlable and in the sitemap: it's a real
+      // server-rendered landing page describing the replay feature, with no
+      // puzzle content on it. Only the per-mode replay routes beneath it are
+      // blocked — those are client-only game surfaces that would serve a
+      // crawler an empty shell. Add each new /archive/<mode>/ route here as
+      // it ships; the bare "/archive/" prefix must NOT come back or it
+      // re-blocks the hub.
+      disallow: ["/labeler/", "/map/", "/archive/classic/", "/archive/sound/"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
     host: SITE_URL,

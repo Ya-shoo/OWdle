@@ -22,6 +22,10 @@ import { rename, mkdir, access } from "node:fs/promises";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
+import {
+  assertPosthogEnv,
+  assertPosthogBaked,
+} from "./assert-analytics.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
@@ -88,8 +92,14 @@ function runBuild() {
 
 let moved = [];
 try {
+  // Fail fast BEFORE building if the analytics key is absent — a keyless
+  // build ships with browser analytics silently disabled (see
+  // scripts/assert-analytics.mjs).
+  assertPosthogEnv(REPO_ROOT);
   moved = await stash();
   await runBuild();
+  // Verify the shipped artifact actually contains the key before upload.
+  await assertPosthogBaked(REPO_ROOT);
 } catch (e) {
   console.error("\n[build-for-deploy] build failed:", e.message ?? e);
   process.exitCode = 1;

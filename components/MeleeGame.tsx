@@ -13,11 +13,7 @@ import {
 import { loadModeState, saveModeState, type ModeState } from "@/lib/storage";
 import { MELEE_AUDIO_BOOST, loadVolume, saveVolume } from "@/lib/audio";
 import { media } from "@/lib/media";
-import {
-  trackGuessSubmitted,
-  trackModeCompleted,
-  trackModeStarted,
-} from "@/lib/tracking";
+import { trackModeCompleted, trackModeStarted } from "@/lib/tracking";
 import { roundShareLinks } from "@/lib/shareLinks";
 import { useShareLinkVisit } from "@/lib/useShareLinkVisit";
 import { HeroCombobox } from "./HeroCombobox";
@@ -31,6 +27,12 @@ import { WaveformPlayer } from "./WaveformPlayer";
 import { VolumeSlider } from "./VolumeSlider";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevMeleePicker } from "./DevMeleePicker";
+import {
+  MODE_INTRO,
+  ModeBodySpacer,
+  ModeIntro,
+  ModeLoading,
+} from "./ModeIntro";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -104,8 +106,9 @@ export function MeleeGame() {
       cap: MAX_GUESSES,
       answerId: pick.hero.key,
       bonus: true,
+      guessIds: state?.guesses ?? [],
     });
-  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+  }, [day, isOverride, stateWon, stateLost, state?.guesses]);
 
   // Warm the reveal MP4 the instant the round is won, so the <video> mounts
   // from browser cache instead of a cold cross-origin fetch. Mirrors
@@ -127,13 +130,7 @@ export function MeleeGame() {
   }, [day, stateWon, isOverride]);
 
   if (!day || !state) {
-    return (
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <div className="utility-label text-xs text-ink-faint">
-          Loading…
-        </div>
-      </main>
-    );
+    return <ModeLoading {...MODE_INTRO.melee} />;
   }
 
   const resolved =
@@ -161,16 +158,6 @@ export function MeleeGame() {
     // render and never written, which corrupted the loss reveal on reload,
     // the loss analytics, and the home bonus-card's "Missed" status.
     const lostNow = !won && nextGuesses.length >= MAX_GUESSES;
-    if (!isOverride) {
-      trackGuessSubmitted({
-        mode: MODE,
-        dailyId: day,
-        guessNumber: state.guesses.length + 1,
-        isCorrect: won,
-        guessId: hero.key,
-        answerId: answer.key,
-      });
-    }
     persist({ ...state, guesses: nextGuesses, won, lost: lostNow });
   };
 
@@ -194,13 +181,7 @@ export function MeleeGame() {
           <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
-            Melee
-          </h1>
-          <p className="mt-3 max-w-md text-ink-soft">
-            Guess the Overwatch hero from their melee sound. Listen to the hit.
-            Five guesses.
-          </p>
+          <ModeIntro {...MODE_INTRO.melee} />
         </div>
         <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
@@ -347,6 +328,7 @@ export function MeleeGame() {
           </p>
         </div>
       )}
+    <ModeBodySpacer guesses={state.guesses.length} />
     </main>
   );
 }

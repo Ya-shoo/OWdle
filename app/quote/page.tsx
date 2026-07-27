@@ -1,7 +1,10 @@
 import { QuoteGame } from "@/components/QuoteGame";
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { ModeFooterNav } from "@/components/ModeFooterNav";
-import { modeJsonLd, modeMetadata } from "@/lib/site";
+import { HomeFaq } from "@/components/HomeFaq";
+import { ModeStatsPanel } from "@/components/ModeStatsPanel";
+import { QUOTE_FAQ } from "@/lib/faq";
+import { faqJsonLd, modeJsonLd, modeMetadata } from "@/lib/site";
 
 const META = {
   slug: "quote",
@@ -13,6 +16,7 @@ const META = {
 export const metadata = modeMetadata(META);
 
 const jsonLd = modeJsonLd(META);
+const faqLd = faqJsonLd(META.slug, QUOTE_FAQ);
 
 export default function QuotePage() {
   return (
@@ -23,8 +27,16 @@ export default function QuotePage() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <ModeBreadcrumbs label={META.title} />
       <QuoteGame />
+      <ModeStatsPanel mode="quote" />
+      <HomeFaq items={QUOTE_FAQ} heading="Quote mode: frequently asked questions" />
       <ModeFooterNav current="quote" />
     </>
   );

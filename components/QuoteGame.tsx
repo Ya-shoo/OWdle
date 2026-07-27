@@ -36,7 +36,6 @@ import {
   trackBonusOffered,
   trackBonusOutcome,
   trackBonusUsed,
-  trackGuessSubmitted,
   trackModeCompleted,
   trackModeStarted,
 } from "@/lib/tracking";
@@ -55,6 +54,12 @@ import { TryDeadlockleCard } from "./TryDeadlockleCard";
 import { isDailyComplete } from "@/lib/storage";
 import { BUILT_MODE_SLUGS } from "@/lib/modes";
 import clsx from "clsx";
+import {
+  MODE_INTRO,
+  ModeBodySpacer,
+  ModeIntro,
+  ModeLoading,
+} from "./ModeIntro";
 
 const IS_DEV = process.env.NODE_ENV !== "production";
 
@@ -164,17 +169,15 @@ export function QuoteGame() {
       cap: MAX_GUESSES,
       answerId,
       conversationId: answerId,
+      // "<heroKey>@<target>" — mirrors the retired guess_submitted
+      // guess_id encoding so speaker-slot analysis stays possible.
+      guessIds:
+        state?.guesses.map((g) => `${g.heroKey}@${g.target}`) ?? [],
     });
-  }, [day, isOverride, stateWon, stateLost, state?.guesses.length]);
+  }, [day, isOverride, stateWon, stateLost, state?.guesses]);
 
   if (!day || !state) {
-    return (
-      <main className="mx-auto w-full max-w-4xl px-6 py-16">
-        <div className="utility-label text-xs text-ink-faint">
-          Loading…
-        </div>
-      </main>
-    );
+    return <ModeLoading {...MODE_INTRO.quote} />;
   }
 
   // Override path serves the picker's conversation; daily uses the
@@ -270,14 +273,6 @@ export function QuoteGame() {
     const nextLost =
       !nextWon && newGuesses.length >= MAX_GUESSES && !bonusActiveAfter;
     if (!isOverride) {
-      trackGuessSubmitted({
-        mode: "quote",
-        dailyId: day,
-        guessNumber: newGuesses.length,
-        isCorrect: hero.key === targetSpeaker.key,
-        guessId: `${hero.key}@${target}`,
-        answerId: `${speakerA.key}_${speakerB.key}`,
-      });
       if (bonusJustEarned) {
         trackBonusOffered({
           mode: "quote",
@@ -329,13 +324,7 @@ export function QuoteGame() {
           <p className="utility-label text-xs text-info">
             <span suppressHydrationWarning>{prettyDay(day)}</span>
           </p>
-          <h1 className="mt-3 font-display display-headline uppercase text-5xl text-ink sm:text-6xl">
-            Quote
-          </h1>
-          <p className="mt-3 max-w-md text-ink-soft">
-            Try to guess which two heroes are having a conversation :D
-            More dialogue is revealed as you go.
-          </p>
+          <ModeIntro {...MODE_INTRO.quote} />
         </div>
         <div className="hidden flex-col items-end utility-label text-xs text-ink-faint sm:flex">
           <Brand size="sm" />
@@ -595,6 +584,7 @@ export function QuoteGame() {
           })}
         </AnimatePresence>
       </div>
+    <ModeBodySpacer guesses={state.guesses.length} />
     </main>
   );
 }

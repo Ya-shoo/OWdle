@@ -43,7 +43,18 @@ const MODES: Mode[] = [
 // daily" starter count. Pre-quoted for direct HogQL interpolation.
 const CANONICAL_MODES_SQL = "'classic','quote','ability','splash','sound'";
 
-type ModeBucket = { won: number; lost: number; gaveUp: number; total: number };
+type ModeBucket = {
+  won: number;
+  lost: number;
+  gaveUp: number;
+  total: number;
+  // Mean guess count among players who SOLVED the mode today. Comes free
+  // off the existing (mode, outcome) grouping — the "won" row's average is
+  // exactly "solved it in N guesses on average". Undefined until at least
+  // one win lands. Losers are excluded on purpose: they all bank the cap,
+  // so folding them in would just drag every mode toward its max.
+  avgGuessesWon?: number;
+};
 type DailyBucket = {
   finishers: number;
   sweepers: number;
@@ -130,7 +141,8 @@ async function fetchFromPostHog(
     "SELECT",
     "  properties.mode AS mode,",
     "  properties.outcome AS outcome,",
-    "  count(DISTINCT distinct_id) AS cnt",
+    "  count(DISTINCT distinct_id) AS cnt,",
+    "  avg(toFloat(properties.total_guesses)) AS avg_guesses",
     "FROM events",
     "WHERE event = 'mode_completed'",
     `  AND properties.daily_id = '${day}'`,
@@ -223,8 +235,13 @@ async function fetchFromPostHog(
     const cnt = Number(row[2]) || 0;
     if (!isMode(mode)) continue;
     const bucket = modes[mode];
-    if (outcome === "won") bucket.won += cnt;
-    else if (outcome === "lost") bucket.lost += cnt;
+    if (outcome === "won") {
+      bucket.won += cnt;
+      const avg = Number(row[3]);
+      if (Number.isFinite(avg) && avg > 0) {
+        bucket.avgGuessesWon = Math.round(avg * 10) / 10;
+      }
+    } else if (outcome === "lost") bucket.lost += cnt;
     else if (outcome === "gaveUp") bucket.gaveUp += cnt;
     bucket.total = bucket.won + bucket.lost + bucket.gaveUp;
   }
