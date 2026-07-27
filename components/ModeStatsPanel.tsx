@@ -57,7 +57,6 @@ export function ModeStatsPanel({ mode }: { mode: StatsMode }) {
               label="Average guesses to solve"
             />
           )}
-          <Stat value={s.total.toLocaleString()} label="Plays so far today" />
         </div>
       </div>
     </section>
