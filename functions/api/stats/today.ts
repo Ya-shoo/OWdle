@@ -137,6 +137,14 @@ async function fetchFromPostHog(
   const key = env.POSTHOG_PERSONAL_API_KEY!;
   const endpoint = `${host.replace(/\/$/, "")}/api/projects/${encodeURIComponent(projectId)}/query/`;
 
+  // Day filter: match on toDate(), NOT string equality. PostHog infers the
+  // `daily_id` property as DateTime64(6, 'America/Los_Angeles') (the events
+  // carry it as an ISO datetime at Pacific midnight, e.g.
+  // "2026-07-27T00:00:00-07:00"), so `properties.daily_id = '2026-07-27'`
+  // never matches and every bucket comes back empty — which the client reads
+  // as "hide the panel". `toDate(properties.daily_id) = toDate('${day}')`
+  // compares the Pacific calendar dates and is the correct filter. Do NOT
+  // revert to bare string equality.
   const modeQuery = [
     "SELECT",
     "  properties.mode AS mode,",
@@ -145,7 +153,7 @@ async function fetchFromPostHog(
     "  avg(toFloat(properties.total_guesses)) AS avg_guesses",
     "FROM events",
     "WHERE event = 'mode_completed'",
-    `  AND properties.daily_id = '${day}'`,
+    `  AND toDate(properties.daily_id) = toDate('${day}')`,
     "  AND properties.site = 'owdle'",
     "GROUP BY mode, outcome",
   ].join("\n");
@@ -156,7 +164,7 @@ async function fetchFromPostHog(
     "  count(DISTINCT if(properties.sweep = true, distinct_id, NULL)) AS sweepers",
     "FROM events",
     "WHERE event = 'daily_completed'",
-    `  AND properties.daily_id = '${day}'`,
+    `  AND toDate(properties.daily_id) = toDate('${day}')`,
     "  AND properties.site = 'owdle'",
   ].join("\n");
 
@@ -169,7 +177,7 @@ async function fetchFromPostHog(
     "  SELECT distinct_id",
     "  FROM events",
     "  WHERE event = 'mode_started'",
-    `    AND properties.daily_id = '${day}'`,
+    `    AND toDate(properties.daily_id) = toDate('${day}')`,
     "    AND properties.site = 'owdle'",
     // Canonical-only: "committed to the daily" means ≥2 of the 5 daily
     // modes started. A Melee (bonus) start must not count toward the
@@ -203,7 +211,7 @@ async function fetchFromPostHog(
     "    ) AS total",
     "  FROM events",
     "  WHERE event = 'mode_completed'",
-    `    AND properties.daily_id = '${day}'`,
+    `    AND toDate(properties.daily_id) = toDate('${day}')`,
     "    AND properties.site = 'owdle'",
     // Canonical-only, two jobs in one filter: the sum must not include a
     // Melee (bonus) completion, AND the distinct-mode count must stay 5
