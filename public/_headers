@@ -45,6 +45,16 @@
   Referrer-Policy: same-origin
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+# The /splash/ GAME PAGE shares the /splash/ prefix with the hero-art JPGs
+# above (public/splash/<key>.jpg), so the /splash/* rule would otherwise pin
+# the page HTML to a 24h browser cache. That turns any bad deploy into a
+# day-long outage for returning Spotlight players: they keep loading stale
+# HTML that references an old, now-broken JS chunk. This exact-path override
+# (more specific than the wildcard, so it wins) forces the page to always
+# revalidate, matching every other game route. Do NOT remove.
+/splash/
+  Cache-Control: public, max-age=0, must-revalidate
+
 /voicelines/*
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
