@@ -40,18 +40,23 @@
   Referrer-Policy: same-origin
   Cache-Control: public, max-age=2592000, stale-while-revalidate=31536000
 
-/splash/*
+# Hero-art JPGs live at /splash/<key>.jpg — a SINGLE path segment. The `:file`
+# placeholder matches exactly those (one non-empty segment, no slash) but does
+# NOT match the bare `/splash/` game page, which is the whole point: the old
+# `/splash/*` splat matched the page too and pinned its HTML to a 24h cache.
+# Cloudflare _headers CONCATENATES Cache-Control across every matching rule
+# (it does not override), so an overlapping page rule produced a duplicate
+# `max-age` header — undefined browser behavior. Keeping the art and the page
+# on non-overlapping rules gives each a single, clean Cache-Control. Do NOT
+# widen this back to /splash/*.
+/splash/:file
   Cross-Origin-Resource-Policy: same-origin
   Referrer-Policy: same-origin
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
-# The /splash/ GAME PAGE shares the /splash/ prefix with the hero-art JPGs
-# above (public/splash/<key>.jpg), so the /splash/* rule would otherwise pin
-# the page HTML to a 24h browser cache. That turns any bad deploy into a
-# day-long outage for returning Spotlight players: they keep loading stale
-# HTML that references an old, now-broken JS chunk. This exact-path override
-# (more specific than the wildcard, so it wins) forces the page to always
-# revalidate, matching every other game route. Do NOT remove.
+# The /splash/ GAME PAGE must always revalidate (like every other game route),
+# so a bad deploy can never pin returning Spotlight players to a stale, broken
+# JS chunk. Matched only by this exact rule, never by the art rule above.
 /splash/
   Cache-Control: public, max-age=0, must-revalidate
 
