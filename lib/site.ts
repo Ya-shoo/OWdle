@@ -8,6 +8,11 @@ export const SITE_NAME = "OWdle";
 // to the same mailbox /privacy/ already publishes, so it is known-working.
 // Swap here and both surfaces follow.
 export const CONTACT_EMAIL = "privacy@playowdle.com";
+
+// Business / partnership address, surfaced on /about/. Kept separate from
+// CONTACT_EMAIL (site/privacy) so sponsorship and ad-network mail lands in a
+// mailbox Yush watches for that, not the site support inbox.
+export const BUSINESS_EMAIL = "yush.dev.games@gmail.com";
 export const SITE_TAGLINE = "the daily Overwatch quiz";
 
 // Google Analytics 4 measurement ID for playowdle.com. Non-secret — it ships

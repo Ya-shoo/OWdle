@@ -14,7 +14,7 @@
 // slate + link/hover tiers, mirroring how the sister-site cards hardcode
 // their own on-light palettes.
 import Link from "next/link";
-import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL } from "@/lib/site";
+import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL, BUSINESS_EMAIL } from "@/lib/site";
 import { trackShareClicked } from "@/lib/tracking";
 import { KofiModal } from "./KofiModal";
 
@@ -143,6 +143,20 @@ export function SupportLinks() {
           Share on X
         </a>
       </div>
+
+      {/* Business inquiries — sits at the very bottom of the card, centered,
+          in strong dark text (text-canvas reads black on this light paper
+          card). Separate from the support cluster above: this is the
+          sponsorship / partnership channel, not a tip prompt. */}
+      <p className="mt-8 text-center text-sm font-extrabold text-canvas">
+        for business inquiries:{" "}
+        <a
+          href={`mailto:${BUSINESS_EMAIL}`}
+          className="text-[#1d4ed8] transition-colors hover:text-[#1e3a8a]"
+        >
+          {BUSINESS_EMAIL}
+        </a>
+      </p>
     </div>
   );
 }

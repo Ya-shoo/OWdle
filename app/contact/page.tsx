@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import {
+  BUSINESS_EMAIL,
   CONTACT_EMAIL,
   SITE_NAME,
   SITE_URL,
@@ -74,6 +75,17 @@ export default function ContactPage() {
               <Link href="/whats-next/" className={linkCls}>
                 what&rsquo;s next
               </Link>
+              .
+            </p>
+          </section>
+
+          <section className="mt-8">
+            <h2 className="text-lg text-ink">Business inquiries</h2>
+            <p className="mt-2">
+              Sponsorships, ad partnerships, and other business questions go to{" "}
+              <a className={linkCls} href={`mailto:${BUSINESS_EMAIL}`}>
+                {BUSINESS_EMAIL}
+              </a>
               .
             </p>
           </section>

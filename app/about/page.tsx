@@ -1,6 +1,6 @@
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { MakerNote } from "@/components/MakerNote";
-import { SITE_NAME, SITE_URL, modeMetadata } from "@/lib/site";
+import { BUSINESS_EMAIL, SITE_NAME, SITE_URL, modeMetadata } from "@/lib/site";
 
 // Intentionally bare. The only body content is the origin story
 // (components/MakerNote.tsx), which is Yush's own words. Nothing else here
@@ -43,6 +43,19 @@ export default function AboutPage() {
           <div className="mt-6">
             <MakerNote />
           </div>
+          <section className="mt-8 text-[15px] leading-relaxed text-ink-soft">
+            <h2 className="text-lg text-ink">Business inquiries</h2>
+            <p className="mt-2">
+              Sponsorships, ad partnerships, and other business questions:{" "}
+              <a
+                className="underline underline-offset-2 hover:text-accent"
+                href={`mailto:${BUSINESS_EMAIL}`}
+              >
+                {BUSINESS_EMAIL}
+              </a>
+              .
+            </p>
+          </section>
         </div>
       </main>
     </>
