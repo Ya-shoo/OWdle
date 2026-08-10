@@ -1,7 +1,7 @@
 import { ModeBreadcrumbs } from "@/components/ModeBreadcrumbs";
 import { SITE_URL, modeMetadata } from "@/lib/site";
 
-const LAST_UPDATED = "July 2, 2026";
+const LAST_UPDATED = "August 10, 2026";
 const PRIVACY_EMAIL = "privacy@playowdle.com";
 
 const PAGE_DESCRIPTION =
@@ -111,7 +111,7 @@ export default function PrivacyPolicyPage() {
               including Google Analytics (<code>_ga</code> cookies).
             </li>
             <li>
-              Advertising &mdash; Google AdSense and its partners, for
+              Advertising &mdash; third-party advertising partners, for
               delivering, capping, personalizing, and measuring ads (when ads
               are live).
             </li>
@@ -132,24 +132,15 @@ export default function PrivacyPolicyPage() {
           </p>
 
           <h2 id="advertising">Advertising</h2>
-          <p>OWdle is supported by ads served through Google AdSense.</p>
           <p>
-            Third-party vendors, including Google, use cookies to serve ads based
-            on a user&rsquo;s prior visits to this and other websites.
-            Google&rsquo;s advertising cookies let it and its partners select,
-            deliver, cap, measure, and personalize ads. For how Google uses data
-            from sites that use its advertising, see{" "}
-            <a
-              className={linkCls}
-              href="https://policies.google.com/technologies/partner-sites"
-            >
-              Google&rsquo;s partner-sites notice
-            </a>
-            . Users can opt out of personalized advertising in{" "}
-            <a className={linkCls} href="https://myadcenter.google.com/">
-              Google&rsquo;s Ads Settings
-            </a>
-            .
+            OWdle is supported by ads served through third-party advertising
+            partners (when ads are live).
+          </p>
+          <p>
+            These partners use cookies and similar technologies to serve ads
+            based on a user&rsquo;s prior visits to this and other websites, and
+            to select, deliver, cap, measure, and personalize those ads. Users
+            can control this through the choices described below.
           </p>
           <h3>Ad choices</h3>
           <ul>
@@ -205,7 +196,7 @@ export default function PrivacyPolicyPage() {
           <ul>
             <li>Analytics providers, including Google.</li>
             <li>A hosting and content-delivery provider.</li>
-            <li>Google AdSense and its advertising partners.</li>
+            <li>Third-party advertising partners.</li>
             <li>Ko-fi, only if a user chooses to tip.</li>
           </ul>
           <p>
