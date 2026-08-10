@@ -112,6 +112,74 @@ export function dayString(d: Date = new Date()): string {
     .slice(0, 10);
 }
 
+// Reads the IANA offset of Pacific time from UTC at the given instant.
+// Returns minutes east of UTC (so PST returns -480, PDT returns -420).
+function pacificOffsetMinutes(d: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: RESET_TZ,
+    timeZoneName: "shortOffset",
+  }).formatToParts(d);
+  const tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "GMT-8";
+  const m = tz.match(/GMT([+-])(\d+)(?::(\d+))?/);
+  if (!m) return -8 * 60;
+  const sign = m[1] === "-" ? -1 : 1;
+  const hours = parseInt(m[2], 10);
+  const minutes = m[3] ? parseInt(m[3], 10) : 0;
+  return sign * (hours * 60 + minutes);
+}
+
+// Milliseconds until the next 2:15am Pacific reset — the moment every daily
+// puzzle rotates to the next day's seed. DST-aware: the actual UTC instant
+// shifts between 10:15 UTC (PST winter) and 09:15 UTC (PDT summer). On the
+// two DST transition days the wall-clock 02:15 is ambiguous/skipped and this
+// can be off by up to an hour — once a year, in the dead of night, acceptable.
+// Shared by NextResetCountdown (the display) and DailyRolloverWatch (which
+// wakes at this instant to advance a tab left open across the roll).
+export function msUntilNextPacificReset(now: Date = new Date()): number {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: RESET_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(now);
+  const get = (type: string) =>
+    parseInt(parts.find((p) => p.type === type)?.value ?? "0", 10);
+  const py = get("year");
+  const pm = get("month");
+  const pd = get("day");
+  const ph = get("hour");
+  const pmin = get("minute");
+
+  const beforeResetToday =
+    ph < RESET_HOUR_PT || (ph === RESET_HOUR_PT && pmin < RESET_MIN_PT);
+
+  let ty = py;
+  let tm = pm;
+  let td = pd;
+  if (!beforeResetToday) {
+    const tomorrow = new Date(Date.UTC(py, pm - 1, pd + 1));
+    ty = tomorrow.getUTCFullYear();
+    tm = tomorrow.getUTCMonth() + 1;
+    td = tomorrow.getUTCDate();
+  }
+
+  // Sample the Pacific offset at noon UTC on the target Pacific day — far
+  // enough from the DST transition window to be unambiguous.
+  const sample = new Date(Date.UTC(ty, tm - 1, td, 12, 0, 0));
+  const offsetMin = pacificOffsetMinutes(sample);
+
+  // Wall-clock 02:15 in Pacific = UTC ms for 02:15 minus the Pacific offset.
+  const targetUtcMs =
+    Date.UTC(ty, tm - 1, td, RESET_HOUR_PT, RESET_MIN_PT, 0) -
+    offsetMin * 60 * 1000;
+
+  return targetUtcMs - now.getTime();
+}
+
 // FNV-1a 32-bit string hash. Deterministic, fast, well-distributed enough
 // to seed a daily index into the answer pool.
 function fnv1a(s: string): number {

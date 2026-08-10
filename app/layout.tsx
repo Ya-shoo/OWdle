@@ -9,6 +9,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { DailyRolloverWatch } from "@/components/DailyRolloverWatch";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { ShareAnnounceModal } from "@/components/ShareAnnounceModal";
@@ -153,6 +154,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <Header />
+        <DailyRolloverWatch />
         {children}
         <SiteFooter />
         <FeedbackButton />
