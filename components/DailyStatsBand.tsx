@@ -1,61 +1,26 @@
 "use client";
 
-// Two stacked lines on DailyCompletePanel:
-//   1. Finish-rate: "<X>% of starters finished today's set"
-//   2. Sweep-rate, personalized:
-//        - swept locally → "Top <Y>% of today's finishers"
-//        - did not sweep → "<Y>% of finishers swept today"
+// Single line on DailyCompletePanel:
+//   Finish-rate: "<X>% of starters finished today's set"
 //
-// Each line hides independently when its denominator is below MIN_SAMPLE.
-// If both hide, the component renders nothing. The personalization on
-// the sweep line uses a localStorage scan so we don't have to thread a
-// `swept` prop through every caller of DailyCompletePanel.
+// Renders nothing when the finishers/starters denominator is below
+// MIN_SAMPLE (see lib/stats). A sweep-rate line used to sit below this
+// ("Top <Y>% of today's finishers"), but its wording collided with the
+// real Daily Rank percentile right beneath it — a sweep rate is a
+// population stat, not a rank — so it read as a contradiction and was
+// removed.
 
-import { useEffect, useState } from "react";
-import { dayString } from "@/lib/daily";
-import { BUILT_MODE_SLUGS } from "@/lib/modes";
-import { loadModeState } from "@/lib/storage";
-import {
-  dailyFinishPercent,
-  dailySweepPercent,
-  useDailyStats,
-} from "@/lib/stats";
+import { dailyFinishPercent, useDailyStats } from "@/lib/stats";
 
 export function DailyStatsBand() {
   const stats = useDailyStats();
-  const [swept, setSwept] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const day = dayString();
-    let allWon = true;
-    for (const slug of BUILT_MODE_SLUGS) {
-      const st = loadModeState(slug, day);
-      if (!st.won) {
-        allWon = false;
-        break;
-      }
-    }
-    setSwept(allWon);
-  }, []);
-
   const finish = dailyFinishPercent(stats);
-  const sweep = dailySweepPercent(stats);
-  const sweepReady = sweep != null && swept != null;
 
-  if (!finish && !sweepReady) return null;
+  if (!finish) return null;
 
   return (
     <div className="utility-label mt-3 flex flex-col items-center gap-1 text-center text-[10px] text-info">
-      {finish && (
-        <p>{finish.percent}% of starters finished today&apos;s set</p>
-      )}
-      {sweepReady && (
-        <p>
-          {swept
-            ? `Top ${sweep.sweepPercent}% of today's finishers`
-            : `${sweep.sweepPercent}% of finishers swept today`}
-        </p>
-      )}
+      <p>{finish.percent}% of starters finished today&apos;s set</p>
     </div>
   );
 }

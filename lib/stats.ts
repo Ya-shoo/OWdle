@@ -194,23 +194,6 @@ export function modeDayStats(
   };
 }
 
-// Sweep rate among players who finished every mode today. Returns null
-// when finisher count is below the display threshold. The sweep rate
-// answers "what % of players who finished today's set swept all 5
-// modes" — easier to interpret than absolute counts.
-export function dailySweepPercent(
-  stats: StatsResponse | null,
-): { sweepPercent: number; finishers: number; sweepers: number } | null {
-  if (!stats) return null;
-  const { finishers, sweepers } = stats.daily;
-  if (finishers < MIN_SAMPLE) return null;
-  return {
-    sweepPercent: Math.round((sweepers / finishers) * 100),
-    finishers,
-    sweepers,
-  };
-}
-
 // Finish-rate: of players who committed to today's set (started ≥ 2
 // distinct modes), what % finished every built mode. Single-mode
 // tourists are excluded from the denominator on the server so the
