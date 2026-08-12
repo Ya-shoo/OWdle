@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 LOG=.reencode.log
 > "$LOG"
 
-mapfile -d '' files < <(find public/sounds -newer .gitignore -name "*.mp4" -size +10M -print0 | sort -z)
+mapfile -d '' files < <(find public/sounds public/melee -newer .gitignore -name "*.mp4" -size +10M -print0 | sort -z)
 total=${#files[@]}
 echo "[reencode] $total files to process" | tee -a "$LOG"
 
