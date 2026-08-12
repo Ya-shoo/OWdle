@@ -165,7 +165,13 @@ function parseInteractionRows(section) {
     // Header detection: row starts with a `| rowspan="N" |<center>` block
     // that names one or more `[[Hero]]`s. When present, that's the new
     // shared header for the following N rows.
-    const headerRe = /\|\s*rowspan="?(\d+)"?\s*\|\s*<center>(.*?)<\/center>/s;
+    // Tolerate extra cell attributes between the rowspan and the `|` cell
+    // separator — newer hero pages (e.g. D.Mon) write `| rowspan="3"
+    // colspan="2" | <center>…`, where the colspan would otherwise break the
+    // match and yield zero rows. `[^|]*` stays backward-compatible with the
+    // plain `rowspan="N" |` form.
+    const headerRe =
+      /\|\s*rowspan="?(\d+)"?[^|]*\|\s*<center>(.*?)<\/center>/s;
     const hm = raw.match(headerRe);
     let bodyStart = 0;
     if (hm) {
