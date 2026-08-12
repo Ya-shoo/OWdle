@@ -13,11 +13,12 @@ import { useSyncExternalStore } from "react";
 // <AdRails/>) and the reader (<SiteGreeter/>, mounted deep inside the page)
 // share no provider ancestor — both are position:fixed islands.
 //
-// "Visible" means an ad is actually painted in the right gutter: a live unit
-// that came back FILLED, or the dev ?adpreview mock — NOT an eligible-but-
-// unfilled ghost slot. So through the pre-approval / low-fill ramp (rails are
-// wired but AdSense returns unfilled → the slot collapses to nothing) the
-// greeter stays in its normal corner instead of dodging an empty gutter.
+// "Visible" means an ad is actually painted in the right gutter, detected
+// network-agnostically: AdRails watches the reserved right-rail slot for a real
+// sized ad <iframe> (what Newor's header-bidding wrapper OR AdSense injects on a
+// fill), or the dev ?adpreview mock — NOT an eligible-but-unfilled ghost slot.
+// So through any low-fill ramp (the slot stays empty / collapses to nothing) the
+// greeter keeps its normal corner instead of dodging an empty gutter.
 
 let visible = false;
 const listeners = new Set<() => void>();

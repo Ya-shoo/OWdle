@@ -14,6 +14,7 @@ import {
 import { Brand } from "./Brand";
 import { NextModeCTA } from "./NextModeCTA";
 import { LossReveal } from "./LossReveal";
+import { InContentAd } from "./InContentAd";
 import { ModeStatsLine } from "./ModeStatsLine";
 import { DevViewToggle, useDevViewState } from "./DevViewToggle";
 import { DevHeroPicker } from "./DevHeroPicker";
@@ -277,6 +278,15 @@ export function ClassicGame() {
             </LossReveal>
           ))}
       </AnimatePresence>
+
+      {/* In-content ad — placement #1, below the per-mode result card (win or
+          loss), not on the final-mode daily-complete screen. Post-round, so it
+          never obstructs play. Dev preview via ?adpreview=1. */}
+      {(state.won || state.lost) && !dailyComplete && (
+        <div className="mb-8">
+          <InContentAd maxW={728} h={90} label="classic result" />
+        </div>
+      )}
     </>
   );
 

@@ -29,6 +29,8 @@ import { SiteGreeter } from "./SiteGreeter";
 import { TryBonusRoundNudge } from "./TryBonusRoundNudge";
 import { ArchiveCta } from "./ArchiveCta";
 import { Plate } from "./Plate";
+import { LifetimeCounter } from "./LifetimeCounter";
+import { InContentAd } from "./InContentAd";
 
 // Home grid split (design decision: canonical daily stays exactly 5).
 //   • Daily grid — everything that isn't a bonus island: the 5 canonical
@@ -128,6 +130,16 @@ export function HomeContent() {
             <DefaultHero day={day} />
           )}
         </div>
+        {/* Lifetime play counter — social-proof flourish riding the bottom-
+            right of the banner (desktop). The solid Plate reads on any banner
+            frame; it self-hides until the first real count arrives. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 hidden sm:block">
+          <div className="mx-auto flex max-w-6xl justify-end px-6 pb-6">
+            <div className="pointer-events-auto">
+              <LifetimeCounter />
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-12 pt-12 sm:pt-16">
@@ -205,6 +217,14 @@ export function HomeContent() {
         <div className="mx-auto max-w-lg rounded-(--radius-card) bg-[#e1e6f3] p-6 shadow-card sm:p-8">
           <SupportLinks />
         </div>
+      </section>
+
+      {/* In-content ad — placement #3, the section break between the support
+          panel and the sister-site cards (Yash's proposed spot). Non-obstructive,
+          below the fold. Dev preview via ?adpreview=1; renders the real fluid
+          unit only once ads are live. */}
+      <section className="mx-auto max-w-3xl px-6 pb-8 pt-4">
+        <InContentAd maxW={728} h={90} label="homepage" />
       </section>
 
       {/* Sister-site cards — two small branded cross-promo cards, centered

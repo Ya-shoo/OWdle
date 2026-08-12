@@ -307,9 +307,14 @@ export function AdRails() {
     "pending" | "filled" | "unfilled"
   >("pending");
   // Fill status of the top RIGHT gutter rail — the one rail the corner greeter
-  // can collide with. Set from that rail's AdSlot (below) and fed to the
-  // adRailSignal so the greeter shifts only when an ad actually paints there.
+  // can collide with. Set network-agnostically by the observer below (watches
+  // the reserved slot for a real painted ad) and fed to the adRailSignal so the
+  // greeter shifts only when an ad actually paints there — whichever network
+  // (Newor's header-bidding wrapper, or AdSense) filled it.
   const [rightRailFilled, setRightRailFilled] = useState(false);
+  // The reserved right-rail slot container (top gutter unit). Observed below to
+  // detect a genuine fill without depending on any one network's fill signal.
+  const rightRailRef = useRef<HTMLDivElement | null>(null);
   // Dev-only mock-ads preview. `?adpreview=1` fills the launching slots (top
   // gutter rail + mobile anchor) with placeholder creatives so the ads-on
   // layout can be eyeballed before AdSense fills anything; `?adpreview=0`
@@ -483,16 +488,53 @@ export function AdRails() {
     };
   }, [pathname]);
 
+  // Network-agnostic right-rail fill detector for the corner greeter. Instead of
+  // keying off one network's fill event (AdSense's data-ad-status — which Newor
+  // never sets), watch our own reserved right-rail slot for a real painted ad:
+  // any managed wrapper (Newor's header bidding via Google Ad Manager, or
+  // AdSense) fills this box with a sized <iframe>, and an unfilled/collapsed
+  // unit leaves none. That IS the "only when an ad actually paints" rule, and it
+  // fires regardless of who served the banner — as long as it lands in our slot.
+  // (If a network instead injects its OWN floating sidebar elsewhere in the DOM,
+  // repoint this observer's target at that element.)
+  useEffect(() => {
+    const el = rightRailRef.current;
+    if (!isAdPage || !el) {
+      setRightRailFilled(false);
+      return;
+    }
+    const hasPaintedAd = () =>
+      Array.from(el.querySelectorAll("iframe")).some((node) => {
+        const r = node.getBoundingClientRect();
+        // >20px both ways clears 1×1 tracking pixels; a real 300×600 / 160×600 /
+        // 728×90 creative passes easily.
+        return r.width > 20 && r.height > 20;
+      });
+    const update = () => setRightRailFilled(hasPaintedAd());
+    update();
+    const mo = new MutationObserver(update);
+    mo.observe(el, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style", "data-ad-status", "width", "height"],
+    });
+    // Ad iframes size asynchronously after injection; re-poll a few times so a
+    // late-filling unit still flips the signal without a user interaction.
+    const timers = [200, 800, 2000].map((ms) => setTimeout(update, ms));
+    return () => {
+      mo.disconnect();
+      timers.forEach(clearTimeout);
+    };
+  }, [geom, isAdPage]);
+
   // Publish "a visible right rail is on screen" for corner-floating UI (the
   // desktop greeter) to dodge. Visible = an ad actually paints in the right
-  // gutter: the dev preview mock, or a live unit that reported FILLED — never an
-  // eligible-but-unfilled ghost. Tier is irrelevant; the greeter only needs the
-  // boolean, then parks against the tier-independent inner edge itself.
+  // gutter: the dev preview mock, or a real filled unit (detected above) — never
+  // an eligible-but-unfilled ghost. Tier is irrelevant; the greeter only needs
+  // the boolean, then parks against the tier-independent inner edge itself.
   const rightRailShowing =
-    isAdPage &&
-    geom?.rails != null &&
-    ((isDev && preview) ||
-      (ADSENSE_ENABLED && AD_UNITS.rail_right.slotId !== "" && rightRailFilled));
+    isAdPage && geom?.rails != null && ((isDev && preview) || rightRailFilled);
   useEffect(() => {
     setRightRailVisible(rightRailShowing);
   }, [rightRailShowing]);
@@ -544,6 +586,7 @@ export function AdRails() {
                 {geom.rails!.slots.map((slot, i) => (
                   <div
                     key={i}
+                    ref={side === "right" && i === 0 ? rightRailRef : undefined}
                     data-rail-slot={`${side}_${i}`}
                     style={{
                       width: slot.w,
@@ -553,20 +596,12 @@ export function AdRails() {
                     }}
                   >
                     {railLive && i === 0 ? (
-                      // Launch fills only the top gutter slot; deeper slots
-                      // stay measured-but-unfilled until Phase 2. The right
-                      // rail reports its fill up so the corner greeter can dodge
-                      // it only when an ad truly serves (left rail: no listener).
-                      <AdSlot
-                        slotId={railUnit.slotId}
-                        w={slot.w}
-                        h={slot.h}
-                        onStatus={
-                          side === "right"
-                            ? (s) => setRightRailFilled(s === "filled")
-                            : undefined
-                        }
-                      />
+                      // Launch fills only the top gutter slot; deeper slots stay
+                      // measured-but-unfilled until Phase 2. The corner greeter's
+                      // dodge no longer reads this unit's status directly — the
+                      // network-agnostic observer above watches this container so
+                      // it works for Newor's fill too, not just AdSense's.
+                      <AdSlot slotId={railUnit.slotId} w={slot.w} h={slot.h} />
                     ) : isDev && preview && i === 0 ? (
                       // Preview mirrors launch: only the top slot fills.
                       <MockAd w={slot.w} h={slot.h} />
