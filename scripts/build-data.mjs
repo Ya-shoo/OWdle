@@ -25,6 +25,7 @@ const SPLASH_QUALITY = 80;
 const OVERLAY = {
   // Tanks
   "dva":           { species: "human",  gender: "female",     release_year: 2016, country: "South Korea" },
+  "dmon":          { species: "human",  gender: "female",     release_year: 2026, country: "South Korea" },
   "domina":        { species: "human",  gender: "female",     release_year: 2026, country: "India" },
   "doomfist":      { species: "human",  gender: "male",       release_year: 2017, country: "Nigeria" },
   "hazard":        { species: "human",  gender: "male",       release_year: 2024, country: "Scotland" },

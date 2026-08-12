@@ -453,6 +453,81 @@
     "affiliation_explanation": "Key Overwatch operative who actively recruited new members to bolster the reformed team."
   },
   {
+    "key": "dmon",
+    "name": "D.Mon",
+    "role": "tank",
+    "subrole": "stalwart",
+    "gamemodes": [
+      "quickplay"
+    ],
+    "portrait": "/portraits/dmon.png",
+    "location": "MEKA Base, Busan, South Korea",
+    "country": "South Korea",
+    "continent": "Asia",
+    "age": 28,
+    "hp": 600,
+    "birthday": "Apr 21",
+    "birthday_month": "April",
+    "species": "human",
+    "gender": "female",
+    "release_year": 2026,
+    "abilities": [
+      {
+        "name": "Plasma Saber",
+        "description": "Fast energy melee weapon.",
+        "icon": "/abilities/dmon/plasma-saber.png"
+      },
+      {
+        "name": "Portable Fusion Repeater",
+        "description": "Heavy machine gun.",
+        "icon": "/abilities/dmon/portable-fusion-repeater.png"
+      },
+      {
+        "name": "Power Barrier",
+        "description": "Hold secondary fire to deploy a frontal energy barrier.",
+        "icon": "/abilities/dmon/power-barrier.png"
+      },
+      {
+        "name": "Surging Strike",
+        "description": "While Power Barrier is deployed, strike forward to damage and push enemies back.",
+        "icon": "/abilities/dmon/surging-strike.png"
+      },
+      {
+        "name": "Fusion Repeater",
+        "description": "Activate a rapid-fire machine gun.",
+        "icon": "/abilities/dmon/fusion-repeater.png"
+      },
+      {
+        "name": "Propulsors",
+        "description": "Consume fuel to surge in any horizontal direction.",
+        "icon": "/abilities/dmon/propulsors.png"
+      },
+      {
+        "name": "Eject!",
+        "description": "Eject out of your mech when it is destroyed.",
+        "icon": "/abilities/dmon/eject.png"
+      },
+      {
+        "name": "Limit Break",
+        "description": "Unleash a sweeping slash that grants self overhealth and amplifies damage taken by enemies.",
+        "icon": "/abilities/dmon/limit-break.png"
+      },
+      {
+        "name": "Call Mech",
+        "description": "Reassemble mech.",
+        "icon": "/abilities/dmon/call-mech.png"
+      }
+    ],
+    "backgrounds": [
+      "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt7ebd74c6809c3fd3/6a73d8a4a736253d5fc8a644/960_Dmon.png",
+      "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/bltd3c87960c2414bdd/6a73d89ef42b958b982fa771/1600_Dmon.png",
+      "https://blz-contentstack-images.akamaized.net/v3/assets/blt2477dcaf4ebd440c/blt2543b5c043d434ed/6a73d8971bb9c51a0d6bc682/2600_Dmon.png"
+    ],
+    "splash_url": "/splash/dmon.jpg",
+    "affiliation": "MEKA",
+    "affiliation_explanation": "Squad leader of South Korea's MEKA unit, piloting the mech Beast to defend Busan from the Gwishin omnics alongside D.Va."
+  },
+  {
     "key": "domina",
     "name": "Domina",
     "role": "tank",
