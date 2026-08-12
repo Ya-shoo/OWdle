@@ -62,23 +62,50 @@ export async function writeVideo(file: File): Promise<void> {
     // file didn't exist
   }
 
+  // Try to expose the File via WORKERFS (lazy reads → any size works). Two
+  // failure shapes to guard against, both of which the old code mishandled:
+  //   1. mount() RESOLVES `false` (it does NOT throw) when the loaded core
+  //      has no WORKERFS filesystem — so we must check the boolean, not just
+  //      the absence of an exception. The old code returned success on false,
+  //      pointing sourcePath at an unmounted /mnt that later slices couldn't
+  //      read.
+  //   2. createDir("/mnt") throws EEXIST when a prior /mnt survived the
+  //      best-effort teardown above (e.g. a second ingest in the same
+  //      session). That's harmless — the dir we want is already there — but
+  //      the old bare catch treated it as "WORKERFS unsupported" and, for a
+  //      >1.5 GB file, surfaced the misleading size error below.
+  let mountErr: unknown = null;
+  let mounted = false;
   try {
-    await ffmpeg.createDir(MOUNT_POINT);
-    await ffmpeg.mount(
+    try {
+      await ffmpeg.createDir(MOUNT_POINT);
+    } catch {
+      // Dir already exists (EEXIST) is fine; a real problem re-surfaces at mount.
+    }
+    const ok = await ffmpeg.mount(
       "WORKERFS" as unknown as Parameters<typeof ffmpeg.mount>[0],
       { files: [file] },
       MOUNT_POINT,
     );
-    sourcePath = `${MOUNT_POINT}/${file.name}`;
-    return;
-  } catch {
-    // WORKERFS unavailable — fall back, but only if the file is small
-    // enough to fit in WASM memory (~2 GB ceiling on 32-bit cores).
+    mounted = ok !== false;
+  } catch (e) {
+    mountErr = e;
   }
 
-  if (file.size > 1.5 * 1024 * 1024 * 1024) {
+  if (mounted) {
+    sourcePath = `${MOUNT_POINT}/${file.name}`;
+    return;
+  }
+
+  // WORKERFS unavailable/failed → copy into MEMFS, but only if it fits the
+  // ~2 GB WASM address space (encoders need headroom too, so cap ~1.8 GB).
+  const GB = 1024 * 1024 * 1024;
+  if (file.size > 1.8 * GB) {
+    const reason = mountErr
+      ? `WORKERFS mount failed (${mountErr instanceof Error ? mountErr.message : String(mountErr)})`
+      : "this browser/core build exposes no WORKERFS filesystem";
     throw new Error(
-      `Video is ${(file.size / 1024 / 1024 / 1024).toFixed(1)} GB and your browser doesn't support WORKERFS mounts. Compress or split the source first (see README).`,
+      `Can't ingest a ${(file.size / GB).toFixed(1)} GB video: ${reason}, and it's too large to copy into WASM memory. Compress or split the source first (see README).`,
     );
   }
   await ffmpeg.writeFile(FALLBACK_NAME, await fetchFile(file));
