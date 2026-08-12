@@ -196,10 +196,34 @@ function fnv1a(s: string): number {
 // Applied BEFORE the daily bag/hash: only the named day is affected, every
 // other day is unchanged. Key must be a valid hero key in heroes.json.
 
+// One-off launch-day overrides — RESOLVER-LEVEL ONLY, so the shuffle bag is
+// completely untouched (zero cascade, unlike the dailyBag PINS which feed the
+// cooldown and reshuffle the epoch). Each mode's map is a 2-day SWAP: it puts
+// D.Mon on her launch day and relocates the hero she displaced into D.Mon's
+// own next natural slot, so each mode's answer multiset is unchanged. Verified
+// against the real 230-day rotation: D.Mon never repeats, no cross-mode
+// collisions on the touched days. The lone accepted trade-off is the Classic
+// swap leaving junker-queen at a 28-day gap once (vs the 51-day full rotation).
+// Splash is a plain override (D.Mon isn't in the Spotlight skins pool, so she
+// displaces nothing there). Safe to delete once these dates have passed.
+const CLASSIC_LAUNCH: Record<string, string> = {
+  "2026-08-14": "dmon", // D.Mon launch — Classic
+  "2026-09-07": "junker-queen", // displaced from Aug 14 into D.Mon's old slot
+};
+const SOUND_LAUNCH: Record<string, string> = {
+  "2026-08-15": "dmon", // D.Mon launch — Sound
+  "2026-09-05": "zarya", // displaced from Aug 15 into D.Mon's old slot
+};
+const SPLASH_LAUNCH: Record<string, string> = {
+  "2026-08-17": "dmon", // D.Mon launch — Spotlight (base splash, no skin displaced)
+};
+
 export function getHeroForDay(day: string): Hero {
   if (ANSWER_POOL.length === 0) {
     throw new Error("ANSWER_POOL is empty — check data/heroes.json");
   }
+  const launch = CLASSIC_LAUNCH[day];
+  if (launch && HEROES_BY_KEY[launch]) return HEROES_BY_KEY[launch];
   const pinned = CLASSIC_PINS[day];
   if (pinned && HEROES_BY_KEY[pinned]) return HEROES_BY_KEY[pinned];
   if (usesRotationV2(day)) return bagClassicHeroV2(day);
@@ -271,6 +295,13 @@ export function getSplashForDay(day: string): {
 } {
   if (SPLASH_POOL.length === 0) {
     throw new Error("SPLASH_POOL is empty");
+  }
+  const launch = SPLASH_LAUNCH[day];
+  if (launch) {
+    const hero = HEROES_BY_KEY[launch];
+    // Base splash art — D.Mon has no legendary skin yet, and isn't in the
+    // Spotlight skins pool, so this displaces nothing.
+    if (hero) return { hero, imageUrl: hero.splash_url ?? "", skin: null };
   }
   const pin = SPLASH_PINS[day];
   if (pin) {
@@ -360,6 +391,15 @@ export type ResolvedSoundClip = {
 };
 
 export function getSoundForDay(day: string): ResolvedSoundClip {
+  const launch = SOUND_LAUNCH[day];
+  if (launch) {
+    const clips = SOUND_CLIPS[launch];
+    if (clips && clips.length > 0) {
+      const clip = clips[fnv1a(`owdle:sound:launch:${day}`) % clips.length];
+      const resolved = resolveLabeledSoundClip(launch, clip.slug);
+      if (resolved) return resolved;
+    }
+  }
   if (usesRotationV2(day)) {
     const { heroKey, clipSlug } = bagSoundPickV2(day);
     const resolved = resolveLabeledSoundClip(heroKey, clipSlug);
