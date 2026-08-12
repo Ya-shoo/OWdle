@@ -174,6 +174,36 @@
       "duration": 5.21
     }
   ],
+  "dmon": [
+    {
+      "slug": "call-mech",
+      "label": "Call Mech",
+      "audioUrl": "/sounds/dmon/call-mech.mp3?v=6fad907b",
+      "videoUrl": "/sounds/dmon/call-mech.mp4?v=4928d5be",
+      "duration": 5.35
+    },
+    {
+      "slug": "fusion-repeater",
+      "label": "Fusion Repeater",
+      "audioUrl": "/sounds/dmon/fusion-repeater.mp3?v=5221a295",
+      "videoUrl": "/sounds/dmon/fusion-repeater.mp4?v=5f078343",
+      "duration": 5.59
+    },
+    {
+      "slug": "limit-break",
+      "label": "Limit Break",
+      "audioUrl": "/sounds/dmon/limit-break.mp3?v=1fcc9698",
+      "videoUrl": "/sounds/dmon/limit-break.mp4?v=78e0f33b",
+      "duration": 3.05
+    },
+    {
+      "slug": "plasma-saber",
+      "label": "Plasma Saber",
+      "audioUrl": "/sounds/dmon/plasma-saber.mp3?v=50acf741",
+      "videoUrl": "/sounds/dmon/plasma-saber.mp4?v=74a9c491",
+      "duration": 6.24
+    }
+  ],
   "domina": [
     {
       "slug": "barrier-array",

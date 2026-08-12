@@ -34,6 +34,11 @@
     "videoUrl": "/melee/cassidy.mp4?v=60afdef7",
     "duration": 6.1
   },
+  "dmon": {
+    "audioUrl": "/melee/dmon.mp3?v=86cd1cc7",
+    "videoUrl": "/melee/dmon.mp4?v=5e65fe58",
+    "duration": 7.7
+  },
   "domina": {
     "audioUrl": "/melee/domina.mp3?v=4ae53bd9",
     "videoUrl": "/melee/domina.mp4?v=4a26a92e",
