@@ -33,6 +33,21 @@ const DEV_MOCK: Lifetime | null =
 
 export function LifetimeCounter() {
   const [value, setValue] = useState<number | null>(null);
+  // Desktop-only flag. The homepage also wraps this in `hidden sm:block`, but
+  // gating the whole component on a matchMedia check means it never mounts,
+  // fetches /api/stats/lifetime, or runs the odometer on phones — where this
+  // social-proof card would just be clutter. SSR + first paint render null
+  // (isDesktop=false) so there's no hydration mismatch, then it flips on for
+  // desktop after mount. Breakpoint matches Tailwind's `sm` (640px).
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(min-width: 640px)");
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
   const base = useRef(0); // count at anchorAt
   const rate = useRef(0); // rounds per second
   const anchorAt = useRef(0); // ms — when `base` was accurate
@@ -40,6 +55,7 @@ export function LifetimeCounter() {
   const running = useRef(false);
 
   useEffect(() => {
+    if (!isDesktop) return; // mobile never mounts the counter — no fetch, no animation
     let stopped = false;
     let raf = 0;
     let jumpId: ReturnType<typeof setInterval> | undefined;
@@ -123,12 +139,12 @@ export function LifetimeCounter() {
       if (jumpId) clearInterval(jumpId);
       clearInterval(syncId);
     };
-  }, []);
+  }, [isDesktop]);
 
-  if (value === null) return null; // no flash before the first real number
+  if (!isDesktop || value === null) return null; // desktop-only; no flash before the first real number
 
   return (
-    <Plate tone="accent" size="lg">
+    <Plate tone="gold" size="xl">
       <span className="inline-flex items-center whitespace-nowrap font-extrabold tracking-[0.05em]">
         OWdle has been played&nbsp;
         <Odometer value={value} />

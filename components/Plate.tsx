@@ -28,6 +28,7 @@ const SIZE_CLASSES = {
   sm: "px-2.5 py-1 text-[11px]",
   md: "px-3.5 py-1.5 text-xs",
   lg: "px-5 py-2 text-xs",
+  xl: "px-6 py-2.5 text-sm",
 } as const;
 
 export type PlateTone = keyof typeof TONE_CLASSES;
