@@ -64,3 +64,13 @@ next-env.d.ts
 # deploys skip the HEAD check on already-uploaded files (R2 rate-limits
 # the HEAD-via-GET endpoint after ~1500 requests).
 /.r2-sync-cache.json
+
+# local-only working docs + scratch — kept on disk, out of version control.
+# Planning / business notes, mode specs, ads.txt backups, and stray capture
+# files that accumulate at the repo root; none belong in the tree.
+/OWdle-*.md
+/VOICEOVER_MODE.md
+/owdle-logo-600x400.png
+/ads.txt.archived-*.bak
+# stray root-level melee clip; canonical melee media lives in public/melee/ (R2).
+/melee/
