@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone Chrome extension — vanilla web-extension JS (chrome.*,
+    // importScripts) that isn't part of the Next app graph. Linting it here
+    // would flag web-extension globals as no-undef.
+    "extension/**",
   ]),
 ]);
 

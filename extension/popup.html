@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OWdle Daily Reminder</title>
+    <style>
+      :root {
+        --canvas: #0a0e14;
+        --card: #12181f;
+        --line: #232c38;
+        --ink: #eef2f7;
+        --ink-soft: #9aa7b6;
+        --ink-faint: #61707f;
+        --accent: #f26522;
+        --on-accent: #0a0e14;
+        --correct: #7fdc92;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+      }
+      body {
+        width: 300px;
+        background: var(--canvas);
+        color: var(--ink);
+        font-family:
+          system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+          sans-serif;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+      .wrap {
+        padding: 14px 14px 12px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 12px;
+      }
+      header .name {
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        font-size: 16px;
+      }
+      header .name .ow {
+        color: var(--ink);
+      }
+      header .name .dle {
+        color: var(--accent);
+      }
+      header .sub {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--ink-faint);
+      }
+      .status {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 11px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .streak {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
+      .streak .n {
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .streak .lbl {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--ink-faint);
+      }
+      .today {
+        font-size: 11px;
+        font-weight: 600;
+        text-align: right;
+      }
+      .today.done {
+        color: var(--correct);
+      }
+      .today.todo {
+        color: var(--accent);
+      }
+      .today.nosync {
+        color: var(--ink-soft);
+        font-weight: 500;
+      }
+      .play {
+        display: block;
+        width: 100%;
+        border: 0;
+        border-radius: 8px;
+        background: var(--accent);
+        color: var(--on-accent);
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 12px;
+        padding: 10px;
+        cursor: pointer;
+      }
+      .play:hover {
+        filter: brightness(1.07);
+      }
+      hr {
+        border: 0;
+        border-top: 1px solid var(--line);
+        margin: 13px 0 10px;
+      }
+      .settings-title {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--ink-faint);
+        margin-bottom: 8px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 6px 0;
+      }
+      .row label {
+        color: var(--ink-soft);
+        cursor: pointer;
+      }
+      .row.sub label {
+        padding-left: 2px;
+        font-size: 12px;
+      }
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+      select {
+        background: var(--canvas);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 6px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .foot {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .link {
+        background: none;
+        border: 0;
+        color: var(--ink-faint);
+        font-size: 11px;
+        cursor: pointer;
+        padding: 2px 0;
+      }
+      .link:hover {
+        color: var(--accent);
+      }
+      .disabled {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <div class="name"><span class="ow">OW</span><span class="dle">dle</span></div>
+          <div class="sub">Daily reminder</div>
+        </div>
+      </header>
+
+      <div class="status">
+        <div class="streak">
+          <span class="n" id="streak-n">0</span>
+          <span class="lbl">day streak</span>
+        </div>
+        <div class="today" id="today">Not played yet</div>
+      </div>
+
+      <button class="play" id="play">Play today's OWdle</button>
+
+      <hr />
+
+      <div class="settings-title">Reminders</div>
+
+      <div class="row">
+        <label for="enabled">Daily reminder</label>
+        <input type="checkbox" id="enabled" />
+      </div>
+
+      <div id="sub-settings">
+        <div class="row">
+          <label for="hour">Remind me at</label>
+          <select id="hour"></select>
+        </div>
+        <div class="row sub">
+          <label for="streakOnly">Only when my streak is at risk</label>
+          <input type="checkbox" id="streakOnly" />
+        </div>
+        <div class="row sub">
+          <label for="feedbackAsks">Occasional feedback asks</label>
+          <input type="checkbox" id="feedbackAsks" />
+        </div>
+      </div>
+
+      <div class="foot">
+        <button class="link" id="test">Send a test notification</button>
+      </div>
+    </div>
+
+    <script src="daytime.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

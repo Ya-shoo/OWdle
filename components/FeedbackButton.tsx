@@ -131,6 +131,29 @@ export function FeedbackButton() {
     setPopupActive(false);
   };
 
+  // Deep-link: the Chrome reminder extension's "feedback" notification opens
+  // /?feedback=1. Auto-open the dialog once on mount, then strip the param so
+  // a refresh doesn't reopen it. Reads window.location directly rather than
+  // useSearchParams, which in the root layout would force a Suspense boundary
+  // under static export.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("feedback") !== "1") return;
+    // Strip the param first so a refresh doesn't reopen the dialog.
+    params.delete("feedback");
+    const qs = params.toString();
+    const url =
+      window.location.pathname +
+      (qs ? `?${qs}` : "") +
+      window.location.hash;
+    window.history.replaceState(null, "", url);
+    // Open on the next frame so we aren't calling setState synchronously
+    // inside the effect body (which would cascade renders).
+    const raf = requestAnimationFrame(() => openDialog());
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   const close = () => {
     setOpen(false);
     setStatus("idle");
