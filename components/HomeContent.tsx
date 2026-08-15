@@ -213,8 +213,8 @@ export function HomeContent() {
           the dark board. max-w-lg keeps it about the width its column had
           before, so centering reads as deliberate rather than a stretched
           half-panel. */}
-      <section className="mx-auto max-w-6xl px-6 pb-12 pt-4">
-        <div className="mx-auto max-w-lg rounded-(--radius-card) bg-[#e1e6f3] p-6 shadow-card sm:p-8">
+      <section className="mx-auto max-w-6xl px-6 pb-12 pt-24">
+        <div className="mx-auto max-w-md rounded-(--radius-card) bg-[#e1e6f3] p-5 shadow-card sm:p-6">
           <SupportLinks />
         </div>
       </section>

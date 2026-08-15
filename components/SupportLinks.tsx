@@ -13,32 +13,16 @@
 // (text-canvas for strong text) plus fixed on-light hexes for the muted
 // slate + link/hover tiers, mirroring how the sister-site cards hardcode
 // their own on-light palettes.
-import Link from "next/link";
-import { SUPPORT_LINKS, SHARE_TEXT, SITE_URL, BUSINESS_EMAIL } from "@/lib/site";
-import { trackShareClicked } from "@/lib/tracking";
+import { SUPPORT_LINKS, BUSINESS_EMAIL } from "@/lib/site";
 import { KofiModal } from "./KofiModal";
-
-const TWITTER_INTENT = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-  SHARE_TEXT,
-)}&url=${encodeURIComponent(SITE_URL)}`;
 
 export function SupportLinks() {
   return (
     <div className="flex h-full flex-col justify-center">
-      <h3 className="font-soft text-2xl font-bold text-canvas sm:text-3xl">
+      <h3 className="text-center font-soft text-xl font-bold text-canvas sm:text-2xl">
         Support me :D
       </h3>
-      <div className="mt-2 space-y-2 text-sm text-[#4a5b74]">
-        <p>
-          I started this site just for me and my friends.{" "}
-          <Link
-            href="/sound/"
-            className="text-[#c2410c] underline underline-offset-2 transition-colors hover:text-accent"
-          >
-            Sound
-          </Link>{" "}
-          was the first mode I built, and it&rsquo;s still my favorite.
-        </p>
+      <div className="mt-2 text-center text-sm text-[#4a5b74]">
         <p>
           Daily puzzles take time. If OWdle made your day, slide a coffee my
           way {'( ๑‾̀◡‾́)σ"'}
@@ -48,10 +32,10 @@ export function SupportLinks() {
       {/* Action cluster — every child centers on the column's vertical axis
           so the avatar+name, Ko-fi button, and share link form one unbroken
           focal column beneath the heading copy. */}
-      <div className="mt-7 flex flex-col items-center gap-6">
+      <div className="mt-5 flex flex-col items-center gap-4">
         {/* Ko-fi profile-card preview — anchors the tip button so visitors
             see who they'd be supporting before they click. */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4">
           {/* Avatar doubles as a quick hop to the creator's Instagram —
               same destination as the IG icon below, but a much bigger
               tap target on mobile. The wrapping div hosts a hover-reveal
@@ -69,9 +53,9 @@ export function SupportLinks() {
               <img
                 src="/kofi-avatar.jpg?v=2"
                 alt=""
-                width={112}
-                height={112}
-                className="h-28 w-28 rounded-full object-cover"
+                width={96}
+                height={96}
+                className="h-24 w-24 rounded-full object-cover"
               />
             </a>
             {/* Speech bubble — pops in on avatar hover / keyboard focus.
@@ -94,10 +78,10 @@ export function SupportLinks() {
             </div>
           </div>
           <div>
-            <p className="font-soft text-2xl font-bold leading-none text-canvas">
+            <p className="font-soft text-xl font-bold leading-none text-canvas">
               yush
             </p>
-            <p className="mt-2 text-base text-[#4a5b74]">ko-fi.com/yushoo</p>
+            <p className="mt-1.5 text-sm text-[#4a5b74]">ko-fi.com/yushoo</p>
             {/* Personal social icons — signal a real human behind the tip jar.
                 Universal HTTPS links so iOS/Android open the X & Instagram
                 apps automatically when installed, falling back to the web. */}
@@ -127,28 +111,13 @@ export function SupportLinks() {
           </div>
         </div>
         <KofiModal username={SUPPORT_LINKS.kofiUsername} />
-        <a
-          href={TWITTER_INTENT}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => {
-            trackShareClicked({
-              surface: "support_panel",
-              method: "twitter_intent",
-            });
-          }}
-          className="-mt-1 inline-flex items-center gap-1.5 utility-label text-[11px] text-[#4a5b74] transition-colors hover:text-[#1d7ab0]"
-        >
-          <ShareMark />
-          Share on X
-        </a>
       </div>
 
       {/* Business inquiries — sits at the very bottom of the card, centered,
           in strong dark text (text-canvas reads black on this light paper
           card). Separate from the support cluster above: this is the
           sponsorship / partnership channel, not a tip prompt. */}
-      <p className="mt-8 text-center text-sm font-extrabold text-canvas">
+      <p className="mt-6 text-center text-sm font-extrabold text-canvas">
         for business inquiries:{" "}
         <a
           href={`mailto:${BUSINESS_EMAIL}`}
@@ -158,17 +127,6 @@ export function SupportLinks() {
         </a>
       </p>
     </div>
-  );
-}
-
-function ShareMark() {
-  return (
-    <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden>
-      <path
-        d="M3 3h6v2H5v14h14v-4h2v6H3z M14 3h7v7h-2V6.4L11.4 14 10 12.6 17.6 5H14z"
-        fill="currentColor"
-      />
-    </svg>
   );
 }
 
