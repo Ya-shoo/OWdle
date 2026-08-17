@@ -529,13 +529,19 @@ function AbilityArtCard({
         style={{ width: 240, height: 240 }}
       >
         <div className="relative h-full w-full">
-          <motion.img
-            src={ability.icon}
-            alt={revealedHero ? ability.name : "Mystery ability"}
-            className="puzzle-art absolute inset-0 h-full w-full object-contain"
-            draggable={false}
-            loading="eager"
-            decoding="async"
+          {/* The answer icon is a CSS background, NOT an <img>. A real <img>
+              here leaks the whole answer on touch devices: iOS Safari's
+              touch-and-hold "lift / Save Image" (and Android Chrome's
+              long-press image menu) hit-test for the underlying image element
+              and bypass pointer-events:none, the opaque mask overlay, AND
+              -webkit-touch-callout:none — surfacing the unmasked source. A
+              background-image has no liftable element, so there is nothing to
+              grab on any platform. Keep .puzzle-art (pointer-events:none) too. */}
+          <motion.div
+            role="img"
+            aria-label={revealedHero ? ability.name : "Mystery ability"}
+            className="puzzle-art absolute inset-0 h-full w-full bg-contain bg-center bg-no-repeat"
+            style={{ backgroundImage: `url("${ability.icon}")` }}
             initial={false}
             animate={{ rotate: rotation }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}

@@ -467,25 +467,32 @@ function SplashFrame({
   return (
     <div className="flex flex-col items-center gap-3">
       <div
-        className="tile-shape relative w-full overflow-hidden border border-line bg-muted shadow-2xl shadow-black/10"
-        style={{ aspectRatio: "1 / 1", maxWidth: "min(80vw, 540px)" }}
+        className="tile-shape relative overflow-hidden border border-line bg-muted shadow-2xl shadow-black/10"
+        // Explicit width (not w-full) because the art is now a background
+        // div with no intrinsic size — the square used to size itself off the
+        // <img>. min(80vw,540px) reproduces the old w-full+maxWidth cap.
+        style={{ aspectRatio: "1 / 1", width: "min(80vw, 540px)" }}
         role="img"
         aria-label={
           revealed ? `Splash art for ${heroName}` : "Cropped splash art"
         }
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={media(imageUrl)}
-          alt=""
-          className="puzzle-art block h-full w-full object-cover transition-transform duration-700 ease-out"
-          draggable={false}
+        {/* The splash is a CSS background, NOT an <img>. A real <img> here
+            leaks the answer on touch devices: iOS Safari's touch-and-hold
+            "lift / Save Image" (and Android Chrome's long-press image menu)
+            hit-test for the underlying image element and bypass
+            pointer-events:none + -webkit-touch-callout:none, surfacing the
+            FULL uncropped splash. A background image has nothing to lift. The
+            scale(zoom)/transform-origin crop + zoom-out animation apply to the
+            div exactly as they did to the <img> (bg-cover == object-cover). */}
+        <div
+          aria-hidden
+          className="puzzle-art block h-full w-full bg-cover bg-center transition-transform duration-700 ease-out"
           style={{
+            backgroundImage: `url("${media(imageUrl)}")`,
             transform: `scale(${zoom})`,
             transformOrigin: `${origin.x}% ${origin.y}%`,
           }}
-          loading="eager"
-          decoding="async"
         />
         {/* subtle vignette to ground the crop */}
         <div
