@@ -14,6 +14,8 @@ import { ExtensionBridge } from "@/components/ExtensionBridge";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FeedbackButton } from "@/components/FeedbackButton";
 import { ShareAnnounceModal } from "@/components/ShareAnnounceModal";
+import { WelcomeTutorial } from "@/components/WelcomeTutorial";
+import { WelcomeTutorialDevTrigger } from "@/components/WelcomeTutorialDevTrigger";
 import { DevThemeSwitcher } from "@/components/DevThemeSwitcher";
 import { AdRails } from "@/components/AdRails";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
@@ -161,6 +163,8 @@ export default function RootLayout({
         <SiteFooter />
         <FeedbackButton />
         <ShareAnnounceModal />
+        <WelcomeTutorial />
+        <WelcomeTutorialDevTrigger />
         <AdRails />
         <DevThemeSwitcher />
         <GoogleAnalytics />
